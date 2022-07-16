@@ -5,10 +5,12 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Country implements Serializable {
+public class Product implements Serializable {
     @Id
     private Long id;
     private String name;
+    private Integer hsn;
+
     public Long getId() {
         return id;
     }
@@ -25,11 +27,20 @@ public class Country implements Serializable {
         this.name = name;
     }
 
+    public Integer getHsn() {
+        return hsn;
+    }
+
+    public void setHsn(Integer hsn) {
+        this.hsn = hsn;
+    }
+
     @Override
     public String toString() {
-        return "Country{" +
+        return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", hsn=" + hsn +
                 '}';
     }
 }

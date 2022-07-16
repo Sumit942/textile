@@ -2,7 +2,9 @@ package com.example.textile.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table
@@ -25,5 +27,18 @@ public class Invoice implements Serializable {
     private Company billToParty;
     @ManyToOne
     private Company shipToParty;
-
+    @ManyToOne
+    private SaleType saleType;
+    @OneToMany
+    private List<ProductDetail> product;
+    private Double pnfCharge;
+    private BigDecimal totalAmount;
+    private BigDecimal cGst;
+    private BigDecimal sGst;
+    private BigDecimal totalTaxAmount;
+    private Double roundOff;
+    private BigDecimal totalAmountAfterTax;
+    private String totalInvoiceAmountInWords;
+    @ManyToOne
+    private BankDetail bankDetail;
 }
