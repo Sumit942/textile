@@ -17,9 +17,9 @@ public class Company implements Serializable {
     @Column(length = 15, unique = true, nullable = false)
     private String gst;
 
-    private List<String> emailId;
+    private String emailId;
 
-    private List<String> mobileNo;
+    private String mobileNo;
 
     public Long getId() {
         return id;
@@ -53,19 +53,19 @@ public class Company implements Serializable {
         this.gst = gst;
     }
 
-    public List<String> getEmailId() {
+    public String getEmailId() {
         return emailId;
     }
 
-    public void setEmailId(List<String> emailId) {
+    public void setEmailId(String emailId) {
         this.emailId = emailId;
     }
 
-    public List<String> getMobileNo() {
+    public String getMobileNo() {
         return mobileNo;
     }
 
-    public void setMobileNo(List<String> mobileNo) {
+    public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
 

@@ -11,11 +11,9 @@ import java.math.BigDecimal;
 public class ProductDetail implements Serializable {
     @Id
     private Long id;
-    @Column(nullable = false)
     @ManyToOne
     private Product product;
     private String chNo;
-    @Column(nullable = false)
     @ManyToOne
     private Unit unitOfMeasure;
     @Column(nullable = false)

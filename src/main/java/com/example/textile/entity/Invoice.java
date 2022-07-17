@@ -11,7 +11,8 @@ import java.util.List;
 public class Invoice implements Serializable {
 
     @Id
-    private Long invoiceNo;
+    private Long id;
+    private String invoiceNo;
     @ManyToOne
     private Company invoiceBy;
     @ManyToOne
@@ -31,7 +32,7 @@ public class Invoice implements Serializable {
     private Company shipToParty;
     @ManyToOne
     private SaleType saleType;
-    @OneToMany
+    @OneToMany(mappedBy = "id")
     private List<ProductDetail> product;
     private Double pnfCharge;
     private BigDecimal totalAmount;
@@ -44,11 +45,19 @@ public class Invoice implements Serializable {
     @ManyToOne
     private BankDetail bankDetail;
 
-    public Long getInvoiceNo() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getInvoiceNo() {
         return invoiceNo;
     }
 
-    public void setInvoiceNo(Long invoiceNo) {
+    public void setInvoiceNo(String invoiceNo) {
         this.invoiceNo = invoiceNo;
     }
 
@@ -227,7 +236,8 @@ public class Invoice implements Serializable {
     @Override
     public String toString() {
         return "Invoice{" +
-                "invoiceNo=" + invoiceNo +
+                "id=" + id +
+                ", invoiceNo=" + invoiceNo +
                 ", invoiceBy=" + invoiceBy +
                 ", user=" + user +
                 ", transportMode=" + transportMode +
