@@ -2,18 +2,16 @@ package com.example.textile.entity;
 
 import com.example.textile.enums.SaleTypeEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 public class SaleType implements Serializable {
-    @Id
     private Long id;
-    @Column
     private String saleType = SaleTypeEnum.FJW.getSaleType();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }

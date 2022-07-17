@@ -1,26 +1,24 @@
 package com.example.textile.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
 public class Company implements Serializable {
-    @Id
     private Long id;
     private String name;
-    @OneToOne
     private Address address;
-    @Column(length = 15, unique = true, nullable = false)
     private String gst;
 
     private String emailId;
 
     private String mobileNo;
 
+    private List<BankDetail> bankDetails;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -37,6 +35,7 @@ public class Company implements Serializable {
         this.name = name;
     }
 
+    @OneToOne
     public Address getAddress() {
         return address;
     }
@@ -45,6 +44,7 @@ public class Company implements Serializable {
         this.address = address;
     }
 
+    @Column(length = 15, unique = true, nullable = false)
     public String getGst() {
         return gst;
     }
@@ -69,6 +69,15 @@ public class Company implements Serializable {
         this.mobileNo = mobileNo;
     }
 
+    @OneToMany(mappedBy = "id")
+    public List<BankDetail> getBankDetails() {
+        return bankDetails;
+    }
+
+    public void setBankDetails(List<BankDetail> bankDetails) {
+        this.bankDetails = bankDetails;
+    }
+
     @Override
     public String toString() {
         return "Company{" +
@@ -76,8 +85,9 @@ public class Company implements Serializable {
                 ", name='" + name + '\'' +
                 ", address=" + address +
                 ", gst='" + gst + '\'' +
-                ", emailId=" + emailId +
-                ", mobileNo=" + mobileNo +
+                ", emailId='" + emailId + '\'' +
+                ", mobileNo='" + mobileNo + '\'' +
+                ", bankDetails=" + bankDetails +
                 '}';
     }
 }

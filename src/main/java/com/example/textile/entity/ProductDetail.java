@@ -1,28 +1,21 @@
 package com.example.textile.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 public class ProductDetail implements Serializable {
-    @Id
     private Long id;
-    @ManyToOne
     private Product product;
     private String chNo;
-    @ManyToOne
     private Unit unitOfMeasure;
-    @Column(nullable = false)
     private Double quantity;
-    @Column(nullable = false)
     private Double rate;
-    @Column(nullable = false)
     private BigDecimal totalPrice;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -31,6 +24,7 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
+    @ManyToOne
     public Product getProduct() {
         return product;
     }
@@ -47,6 +41,7 @@ public class ProductDetail implements Serializable {
         this.chNo = chNo;
     }
 
+    @ManyToOne
     public Unit getUnitOfMeasure() {
         return unitOfMeasure;
     }
@@ -55,6 +50,7 @@ public class ProductDetail implements Serializable {
         this.unitOfMeasure = unitOfMeasure;
     }
 
+    @Column(nullable = false)
     public Double getQuantity() {
         return quantity;
     }
@@ -63,6 +59,7 @@ public class ProductDetail implements Serializable {
         this.quantity = quantity;
     }
 
+    @Column(nullable = false)
     public Double getRate() {
         return rate;
     }
@@ -71,6 +68,7 @@ public class ProductDetail implements Serializable {
         this.rate = rate;
     }
 
+    @Column(nullable = false)
     public BigDecimal getTotalPrice() {
         return totalPrice;
     }

@@ -1,19 +1,17 @@
 package com.example.textile.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 public class Address implements Serializable {
-    @Id
     private Long id;
-    @ManyToOne
     private State state;
     private String address;
     private Integer pinCode;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -22,6 +20,7 @@ public class Address implements Serializable {
         this.id = id;
     }
 
+    @ManyToOne
     public State getState() {
         return state;
     }

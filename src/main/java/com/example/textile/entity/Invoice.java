@@ -1,5 +1,7 @@
 package com.example.textile.entity;
 
+import com.example.textile.utility.ShreeramTextile;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -7,32 +9,22 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table
 public class Invoice implements Serializable {
 
-    @Id
     private Long id;
     private String invoiceNo;
-    @ManyToOne
-    private Company invoiceBy;
-    @ManyToOne
+    private Company invoiceBy = ShreeramTextile.getInfo().getCompanyDetails();
     private User user;
-    @ManyToOne
     private TransportMode transportMode;
     private Date invoiceDate;
     private String vehicleNo;
-    private final Boolean reverseCharge = Boolean.FALSE;
+    private Boolean reverseCharge = Boolean.FALSE;
     private Date dateOfSupply;
-    @ManyToOne
     private State state;
     private String placeOfSupply;
-    @ManyToOne
     private Company billToParty;
-    @ManyToOne
     private Company shipToParty;
-    @ManyToOne
     private SaleType saleType;
-    @OneToMany(mappedBy = "id")
     private List<ProductDetail> product;
     private Double pnfCharge;
     private BigDecimal totalAmount;
@@ -42,9 +34,9 @@ public class Invoice implements Serializable {
     private Double roundOff;
     private BigDecimal totalAmountAfterTax;
     private String totalInvoiceAmountInWords;
-    @ManyToOne
-    private BankDetail bankDetail;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -61,6 +53,7 @@ public class Invoice implements Serializable {
         this.invoiceNo = invoiceNo;
     }
 
+    @Transient
     public Company getInvoiceBy() {
         return invoiceBy;
     }
@@ -69,6 +62,7 @@ public class Invoice implements Serializable {
         this.invoiceBy = invoiceBy;
     }
 
+    @ManyToOne
     public User getUser() {
         return user;
     }
@@ -77,6 +71,7 @@ public class Invoice implements Serializable {
         this.user = user;
     }
 
+    @ManyToOne
     public TransportMode getTransportMode() {
         return transportMode;
     }
@@ -105,6 +100,10 @@ public class Invoice implements Serializable {
         return reverseCharge;
     }
 
+    public void setReverseCharge(Boolean reverseCharge) {
+        this.reverseCharge = reverseCharge;
+    }
+
     public Date getDateOfSupply() {
         return dateOfSupply;
     }
@@ -113,6 +112,7 @@ public class Invoice implements Serializable {
         this.dateOfSupply = dateOfSupply;
     }
 
+    @ManyToOne
     public State getState() {
         return state;
     }
@@ -129,6 +129,7 @@ public class Invoice implements Serializable {
         this.placeOfSupply = placeOfSupply;
     }
 
+    @ManyToOne
     public Company getBillToParty() {
         return billToParty;
     }
@@ -137,6 +138,7 @@ public class Invoice implements Serializable {
         this.billToParty = billToParty;
     }
 
+    @ManyToOne
     public Company getShipToParty() {
         return shipToParty;
     }
@@ -145,6 +147,7 @@ public class Invoice implements Serializable {
         this.shipToParty = shipToParty;
     }
 
+    @ManyToOne
     public SaleType getSaleType() {
         return saleType;
     }
@@ -153,6 +156,7 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
+    @OneToMany(mappedBy = "id")
     public List<ProductDetail> getProduct() {
         return product;
     }
@@ -225,14 +229,6 @@ public class Invoice implements Serializable {
         this.totalInvoiceAmountInWords = totalInvoiceAmountInWords;
     }
 
-    public BankDetail getBankDetail() {
-        return bankDetail;
-    }
-
-    public void setBankDetail(BankDetail bankDetail) {
-        this.bankDetail = bankDetail;
-    }
-
     @Override
     public String toString() {
         return "Invoice{" +
@@ -259,7 +255,6 @@ public class Invoice implements Serializable {
                 ", roundOff=" + roundOff +
                 ", totalAmountAfterTax=" + totalAmountAfterTax +
                 ", totalInvoiceAmountInWords='" + totalInvoiceAmountInWords + '\'' +
-                ", bankDetail=" + bankDetail +
                 '}';
     }
 }
