@@ -1,10 +1,14 @@
 package com.example.textile.entity;
 
 import com.example.textile.utility.ShreeramTextile;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +20,7 @@ public class Invoice implements Serializable {
     private Company invoiceBy = ShreeramTextile.getInfo().getCompanyDetails();
     private User user;
     private TransportMode transportMode;
-    private Date invoiceDate;
+    private Date invoiceDate = Calendar.getInstance().getTime();
     private String vehicleNo;
     private Boolean reverseCharge = Boolean.FALSE;
     private Date dateOfSupply;
@@ -34,6 +38,8 @@ public class Invoice implements Serializable {
     private Double roundOff;
     private BigDecimal totalAmountAfterTax;
     private String totalInvoiceAmountInWords;
+    private Date insertDate;
+    private Date updateDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,6 +86,7 @@ public class Invoice implements Serializable {
         this.transportMode = transportMode;
     }
 
+    @NotNull
     public Date getInvoiceDate() {
         return invoiceDate;
     }
@@ -173,6 +180,7 @@ public class Invoice implements Serializable {
         this.pnfCharge = pnfCharge;
     }
 
+    @NotNull
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
@@ -181,6 +189,7 @@ public class Invoice implements Serializable {
         this.totalAmount = totalAmount;
     }
 
+    @NotNull
     public BigDecimal getcGst() {
         return cGst;
     }
@@ -189,6 +198,7 @@ public class Invoice implements Serializable {
         this.cGst = cGst;
     }
 
+    @NotNull
     public BigDecimal getsGst() {
         return sGst;
     }
@@ -197,6 +207,7 @@ public class Invoice implements Serializable {
         this.sGst = sGst;
     }
 
+    @NotNull
     public BigDecimal getTotalTaxAmount() {
         return totalTaxAmount;
     }
@@ -213,6 +224,7 @@ public class Invoice implements Serializable {
         this.roundOff = roundOff;
     }
 
+    @NotNull
     public BigDecimal getTotalAmountAfterTax() {
         return totalAmountAfterTax;
     }
@@ -221,12 +233,32 @@ public class Invoice implements Serializable {
         this.totalAmountAfterTax = totalAmountAfterTax;
     }
 
+    @NotNull
     public String getTotalInvoiceAmountInWords() {
         return totalInvoiceAmountInWords;
     }
 
     public void setTotalInvoiceAmountInWords(String totalInvoiceAmountInWords) {
         this.totalInvoiceAmountInWords = totalInvoiceAmountInWords;
+    }
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    public Date getInsertDate() {
+        return insertDate;
+    }
+
+    public void setInsertDate(Date insertDate) {
+        this.insertDate = insertDate;
+    }
+
+    @UpdateTimestamp
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     @Override

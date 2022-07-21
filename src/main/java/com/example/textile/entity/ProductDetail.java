@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -50,6 +51,7 @@ public class ProductDetail implements Serializable {
         this.unitOfMeasure = unitOfMeasure;
     }
 
+    @NotNull
     @Column(nullable = false)
     public Double getQuantity() {
         return quantity;
@@ -59,6 +61,7 @@ public class ProductDetail implements Serializable {
         this.quantity = quantity;
     }
 
+    @NotNull
     @Column(nullable = false)
     public Double getRate() {
         return rate;
@@ -68,6 +71,7 @@ public class ProductDetail implements Serializable {
         this.rate = rate;
     }
 
+    @NotNull
     @Column(nullable = false)
     public BigDecimal getTotalPrice() {
         return totalPrice;

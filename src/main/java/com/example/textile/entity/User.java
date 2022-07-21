@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,8 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    @NotNull
+    @Column(unique = true)
     public String getUserName() {
         return userName;
     }
@@ -31,6 +34,7 @@ public class User implements Serializable {
         this.userName = userName;
     }
 
+    @NotNull
     public String getPassword() {
         return password;
     }

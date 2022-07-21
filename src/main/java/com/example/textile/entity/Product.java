@@ -1,9 +1,7 @@
 package com.example.textile.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -22,6 +20,8 @@ public class Product implements Serializable {
         this.id = id;
     }
 
+    @NotNull
+    @Column(unique = true)
     public String getName() {
         return name;
     }

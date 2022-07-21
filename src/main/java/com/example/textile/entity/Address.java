@@ -1,6 +1,9 @@
 package com.example.textile.entity;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -20,6 +23,7 @@ public class Address implements Serializable {
         this.id = id;
     }
 
+    @NotNull
     @ManyToOne
     public State getState() {
         return state;
@@ -29,6 +33,7 @@ public class Address implements Serializable {
         this.state = state;
     }
 
+    @NotNull
     public String getAddress() {
         return address;
     }

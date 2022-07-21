@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class Company implements Serializable {
     private Long id;
     private String name;
     private Address address;
+    private Address ofcAddress;
     private String gst;
 
     private String emailId;
@@ -27,6 +29,7 @@ public class Company implements Serializable {
         this.id = id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
@@ -42,6 +45,15 @@ public class Company implements Serializable {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    @OneToOne
+    public Address getOfcAddress() {
+        return ofcAddress;
+    }
+
+    public void setOfcAddress(Address ofcAddress) {
+        this.ofcAddress = ofcAddress;
     }
 
     @Column(length = 15, unique = true, nullable = false)
