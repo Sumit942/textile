@@ -78,7 +78,7 @@ public class Company implements Serializable {
         this.mobileNo = mobileNo;
     }
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id",orphanRemoval = true)
     public List<BankDetail> getBankDetails() {
         return bankDetails;
     }

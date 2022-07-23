@@ -42,7 +42,7 @@ public class InvoiceController {
 
     @PostConstruct
     public void init() {
-        actionExecutorMap = ActionExecutorFactory.getActionExecutors(InvoiceController.class);
+        actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(InvoiceController.class);
         actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService));
     }
 
@@ -65,10 +65,11 @@ public class InvoiceController {
     }
 
     @GetMapping("/submit")
-    public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice) {
+    public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
+                                   RedirectAttributes redirectAttributes) {
         log.info("show invoice");
         ModelAndView model = new ModelAndView("/invoice");
-        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
+        ActionExecutor<Invoice> actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         try {
             actExecutor.prePopulateOptionsAndFields(invoice, model);
         } catch (InvalidObjectPopulationException e) {
@@ -86,7 +87,7 @@ public class InvoiceController {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
-        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
+        ActionExecutor<Invoice> actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
 
         try {
             ActionResponse response = actExecutor.execute(invoice,parameterMap,result);

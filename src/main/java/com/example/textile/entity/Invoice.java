@@ -153,7 +153,7 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id",orphanRemoval = true)
     public List<ProductDetail> getProduct() {
         return product;
     }

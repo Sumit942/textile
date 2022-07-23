@@ -56,4 +56,15 @@ public class BankDetail implements Serializable {
     public void setBranch(String branch) {
         this.branch = branch;
     }
+
+    @Override
+    public String toString() {
+        return "BankDetail{" +
+                "id=" + id +
+                ", bankName='" + bankName + '\'' +
+                ", accountNo='" + accountNo + '\'' +
+                ", ifsc='" + ifsc + '\'' +
+                ", branch='" + branch + '\'' +
+                '}';
+    }
 }
