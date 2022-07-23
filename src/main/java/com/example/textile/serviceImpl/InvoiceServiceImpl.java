@@ -1,7 +1,7 @@
 package com.example.textile.serviceImpl;
 
-import com.example.textile.entity.Invoice;
-import com.example.textile.repo.InvoiceRepository;
+import com.example.textile.entity.*;
+import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     InvoiceRepository invoiceRepo;
+
+    @Autowired
+    TransportModeRepository transportModeRepo;
+
+    @Autowired
+    SaleTypeRepository saleTypeRepo;
+
+    @Autowired
+    UnitRepository uomRepo;
+
+    @Autowired
+    private StateRepository stateRepo;
 
     @Override
     public List<Invoice> findAll() {
@@ -45,4 +57,25 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return latestInvNo;
     }
+
+    @Override
+    public List<TransportMode> getTransportModes() {
+        return transportModeRepo.findAll();
+    }
+
+    @Override
+    public List<SaleType> getSaleTypes() {
+        return saleTypeRepo.findAll();
+    }
+
+    @Override
+    public List<Unit> getUnitOfMeasure() {
+        return uomRepo.findAll();
+    }
+
+    @Override
+    public List<State> getStates() {
+        return stateRepo.findAll();
+    }
+
 }

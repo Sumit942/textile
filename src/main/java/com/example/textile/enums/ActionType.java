@@ -8,4 +8,8 @@ public enum ActionType {
     ActionType(String actionType) {
         this.actionType = actionType;
     }
+
+    public String getActionType() {
+        return actionType;
+    }
 }

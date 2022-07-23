@@ -3,7 +3,7 @@ package com.example.textile;
 import com.example.textile.action.InvoiceSubmitAction;
 import com.example.textile.entity.Invoice;
 import com.example.textile.enums.ActionType;
-import com.example.textile.executors.ActionExecutors;
+import com.example.textile.executors.ActionExecutor;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import org.junit.jupiter.api.Test;
@@ -232,7 +232,7 @@ class TextileApplicationTests {
 			}
 		};
 
-		ActionExecutors<Invoice> actionExecutor = new InvoiceSubmitAction(invoiceService);
+		ActionExecutor<Invoice> actionExecutor = new InvoiceSubmitAction(invoiceService);
 
 		actionExecutor.execute(invoice,parameterMap, result);
 		System.out.println("Test run completed!!");

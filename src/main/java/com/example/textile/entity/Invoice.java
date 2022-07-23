@@ -22,9 +22,8 @@ public class Invoice implements Serializable {
     private TransportMode transportMode;
     private Date invoiceDate = Calendar.getInstance().getTime();
     private String vehicleNo;
-    private Boolean reverseCharge = Boolean.FALSE;
+    private String reverseCharge = "No";
     private Date dateOfSupply;
-    private State state;
     private String placeOfSupply;
     private Company billToParty;
     private Company shipToParty;
@@ -103,11 +102,11 @@ public class Invoice implements Serializable {
         this.vehicleNo = vehicleNo;
     }
 
-    public Boolean getReverseCharge() {
+    public String getReverseCharge() {
         return reverseCharge;
     }
 
-    public void setReverseCharge(Boolean reverseCharge) {
+    public void setReverseCharge(String reverseCharge) {
         this.reverseCharge = reverseCharge;
     }
 
@@ -117,15 +116,6 @@ public class Invoice implements Serializable {
 
     public void setDateOfSupply(Date dateOfSupply) {
         this.dateOfSupply = dateOfSupply;
-    }
-
-    @ManyToOne
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
     }
 
     public String getPlaceOfSupply() {
@@ -273,7 +263,6 @@ public class Invoice implements Serializable {
                 ", vehicleNo='" + vehicleNo + '\'' +
                 ", reverseCharge=" + reverseCharge +
                 ", dateOfSupply=" + dateOfSupply +
-                ", state=" + state +
                 ", placeOfSupply='" + placeOfSupply + '\'' +
                 ", billToParty=" + billToParty +
                 ", shipToParty=" + shipToParty +

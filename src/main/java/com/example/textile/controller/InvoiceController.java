@@ -5,10 +5,12 @@ import com.example.textile.command.CommandConstants;
 import com.example.textile.entity.Invoice;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
-import com.example.textile.executors.ActionExecutors;
+import com.example.textile.exception.InvalidObjectPopulationException;
+import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
+import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +36,15 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
-    @GetMapping("/")
+    Map<String, ActionExecutor> actionExecutorMap;
+
+    @PostConstruct
+    public void init() {
+        actionExecutorMap = ActionExecutorFactory.getActionExecutors(InvoiceController.class);
+        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService));
+    }
+
+    @GetMapping
     public ModelAndView showAllInvoices() {
         ModelAndView model = new ModelAndView("/invoices");
         List<Invoice> invoices = invoiceService.findAll();
@@ -42,13 +53,20 @@ public class InvoiceController {
         return model;
     }
 
-    @GetMapping("/save")
+    @GetMapping("/submit")
     public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice) {
         log.info("show invoice");
-        return new ModelAndView("/invoice");
+        ModelAndView model = new ModelAndView("/invoice");
+        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
+        try {
+            actExecutor.prePopulateOptionsAndFields(invoice, model);
+        } catch (InvalidObjectPopulationException e) {
+            log.error("Exception: {} prePopulation","getInvoice()",e);
+        }
+        return model;
     }
 
-    @PostMapping("/save")
+    @PostMapping("/submit")
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
                                       BindingResult result, RedirectAttributes redirectAttr) {
 
@@ -57,7 +75,7 @@ public class InvoiceController {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SAVE);
 
-        ActionExecutors actExecutor = new InvoiceSubmitAction(invoiceService);
+        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
 
         try {
             ActionResponse response = actExecutor.execute(invoice,parameterMap,result);

@@ -12,11 +12,8 @@ public class Company implements Serializable {
     private Address address;
     private Address ofcAddress;
     private String gst;
-
     private String emailId;
-
     private String mobileNo;
-
     private List<BankDetail> bankDetails;
 
     @Id
