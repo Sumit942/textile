@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <meta charset="utf-8">
@@ -10,8 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<form:form action="save" method="POST" modelAttribute="invoiceCommand">
-<div class="container">
+<form:form action="submit" method="POST" modelAttribute="invoiceCommand">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">Tax Invoice</div>
     </div>
@@ -29,8 +30,10 @@
     </div>
     <div class="row">
         <div class="col-md-6">
+
             <form:label path="invoiceDate">Invoice date:</form:label>
-            <form:input path="invoiceDate" />
+            <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.invoiceDate}" var="invoiceDateFormatted"/>
+            <input name="invoiceDate" value="${invoiceDateFormatted}"/>
         </div>
         <div class="col-md-6">
             <form:label path="vehicleNo">Vehicle Number:</form:label>
@@ -75,34 +78,88 @@
             <form:input path="billToParty.name" />
         </div>
         <div class="col-md-6">
-            <form:input path="shipToParty.id" />
+            <form:hidden path="shipToParty.id" />
             <form:label path="shipToParty.name">Name:</form:label>
             <form:input path="shipToParty.name" />
-        <div>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <form:hidden path="billToParty.address.id" />
-            <form:label path="billToParty.address.address">Name:</form:label>
+            <form:label path="billToParty.address.address">Address:</form:label>
             <form:input path="billToParty.address.address" />
-            <form:input path="billToParty.address.pincode" />
+            <form:hidden path="billToParty.address.pinCode" />
         </div>
         <div class="col-md-6">
-            <form:input path="shipToParty.address.id" />
-            <form:label path="shipToParty.address.address">Name:</form:label>
+            <form:hidden path="shipToParty.address.id" />
+            <form:label path="shipToParty.address.address">Address:</form:label>
             <form:input path="shipToParty.address.address" />
-        <div>
+            <form:hidden path="shipToParty.address.pinCode" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form:label path="billToParty.gst">GSTIN:</form:label>
+            <form:input path="billToParty.gst" />
+        </div>
+        <div class="col-md-6">
+            <form:label path="shipToParty.gst">GSTIN:</form:label>
+            <form:input path="shipToParty.gst" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <form:hidden path="billToParty.address.state.id" />
+            <form:hidden path="billToParty.address.state.country.id" />
+            <form:label path="billToParty.address.state.name">State:</form:label>
+            <form:input path="billToParty.address.state.name" />
+        </div>
+        <div class="col-md-3">
+            <form:label path="billToParty.address.state.code">Code:</form:label>
+            <form:input path="billToParty.address.state.code" />
+        </div>
+        <div class="col-md-3">
+            <form:label path="shipToParty.address.state.name">State:</form:label>
+            <form:input path="shipToParty.address.state.name" />
+        </div>
+        <div class="col-md-3">
+            <form:label path="shipToParty.address.state.code">Code:</form:label>
+            <form:input path="shipToParty.address.state.code" />
+        </div>
     </div>
 
-
-    <form:input path="billToParty.gst" />
-    <form:input path="billToParty.address.state.name" />
-    <form:input path="billToParty.address.state.code" />
-
-
-    <form:input path="shipToParty.gst" />
-    <form:input path="shipToParty.address.state.name" />
-    <form:input path="shipToParty.address.state.code" />
+    <c:if test="${empty invoiceCommand.product}">
+    <div class="row">
+        <div class="col-md-1">
+            <span id="product[0].srNo">1</span>
+            <input type="hidden" name="product[0].id" />
+        </div>
+        <div class="col-md-2">
+            <input type="hidden" name="product[0].product.id" />
+            <input type="text" name="product[0].product.name" />
+            <input type="text" name="product[0].chNo" />
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="product[0].product.hsn" />
+        </div>
+        <div class="col-md-1">
+            <select path="product[0].unitOfMeasure">
+                <c:forEach items="${unitOfMeasures}" var="uom">
+                    <option value="${uom.id}">${uom.unitOfMeasure}</option>
+                </c:forEach>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="product[0].quantity" />
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="product[0].rate" />
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="product[0].totalPrice" />
+        </div>
+    </div>
+    </c:if>
 
     <c:if test="${!empty invoiceCommand.product}">
         <c:forEach items="product" var="particular" varStatus="index">
@@ -123,38 +180,85 @@
             <form:input path="product[${index}].totalPrice" />
         </c:forEach>
     </c:if>
-    <c:if test="${empty invoiceCommand.product}">
-        <span id="product[0].srNo">1</span>
-        <form:hidden path="product[0].id" />
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-2">Packing & Forwarding Charges</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
+            <form:input path="pnfCharge"/>
+        </div>
+    </div>
 
-        <form:hidden path="product[0].product.id" />
-        <form:input path="product[0].product.name" />
-        <form:input path="product[0].chNo" />
-        <form:input path="product[0].product.hsn" />
+    <div class="row">
+        <div class="col-md-8">
+            <span>Total Invoice amount in words</span>
+        </div>
+        <div class="col-md-2">
+            <span>Total Amount</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="totalAmount"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <form:input path="totalInvoiceAmountInWords"/>
+        </div>
+        <div class="col-md-2">
+            <span>Add: CGST 2.5%</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="cGst"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
 
-        <form:select path="product[0].unitOfMeasure">
-            <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure"/>
-        </form:select>
+        </div>
+        <div class="col-md-2">
+            <span>Add: SGST 2.5%</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="sGst"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
 
-        <form:input path="product[0].quantity" />
-        <form:input path="product[0].rate" />
-        <form:input path="product[0].totalPrice" />
-    </c:if>
+        </div>
+        <div class="col-md-2">
+            <span>Total Tax Amount</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="totalTaxAmount"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
 
-    <form:input path="pnfCharge"/>
-    <form:input path="totalAmount"/>
-    <form:input path="cGst"/>
-    <form:input path="sGst"/>
-    <form:input path="totalTaxAmount"/>
-    <form:input path="roundOff"/>
-    <form:input path="totalAmountAfterTax"/>
-    <form:input path="totalInvoiceAmountInWords"/>
-    <form:input path="roundOff"/>
-    <form:input path="roundOff"/>
+        </div>
+        <div class="col-md-2">
+            <span>Round Off</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="roundOff"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
 
-    <form:input path="invoiceBy.bankDetails[0].bankName"/>
-    <form:input path="invoiceBy.bankDetails[0].accountNo"/>
-    <form:input path="invoiceBy.bankDetails[0].ifsc"/>
+        </div>
+        <div class="col-md-2">
+            <span>Total Amount after Tax</span>
+        </div>
+        <div class="col-md-2">
+            <form:input path="totalAmountAfterTax"/>
+        </div>
+    </div>
+    <input type="Submit"/>
 </div>
 </form:form>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
