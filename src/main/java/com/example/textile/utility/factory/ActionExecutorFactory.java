@@ -9,7 +9,7 @@ import java.util.Map;
 @Slf4j
 public class ActionExecutorFactory {
 
-    private static ActionExecutorFactory factory = new ActionExecutorFactory();
+    private final static ActionExecutorFactory factory = new ActionExecutorFactory();
 
     private ActionExecutorFactory() {
         log.debug("ActionExecutorFactory initialized!!");
@@ -23,13 +23,10 @@ public class ActionExecutorFactory {
 
     private static Map<Class<?>, Map<String, ActionExecutor>> actionExecutorsMap;
 
-    public static Map<String, ActionExecutor> getActionExecutors(Class<?> cls) {
+    public Map<String, ActionExecutor> getActionExecutors(Class<?> cls) {
 
-        Map<String, ActionExecutor> actExecutorMap = actionExecutorsMap.get(cls);
-        if (actExecutorMap == null) {
-            actExecutorMap = new HashMap<>();
-            actionExecutorsMap.put(cls, actExecutorMap);
-        }
+        Map<String, ActionExecutor> actExecutorMap = actionExecutorsMap
+                .computeIfAbsent(cls, k -> new HashMap<>());
 
         return actExecutorMap;
     }
