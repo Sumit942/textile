@@ -17,6 +17,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,10 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -85,19 +83,25 @@ public class InvoiceController {
         String logPrefix = "saveInvoice() |";
         System.out.println(logPrefix + "\n" + invoice);
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
+        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SAVE);
+
+        if (result.hasErrors()) {
+            log.error("result has Errors");
+            result.getAllErrors().stream().forEach(System.out::println);
+            return new ModelAndView("/invoice");
+        }
 
         ActionExecutor<Invoice> actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
 
         try {
-            ActionResponse response = actExecutor.execute(invoice,parameterMap,result);
+            ActionResponse response = actExecutor.execute(invoice, parameterMap, result);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
                 log.info("{} saved Successfully!!", logPrefix);
             } else {
                 log.info("{} save Unsuccessfull", logPrefix);
             }
         } catch (Exception e) {
-            log.error("Error in saving invoice",e);
+            log.error("Error in saving invoice", e);
         }
         return new ModelAndView("redirect:submit");
     }

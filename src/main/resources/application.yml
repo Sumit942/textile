@@ -14,7 +14,7 @@ spring:
     show-sql: true
   mvc:
     view:
-      prefix: /views/
+      prefix: /WEB-INF/views/
       suffix: .jsp
   main:
     banner-mode: OFF

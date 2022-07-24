@@ -28,43 +28,43 @@ class TextileApplicationTests {
     @Autowired
     InvoiceService invoiceService;
 
-    @Test
+//    @Test
     void testSaveInvoiceMapping() {
         System.out.println("SUMEET running checkSaveInvoiceService test1...");
         Country country = new Country();
-        country.setName("INDIA");
+//        country.setName("INDIA");
         State state = new State();
-        state.setName("Maharashtra");
-        state.setCode(27);
+//        state.setName("Maharashtra");
+//        state.setCode(27);
         state.setCountry(country);
         Address address = new Address();
-        address.setAddress("240  INDL ESTATE, MARG, PAREL WEST, MUMBAI");
-        address.setPinCode(400013);
+//        address.setAddress("240  INDL ESTATE, MARG, PAREL WEST, MUMBAI");
+//        address.setPinCode(400013);
         address.setState(state);
         BankDetail bankDetail = new BankDetail();
-        bankDetail.setBankName("IDFC Bank");
-        bankDetail.setBranch("New Thane");
-        bankDetail.setAccountNo("***1239");
-        bankDetail.setIfsc("IDFC000005");
+//        bankDetail.setBankName("IDFC Bank");
+//        bankDetail.setBranch("New Thane");
+//        bankDetail.setAccountNo("***1239");
+//        bankDetail.setIfsc("IDFC000005");
         List<BankDetail> bankDetails = new ArrayList<>();
         bankDetails.add(bankDetail);
         Company company = new Company();
         company.setAddress(address);
         company.setBankDetails(bankDetails);
-        company.setName("C SQUARE CLOTHING");
-        company.setGst("27AAYFA0586B1ZB");
-        company.setId(4L);
+//        company.setName("C SQUARE CLOTHING");
+//        company.setGst("27AAYFA0586B1ZB");
+//        company.setId(4L);
 
         Invoice invoice = new Invoice();
         invoice.setBillToParty(company);
-        invoice.setInvoiceDate(new Date());
-        invoice.setTotalAmount(BigDecimal.valueOf(100000.00));
-        invoice.setsGst(BigDecimal.valueOf(2500));
-        invoice.setcGst(BigDecimal.valueOf(2500));
-        invoice.setTotalTaxAmount(BigDecimal.valueOf(105000.00));
-        invoice.setTotalAmountAfterTax(BigDecimal.valueOf(105000.00));
-        invoice.setTotalInvoiceAmountInWords("One Lakh Five Thousand Only.");
-        invoice.setPlaceOfSupply("Bhiwandi");
+//        invoice.setInvoiceDate(new Date());
+//        invoice.setTotalAmount(BigDecimal.valueOf(100000.00));
+//        invoice.setsGst(BigDecimal.valueOf(2500));
+//        invoice.setcGst(BigDecimal.valueOf(2500));
+//        invoice.setTotalTaxAmount(BigDecimal.valueOf(105000.00));
+//        invoice.setTotalAmountAfterTax(BigDecimal.valueOf(105000.00));
+//        invoice.setTotalInvoiceAmountInWords("One Lakh Five Thousand Only.");
+//        invoice.setPlaceOfSupply("Bhiwandi");
 
         invoiceService.save(invoice);
         System.out.println(invoice);
@@ -72,7 +72,7 @@ class TextileApplicationTests {
     }
 
 
-    @Test
+//    @Test
     void checkSaveInvoiceService() {
 
         System.out.println("SUMEET running checkSaveInvoiceService test...");
@@ -282,7 +282,7 @@ class TextileApplicationTests {
         System.out.println("Test run completed!!");
     }
 
-    @Test
+//    @Test
     void contextLoads() {
         String url = "http://localhost:8080/textile/invoices/save";
 

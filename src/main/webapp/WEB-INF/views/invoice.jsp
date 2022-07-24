@@ -10,6 +10,18 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
+<style>
+.error {
+    color: #ff0000;
+}
+.errorblock {
+     color: #000;
+     background-color: #ffEEEE;
+     border: 3px solid #ff0000;
+     padding: 8px;
+     margin: 16px;
+}
+</style>
 <body>
 <form:form action="submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
@@ -163,21 +175,21 @@
 
     <c:if test="${!empty invoiceCommand.product}">
         <c:forEach items="product" var="particular" varStatus="index">
-            <span id="product[${index}].srNo">${index}</span>
-            <form:hidden path="product[${index}].id" />
+            <span id="product[${index.index}].srNo">${index.index}</span>
+            <form:hidden path="product[${index.index}].id" />
 
-            <form:hidden path="product[${index}].product.id" />
-            <form:input path="product[${index}].product.name" />
-            <form:input path="product[${index}].chNo" />
-            <form:input path="product[${index}].product.hsn" />
+            <form:hidden path="product[${index.index}].product.id" />
+            <form:input path="product[${index.index}].product.name" />
+            <form:input path="product[${index.index}].chNo" />
+            <form:input path="product[${index.index}].product.hsn" />
 
-            <form:select path="product[${index}].unitOfMeasure">
+            <form:select path="product[${index.index}].unitOfMeasure">
                 <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure"/>
             </form:select>
 
-            <form:input path="product[${index}].quantity" />
-            <form:input path="product[${index}].rate" />
-            <form:input path="product[${index}].totalPrice" />
+            <form:input path="product[${index.index}].quantity" />
+            <form:input path="product[${index.index}].rate" />
+            <form:input path="product[${index.index}].totalPrice" />
         </c:forEach>
     </c:if>
     <div class="row">
@@ -201,11 +213,13 @@
         </div>
         <div class="col-md-2">
             <form:input path="totalAmount"/>
+            <form:errors path="totalAmount" cssClass="error"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-8">
             <form:input path="totalInvoiceAmountInWords"/>
+            <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
         <div class="col-md-2">
             <span>Add: CGST 2.5%</span>

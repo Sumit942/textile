@@ -29,7 +29,7 @@ public class Invoice implements Serializable {
     private Company shipToParty;
     private SaleType saleType;
     private List<ProductDetail> product;
-    private Double pnfCharge;
+    private BigDecimal pnfCharge;
     private BigDecimal totalAmount;
     private BigDecimal cGst;
     private BigDecimal sGst;
@@ -162,11 +162,11 @@ public class Invoice implements Serializable {
         this.product = product;
     }
 
-    public Double getPnfCharge() {
+    public BigDecimal getPnfCharge() {
         return pnfCharge;
     }
 
-    public void setPnfCharge(Double pnfCharge) {
+    public void setPnfCharge(BigDecimal pnfCharge) {
         this.pnfCharge = pnfCharge;
     }
 
