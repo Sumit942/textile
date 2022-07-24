@@ -170,7 +170,8 @@
         </tr>
     </thead>
     <tbody>
-    <c:if test="${empty invoiceCommand.product}">
+    <c:choose>
+    <c:when test="${empty invoiceCommand.product}">
         <tr>
             <td>
                 <span id="product[0].srNo">1</span>
@@ -210,8 +211,8 @@
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
         </tr>
-    </c:if>
-    <c:if test="${!empty invoiceCommand.product}">
+    </c:when>
+    <c:otherwise>
         <c:forEach items="product" varStatus="index">
             <tr>
                 <td>
@@ -251,21 +252,22 @@
                 </td>
             </tr>
         </c:forEach>
-    </c:if>
-    </tbody>
-    </table>
-    <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-2">Packing & Forwarding Charges</div>
-        <div class="col-md-2"></div>
-        <div class="col-md-1"></div>
-        <div class="col-md-2"></div>
-        <div class="col-md-2"></div>
-        <div class="col-md-2">
+    </c:otherwise>
+    </c:choose>
+    <tr>
+        <td></td>
+        <td colspan="2">Packing & Forwarding Charges</div>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
             <form:input path="pnfCharge"/>
             <form:errors path="pnfCharge" cssClass="error"/>
-        </div>
-    </div>
+        </td>
+    </tr>
+    </tbody>
+    </table>
 
     <div class="row">
         <div class="col-md-8">
