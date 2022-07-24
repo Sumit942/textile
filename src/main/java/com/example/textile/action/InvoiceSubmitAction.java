@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Slf4j
 public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
@@ -109,18 +110,15 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 } else {
                     if (invoice.getShipToParty().getAddress().getAddress() == null)
                         errMsg.add("NotNull.invoiceCommand.shipToParty.address.address");
-                    if (invoice.getShipToParty().getAddress().getPinCode() == null) {
+                    if (invoice.getShipToParty().getAddress().getPinCode() == null)
                         errMsg.add("NotNull.invoiceCommand.shipToParty.address.pincode");
-                    }
                     if (invoice.getShipToParty().getAddress().getState() == null) {
                         errMsg.add("NotNull.invoiceCommand.shipToParty.address.state");
                     } else {
-                        if (invoice.getShipToParty().getAddress().getState().getName() == null) {
+                        if (invoice.getShipToParty().getAddress().getState().getName() == null)
                             errMsg.add("NotNull.invoiceCommand.shipToParty.address.state.name");
-                        }
-                        if (invoice.getShipToParty().getAddress().getState().getCode() == null || invoice.getShipToParty().getAddress().getState().getCode() <= 0) {
+                        if (invoice.getShipToParty().getAddress().getState().getCode() == null || invoice.getShipToParty().getAddress().getState().getCode() <= 0)
                             errMsg.add("NotNull.invoiceCommand.shipToParty.address.state.code");
-                        }
                     }
                 }
                 if (invoice.getShipToParty().getGst() == null)
@@ -131,31 +129,29 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             }
             //validating product list
             if (invoice.getProduct() == null || invoice.getProduct().isEmpty()) {
-                errMsg.add("NotEmpty.invoiceCommand.product");
+                errMsg.add("NotNull.invoiceCommand.product");
             } else {
                 for (ProductDetail prod: invoice.getProduct()) {
 
                     if (prod.getProduct() == null) {
-                        errMsg.add("NotNull.invoiceCommand.product");
+                        errMsg.add("NotNull.invoiceCommand.product.product");
                     } else {
 
-                        if (prod.getProduct().getName() == null) {
-                            errMsg.add("NotNull.invoiceCommand.product.name");
-                        }
-                        if (prod.getProduct().getHsn() == null) {
-                            errMsg.add("NotNull.invoiceCommand.product.hsn");
-                        }
+                        if (prod.getProduct().getName() == null)
+                            errMsg.add("NotNull.invoiceCommand.product.product.name");
+                        if (prod.getProduct().getHsn() == null)
+                            errMsg.add("NotNull.invoiceCommand.product.product.hsn");
                     }
                     if (prod.getChNo() == null)
-                        errMsg.add("NotNull.invoiceCommand.product.chNo");
+                        errMsg.add("NotNull.invoiceCommand.product.product.chNo");
                     if (prod.getQuantity() == null || prod.getQuantity() <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.quantity");
+                        errMsg.add("NotNull.invoiceCommand.product.product.quantity");
                     if (prod.getRate() == null || prod.getRate() <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.rate");
+                        errMsg.add("NotNull.invoiceCommand.product.product.rate");
                     if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.totalPrice");
+                        errMsg.add("NotNull.invoiceCommand.product.product.totalPrice");
                     if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
-                        errMsg.add("NotNull.invoiceCommand.product.unitOfMeasure");
+                        errMsg.add("NotNull.invoiceCommand.product.product.unitOfMeasure");
                 }
             }
             if (invoice.getPnfCharge() == null || invoice.getPnfCharge().compareTo(BigDecimal.ZERO) < 0)
@@ -176,7 +172,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMsg.add("NotNull.invoiceCommand.totalInvoiceAmountInWords");
         }
 
-
+        //adding validation error in Binding result
+        errMsg.forEach(result::reject);
 
         log.info("{} Exit", logPrefix);
     }
