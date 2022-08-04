@@ -55,7 +55,7 @@ public class InvoiceController {
 
     @GetMapping
     public ModelAndView showAllInvoices() {
-        ModelAndView model = new ModelAndView("/invoices");
+        ModelAndView model = new ModelAndView("/invoiceList");
         List<Invoice> invoices = invoiceService.findAll();
         model.addObject("invoices",invoices);
 
@@ -78,7 +78,7 @@ public class InvoiceController {
     @PostMapping("/submit")
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
                                       BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
-        ModelAndView model =  new ModelAndView();
+        ModelAndView model =  new ModelAndView("/invoice");
         String logPrefix = "saveInvoice() |";
         log.info("{} -> {}",logPrefix,invoice);
         Map<String, Object> parameterMap = new HashMap<>();
@@ -86,7 +86,7 @@ public class InvoiceController {
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         if (result.hasErrors()) {
-            model.setViewName("/invoice");
+            actExecutor.prePopulateOptionsAndFields(invoice,model);
             log.error("result has Errors");//TODO: rejectValue
             result.getAllErrors().forEach(System.out::println);
         } else {
@@ -97,7 +97,6 @@ public class InvoiceController {
                     model.setViewName("redirect:submit");
                     log.info("{} saved Successfully!!", logPrefix);
                 } else {
-                    model.setViewName("/invoice");
                     log.error("result has doValidation Errors");
                     result.getAllErrors().forEach(System.out::println);
                     log.info("{} save Unsuccessfull", logPrefix);

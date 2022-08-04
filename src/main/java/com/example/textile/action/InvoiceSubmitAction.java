@@ -13,10 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -62,6 +59,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         String logPrefix = "doValidation() |";
         log.info("{} Entry", logPrefix);
         Set<String> errMsg = new HashSet<>();
+        Map<String,String> errMap = new HashMap<>();
 
         if (invoice.getInvoiceDate() == null)
             errMsg.add("NotNull.invoiceCommand.totalAmount");
@@ -131,14 +129,15 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             if (invoice.getProduct() == null || invoice.getProduct().isEmpty()) {
                 errMsg.add("NotNull.invoiceCommand.product");
             } else {
-                for (ProductDetail prod: invoice.getProduct()) {
-
+                for (int i = 0; i < invoice.getProduct().size(); i++) {
+                    ProductDetail prod = invoice.getProduct().get(i);
                     if (prod.getProduct() == null) {
                         errMsg.add("NotNull.invoiceCommand.product.product");
                     } else {
 
                         if (prod.getProduct().getName() == null)
                             errMsg.add("NotNull.invoiceCommand.product.product.name");
+                            errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
                         if (prod.getProduct().getHsn() == null)
                             errMsg.add("NotNull.invoiceCommand.product.product.hsn");
                     }
@@ -174,6 +173,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 
         //adding validation error in Binding result
         errMsg.forEach(result::reject);
+        errMap.forEach(result::rejectValue); //TODO: add rejectValue()
 
         log.info("{} Exit", logPrefix);
     }

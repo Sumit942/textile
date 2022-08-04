@@ -5,11 +5,13 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.utility.ShreeramTextileConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
 
+@Slf4j
 public abstract class ActionExecutor<T> {
 
     protected abstract ActionResponse onSuccess(T t, Map<String, Object> parameterMap, ModelAndView model);
@@ -25,12 +27,18 @@ public abstract class ActionExecutor<T> {
     public ActionResponse execute(T t, Map<String, Object> parameterMap, BindingResult result, ModelAndView model) throws ServiceActionException {
 
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
+        ActionResponse actionResponse = null;
 
         if (ActionType.SUBMIT.equals(action)) {
-            doValidation(t, parameterMap, result,model);
-            if (result.hasErrors()) {
-                ActionResponse actionResponse = new ActionResponse(ResponseType.FAILURE);
-                return onError(t, result, actionResponse,model);
+            try {
+                doValidation(t, parameterMap, result, model);
+                if (result.hasErrors()) {
+                    actionResponse = new ActionResponse(ResponseType.FAILURE);
+                    return onError(t, result, actionResponse,model);
+                }
+            } catch (RuntimeException e) {
+                log.error("Error: exception in doValidation() - "+e.getLocalizedMessage(),e);
+                onError(t, result, actionResponse,model);
             }
         }
         return onSuccess(t, parameterMap, model);
