@@ -3,10 +3,10 @@ package com.example.textile;
 import com.example.textile.action.InvoiceSubmitAction;
 import com.example.textile.entity.*;
 import com.example.textile.enums.ActionType;
+import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -278,7 +278,11 @@ class TextileApplicationTests {
 
         ActionExecutor<Invoice> actionExecutor = new InvoiceSubmitAction(invoiceService);
 
-        actionExecutor.execute(invoice, parameterMap, result);
+        try {
+            actionExecutor.execute(invoice, parameterMap, result, null);
+        } catch (ServiceActionException e) {
+            e.printStackTrace();
+        }
         System.out.println("Test run completed!!");
     }
 

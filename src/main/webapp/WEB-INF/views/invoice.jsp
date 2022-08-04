@@ -170,6 +170,19 @@
         </tr>
     </thead>
     <tbody>
+    <tr>
+        <td></td>
+        <td colspan="2">
+            <form:select path="saleType" >
+                <form:options items="${saleTypes}" itemLabel="saleType" />
+            </form:select>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
     <c:choose>
     <c:when test="${empty invoiceCommand.product}">
         <tr>

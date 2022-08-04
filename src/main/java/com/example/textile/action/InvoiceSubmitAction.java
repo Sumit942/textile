@@ -29,7 +29,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     }
 
     @Override
-    protected ActionResponse onSuccess(Invoice invoice, Map<String, Object> parameterMap) {
+    protected ActionResponse onSuccess(Invoice invoice, Map<String, Object> parameterMap, ModelAndView model) {
         String logPrefix = "doSuccess() |";
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
@@ -58,7 +58,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     }
 
     @Override
-    protected void doValidation(Invoice invoice, Map<String, Object> parameterMap, BindingResult result) {
+    protected void doValidation(Invoice invoice, Map<String, Object> parameterMap, BindingResult result, ModelAndView model) {
         String logPrefix = "doValidation() |";
         log.info("{} Entry", logPrefix);
         Set<String> errMsg = new HashSet<>();

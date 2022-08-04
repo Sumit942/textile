@@ -6,6 +6,7 @@ import com.example.textile.entity.Invoice;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
+import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
@@ -17,7 +18,6 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,7 +36,7 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
-    Map<String, ActionExecutor> actionExecutorMap;
+    private Map<String, ActionExecutor> actionExecutorMap;
 
     @PostConstruct
     public void init() {
@@ -67,9 +67,8 @@ public class InvoiceController {
                                    RedirectAttributes redirectAttributes) {
         log.info("show invoice");
         ModelAndView model = new ModelAndView("/invoice");
-        ActionExecutor<Invoice> actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         try {
-            actExecutor.prePopulateOptionsAndFields(invoice, model);
+            actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
         } catch (InvalidObjectPopulationException e) {
             log.error("Exception: {} prePopulation","getInvoice()",e);
         }
@@ -78,31 +77,35 @@ public class InvoiceController {
 
     @PostMapping("/submit")
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
-                                      BindingResult result, RedirectAttributes redirectAttr) {
-
+                                      BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
+        ModelAndView model =  new ModelAndView();
         String logPrefix = "saveInvoice() |";
-        System.out.println(logPrefix + "\n" + invoice);
+        log.info("{} -> {}",logPrefix,invoice);
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SAVE);
+        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
+        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         if (result.hasErrors()) {
-            log.error("result has Errors");
-            result.getAllErrors().stream().forEach(System.out::println);
-            return new ModelAndView("/invoice");
-        }
+            model.setViewName("/invoice");
+            log.error("result has Errors");//TODO: rejectValue
+            result.getAllErrors().forEach(System.out::println);
+        } else {
 
-        ActionExecutor<Invoice> actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-
-        try {
-            ActionResponse response = actExecutor.execute(invoice, parameterMap, result);
-            if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                log.info("{} saved Successfully!!", logPrefix);
-            } else {
-                log.info("{} save Unsuccessfull", logPrefix);
+            try {
+                ActionResponse response = actExecutor.execute(invoice, parameterMap, result,model);
+                if (ResponseType.SUCCESS.equals(response.getResponseType())) {
+                    model.setViewName("redirect:submit");
+                    log.info("{} saved Successfully!!", logPrefix);
+                } else {
+                    model.setViewName("/invoice");
+                    log.error("result has doValidation Errors");
+                    result.getAllErrors().forEach(System.out::println);
+                    log.info("{} save Unsuccessfull", logPrefix);
+                }
+            } catch (Exception e) {
+                log.error("Error in saving invoice", e);
             }
-        } catch (Exception e) {
-            log.error("Error in saving invoice", e);
         }
-        return new ModelAndView("redirect:submit");
+        return model;
     }
 }
