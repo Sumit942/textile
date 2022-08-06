@@ -29,12 +29,12 @@ public class Invoice implements Serializable {
     private Company shipToParty;
     private SaleType saleType;
     private List<ProductDetail> product;
-    private BigDecimal pnfCharge;
+    private BigDecimal pnfCharge = BigDecimal.ZERO;
     private BigDecimal totalAmount;
     private BigDecimal cGst;
     private BigDecimal sGst;
     private BigDecimal totalTaxAmount;
-    private Double roundOff;
+    private Double roundOff = (double) 0;
     private BigDecimal totalAmountAfterTax;
     private String totalInvoiceAmountInWords;
     private Date insertDate;

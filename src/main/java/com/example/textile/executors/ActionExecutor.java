@@ -20,6 +20,8 @@ public abstract class ActionExecutor<T> {
 
     private ActionResponse onError(T t,BindingResult result, ActionResponse actResponse, ModelAndView model) throws ServiceActionException {
         prePopulateOptionsAndFields(t,model);
+        if (actResponse == null)
+            actResponse = new ActionResponse(ResponseType.FAILURE);
         actResponse.setErrorList(result.getAllErrors());
         return actResponse;
     }
@@ -30,24 +32,35 @@ public abstract class ActionExecutor<T> {
         ActionResponse actionResponse = null;
 
         if (ActionType.SUBMIT.equals(action)) {
+            //if result already has error: before doValidation()
+            if (result.hasErrors()) {
+                return onError(t, result, actionResponse,model);
+            }
+
             try {
                 doValidation(t, parameterMap, result, model);
                 if (result.hasErrors()) {
-                    actionResponse = new ActionResponse(ResponseType.FAILURE);
                     return onError(t, result, actionResponse,model);
                 }
             } catch (RuntimeException e) {
                 log.error("Error: exception in doValidation() - "+e.getLocalizedMessage(),e);
-                onError(t, result, actionResponse,model);
+                return onError(t, result, actionResponse,model);
             }
+        }
+        doPreSaveOperation(t,result);
+        if (result.hasErrors()) {
+            log.error("Error: result.hasErrors from doPreSaveOperation");
+            return onError(t, result, actionResponse,model);
         }
         return onSuccess(t, parameterMap, model);
     }
 
+    protected abstract void doPreSaveOperation(T t, BindingResult result);
+
     /**
      * This will do all the preliminary work : population all the pre required inputs and dropdowns.
-     * @param t
-     * @param model
+     * @param t Entity
+     * @param model modelAndView
      * @throws InvalidObjectPopulationException when wrong command Object is passed
      */
     public abstract void prePopulateOptionsAndFields(T t, Object model) throws InvalidObjectPopulationException;

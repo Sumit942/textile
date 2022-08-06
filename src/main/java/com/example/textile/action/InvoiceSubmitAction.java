@@ -30,7 +30,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         String logPrefix = "doSuccess() |";
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
-        doPreSaveOperation(invoice);
+//        doPreSaveOperation(invoice);
         if (ActionType.SUBMIT.equals(action)) {
             log.info("{} [ActionType=SUBMIT]",logPrefix);
             invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
@@ -45,135 +45,144 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         return actionResponse;
     }
 
-    private void doPreSaveOperation(Invoice invoice) {
-
-        if (invoice.getId() == null) {
-            if (invoice.getUser() == null) {
-
+    @Override
+    protected void doPreSaveOperation(Invoice invoice, BindingResult result) {
+        String logPrefix = "doPreSaveOperation() |";
+        log.info("{} Entry",logPrefix);
+        if (invoice.getBillToParty().getId() == null) {
+            //check if the newly added gst already exist
+            List<Company> bParty = invoiceService.getCompanyByGst(invoice.getBillToParty().getGst());
+            if (bParty != null && !bParty.isEmpty()) {
+                Company savedParty = bParty.get(0);
+                result.rejectValue("billToParty.gst",
+                        "invoiceCommand.billToParty.gst.alreadyExist",
+                        new Object[]{savedParty.getName()},
+                        "Gst Already registered");
             }
         }
+
+        log.info("{} Exit",logPrefix);
     }
 
     @Override
     protected void doValidation(Invoice invoice, Map<String, Object> parameterMap, BindingResult result, ModelAndView model) {
         String logPrefix = "doValidation() |";
         log.info("{} Entry", logPrefix);
-        Set<String> errMsg = new HashSet<>();
         Map<String,String> errMap = new HashMap<>();
 
         if (invoice.getInvoiceDate() == null)
-            errMsg.add("NotNull.invoiceCommand.totalAmount");
+            errMap.put("totalAmount","NotNull.invoiceCommand.totalAmount");
         if (invoice.getReverseCharge() == null)
             invoice.setReverseCharge("No");
         if (invoice.getTransportMode() == null || invoice.getTransportMode().getMode() == null)
-            errMsg.add("NotNull.invoiceCommand.transportMode");
+            errMap.put("transportMode","NotNull.invoiceCommand.transportMode");
         if (invoice.getId() == null) {
             if (invoice.getDateOfSupply() == null) {
-                errMsg.add("NotNull.invoiceCommand.dateOfSupply");
-            } else if (invoice.getInvoiceDate() != null) {
-                errMsg.add("NotNull.invoiceCommand.invoiceDate");
+                errMap.put("dateOfSupply","NotNull.invoiceCommand.dateOfSupply");
+            } else if (invoice.getInvoiceDate() == null) {
+                errMap.put("invoiceDate","NotNull.invoiceCommand.invoiceDate");
             } else if (invoice.getDateOfSupply().after(invoice.getInvoiceDate())) {
-                errMsg.add("invoiceCommand.dateOfSupplyAfterInvoiceDate");
+                errMap.put("dateOfSupply","invoiceCommand.dateOfSupplyAfterInvoiceDate");
             }
             //Validating billToParty
             if (invoice.getBillToParty() != null) {
                 if (invoice.getBillToParty().getName() == null)
-                    errMsg.add("NotNull.invoiceCommand.billToParty.name");
+                    errMap.put("billToParty.name","NotNull.invoiceCommand.billToParty.name");
                 if (invoice.getBillToParty().getGst() == null)
-                    errMsg.add("NotNull.invoiceCommand.billToParty.gst");
+                    errMap.put("billToParty.gst","NotNull.invoiceCommand.billToParty.gst");
                 if (invoice.getBillToParty().getAddress() == null) {
-                    errMsg.add("NotNull.invoiceCommand.billToParty.address");
+                    errMap.put("billToParty.address","NotNull.invoiceCommand.billToParty.address");
                 } else {
                     if (invoice.getBillToParty().getAddress().getAddress() == null)
-                        errMsg.add("NotNull.invoiceCommand.billToParty.address.address");
+                        errMap.put("billToParty.address.address","NotNull.invoiceCommand.billToParty.address.address");
                     if (invoice.getBillToParty().getAddress().getPinCode() == null) {
-                        errMsg.add("NotNull.invoiceCommand.billToParty.address.pinCode");
+                        errMap.put("billToParty.address.pinCode","NotNull.invoiceCommand.billToParty.address.pinCode");
                     }
                     if (invoice.getBillToParty().getAddress().getState() == null) {
-                        errMsg.add("NotNull.invoiceCommand.billToParty.address.state");
+                        errMap.put("billToParty.address.state","NotNull.invoiceCommand.billToParty.address.state");
                     } else {
                         if (invoice.getBillToParty().getAddress().getState().getName() == null) {
-                            errMsg.add("NotNull.invoiceCommand.billToParty.address.state.name");
+                            errMap.put("billToParty.address.state.name","NotNull.invoiceCommand.billToParty.address.state.name");
                         }
                         if (invoice.getBillToParty().getAddress().getState().getCode() == null || invoice.getBillToParty().getAddress().getState().getCode() <= 0) {
-                            errMsg.add("NotNull.invoiceCommand.billToParty.address.state.code");
+                            errMap.put("billToParty.address.state.code","NotNull.invoiceCommand.billToParty.address.state.code");
                         }
                     }
                 }
             }
             //Validating shipToParty
             if (invoice.getShipToParty() != null){
+                if (invoice.getBillToParty().getName() == null)
+                    errMap.put("shipToParty.name","NotNull.invoiceCommand.shipToParty.name");
                 if (invoice.getShipToParty().getAddress() == null) {
-                    errMsg.add("NotNull.invoiceCommand.shipToParty.address");
+                    errMap.put("shipToParty.address","NotNull.invoiceCommand.shipToParty.address");
                 } else {
                     if (invoice.getShipToParty().getAddress().getAddress() == null)
-                        errMsg.add("NotNull.invoiceCommand.shipToParty.address.address");
+                        errMap.put("shipToParty.address.address","NotNull.invoiceCommand.shipToParty.address.address");
                     if (invoice.getShipToParty().getAddress().getPinCode() == null)
-                        errMsg.add("NotNull.invoiceCommand.shipToParty.address.pincode");
+                        errMap.put("shipToParty.address.pinCode","NotNull.invoiceCommand.shipToParty.address.pinCode");
                     if (invoice.getShipToParty().getAddress().getState() == null) {
-                        errMsg.add("NotNull.invoiceCommand.shipToParty.address.state");
+                        errMap.put("shipToParty.address.state","NotNull.invoiceCommand.shipToParty.address.state");
                     } else {
                         if (invoice.getShipToParty().getAddress().getState().getName() == null)
-                            errMsg.add("NotNull.invoiceCommand.shipToParty.address.state.name");
+                            errMap.put("shipToParty.address.state.name","NotNull.invoiceCommand.shipToParty.address.state.name");
                         if (invoice.getShipToParty().getAddress().getState().getCode() == null || invoice.getShipToParty().getAddress().getState().getCode() <= 0)
-                            errMsg.add("NotNull.invoiceCommand.shipToParty.address.state.code");
+                            errMap.put("shipToParty.address.state.code","NotNull.invoiceCommand.shipToParty.address.state.code");
                     }
                 }
                 if (invoice.getShipToParty().getGst() == null)
-                    errMsg.add("NotNull.invoiceCommand.shipToParty.gst");
+                    errMap.put("shipToParty.gst","NotNull.invoiceCommand.shipToParty.gst");
             }
-            if (invoice.getSaleType().getId() == null || invoice.getSaleType().getSaleType() == null) {
-                errMsg.add("NotNull.invoiceCommand.saleType");
+            if (invoice.getSaleType() == null || invoice.getSaleType().getId() == null || invoice.getSaleType().getSaleType() == null) {
+                errMap.put("saleType","NotNull.invoiceCommand.saleType");
             }
             //validating product list
             if (invoice.getProduct() == null || invoice.getProduct().isEmpty()) {
-                errMsg.add("NotNull.invoiceCommand.product");
+                errMap.put("product","NotNull.invoiceCommand.product");
             } else {
                 for (int i = 0; i < invoice.getProduct().size(); i++) {
                     ProductDetail prod = invoice.getProduct().get(i);
                     if (prod.getProduct() == null) {
-                        errMsg.add("NotNull.invoiceCommand.product.product");
+                        errMap.put("product.product","NotNull.invoiceCommand.product.product");
                     } else {
 
                         if (prod.getProduct().getName() == null)
-                            errMsg.add("NotNull.invoiceCommand.product.product.name");
                             errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
                         if (prod.getProduct().getHsn() == null)
-                            errMsg.add("NotNull.invoiceCommand.product.product.hsn");
+                            errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
                     }
                     if (prod.getChNo() == null)
-                        errMsg.add("NotNull.invoiceCommand.product.product.chNo");
+                        errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
                     if (prod.getQuantity() == null || prod.getQuantity() <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.product.quantity");
+                        errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
                     if (prod.getRate() == null || prod.getRate() <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.product.rate");
+                        errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
                     if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
-                        errMsg.add("NotNull.invoiceCommand.product.product.totalPrice");
+                        errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");
                     if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
-                        errMsg.add("NotNull.invoiceCommand.product.product.unitOfMeasure");
+                        errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
                 }
             }
             if (invoice.getPnfCharge() == null || invoice.getPnfCharge().compareTo(BigDecimal.ZERO) < 0)
-                errMsg.add("NotNull.invoiceCommand.pnfCharge");
+                errMap.put("pnfCharge","NotNull.invoiceCommand.pnfCharge");
             if (invoice.getTotalAmount() == null || invoice.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0)
-                errMsg.add("NotNull.invoiceCommand.totalAmount");
+                errMap.put("totalAmount","NotNull.invoiceCommand.totalAmount");
             if (invoice.getcGst() == null || invoice.getcGst().compareTo(BigDecimal.ZERO) <= 0)
-                errMsg.add("NotNull.invoiceCommand.cGst");
+                errMap.put("cGst","NotNull.invoiceCommand.cGst");
             if (invoice.getsGst() == null || invoice.getsGst().compareTo(BigDecimal.ZERO) <= 0)
-                errMsg.add("NotNull.invoiceCommand.sGst");
+                errMap.put("sGst","NotNull.invoiceCommand.sGst");
             if (invoice.getTotalTaxAmount() == null || invoice.getTotalTaxAmount().compareTo(BigDecimal.ZERO) <= 0)
-                errMsg.add("NotNull.invoiceCommand.totalTaxAmount");
+                errMap.put("totalTaxAmount","NotNull.invoiceCommand.totalTaxAmount");
             if (invoice.getRoundOff() == null)
-                errMsg.add("NotNull.invoiceCommand.roundOff");
+                errMap.put("roundOff","NotNull.invoiceCommand.roundOff");
             if (invoice.getTotalAmountAfterTax() == null || invoice.getTotalAmountAfterTax().compareTo(BigDecimal.ZERO) <= 0)
-                errMsg.add("NotNull.invoiceCommand.totalAmountAfterTax");
+                errMap.put("totalAmountAfterTax","NotNull.invoiceCommand.totalAmountAfterTax");
             if (invoice.getTotalInvoiceAmountInWords() == null || invoice.getTotalInvoiceAmountInWords().equalsIgnoreCase("Zero"))
-                errMsg.add("NotNull.invoiceCommand.totalInvoiceAmountInWords");
+                errMap.put("totalInvoiceAmountInWords","NotNull.invoiceCommand.totalInvoiceAmountInWords");
         }
 
         //adding validation error in Binding result
-        errMsg.forEach(result::reject);
-        errMap.forEach(result::rejectValue); //TODO: add rejectValue()
+        errMap.forEach(result::rejectValue);
 
         log.info("{} Exit", logPrefix);
     }

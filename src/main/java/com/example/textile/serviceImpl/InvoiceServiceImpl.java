@@ -29,6 +29,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private StateRepository stateRepo;
 
+    @Autowired
+    private CompanyRepository companyRepo;
+
     @Override
     public List<Invoice> findAll() {
         return invoiceRepo.findAll();
@@ -76,6 +79,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<State> getStates() {
         return stateRepo.findAll();
+    }
+
+    @Override
+    public List<Company> getCompanyByGst(String gst) {
+        return companyRepo.findByGst(gst);
     }
 
 }

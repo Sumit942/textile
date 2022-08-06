@@ -19,4 +19,6 @@ public interface InvoiceService {
     List<Unit> getUnitOfMeasure();
 
     List<State> getStates();
+
+    List<Company> getCompanyByGst(String gst);
 }

@@ -7,8 +7,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
+    <!-- css -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
 </head>
 <style>
 .error {
@@ -109,14 +113,18 @@
             <form:label path="billToParty.address.address">Address:</form:label>
             <form:input path="billToParty.address.address" />
             <form:errors path="billToParty.address.address" cssClass="error"/>
-            <form:hidden path="billToParty.address.pinCode" />
+            <form:label path="billToParty.address.pinCode">PinCode:</form:label>
+            <form:input path="billToParty.address.pinCode" />
+            <form:errors path="billToParty.address.pinCode" cssClass="error" />
         </div>
         <div class="col-md-6">
             <form:hidden path="shipToParty.address.id" />
             <form:label path="shipToParty.address.address">Address:</form:label>
             <form:input path="shipToParty.address.address" />
             <form:errors path="shipToParty.address.address" cssClass="error"/>
-            <form:hidden path="shipToParty.address.pinCode" />
+            <form:label path="shipToParty.address.pinCode">PinCode:</form:label>
+            <form:input path="shipToParty.address.pinCode" />
+            <form:errors path="shipToParty.address.pinCode" cssClass="error" />
         </div>
     </div>
     <div class="row">
@@ -204,7 +212,7 @@
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
             <td>
-                <select path="product[0].unitOfMeasure">
+                <select path="product[0].unitOfMeasure.id">
                     <c:forEach items="${unitOfMeasures}" var="uom">
                         <option value="${uom.id}">${uom.unitOfMeasure}</option>
                     </c:forEach>
@@ -358,6 +366,13 @@
     <input type="Submit"/>
 </div>
 </form:form>
+<script>
+$( document ).ready(function() {
+    console.log( "qeury ready!" );
+});
+
+</script>
+<script src="${pageContext.request.contextPath}/js/invoice.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

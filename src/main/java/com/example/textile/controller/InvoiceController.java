@@ -80,31 +80,27 @@ public class InvoiceController {
                                       BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
         ModelAndView model =  new ModelAndView("/invoice");
         String logPrefix = "saveInvoice() |";
-        log.info("{} -> {}",logPrefix,invoice);
+        log.info("{} Entry",logPrefix);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-        if (result.hasErrors()) {
-            actExecutor.prePopulateOptionsAndFields(invoice,model);
-            log.error("result has Errors");//TODO: rejectValue
-            result.getAllErrors().forEach(System.out::println);
-        } else {
 
-            try {
-                ActionResponse response = actExecutor.execute(invoice, parameterMap, result,model);
-                if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                    model.setViewName("redirect:submit");
-                    log.info("{} saved Successfully!!", logPrefix);
-                } else {
-                    log.error("result has doValidation Errors");
-                    result.getAllErrors().forEach(System.out::println);
-                    log.info("{} save Unsuccessfull", logPrefix);
-                }
-            } catch (Exception e) {
-                log.error("Error in saving invoice", e);
+        try {
+            ActionResponse response = actExecutor.execute(invoice, parameterMap, result,model);
+            if (ResponseType.SUCCESS.equals(response.getResponseType())) {
+                model.setViewName("redirect:submit");
+                log.info("{} saved Successfully!!", logPrefix);
+            } else {
+                log.error("result has doValidation Errors");
+                result.getAllErrors().forEach(System.out::println);
+                log.info("{} save Unsuccessfull", logPrefix);
             }
+        } catch (Exception e) {
+            result.getAllErrors().forEach(System.out::println);
+            log.error("Error in saving invoice", e);
         }
+        log.info("{} Exit",logPrefix);
         return model;
     }
 }
