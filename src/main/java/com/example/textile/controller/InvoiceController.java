@@ -2,7 +2,9 @@ package com.example.textile.controller;
 
 import com.example.textile.action.InvoiceSubmitAction;
 import com.example.textile.command.CommandConstants;
+import com.example.textile.entity.Company;
 import com.example.textile.entity.Invoice;
+import com.example.textile.entity.State;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
@@ -102,5 +104,17 @@ public class InvoiceController {
         }
         log.info("{} Exit",logPrefix);
         return model;
+    }
+    @GetMapping("/bankInvoice")
+    public @ResponseBody Invoice showNewInvoice() {
+        return new Invoice();
+    }
+    @GetMapping("/blankCompany")
+    public @ResponseBody Company showNewCompany() {
+        return new Company();
+    }
+    @GetMapping("/bankState")
+    public @ResponseBody State showState() {
+        return new State();
     }
 }

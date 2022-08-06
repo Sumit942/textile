@@ -9,9 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- css -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
     <!-- js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 </head>
 <style>
@@ -24,6 +26,9 @@
      border: 3px solid #ff0000;
      padding: 8px;
      margin: 16px;
+}
+.ui-autocomplete-loading {
+    background: white url("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
 }
 </style>
 <body>
@@ -367,8 +372,73 @@
 </div>
 </form:form>
 <script>
-$( document ).ready(function() {
-    console.log( "qeury ready!" );
+$(document).ready(function() {
+
+    $( "#billToParty\\.address\\.state\\.name" ).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/states/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    $("#billToParty\\.address\\.state\\.id").val('')
+                    $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
+                    $("#billToParty\\.address\\.state\\.name").val('')
+                    $("#billToParty\\.address\\.state\\.code").val('')
+                    response(data);
+                },
+                error : function(err) {
+                    $("#billToParty\\.address\\.state\\.id").val('')
+                    $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
+                    $("#billToParty\\.address\\.state\\.name").val('')
+                    $("#billToParty\\.address\\.state\\.code").val('')
+                    console.log("error in ajax search call: " + err)
+                }
+            });
+        },
+        select : function(event, ui) {
+            this.value = ui.item.name
+            $("#billToParty\\.address\\.state\\.id").val(ui.item.id)
+            $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
+            $("#billToParty\\.address\\.state\\.code").val(ui.item.code)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+    };
+
+    $("#billToParty\\.name").autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/company/searchByName"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    $("#billToParty\\.name").val('')
+                    $("#billToParty\\.address\\.address").val('')
+                    $("#billToParty\\.address\\.pinCode").val('')
+                    $("#billToParty\\.gst").val(ui.item.gst)
+// 					console.log(data);
+                    response(data);
+                },
+                error : function(err) {
+                    $("#billToParty\\.name").val('')
+                    $("#billToParty\\.address\\.address").val('')
+                    $("#billToParty\\.address\\.pinCode").val('')
+                    $("#billToParty\\.gst").val(ui.item.gst)
+                    console.log("error in ajax search call: " + err)
+                }
+            });
+        },
+        select : function(event, ui) {
+            this.value = ui.item.name
+            $("#billToParty\\.address\\.address").val(ui.item.address.address)
+            $("#billToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
+            $("#billToParty\\.gst").val(ui.item.gst)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.symbol_info + "</strong> - " + item.symbol + "</a>").appendTo(ul);
+    };
 });
 
 </script>
