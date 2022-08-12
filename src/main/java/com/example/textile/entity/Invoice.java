@@ -126,7 +126,7 @@ public class Invoice implements Serializable {
         this.placeOfSupply = placeOfSupply;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Company getBillToParty() {
         return billToParty;
     }
@@ -135,7 +135,7 @@ public class Invoice implements Serializable {
         this.billToParty = billToParty;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Company getShipToParty() {
         return shipToParty;
     }
@@ -153,7 +153,7 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
-    @OneToMany(mappedBy = "id",orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,mappedBy = "invoice")
     public List<ProductDetail> getProduct() {
         return product;
     }

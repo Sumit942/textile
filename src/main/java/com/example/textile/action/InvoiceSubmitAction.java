@@ -6,9 +6,11 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
+import com.example.textile.service.CompanyService;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,8 +23,11 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 
     private final InvoiceService invoiceService;
 
-    public InvoiceSubmitAction(InvoiceService invoiceService) {
+    private CompanyService companyService;
+
+    public InvoiceSubmitAction(InvoiceService invoiceService, CompanyService companyService) {
         this.invoiceService = invoiceService;
+        this.companyService = companyService;
     }
 
     @Override
@@ -30,7 +35,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         String logPrefix = "doSuccess() |";
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
-//        doPreSaveOperation(invoice);
+
+        invoiceService.save(invoice);
         if (ActionType.SUBMIT.equals(action)) {
             log.info("{} [ActionType=SUBMIT]",logPrefix);
             invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
@@ -38,6 +44,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             log.info("{} [ActionType=SAVE]",logPrefix);
             invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
         }
+        //saving the by getting the invoiceId
         invoiceService.save(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         log.info("{} [Reponse=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
@@ -48,20 +55,55 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     @Override
     protected void doPreSaveOperation(Invoice invoice, BindingResult result) {
         String logPrefix = "doPreSaveOperation() |";
+        String logSuffix = "";
         log.info("{} Entry",logPrefix);
         if (invoice.getBillToParty().getId() == null) {
+            log.info("{} new invoice",logPrefix);
             //check if the newly added gst already exist
             List<Company> bParty = invoiceService.getCompanyByGst(invoice.getBillToParty().getGst());
+            logSuffix += "GST="+invoice.getBillToParty().getGst()+";";
             if (bParty != null && !bParty.isEmpty()) {
+                logSuffix += "isDuplicate=YES;";
                 Company savedParty = bParty.get(0);
                 result.rejectValue("billToParty.gst",
                         "invoiceCommand.billToParty.gst.alreadyExist",
                         new Object[]{savedParty.getName()},
                         "Gst Already registered");
+            } else {
+                logSuffix += "isDuplicate=NO;";
             }
+            // if ship & bill party are same first save Company object for - DataIntegrityViolationException in Company
+            if(invoice.getBillToParty().getGst().equalsIgnoreCase(invoice.getShipToParty().getGst())) {
+                //if address is different eg. office / company
+                logSuffix += "GstMatch=YES;";
+                if (!invoice.getBillToParty().getAddress().getAddress()
+                        .equals(invoice.getShipToParty().getAddress().getAddress())) {
+                    logSuffix += "AddressMatch=NO;";
+                    invoice.getBillToParty().setOfcAddress(invoice.getShipToParty().getAddress());
+                } else {
+                    logSuffix += "AddressMatch=YES;";
+                }
+                log.info("{} saving->{} [{}]", logPrefix, invoice.getBillToParty(),logSuffix);
+                Company party = companyService.save(invoice.getBillToParty());
+                logSuffix += "bsPartyId="+party.getId()+";";
+                invoice.setBillToParty(party);
+                invoice.setShipToParty(party);
+            } else {
+                log.info("{} same Bill & Ship party same gst",logPrefix);
+            }
+
+            //check if the product name is already added
+            invoice.getProduct().stream()
+                    .filter(e -> e.getProduct().getId() == null)
+                    .forEach(e -> {
+                        invoiceService.getProductByName(e.getProduct().getName());
+                    });
+
+        } else {
+            log.info("{} old invoice {}",logPrefix, invoice.getId());
         }
 
-        log.info("{} Exit",logPrefix);
+        log.info("{} Exit [{}]", logPrefix, logSuffix);
     }
 
     @Override

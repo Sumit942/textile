@@ -6,6 +6,8 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,6 +28,7 @@ public abstract class ActionExecutor<T> {
         return actResponse;
     }
 
+    @Transactional
     public ActionResponse execute(T t, Map<String, Object> parameterMap, BindingResult result, ModelAndView model) throws ServiceActionException {
 
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
@@ -33,26 +36,38 @@ public abstract class ActionExecutor<T> {
 
         if (ActionType.SUBMIT.equals(action)) {
             //if result already has error: before doValidation()
-            if (result.hasErrors()) {
+            if (result.hasErrors())
                 return onError(t, result, actionResponse,model);
-            }
 
             try {
                 doValidation(t, parameterMap, result, model);
-                if (result.hasErrors()) {
+                if (result.hasErrors())
                     return onError(t, result, actionResponse,model);
-                }
             } catch (RuntimeException e) {
                 log.error("Error: exception in doValidation() - "+e.getLocalizedMessage(),e);
                 return onError(t, result, actionResponse,model);
             }
         }
-        doPreSaveOperation(t,result);
+        try {
+            doPreSaveOperation(t, result);
+        } catch (Exception e) {
+            log.error("Error:    doPreSaveOperation() | "+e.getLocalizedMessage(),e);
+            result.reject("System.DB.Exception");
+            model.addObject("SystemError","Something went wrong!! Please contact IT Support");
+            return onError(t,result,actionResponse,model);
+        }
         if (result.hasErrors()) {
             log.error("Error: result.hasErrors from doPreSaveOperation");
             return onError(t, result, actionResponse,model);
         }
-        return onSuccess(t, parameterMap, model);
+        try {
+            return onSuccess(t, parameterMap, model);
+        } catch (DataAccessException e) {
+            log.error("Error: doSuccess() | "+e.getLocalizedMessage(),e);
+            result.reject("System.DB.Exception");
+            model.addObject("SystemError","Something went wrong!! Please contact IT Support");
+            return onError(t,result,actionResponse,model);
+        }
     }
 
     protected abstract void doPreSaveOperation(T t, BindingResult result);

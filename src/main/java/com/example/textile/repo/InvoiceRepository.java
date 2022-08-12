@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
-    @Query(value = "SELECT COUNT(*) FROM invoice WHERE invoice_no <> '######'",nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM invoice WHERE invoice_no <> '######' or invoice_no is not null",nativeQuery = true)
     Integer getLastestInvoiceNo();
 }

@@ -1,9 +1,13 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 public class ProductDetail implements Serializable {
@@ -15,6 +19,20 @@ public class ProductDetail implements Serializable {
     private Double rate;
     private BigDecimal totalPrice;
 
+    private Invoice invoice;
+
+    private Date insertDt;
+    private Date updateDt;
+
+    @ManyToOne
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
@@ -25,7 +43,7 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     public Product getProduct() {
         return product;
     }
@@ -79,6 +97,24 @@ public class ProductDetail implements Serializable {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    @CreationTimestamp
+    public Date getInsertDt() {
+        return insertDt;
+    }
+
+    public void setInsertDt(Date insertDt) {
+        this.insertDt = insertDt;
+    }
+
+    @UpdateTimestamp
+    public Date getUpdateDt() {
+        return updateDt;
+    }
+
+    public void setUpdateDt(Date updateDt) {
+        this.updateDt = updateDt;
     }
 
     @Override

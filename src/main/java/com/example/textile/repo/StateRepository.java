@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StateRepository extends JpaRepository<State, Long> {
 
-    @Query("select s from State s where lower(s.name) like concat('%',:name,'%')")
+    @Query("select s from State s where lower(s.name) like concat('%',lower(:name),'%')")
     List<State> findByNameLike(String name);
 }

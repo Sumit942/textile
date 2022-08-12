@@ -276,7 +276,7 @@ class TextileApplicationTests {
             }
         };
 
-        ActionExecutor<Invoice> actionExecutor = new InvoiceSubmitAction(invoiceService);
+        ActionExecutor<Invoice> actionExecutor = new InvoiceSubmitAction(invoiceService,null);
 
         try {
             actionExecutor.execute(invoice, parameterMap, result, null);

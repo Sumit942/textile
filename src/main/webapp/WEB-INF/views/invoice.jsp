@@ -45,7 +45,7 @@
         <div class="col-md-6">
             <form:label path="transportMode">Transport Mode:</form:label>
             <form:select path="transportMode">
-                <form:options items="${transportModes}" itemLabel="mode" />
+                <form:options items="${transportModes}" itemValue="id" itemLabel="mode" />
             </form:select>
             <form:errors path="transportMode" cssClass="error"/>
         </div>
@@ -186,8 +186,8 @@
     <tr>
         <td></td>
         <td colspan="2">
-            <form:select path="saleType" >
-                <form:options items="${saleTypes}" itemLabel="saleType" />
+            <form:select path="saleType.id" >
+                <form:options items="${saleTypes}" itemValue="id" itemLabel="saleType" />
             </form:select>
         </td>
         <td></td>
@@ -201,39 +201,37 @@
         <tr>
             <td>
                 <span id="product[0].srNo">1</span>
-                <input type="hidden" name="product[0].id" />
+                <form:hidden path="product[0].id" />
             </td>
             <td>
                 <input type="hidden" name="product[0].product.id" />
-                <input type="text" name="product[0].product.name" />
+                <form:input path="product[0].product.name" />
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
-                <input type="text" name="product[0].chNo" />
+                <form:input path="product[0].chNo" />
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
-                <input type="text" name="product[0].product.hsn" />
+                <form:input path="product[0].product.hsn" />
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
             <td>
-                <select path="product[0].unitOfMeasure.id">
-                    <c:forEach items="${unitOfMeasures}" var="uom">
-                        <option value="${uom.id}">${uom.unitOfMeasure}</option>
-                    </c:forEach>
-                </select>
+                <form:select path="product[0].unitOfMeasure.id">
+                    <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure" itemValue="id"/>
+                </form:select>
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
             <td>
-                <input type="text" name="product[0].quantity" />
+                <form:input path="product[0].quantity" />
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
             <td>
-                <input type="text" name="product[0].rate" />
+                <form:input path="product[0].rate" />
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
             <td>
-                <input type="text" name="product[0].totalPrice" />
+                <form:input path="product[0].totalPrice" />
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
         </tr>
@@ -259,8 +257,8 @@
                     <form:errors path="product[${index.index}].product.hsn" cssClass="error"/>
                 </td>
                 <td>
-                    <form:select path="product[${index.index}].unitOfMeasure">
-                        <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure"/>
+                    <form:select path="product[${index.index}].unitOfMeasure.id">
+                        <form:options items="${unitOfMeasures}" itemValue="id" itemLabel="unitOfMeasure"/>
                     </form:select>
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
                 </td>
@@ -368,11 +366,21 @@
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
-    <input type="Submit"/>
+    <input class="btn btn-primary" type="Submit"/>
 </div>
 </form:form>
 <script>
 $(document).ready(function() {
+
+    $("#billToParty\\.address\\.address").on("focusout",function(e){
+        $("#shipToParty\\.address\\.address").val(this.value);
+    })
+    $("#billToParty\\.address\\.pinCode").on("focusout",function(e){
+        $("#shipToParty\\.address\\.pinCode").val(this.value);
+    })
+    $("#billToParty\\.gst").on("focusout",function(e){
+        $("#shipToParty\\.gst").val(this.value);
+    })
 
     $( "#billToParty\\.address\\.state\\.name" ).autocomplete({
         source : function(request, response) {
@@ -380,26 +388,18 @@ $(document).ready(function() {
                 url : "${pageContext.request.contextPath}/states/searchByName/"+request.term,
                 dataType : 'json',
                 success : function(data) {
-                    $("#billToParty\\.address\\.state\\.id").val('')
-                    $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
-                    $("#billToParty\\.address\\.state\\.name").val('')
-                    $("#billToParty\\.address\\.state\\.code").val('')
                     response(data);
                 },
                 error : function(err) {
-                    $("#billToParty\\.address\\.state\\.id").val('')
-                    $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
-                    $("#billToParty\\.address\\.state\\.name").val('')
-                    $("#billToParty\\.address\\.state\\.code").val('')
-                    console.log("error in ajax search call: " + err)
+                    resetBillToPartyState()
+                    console.error(err)
                 }
             });
         },
+        minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
-            $("#billToParty\\.address\\.state\\.id").val(ui.item.id)
-            $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
-            $("#billToParty\\.address\\.state\\.code").val(ui.item.code)
+            setBillToPartyState(ui)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -409,36 +409,89 @@ $(document).ready(function() {
     $("#billToParty\\.name").autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "${pageContext.request.contextPath}/company/searchByName"+request.term,
+                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
                 dataType : 'json',
                 success : function(data) {
-                    $("#billToParty\\.name").val('')
-                    $("#billToParty\\.address\\.address").val('')
-                    $("#billToParty\\.address\\.pinCode").val('')
-                    $("#billToParty\\.gst").val(ui.item.gst)
-// 					console.log(data);
                     response(data);
                 },
                 error : function(err) {
-                    $("#billToParty\\.name").val('')
-                    $("#billToParty\\.address\\.address").val('')
-                    $("#billToParty\\.address\\.pinCode").val('')
-                    $("#billToParty\\.gst").val(ui.item.gst)
-                    console.log("error in ajax search call: " + err)
+                    resetBillToParty()
+                    console.error(err)
                 }
             });
         },
+        minLength: 4,
         select : function(event, ui) {
             this.value = ui.item.name
-            $("#billToParty\\.address\\.address").val(ui.item.address.address)
-            $("#billToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
-            $("#billToParty\\.gst").val(ui.item.gst)
+            setBillToParty(ui)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.symbol_info + "</strong> - " + item.symbol + "</a>").appendTo(ul);
+                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
+
+    //reset state fields in billToParty
+    function resetBillToPartyState() {
+        $("#billToParty\\.address\\.state\\.id").val('')
+        $("#billToParty\\.address\\.state\\.country\\.id").val('')
+        $("#billToParty\\.address\\.state\\.name").val('')
+        $("#billToParty\\.address\\.state\\.code").val('')
+    }
+    //set state fields in billToParty
+    function setBillToPartyState(ui) {
+        $("#billToParty\\.address\\.state\\.id").val(ui.item.id)
+        $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
+        $("#billToParty\\.address\\.state\\.code").val(ui.item.code)
+        setShipToPartyState(ui)
+    }
+
+    //reset all fields in billToParty
+    function resetBillToParty(){
+        $("#billToParty\\.id").val('')
+        $("#billToParty\\.address\\.address").val('')
+        $("#billToParty\\.address\\.pinCode").val('')
+        $("#billToParty\\.gst").val('')
+    }
+
+    //set all fields in billToParty
+    function setBillToParty(ui) {
+        $("#billToParty\\.id").val(ui.item.id)
+        $("#billToParty\\.address\\.address").val(ui.item.address.address)
+        $("#billToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
+        $("#billToParty\\.gst").val(ui.item.gst)
+    }
+
+    //reset state fields in billToParty
+    function resetShipToPartyState() {
+        $("#shipToParty\\.address\\.state\\.id").val('')
+        $("#shipToParty\\.address\\.state\\.country\\.id").val('')
+        $("#shipToParty\\.address\\.state\\.name").val('')
+        $("#shipToParty\\.address\\.state\\.code").val('')
+    }
+    //set state fields in billToParty
+    function setShipToPartyState(ui) {
+        $("#shipToParty\\.address\\.state\\.id").val(ui.item.id)
+        $("#shipToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
+        $("#shipToParty\\.address\\.state\\.name").val(ui.item.name)
+        $("#shipToParty\\.address\\.state\\.code").val(ui.item.code)
+    }
+
+    //reset all fields in shipToParty
+    function resetShipToParty(){
+        $("#shipToParty\\.id").val('')
+        $("#shipToParty\\.address\\.address").val('')
+        $("#shipToParty\\.address\\.pinCode").val('')
+        $("#shipToParty\\.gst").val('')
+    }
+
+    //set all fields in shipToParty
+    function setShipToParty(ui) {
+        $("#shipToParty\\.id").val(ui.item.id)
+        $("#shipToParty\\.address\\.address").val(ui.item.address.address)
+        $("#shipToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
+        $("#shipToParty\\.gst").val(ui.item.gst)
+    }
 });
 
 </script>

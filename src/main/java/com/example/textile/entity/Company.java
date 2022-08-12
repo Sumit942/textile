@@ -1,8 +1,12 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,6 +19,8 @@ public class Company implements Serializable {
     private String emailId;
     private String mobileNo;
     private List<BankDetail> bankDetails;
+    private Date insert_dt;
+    private Date update_dt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +41,7 @@ public class Company implements Serializable {
         this.name = name;
     }
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     public Address getAddress() {
         return address;
     }
@@ -44,7 +50,7 @@ public class Company implements Serializable {
         this.address = address;
     }
 
-    @OneToOne
+    @OneToOne(optional = true)
     public Address getOfcAddress() {
         return ofcAddress;
     }
@@ -78,13 +84,31 @@ public class Company implements Serializable {
         this.mobileNo = mobileNo;
     }
 
-    @OneToMany(mappedBy = "id",orphanRemoval = true)
+    @OneToMany(mappedBy = "id",cascade = {CascadeType.DETACH,CascadeType.REMOVE})
     public List<BankDetail> getBankDetails() {
         return bankDetails;
     }
 
     public void setBankDetails(List<BankDetail> bankDetails) {
         this.bankDetails = bankDetails;
+    }
+
+    @CreationTimestamp
+    public Date getInsert_dt() {
+        return insert_dt;
+    }
+
+    @UpdateTimestamp
+    public void setInsert_dt(Date insert_dt) {
+        this.insert_dt = insert_dt;
+    }
+
+    public Date getUpdate_dt() {
+        return update_dt;
+    }
+
+    public void setUpdate_dt(Date update_dt) {
+        this.update_dt = update_dt;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
+import com.example.textile.service.CompanyService;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
@@ -38,12 +39,15 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
+    @Autowired
+    CompanyService companyService;
+
     private Map<String, ActionExecutor> actionExecutorMap;
 
     @PostConstruct
     public void init() {
         actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(InvoiceController.class);
-        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService));
+        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService, companyService));
     }
 
     @InitBinder
@@ -61,6 +65,18 @@ public class InvoiceController {
         List<Invoice> invoices = invoiceService.findAll();
         model.addObject("invoices",invoices);
 
+        return model;
+    }
+
+    @GetMapping("/invoice/{id}")
+    public ModelAndView getInvoiceById(@PathVariable("id") Long id) {
+        log.info("show invoice");
+        ModelAndView model = new ModelAndView("/invoice");
+        try {
+            invoiceService.finById(id);
+        } catch (Exception e) {
+            log.error("Exception: {} prePopulation","getInvoiceById()",e);
+        }
         return model;
     }
 
@@ -82,7 +98,7 @@ public class InvoiceController {
                                       BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
         ModelAndView model =  new ModelAndView("/invoice");
         String logPrefix = "saveInvoice() |";
-        log.info("{} Entry",logPrefix);
+        log.info("{} Entry -> {}",logPrefix, invoice);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
@@ -91,6 +107,7 @@ public class InvoiceController {
         try {
             ActionResponse response = actExecutor.execute(invoice, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
+                redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
                 model.setViewName("redirect:submit");
                 log.info("{} saved Successfully!!", logPrefix);
             } else {

@@ -1,10 +1,13 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 public class Address implements Serializable {
@@ -12,6 +15,8 @@ public class Address implements Serializable {
     private State state;
     private String address;
     private Integer pinCode;
+    private Date insertDt;
+    private Date updateDt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +53,24 @@ public class Address implements Serializable {
 
     public void setPinCode(Integer pinCode) {
         this.pinCode = pinCode;
+    }
+
+    @CreationTimestamp
+    public Date getInsertDt() {
+        return insertDt;
+    }
+
+    public void setInsertDt(Date insertDt) {
+        this.insertDt = insertDt;
+    }
+
+    @UpdateTimestamp
+    public Date getUpdateDt() {
+        return updateDt;
+    }
+
+    public void setUpdateDt(Date updateDt) {
+        this.updateDt = updateDt;
     }
 
     @Override

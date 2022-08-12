@@ -1,6 +1,7 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.*;
+import com.example.textile.exception.InvoiceNotFoundException;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
@@ -31,6 +32,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     private CompanyRepository companyRepo;
+
+    @Autowired
+    private ProductRepository productRepo;
 
     @Override
     public List<Invoice> findAll() {
@@ -84,6 +88,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Company> getCompanyByGst(String gst) {
         return companyRepo.findByGst(gst);
+    }
+
+    @Override
+    public Invoice finById(Long id) {
+        return this.invoiceRepo.findById(id).orElse(null);
+    }
+
+    @Override
+    public Product getProductByName(String name) {
+        return this.productRepo.findByName(name);
     }
 
 }

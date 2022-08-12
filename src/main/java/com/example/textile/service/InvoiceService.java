@@ -21,4 +21,8 @@ public interface InvoiceService {
     List<State> getStates();
 
     List<Company> getCompanyByGst(String gst);
+
+    Invoice finById(Long id);
+
+    Product getProductByName(String name);
 }
