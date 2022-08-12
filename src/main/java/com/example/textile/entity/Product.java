@@ -3,12 +3,15 @@ package com.example.textile.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 public class Product implements Serializable {
     private Long id;
     private String name;
     private Integer hsn;
+    private Date insertDt;
+    private Date updateDt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +39,22 @@ public class Product implements Serializable {
 
     public void setHsn(Integer hsn) {
         this.hsn = hsn;
+    }
+
+    public Date getInsertDt() {
+        return insertDt;
+    }
+
+    public void setInsertDt(Date insertDt) {
+        this.insertDt = insertDt;
+    }
+
+    public Date getUpdateDt() {
+        return updateDt;
+    }
+
+    public void setUpdateDt(Date updateDt) {
+        this.updateDt = updateDt;
     }
 
     @Override

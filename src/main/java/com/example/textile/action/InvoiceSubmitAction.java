@@ -92,11 +92,14 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 log.info("{} same Bill & Ship party same gst",logPrefix);
             }
 
-            //check if the product name is already added
+            //check if the product name is already added. is yes then use it.
             invoice.getProduct().stream()
                     .filter(e -> e.getProduct().getId() == null)
                     .forEach(e -> {
-                        invoiceService.getProductByName(e.getProduct().getName());
+                        Product savedPrdt = invoiceService.getProductByName(e.getProduct().getName());
+                        if (savedPrdt != null) {
+                            e.getProduct().setId(savedPrdt.getId());
+                        }
                     });
 
         } else {
