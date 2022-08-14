@@ -6,28 +6,24 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.service.CompanyService;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 
     private final InvoiceService invoiceService;
 
-    private CompanyService companyService;
-
-    public InvoiceSubmitAction(InvoiceService invoiceService, CompanyService companyService) {
+    public InvoiceSubmitAction(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
-        this.companyService = companyService;
     }
 
     @Override
@@ -72,35 +68,6 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             } else {
                 logSuffix += "isDuplicate=NO;";
             }
-            // if ship & bill party are same first save Company object for - DataIntegrityViolationException in Company
-            if(invoice.getBillToParty().getGst().equalsIgnoreCase(invoice.getShipToParty().getGst())) {
-                //if address is different eg. office / company
-                logSuffix += "GstMatch=YES;";
-                if (!invoice.getBillToParty().getAddress().getAddress()
-                        .equals(invoice.getShipToParty().getAddress().getAddress())) {
-                    logSuffix += "AddressMatch=NO;";
-                    invoice.getBillToParty().setOfcAddress(invoice.getShipToParty().getAddress());
-                } else {
-                    logSuffix += "AddressMatch=YES;";
-                }
-                log.info("{} saving->{} [{}]", logPrefix, invoice.getBillToParty(),logSuffix);
-                Company party = companyService.save(invoice.getBillToParty());
-                logSuffix += "bsPartyId="+party.getId()+";";
-                invoice.setBillToParty(party);
-                invoice.setShipToParty(party);
-            } else {
-                log.info("{} same Bill & Ship party same gst",logPrefix);
-            }
-
-            //check if the product name is already added. is yes then use it.
-            invoice.getProduct().stream()
-                    .filter(e -> e.getProduct().getId() == null)
-                    .forEach(e -> {
-                        Product savedPrdt = invoiceService.getProductByName(e.getProduct().getName());
-                        if (savedPrdt != null) {
-                            e.getProduct().setId(savedPrdt.getId());
-                        }
-                    });
 
         } else {
             log.info("{} old invoice {}",logPrefix, invoice.getId());

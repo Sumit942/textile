@@ -39,15 +39,12 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
-    @Autowired
-    CompanyService companyService;
-
     private Map<String, ActionExecutor> actionExecutorMap;
 
     @PostConstruct
     public void init() {
         actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(InvoiceController.class);
-        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService, companyService));
+        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new InvoiceSubmitAction(invoiceService));
     }
 
     @InitBinder
@@ -110,6 +107,7 @@ public class InvoiceController {
                 redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
                 model.setViewName("redirect:submit");
                 log.info("{} saved Successfully!!", logPrefix);
+                model.addObject("printInvoice",true);
             } else {
                 log.error("result has doValidation Errors");
                 result.getAllErrors().forEach(System.out::println);

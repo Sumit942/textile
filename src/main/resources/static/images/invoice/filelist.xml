@@ -1,0 +1,12 @@
+<xml xmlns:o="urn:schemas-microsoft-com:office:office">
+ <o:MainFile HRef="../../../templates/email/SRTI_Invoice.htm"/>
+ <o:File HRef="SRTI-logo-001.png"
+  PublicationID="SRTI-Invoice"/>
+ <o:File HRef="SRTI-logo-002.png"
+  PublicationID="SRTI-Invoice"/>
+ <o:File HRef="SRTI-Stamp-003.png"
+  PublicationID="SRTI-Invoice"/>
+ <o:File HRef="SRTI-Stamp-004.png"
+  PublicationID="SRTI-Invoice"/>
+ <o:File HRef="filelist.xml"/>
+</xml>

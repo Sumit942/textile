@@ -367,6 +367,9 @@
         </div>
     </div>
     <input class="btn btn-primary" type="Submit"/>
+    <c:if test="${printInvoice}">
+        <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
+    </c:if>
 </div>
 </form:form>
 <script>
