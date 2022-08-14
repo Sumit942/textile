@@ -45,7 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     @Override
     public Invoice save(Invoice invoice) {
-        String logPrefix = "save() }";
+        String logPrefix = "save() |";
         String logSuffix = "";
         // if ship & bill party are same first save Company object for - DataIntegrityViolationException in Company
         if(invoice.getBillToParty().getGst().equalsIgnoreCase(invoice.getShipToParty().getGst())) {

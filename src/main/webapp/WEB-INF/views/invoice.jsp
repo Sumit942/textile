@@ -32,13 +32,14 @@
 }
 </style>
 <body>
-<form:form action="submit" method="POST" modelAttribute="invoiceCommand">
+<form:form name="invoice" action="submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">Tax Invoice</div>
     </div>
     <div class="row">
         <div class="col-md-6">
+            <form:hidden path="id"/>
             <form:label path="invoiceNo">Invoice No:</form:label>
             <form:input path="invoiceNo" />
         </div>
@@ -366,14 +367,23 @@
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
-    <input class="btn btn-primary" type="Submit"/>
-    <c:if test="${printInvoice}">
-        <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
-    </c:if>
+
+    <c:choose>
+    <c:when test="${printInvoice}">
+        <input id="printInvoice" class="btn btn-primary" type="Submit" value="Print"/>
+    </c:when>
+    <c:otherwise>
+        <input class="btn btn-primary" type="Submit"/>
+    </c:otherwise>
+    </c:choose>
 </div>
 </form:form>
 <script>
 $(document).ready(function() {
+
+    $("#printInvoice").on("click",function(e){
+        $("#invoiceCommand").attr("action","print")
+    })
 
     $("#billToParty\\.address\\.address").on("focusout",function(e){
         $("#shipToParty\\.address\\.address").val(this.value);

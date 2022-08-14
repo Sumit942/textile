@@ -73,6 +73,11 @@ public class Address implements Serializable {
         this.updateDt = updateDt;
     }
 
+    @Transient
+    public String getFullAddress() {
+        return address + (state != null ? state.getName() : "")  + "-" + pinCode;
+    }
+
     @Override
     public String toString() {
         return "Address{" +

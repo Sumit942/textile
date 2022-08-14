@@ -15,6 +15,7 @@ import com.example.textile.service.CompanyService;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -81,7 +82,7 @@ public class InvoiceController {
     public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
                                    RedirectAttributes redirectAttributes) {
         log.info("show invoice");
-        ModelAndView model = new ModelAndView("/invoice");
+        ModelAndView model = new ModelAndView("invoice");
         try {
             actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
         } catch (InvalidObjectPopulationException e) {
@@ -93,7 +94,7 @@ public class InvoiceController {
     @PostMapping("/submit")
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
                                       BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
-        ModelAndView model =  new ModelAndView("/invoice");
+        ModelAndView model =  new ModelAndView("invoice");
         String logPrefix = "saveInvoice() |";
         log.info("{} Entry -> {}",logPrefix, invoice);
         Map<String, Object> parameterMap = new HashMap<>();
@@ -107,7 +108,7 @@ public class InvoiceController {
                 redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
                 model.setViewName("redirect:submit");
                 log.info("{} saved Successfully!!", logPrefix);
-                model.addObject("printInvoice",true);
+                redirectAttr.addFlashAttribute("printInvoice",true);
             } else {
                 log.error("result has doValidation Errors");
                 result.getAllErrors().forEach(System.out::println);
@@ -131,5 +132,15 @@ public class InvoiceController {
     @GetMapping("/bankState")
     public @ResponseBody State showState() {
         return new State();
+    }
+
+    @GetMapping("/print/{id}")
+    public ModelAndView showPrintInvoice(@PathVariable("id") Long id) {
+        log.info("showPrintInvoice() | id-"+id);
+        ModelAndView modelAndView = new ModelAndView("emailTemplates/SRTI_Invoice.html");
+        Invoice invoice = invoiceService.finById(id);
+        log.info("showPrintInvoice() | {}",invoice);
+        modelAndView.addObject("invoice",invoice);
+        return modelAndView;
     }
 }

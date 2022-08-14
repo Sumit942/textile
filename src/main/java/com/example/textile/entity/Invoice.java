@@ -21,7 +21,7 @@ public class Invoice implements Serializable {
     private User user;
     private TransportMode transportMode;
     private Date invoiceDate = Calendar.getInstance().getTime();
-    private String vehicleNo;
+    private String vehicleNo = "NA";
     private String reverseCharge = "No";
     private Date dateOfSupply;
     private String placeOfSupply;
