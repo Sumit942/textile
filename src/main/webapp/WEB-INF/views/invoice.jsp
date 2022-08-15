@@ -206,7 +206,7 @@
             </td>
             <td>
                 <input type="hidden" name="product[0].product.id" />
-                <form:input path="product[0].product.name" />
+                <form:input path="product[0].product.name" class="productDesc"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
@@ -246,7 +246,7 @@
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
-                    <form:input path="product[${index.index}].product.name" />
+                    <form:input path="product[${index.index}].product.name" class="productDesc"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
@@ -370,21 +370,19 @@
 
     <c:choose>
     <c:when test="${printInvoice}">
-        <input id="printInvoice" class="btn btn-primary" type="Submit" value="Print"/>
+    <a href="${pageContext.request.contextPath}/invoices/print/${invoiceCommand.id}" target="_blank">
+        <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
+    </a>
     </c:when>
     <c:otherwise>
-        <input class="btn btn-primary" type="Submit"/>
+        <input type="Submit" class="btn btn-primary" />
     </c:otherwise>
     </c:choose>
 </div>
 </form:form>
 <script>
 $(document).ready(function() {
-
-    $("#printInvoice").on("click",function(e){
-        $("#invoiceCommand").attr("action","print")
-    })
-
+    /**                 billToParty script                  **/
     $("#billToParty\\.address\\.address").on("focusout",function(e){
         $("#shipToParty\\.address\\.address").val(this.value);
     })
@@ -394,6 +392,30 @@ $(document).ready(function() {
     $("#billToParty\\.gst").on("focusout",function(e){
         $("#shipToParty\\.gst").val(this.value);
     })
+    $("#billToParty\\.name").autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    resetBillToParty()
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 4,
+        select : function(event, ui) {
+            this.value = ui.item.name
+            setBillToParty(ui.item)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+    };
 
     $( "#billToParty\\.address\\.state\\.name" ).autocomplete({
         source : function(request, response) {
@@ -412,36 +434,11 @@ $(document).ready(function() {
         minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
-            setBillToPartyState(ui)
+            setBillToPartyState(ui.item)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
-    };
-
-    $("#billToParty\\.name").autocomplete({
-        source : function(request, response) {
-            $.ajax({
-                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
-                dataType : 'json',
-                success : function(data) {
-                    response(data);
-                },
-                error : function(err) {
-                    resetBillToParty()
-                    console.error(err)
-                }
-            });
-        },
-        minLength: 4,
-        select : function(event, ui) {
-            this.value = ui.item.name
-            setBillToParty(ui)
-            return false;
-        }
-    }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 
     //reset state fields in billToParty
@@ -451,12 +448,14 @@ $(document).ready(function() {
         $("#billToParty\\.address\\.state\\.name").val('')
         $("#billToParty\\.address\\.state\\.code").val('')
     }
+
     //set state fields in billToParty
-    function setBillToPartyState(ui) {
-        $("#billToParty\\.address\\.state\\.id").val(ui.item.id)
-        $("#billToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
-        $("#billToParty\\.address\\.state\\.code").val(ui.item.code)
-        setShipToPartyState(ui)
+    function setBillToPartyState(item) {
+        $("#billToParty\\.address\\.state\\.id").val(item.id)
+        $("#billToParty\\.address\\.state\\.name").val(item.name)
+        $("#billToParty\\.address\\.state\\.country\\.id").val(item.country.id)
+        $("#billToParty\\.address\\.state\\.code").val(item.code)
+        setShipToPartyState(item)
     }
 
     //reset all fields in billToParty
@@ -468,12 +467,66 @@ $(document).ready(function() {
     }
 
     //set all fields in billToParty
-    function setBillToParty(ui) {
-        $("#billToParty\\.id").val(ui.item.id)
-        $("#billToParty\\.address\\.address").val(ui.item.address.address)
-        $("#billToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
-        $("#billToParty\\.gst").val(ui.item.gst)
+    function setBillToParty(item) {
+        $("#billToParty\\.id").val(item.id)
+        $("#billToParty\\.name").val(item.name)
+        $("#billToParty\\.address\\.address").val(item.address.address)
+        $("#billToParty\\.address\\.pinCode").val(item.address.pinCode)
+        $("#billToParty\\.gst").val(item.gst)
+        setBillToPartyState(item.address.state)
+        setShipToParty(item)
     }
+
+    /**                 shipToParty script                  **/
+    $( "#shipToParty\\.address\\.state\\.name" ).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/states/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    resetShipToPartyState()
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 3,
+        select : function(event, ui) {
+            this.value = ui.item.name
+            setShipToPartyState(ui.item)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+    };
+
+
+    $("#shipToParty\\.name").autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    resetShipToParty()
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 4,
+        select : function(event, ui) {
+            this.value = ui.item.name
+            setShipToParty(ui.item)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+    };
 
     //reset state fields in billToParty
     function resetShipToPartyState() {
@@ -483,11 +536,11 @@ $(document).ready(function() {
         $("#shipToParty\\.address\\.state\\.code").val('')
     }
     //set state fields in billToParty
-    function setShipToPartyState(ui) {
-        $("#shipToParty\\.address\\.state\\.id").val(ui.item.id)
-        $("#shipToParty\\.address\\.state\\.country\\.id").val(ui.item.country.id)
-        $("#shipToParty\\.address\\.state\\.name").val(ui.item.name)
-        $("#shipToParty\\.address\\.state\\.code").val(ui.item.code)
+    function setShipToPartyState(item) {
+        $("#shipToParty\\.address\\.state\\.id").val(item.id)
+        $("#shipToParty\\.address\\.state\\.country\\.id").val(item.country.id)
+        $("#shipToParty\\.address\\.state\\.name").val(item.name)
+        $("#shipToParty\\.address\\.state\\.code").val(item.code)
     }
 
     //reset all fields in shipToParty
@@ -499,14 +552,42 @@ $(document).ready(function() {
     }
 
     //set all fields in shipToParty
-    function setShipToParty(ui) {
-        $("#shipToParty\\.id").val(ui.item.id)
-        $("#shipToParty\\.address\\.address").val(ui.item.address.address)
-        $("#shipToParty\\.address\\.pinCode").val(ui.item.address.pinCode)
-        $("#shipToParty\\.gst").val(ui.item.gst)
+    function setShipToParty(item) {
+        $("#shipToParty\\.id").val(item.id)
+        $("#shipToParty\\.name").val(item.name)
+        $("#shipToParty\\.address\\.address").val(item.address.address)
+        $("#shipToParty\\.address\\.pinCode").val(item.address.pinCode)
+        $("#shipToParty\\.gst").val(item.gst)
+        setShipToPartyState(item.address.state)
     }
 });
 
+    /**                 productDescription script                  **/
+
+    /*$("#shipToParty\\.name").autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    resetShipToParty()
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 3,
+        select : function(event, ui) {
+            this.value = ui.item.name
+            setShipToParty(ui.item)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+    };*/
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

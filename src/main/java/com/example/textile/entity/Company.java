@@ -98,13 +98,13 @@ public class Company implements Serializable {
         return insert_dt;
     }
 
+    public Date getUpdate_dt() {
+        return update_dt;
+    }
+
     @UpdateTimestamp
     public void setInsert_dt(Date insert_dt) {
         this.insert_dt = insert_dt;
-    }
-
-    public Date getUpdate_dt() {
-        return update_dt;
     }
 
     public void setUpdate_dt(Date update_dt) {

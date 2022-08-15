@@ -1,5 +1,8 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -41,6 +44,7 @@ public class Product implements Serializable {
         this.hsn = hsn;
     }
 
+    @CreationTimestamp
     public Date getInsertDt() {
         return insertDt;
     }
@@ -49,6 +53,7 @@ public class Product implements Serializable {
         this.insertDt = insertDt;
     }
 
+    @UpdateTimestamp
     public Date getUpdateDt() {
         return updateDt;
     }

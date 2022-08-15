@@ -25,6 +25,7 @@ public class ProductDetail implements Serializable {
     private Date updateDt;
 
     @ManyToOne
+    @JoinColumn(name = "invoice_id", nullable = false)
     public Invoice getInvoice() {
         return invoice;
     }
@@ -43,7 +44,7 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     public Product getProduct() {
         return product;
     }
