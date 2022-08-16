@@ -34,10 +34,10 @@
 <body>
 <form:form name="invoice" action="submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">Tax Invoice</div>
+    <div class="row mb-1">
+        <div class="col-md-12" style="text-align:center;">Tax Invoice</div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:hidden path="id"/>
             <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
@@ -51,7 +51,7 @@
             <form:errors path="transportMode" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
 
             <form:label path="invoiceDate" class="col-md-3">Invoice date:</form:label>
@@ -64,7 +64,7 @@
             <form:input path="vehicleNo" class="col-md-3"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:label path="reverseCharge" class="col-md-3">Reverse Charge (Y/N):</form:label>
             <form:select path="reverseCharge" class="col-md-3">
@@ -80,7 +80,7 @@
             <form:errors path="dateOfSupply" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
          <div class="col-md-6">
             <form:label path="invoiceBy.address.state.name" class="col-md-3">State:</form:label>
             <form:input path="invoiceBy.address.state.name" class="col-md-3"/>
@@ -92,7 +92,7 @@
             <form:errors path="placeOfSupply" cssClass="error"/>
          </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <span>Bill to Party</span>
         </div>
@@ -100,7 +100,7 @@
             <span>Ship to Party</span>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:hidden path="billToParty.id" />
             <form:label path="billToParty.name" class="col-md-3">Name:</form:label>
@@ -114,7 +114,7 @@
             <form:errors path="shipToParty.name" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:hidden path="billToParty.address.id" />
             <form:label path="billToParty.address.address" class="col-md-12">Address:</form:label>
@@ -134,7 +134,7 @@
             <form:errors path="shipToParty.address.pinCode" cssClass="error" />
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:label path="billToParty.gst" class="col-md-3">GSTIN:</form:label>
             <form:input path="billToParty.gst" class="col-md-3"/>
@@ -146,7 +146,7 @@
             <form:errors path="shipToParty.gst" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-6">
             <form:hidden path="billToParty.address.state.id" />
             <form:hidden path="billToParty.address.state.country.id" />
@@ -321,7 +321,7 @@
     </table>
     </div>
 
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
             <span>Total Invoice amount in words</span>
         </div>
@@ -333,7 +333,7 @@
             <form:errors path="totalAmount" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
             <form:input path="totalInvoiceAmountInWords"/>
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
@@ -346,7 +346,7 @@
             <form:errors path="cGst" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
 
         </div>
@@ -358,7 +358,7 @@
             <form:errors path="sGst" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
 
         </div>
@@ -370,7 +370,7 @@
             <form:errors path="totalTaxAmount" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
 
         </div>
@@ -382,7 +382,7 @@
             <form:errors path="roundOff" cssClass="error"/>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-1">
         <div class="col-md-8">
 
         </div>
