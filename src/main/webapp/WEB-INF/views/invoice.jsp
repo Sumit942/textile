@@ -323,7 +323,7 @@
 
     <div class="row mb-1">
         <div class="col-md-8">
-            <span>Total Invoice amount in words</span>
+            <form:label path="totalInvoiceAmountInWords">Total Invoice amount in words</form:label>
         </div>
         <div class="col-md-2">
             <span>Total Amount</span>
@@ -335,7 +335,7 @@
     </div>
     <div class="row mb-1">
         <div class="col-md-8">
-            <form:input path="totalInvoiceAmountInWords"/>
+            <form:textarea path="totalInvoiceAmountInWords" style="width:100%;height:100%;" readonly="true"/>
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
         <div class="col-md-2">
@@ -394,17 +394,12 @@
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
-
-    <c:choose>
-    <c:when test="${printInvoice}">
-    <a href="${pageContext.request.contextPath}/invoices/print/${invoiceCommand.id}" target="_blank">
-        <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
-    </a>
-    </c:when>
-    <c:otherwise>
-        <input type="Submit" class="btn btn-primary" />
-    </c:otherwise>
-    </c:choose>
+    <input type="Submit" class="btn btn-primary" />
+    <c:if test="${printInvoice}">
+        <a href="${pageContext.request.contextPath}/invoices/print/${invoiceCommand.id}" target="_blank">
+            <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
+        </a>
+    </c:if>
 </div>
 </form:form>
 <script>
