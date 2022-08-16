@@ -19,20 +19,8 @@ public class ProductDetail implements Serializable {
     private Double rate;
     private BigDecimal totalPrice;
 
-    private Invoice invoice;
-
     private Date insertDt;
     private Date updateDt;
-
-    @ManyToOne
-    @JoinColumn(name = "invoice_id", nullable = false)
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +32,8 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     public Product getProduct() {
         return product;
     }
@@ -120,14 +109,6 @@ public class ProductDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductDetail{" +
-                "id=" + id +
-                ", product=" + product +
-                ", chNo='" + chNo + '\'' +
-                ", unitOfMeasure=" + unitOfMeasure +
-                ", quantity=" + quantity +
-                ", rate=" + rate +
-                ", totalPrice=" + totalPrice +
-                '}';
+        return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
     }
 }

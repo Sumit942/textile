@@ -21,4 +21,6 @@ public class ShreeramTextileConstants {
     public static final String FORMAT_INVOICE_NO = "SRTI/22-23/";
     public static final String FORMAT_SAVE_INVOICE_NO = "######";
     public static final String ACTION = "action";
+
+    public static final Integer PRODUCT_HSN = 6006;
 }

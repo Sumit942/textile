@@ -40,12 +40,12 @@
     <div class="row">
         <div class="col-md-6">
             <form:hidden path="id"/>
-            <form:label path="invoiceNo">Invoice No:</form:label>
-            <form:input path="invoiceNo" />
+            <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
+            <form:input path="invoiceNo" class="col-md-3"/>
         </div>
         <div class="col-md-6">
-            <form:label path="transportMode">Transport Mode:</form:label>
-            <form:select path="transportMode">
+            <form:label path="transportMode" class="col-md-3">Transport Mode:</form:label>
+            <form:select path="transportMode" class="col-md-3">
                 <form:options items="${transportModes}" itemValue="id" itemLabel="mode" />
             </form:select>
             <form:errors path="transportMode" cssClass="error"/>
@@ -54,40 +54,41 @@
     <div class="row">
         <div class="col-md-6">
 
-            <form:label path="invoiceDate">Invoice date:</form:label>
+            <form:label path="invoiceDate" class="col-md-3">Invoice date:</form:label>
             <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.invoiceDate}" var="invoiceDateFormatted"/>
-            <input name="invoiceDate" value="${invoiceDateFormatted}"/>
+            <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly/>
             <form:errors path="invoiceDate" cssClass="error"/>
         </div>
         <div class="col-md-6">
-            <form:label path="vehicleNo">Vehicle Number:</form:label>
-            <form:input path="vehicleNo" />
+            <form:label path="vehicleNo" class="col-md-3">Vehicle Number:</form:label>
+            <form:input path="vehicleNo" class="col-md-3"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
-            <form:label path="reverseCharge">Reverse Charge (Y/N):</form:label>
-            <form:select path="reverseCharge">
+            <form:label path="reverseCharge" class="col-md-3">Reverse Charge (Y/N):</form:label>
+            <form:select path="reverseCharge" class="col-md-3">
                 <form:option value="NO" label="NO"/>
                 <form:option value="YES" label="YES"/>
             </form:select>
             <form:errors path="reverseCharge" cssClass="error"/>
         </div>
         <div class="col-md-6">
-            <form:label path="dateOfSupply">Date of Supply:</form:label>
-            <form:input path="dateOfSupply" />
+            <form:label path="dateOfSupply" class="col-md-3">Date of Supply:</form:label>
+            <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.dateOfSupply}" var="dateOfSupplyFormatted"/>
+            <input name="dateOfSupply" id="dateOfSupply" value="${dateOfSupplyFormatted}" class="col-md-3" readonly/>
             <form:errors path="dateOfSupply" cssClass="error"/>
         </div>
     </div>
     <div class="row">
          <div class="col-md-6">
-            <form:label path="invoiceBy.address.state.name">State:</form:label>
-            <form:input path="invoiceBy.address.state.name" />
+            <form:label path="invoiceBy.address.state.name" class="col-md-3">State:</form:label>
+            <form:input path="invoiceBy.address.state.name" class="col-md-3"/>
             <form:errors path="invoiceBy.address.state.name" cssClass="error"/>
          </div>
          <div class="col-md-6">
-            <form:label path="placeOfSupply">Place of Supply:</form:label>
-            <form:input path="placeOfSupply"/>
+            <form:label path="placeOfSupply" class="col-md-3">Place of Supply:</form:label>
+            <form:input path="placeOfSupply" class="col-md-3"/>
             <form:errors path="placeOfSupply" cssClass="error"/>
          </div>
     </div>
@@ -102,88 +103,90 @@
     <div class="row">
         <div class="col-md-6">
             <form:hidden path="billToParty.id" />
-            <form:label path="billToParty.name">Name:</form:label>
-            <form:input path="billToParty.name" />
+            <form:label path="billToParty.name" class="col-md-3">Name:</form:label>
+            <form:input path="billToParty.name" class="col-md-3"/>
             <form:errors path="billToParty.name" cssClass="error"/>
         </div>
         <div class="col-md-6">
             <form:hidden path="shipToParty.id" />
-            <form:label path="shipToParty.name">Name:</form:label>
-            <form:input path="shipToParty.name" />
+            <form:label path="shipToParty.name" class="col-md-3">Name:</form:label>
+            <form:input path="shipToParty.name" class="col-md-3"/>
             <form:errors path="shipToParty.name" cssClass="error"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <form:hidden path="billToParty.address.id" />
-            <form:label path="billToParty.address.address">Address:</form:label>
-            <form:input path="billToParty.address.address" />
+            <form:label path="billToParty.address.address" class="col-md-12">Address:</form:label>
+            <form:textarea path="billToParty.address.address" class="col-md-7"/>
             <form:errors path="billToParty.address.address" cssClass="error"/>
-            <form:label path="billToParty.address.pinCode">PinCode:</form:label>
-            <form:input path="billToParty.address.pinCode" />
+            <form:label path="billToParty.address.pinCode" class="col-md-2" style="margin-left: 5%;">PinCode:</form:label>
+            <form:input path="billToParty.address.pinCode" class="col-md-2"/>
             <form:errors path="billToParty.address.pinCode" cssClass="error" />
         </div>
         <div class="col-md-6">
             <form:hidden path="shipToParty.address.id" />
-            <form:label path="shipToParty.address.address">Address:</form:label>
-            <form:input path="shipToParty.address.address" />
+            <form:label path="shipToParty.address.address" class="col-md-12">Address:</form:label>
+            <form:textarea path="shipToParty.address.address" class="col-md-7"/>
             <form:errors path="shipToParty.address.address" cssClass="error"/>
-            <form:label path="shipToParty.address.pinCode">PinCode:</form:label>
-            <form:input path="shipToParty.address.pinCode" />
+            <form:label path="shipToParty.address.pinCode" class="col-md-2" style="margin-left: 5%;">PinCode:</form:label>
+            <form:input path="shipToParty.address.pinCode" class="col-md-2"/>
             <form:errors path="shipToParty.address.pinCode" cssClass="error" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
-            <form:label path="billToParty.gst">GSTIN:</form:label>
-            <form:input path="billToParty.gst" />
+            <form:label path="billToParty.gst" class="col-md-3">GSTIN:</form:label>
+            <form:input path="billToParty.gst" class="col-md-3"/>
             <form:errors path="billToParty.gst" cssClass="error"/>
         </div>
         <div class="col-md-6">
-            <form:label path="shipToParty.gst">GSTIN:</form:label>
-            <form:input path="shipToParty.gst" />
+            <form:label path="shipToParty.gst" class="col-md-3">GSTIN:</form:label>
+            <form:input path="shipToParty.gst" class="col-md-3"/>
             <form:errors path="shipToParty.gst" cssClass="error"/>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
             <form:hidden path="billToParty.address.state.id" />
             <form:hidden path="billToParty.address.state.country.id" />
-            <form:label path="billToParty.address.state.name">State:</form:label>
-            <form:input path="billToParty.address.state.name" />
+            <form:label path="billToParty.address.state.name" class="col-md-3">State:</form:label>
+            <form:input path="billToParty.address.state.name" class="col-md-3"/>
             <form:errors path="billToParty.address.state.name" cssClass="error"/>
-        </div>
-        <div class="col-md-3">
-            <form:label path="billToParty.address.state.code">Code:</form:label>
-            <form:input path="billToParty.address.state.code" />
+
+            <form:label path="billToParty.address.state.code" class="col-md-2" style="margin-left: 13%;">Code:</form:label>
+            <form:input path="billToParty.address.state.code" class="col-md-2"/>
             <form:errors path="billToParty.address.state.code" cssClass="error"/>
         </div>
-        <div class="col-md-3">
-            <form:label path="shipToParty.address.state.name">State:</form:label>
-            <form:input path="shipToParty.address.state.name" />
+        <div class="col-md-6">
+            <form:hidden path="shipToParty.address.state.id" />
+            <form:hidden path="shipToParty.address.state.country.id" />
+            <form:label path="shipToParty.address.state.name" class="col-md-3">State:</form:label>
+            <form:input path="shipToParty.address.state.name" class="col-md-3"/>
             <form:errors path="shipToParty.address.state.name" cssClass="error"/>
-        </div>
-        <div class="col-md-3">
-            <form:label path="shipToParty.address.state.code">Code:</form:label>
-            <form:input path="shipToParty.address.state.code" />
+
+            <form:label path="shipToParty.address.state.code" class="col-md-2">Code:</form:label>
+            <form:input path="shipToParty.address.state.code" class="col-md-2" style="margin-left: 13%;"/>
             <form:errors path="shipToParty.address.state.code" cssClass="error"/>
         </div>
     </div>
 
-    <table class="table">
+    <div class="">
+    <table class="table" id="productDescTable">
     <thead>
         <tr>
-          <th scope="col">Sr.No</th>
-          <th scope="col">Product Description</th>
-          <th scope="col">Challan No</th>
-          <th scope="col">HSN code</th>
-          <th scope="col">UOM</th>
-          <th scope="col">Qty</th>
-          <th scope="col">Rate</th>
-          <th scope="col">Amount</th>
+          <th>Sr.No</th>
+          <th>Product Description</th>
+          <th>Challan No</th>
+          <th>HSN code</th>
+          <th>UOM</th>
+          <th>Qty</th>
+          <th>Rate</th>
+          <th>Amount</th>
+          <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="productDescTBody">
     <tr>
         <td></td>
         <td colspan="2">
@@ -191,6 +194,7 @@
                 <form:options items="${saleTypes}" itemValue="id" itemLabel="saleType" />
             </form:select>
         </td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -206,7 +210,7 @@
             </td>
             <td>
                 <input type="hidden" name="product[0].product.id" />
-                <form:input path="product[0].product.name" class="productDesc"/>
+                <form:input path="product[0].product.name" onkeypress="autoSearchProduct(this,0)" class="ui-autocomplete-input" autocomplete="off"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
@@ -214,7 +218,7 @@
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].product.hsn" />
+                <form:input path="product[0].product.hsn" style="width: 100%;"/>
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
             <td>
@@ -224,16 +228,18 @@
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].quantity" />
+                <form:input path="product[0].quantity" onkeyup="updateRowAmount(0)"/>
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].rate" />
+                <form:input path="product[0].rate" onkeyup="updateRowAmount(0)"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
             <td>
                 <form:input path="product[0].totalPrice" />
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
+            </td>
+            <td>
             </td>
         </tr>
     </c:when>
@@ -246,7 +252,7 @@
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
-                    <form:input path="product[${index.index}].product.name" class="productDesc"/>
+                    <form:input path="product[${index.index}].product.name" onkeypress="autoSearchProduct(this,${index.index})"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
@@ -254,7 +260,7 @@
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].product.hsn" />
+                    <form:input path="product[${index.index}].product.hsn" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].product.hsn" cssClass="error"/>
                 </td>
                 <td>
@@ -264,35 +270,56 @@
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].quantity" />
+                    <form:input path="product[${index.index}].quantity" onkeyup="updateRowAmount(${index.index})"/>
                     <form:errors path="product[${index.index}].quantity" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].rate" />
+                    <form:input path="product[${index.index}].rate" onkeyup="updateRowAmount(${index.index})"/>
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
                     <form:input path="product[${index.index}].totalPrice" />
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
+                <td>
+                    <c:if test="${index.index > 0}">
+                        <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow()"/>
+                    </c:if>
+                </td>
             </tr>
         </c:forEach>
     </c:otherwise>
     </c:choose>
-    <tr>
-        <td></td>
-        <td colspan="2">Packing & Forwarding Charges</div>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-            <form:input path="pnfCharge"/>
-            <form:errors path="pnfCharge" cssClass="error"/>
-        </td>
-    </tr>
     </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <input type="button" class="btn btn-primary" value="Add" id="add" onclick="addProductDescRow()"/>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td colspan="2">Packing & Forwarding Charges</div>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <form:input path="pnfCharge"/>
+                <form:errors path="pnfCharge" cssClass="error"/>
+            </td>
+        </tr>
+    </tfoot>
     </table>
+    </div>
 
     <div class="row">
         <div class="col-md-8">
@@ -382,9 +409,23 @@
 </form:form>
 <script>
 $(document).ready(function() {
+    $( "#dateOfSupply" ).datepicker({
+        dateFormat: 'dd/mm/yy'
+    })
+    $( "#invoiceDate" ).datepicker({
+       format: 'dd/mm/yy'
+    })
+
+
     /**                 billToParty script                  **/
     $("#billToParty\\.address\\.address").on("focusout",function(e){
         $("#shipToParty\\.address\\.address").val(this.value);
+        var pinCode = this.value.substr(-6)
+        if (isNaN(pinCode)) {
+            return;
+        }
+        $("#billToParty\\.address\\.pinCode").val(pinCode);
+        $("#shipToParty\\.address\\.pinCode").val(pinCode);
     })
     $("#billToParty\\.address\\.pinCode").on("focusout",function(e){
         $("#shipToParty\\.address\\.pinCode").val(this.value);
@@ -560,20 +601,24 @@ $(document).ready(function() {
         $("#shipToParty\\.gst").val(item.gst)
         setShipToPartyState(item.address.state)
     }
+
+
 });
 
     /**                 productDescription script                  **/
+function autoSearchProduct(obj,index) {
 
-    /*$("#shipToParty\\.name").autocomplete({
+    $(obj).autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
+                url : "${pageContext.request.contextPath}/product/searchByName/"+request.term,
                 dataType : 'json',
                 success : function(data) {
                     response(data);
                 },
                 error : function(err) {
-                    resetShipToParty()
+                    $("#product"+index+"\\.product\\.hsn").val('')
+                    $("#product"+index+"\\.product\\.id").val('')
                     console.error(err)
                 }
             });
@@ -581,13 +626,121 @@ $(document).ready(function() {
         minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
-            setShipToParty(ui.item)
+            $("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
+            $("#product"+index+"\\.product\\.id").val(ui.item.id)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
-    };*/
+                "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+    };
+}
+
+
+    /**                 add button script                  **/
+function addProductDescRow() {
+
+    var i = $("#productDescTBody > tr").length - 1;
+
+    var prodDescRow = '<tr>'+
+                        '<td>'+
+                            '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
+                            '<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input type="hidden" name="product['+i+'].product.id">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" onkeypress="autoSearchProduct(this,'+i+')" type="text" value="">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" value="">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" type="text" value="6006" style="width: 100%;">'+
+                        '</td>'+
+                        '<td>'+
+                            '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id">'+
+                                $("#product0\\.unitOfMeasure\\.id").html()+
+                            '</select>'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" type="text" onkeyup="updateRowAmount('+i+')" >'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" type="text" onkeyup="updateRowAmount('+i+')">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" type="text" value="">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
+                        '</td>'+
+                      '</tr>';
+
+    $("#productDescTBody > tr:eq("+i+")").find('td:eq(8)').html('')
+    $("#productDescTBody").append(prodDescRow)
+}
+function productDelRow() {
+    var rowCount = $("#productDescTBody > tr").length
+    if (rowCount > 2) {
+        $("#productDescTBody > tr:last").remove()
+        if (rowCount > 3) {
+            $("#productDescTBody > tr:last > td:eq(8)").html('<input type="button" value="-" id="productDel_'+(rowCount-1)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">')
+        }
+    }
+    updateTotalAmount()
+}
+    /**                 calculation script                  **/
+function updateRowAmount(index) {
+
+    var quantity = $("#product"+index+"\\.quantity").val()
+    var rate= $("#product"+index+"\\.rate").val()
+    var amount = quantity * rate
+    //console.log('quantity: '+quantity+', rate: '+rate+', amount: '+amount)
+    $("#product"+index+"\\.totalPrice").val(amount)
+    updateTotalAmount()
+}
+function updateTotalAmount() {
+
+    var totalAmount = 0;
+    $("input[id$='.totalPrice']").each(function(k,v){
+        totalAmount += parseFloat(v.value)
+        //console.log('adding... '+v.value)
+    })
+    $("#totalAmount").val(totalAmount)
+
+    var gst = parseFloat((totalAmount*(2.5/100)).toFixed(2));
+    $("#cGst").val(gst)
+    $("#sGst").val(gst)
+
+    var totalTaxAmount = gst*2
+    $("#totalTaxAmount").val(totalTaxAmount)
+    //console.log('totalAmount: '+totalAmount+', gst: '+gst+', totalTaxAmount: '+totalTaxAmount)
+
+    var totalAmountAfterTax = totalAmount + totalTaxAmount
+    var roundedTotalAmountAfterTax = Math.round(totalAmountAfterTax)
+
+    $("#roundOff").val((totalAmountAfterTax-roundedTotalAmountAfterTax).toFixed(2))
+
+    $("#totalAmountAfterTax").val(roundedTotalAmountAfterTax)
+
+    inWords(roundedTotalAmountAfterTax)
+}
+
+var a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+var b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+
+function inWords (num) {
+    if ((num = num.toString()).length > 9) return 'overflow';
+    n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return; var str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only.' : '.';
+
+    $("#totalInvoiceAmountInWords").val(str)
+}
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

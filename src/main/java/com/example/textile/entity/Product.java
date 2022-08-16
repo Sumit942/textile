@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.example.textile.utility.ShreeramTextileConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +13,7 @@ import java.util.Date;
 public class Product implements Serializable {
     private Long id;
     private String name;
-    private Integer hsn;
+    private Integer hsn = ShreeramTextileConstants.PRODUCT_HSN;
     private Date insertDt;
     private Date updateDt;
 

@@ -28,7 +28,6 @@ public class Address implements Serializable {
         this.id = id;
     }
 
-    @NotNull
     @ManyToOne
     public State getState() {
         return state;

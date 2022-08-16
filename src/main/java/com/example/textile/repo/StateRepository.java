@@ -10,4 +10,6 @@ public interface StateRepository extends JpaRepository<State, Long> {
 
     @Query("select s from State s where lower(s.name) like concat('%',lower(:name),'%')")
     List<State> findByNameLike(String name);
+
+    State findByCode(Integer code);
 }

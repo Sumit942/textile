@@ -32,7 +32,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
 
-        invoiceService.save(invoice);
+//        invoiceService.save(invoice);
         if (ActionType.SUBMIT.equals(action)) {
             log.info("{} [ActionType=SUBMIT]",logPrefix);
             invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
@@ -40,7 +40,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             log.info("{} [ActionType=SAVE]",logPrefix);
             invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
         }
-        //saving the by getting the invoiceId
+        //saving by getting the invoiceId
         invoiceService.save(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         log.info("{} [Reponse=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
@@ -54,25 +54,38 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         String logSuffix = "";
         log.info("{} Entry",logPrefix);
         if (invoice.getBillToParty().getId() == null) {
-            log.info("{} new invoice",logPrefix);
+            log.info("{} new bParty invoice",logPrefix);
             //check if the newly added gst already exist
             List<Company> bParty = invoiceService.getCompanyByGst(invoice.getBillToParty().getGst());
             logSuffix += "GST="+invoice.getBillToParty().getGst()+";";
             if (bParty != null && !bParty.isEmpty()) {
-                logSuffix += "isDuplicate=YES;";
-                Company savedParty = bParty.get(0);
+                logSuffix += "bParty:isDuplicate=YES;";
                 result.rejectValue("billToParty.gst",
                         "invoiceCommand.billToParty.gst.alreadyExist",
-                        new Object[]{savedParty.getName()},
+                        new Object[]{bParty.get(0).getName()},
+                        "Gst Already registered");
+                if (invoice.getBillToParty().getGst().equals(invoice.getShipToParty().getGst()))
+                    result.rejectValue("billToParty.gst",
+                            "invoiceCommand.shipToParty.gst.alreadyExist",
+                            new Object[]{bParty.get(0).getName()},
+                            "Gst Already registered");
+            } else {
+                logSuffix += "bParty:isDuplicate=NO;";
+            }
+        }
+        if (invoice.getShipToParty().getId() == null &&
+                !invoice.getBillToParty().getGst().equals(invoice.getShipToParty().getGst())) {
+            List<Company> sParty = invoiceService.getCompanyByGst(invoice.getBillToParty().getGst());
+            if (sParty != null && !sParty.isEmpty()) {
+                logSuffix+="sParty:isDuplicateGst=YES";
+                result.rejectValue("billToParty.gst",
+                        "invoiceCommand.shipToParty.gst.alreadyExist",
+                        new Object[]{sParty.get(0).getName()},
                         "Gst Already registered");
             } else {
-                logSuffix += "isDuplicate=NO;";
+                logSuffix+="sParty:isDuplicateGst=NO";
             }
-
-        } else {
-            log.info("{} old invoice {}",logPrefix, invoice.getId());
         }
-
         log.info("{} Exit [{}]", logPrefix, logSuffix);
     }
 
@@ -107,9 +120,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 } else {
                     if (invoice.getBillToParty().getAddress().getAddress() == null)
                         errMap.put("billToParty.address.address","NotNull.invoiceCommand.billToParty.address.address");
-                    if (invoice.getBillToParty().getAddress().getPinCode() == null) {
-                        errMap.put("billToParty.address.pinCode","NotNull.invoiceCommand.billToParty.address.pinCode");
-                    }
+                    //if (invoice.getBillToParty().getAddress().getPinCode() == null)
+                    //    errMap.put("billToParty.address.pinCode","NotNull.invoiceCommand.billToParty.address.pinCode");
                     if (invoice.getBillToParty().getAddress().getState() == null) {
                         errMap.put("billToParty.address.state","NotNull.invoiceCommand.billToParty.address.state");
                     } else {
@@ -131,8 +143,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 } else {
                     if (invoice.getShipToParty().getAddress().getAddress() == null)
                         errMap.put("shipToParty.address.address","NotNull.invoiceCommand.shipToParty.address.address");
-                    if (invoice.getShipToParty().getAddress().getPinCode() == null)
-                        errMap.put("shipToParty.address.pinCode","NotNull.invoiceCommand.shipToParty.address.pinCode");
+                    //if (invoice.getShipToParty().getAddress().getPinCode() == null)
+                    //    errMap.put("shipToParty.address.pinCode","NotNull.invoiceCommand.shipToParty.address.pinCode");
                     if (invoice.getShipToParty().getAddress().getState() == null) {
                         errMap.put("shipToParty.address.state","NotNull.invoiceCommand.shipToParty.address.state");
                     } else {

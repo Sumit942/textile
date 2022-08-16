@@ -1,11 +1,15 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
 
 @Entity
 public class BankDetail implements Serializable {
@@ -14,6 +18,8 @@ public class BankDetail implements Serializable {
     private String accountNo;
     private String ifsc;
     private String branch;
+    private Date insert_dt;
+    private Date update_dt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +61,24 @@ public class BankDetail implements Serializable {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    @CreationTimestamp
+    public Date getInsert_dt() {
+        return insert_dt;
+    }
+
+    public void setInsert_dt(Date insert_dt) {
+        this.insert_dt = insert_dt;
+    }
+
+    @UpdateTimestamp
+    public Date getUpdate_dt() {
+        return update_dt;
+    }
+
+    public void setUpdate_dt(Date update_dt) {
+        this.update_dt = update_dt;
     }
 
     @Override

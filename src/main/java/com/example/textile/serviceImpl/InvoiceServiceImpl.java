@@ -47,25 +47,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice save(Invoice invoice) {
         String logPrefix = "save() |";
         String logSuffix = "";
-        // if ship & bill party are same first save Company object for - DataIntegrityViolationException in Company
-        if(invoice.getBillToParty().getGst().equalsIgnoreCase(invoice.getShipToParty().getGst())) {
-            //if address is different eg. office / company
-            logSuffix += "GstMatch=YES;";
-            if (!invoice.getBillToParty().getAddress().getAddress().equals(invoice.getShipToParty().getAddress().getAddress())) {
-                logSuffix += "AddressMatch=NO;";
-                invoice.getBillToParty().setOfcAddress(invoice.getShipToParty().getAddress());
-            } else {
-                logSuffix += "AddressMatch=YES;";
-            }
-            log.info("{} saving->{} [{}]", logPrefix, invoice.getBillToParty(),logSuffix);
-            Company party = companyRepo.save(invoice.getBillToParty());
-            logSuffix += "bsPartyId="+party.getId()+";";
-            invoice.setBillToParty(party);
-            invoice.setShipToParty(party);
-        } else {
-            log.info("{} same Bill & Ship party same gst",logPrefix);
-        }
-
+        log.info("{} saving.... {}",logPrefix,invoice);
+        preCheckCompany(invoice);
         //check if the product name is already added. is yes then use it.
         invoice.getProduct().stream()
                 .filter(e -> e.getProduct().getId() == null)
@@ -73,6 +56,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                     Product savedPrdt = productRepo.findByName(e.getProduct().getName());
                     if (savedPrdt != null) {
                         e.getProduct().setId(savedPrdt.getId());
+                    } else {
+                        productRepo.save(e.getProduct());
+                        log.info("{} saving product{} ", logPrefix,e.getProduct());
                     }
                 });
 
@@ -81,6 +67,58 @@ public class InvoiceServiceImpl implements InvoiceService {
         return saved;
     }
 
+    private void preCheckCompany(Invoice invoice) {
+        String logPrefix = "preCheckCompany() ";
+        String logSuffix = "";
+        if (invoice.getBillToParty().getId() != null && invoice.getBillToParty().getId() > 0
+            && invoice.getShipToParty().getId() != null && invoice.getShipToParty().getId() > 0)
+            return;
+
+        //saving transient objects
+        if (invoice.getBillToParty().getAddress().getState().getId() == null) {
+            State bPartyState = stateRepo.save(invoice.getBillToParty().getAddress().getState());
+            invoice.getBillToParty().getAddress().setState(bPartyState);
+            //state code are same to bill&ship party then set same state
+            if (invoice.getBillToParty().getAddress().getState().getCode()
+                    .equals(invoice.getShipToParty().getAddress().getState().getCode())) {
+                invoice.getShipToParty().getAddress().setState(bPartyState);
+            } else {
+                if (invoice.getShipToParty().getAddress().getState().getId() == null) {
+                    State sPartyState = stateRepo.save(invoice.getShipToParty().getAddress().getState());
+                    invoice.getShipToParty().getAddress().setState(sPartyState);
+                }
+            }
+        }
+        if (invoice.getShipToParty().getAddress().getState().getId() == null) {
+            State sPartyState = stateRepo.save(invoice.getShipToParty().getAddress().getState());
+            invoice.getShipToParty().getAddress().setState(sPartyState);
+        }
+
+        // if ship & bill party are same first save Company object for - DataIntegrityViolationException in Company
+        if (invoice.getBillToParty().getGst().equalsIgnoreCase(invoice.getShipToParty().getGst())) {
+            //if address is different eg. office / company
+            logSuffix += "GstMatch=YES;";
+            if (!invoice.getBillToParty().getAddress().getAddress().equals(invoice.getShipToParty().getAddress().getAddress())) {
+                logSuffix += "AddressMatch=NO;";
+                invoice.getBillToParty().setOfcAddress(invoice.getShipToParty().getAddress());
+            } else {
+                logSuffix += "AddressMatch=YES;";
+            }
+            Company party = companyRepo.save(invoice.getBillToParty());
+            logSuffix += "bsPartyId="+party.getId()+";";
+            invoice.setBillToParty(party);
+            invoice.setShipToParty(party);
+        } else {
+            log.info("{} Bill & Ship party different GST", logPrefix);
+            Company bParty = companyRepo.save(invoice.getBillToParty());
+            Company sParty = companyRepo.save(invoice.getShipToParty());
+            invoice.setBillToParty(bParty);
+            invoice.setShipToParty(sParty);
+        }
+
+        log.info("{} saving-> bParty{}; sParty{}; [{}]", logPrefix, invoice.getBillToParty().getId(), invoice.getShipToParty().getId(), logSuffix);
+        log.info("{} Exit {}",logPrefix,logSuffix);
+    }
 
 
     @Override

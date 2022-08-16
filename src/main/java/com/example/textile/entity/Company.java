@@ -41,7 +41,7 @@ public class Company implements Serializable {
         this.name = name;
     }
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(cascade = CascadeType.ALL)
     public Address getAddress() {
         return address;
     }
@@ -50,7 +50,7 @@ public class Company implements Serializable {
         this.address = address;
     }
 
-    @OneToOne(optional = true)
+    @OneToOne
     public Address getOfcAddress() {
         return ofcAddress;
     }
@@ -84,7 +84,8 @@ public class Company implements Serializable {
         this.mobileNo = mobileNo;
     }
 
-    @OneToMany(mappedBy = "id",cascade = {CascadeType.DETACH,CascadeType.REMOVE})
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "company_id")
     public List<BankDetail> getBankDetails() {
         return bankDetails;
     }
@@ -98,13 +99,13 @@ public class Company implements Serializable {
         return insert_dt;
     }
 
-    public Date getUpdate_dt() {
-        return update_dt;
+    public void setInsert_dt(Date insert_dt) {
+        this.insert_dt = insert_dt;
     }
 
     @UpdateTimestamp
-    public void setInsert_dt(Date insert_dt) {
-        this.insert_dt = insert_dt;
+    public Date getUpdate_dt() {
+        return update_dt;
     }
 
     public void setUpdate_dt(Date update_dt) {

@@ -28,4 +28,12 @@ public class TransportMode {
     public void setMode(String mode) {
         this.mode = mode;
     }
+
+    @Override
+    public String toString() {
+        return "TransportMode{" +
+                "id=" + id +
+                ", mode='" + mode + '\'' +
+                '}';
+    }
 }
