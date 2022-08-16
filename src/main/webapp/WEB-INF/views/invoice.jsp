@@ -35,15 +35,15 @@
 <form:form name="invoice" action="submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
     <div class="row mb-1">
-        <div class="col-md-12" style="text-align:center;">Tax Invoice</div>
+        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">Tax Invoice</div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="id"/>
             <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
             <form:input path="invoiceNo" class="col-md-3"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="transportMode" class="col-md-3">Transport Mode:</form:label>
             <form:select path="transportMode" class="col-md-3">
                 <form:options items="${transportModes}" itemValue="id" itemLabel="mode" />
@@ -52,20 +52,20 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
 
             <form:label path="invoiceDate" class="col-md-3">Invoice date:</form:label>
             <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.invoiceDate}" var="invoiceDateFormatted"/>
             <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly/>
             <form:errors path="invoiceDate" cssClass="error"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="vehicleNo" class="col-md-3">Vehicle Number:</form:label>
             <form:input path="vehicleNo" class="col-md-3"/>
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="reverseCharge" class="col-md-3">Reverse Charge (Y/N):</form:label>
             <form:select path="reverseCharge" class="col-md-3">
                 <form:option value="NO" label="NO"/>
@@ -73,7 +73,7 @@
             </form:select>
             <form:errors path="reverseCharge" cssClass="error"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="dateOfSupply" class="col-md-3">Date of Supply:</form:label>
             <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.dateOfSupply}" var="dateOfSupplyFormatted"/>
             <input name="dateOfSupply" id="dateOfSupply" value="${dateOfSupplyFormatted}" class="col-md-3" readonly/>
@@ -81,33 +81,33 @@
         </div>
     </div>
     <div class="row mb-1">
-         <div class="col-md-6">
+         <div class="col-md-6 border">
             <form:label path="invoiceBy.address.state.name" class="col-md-3">State:</form:label>
             <form:input path="invoiceBy.address.state.name" class="col-md-3"/>
             <form:errors path="invoiceBy.address.state.name" cssClass="error"/>
          </div>
-         <div class="col-md-6">
+         <div class="col-md-6 border">
             <form:label path="placeOfSupply" class="col-md-3">Place of Supply:</form:label>
             <form:input path="placeOfSupply" class="col-md-3"/>
             <form:errors path="placeOfSupply" cssClass="error"/>
          </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border fw-bold" style="text-align:center;">
             <span>Bill to Party</span>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border fw-bold" style="text-align:center;">
             <span>Ship to Party</span>
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="billToParty.id" />
             <form:label path="billToParty.name" class="col-md-3">Name:</form:label>
             <form:input path="billToParty.name" class="col-md-3"/>
             <form:errors path="billToParty.name" cssClass="error"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="shipToParty.id" />
             <form:label path="shipToParty.name" class="col-md-3">Name:</form:label>
             <form:input path="shipToParty.name" class="col-md-3"/>
@@ -115,7 +115,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="billToParty.address.id" />
             <form:label path="billToParty.address.address" class="col-md-12">Address:</form:label>
             <form:textarea path="billToParty.address.address" class="col-md-7"/>
@@ -124,7 +124,7 @@
             <form:input path="billToParty.address.pinCode" class="col-md-2"/>
             <form:errors path="billToParty.address.pinCode" cssClass="error" />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="shipToParty.address.id" />
             <form:label path="shipToParty.address.address" class="col-md-12">Address:</form:label>
             <form:textarea path="shipToParty.address.address" class="col-md-7"/>
@@ -135,19 +135,19 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="billToParty.gst" class="col-md-3">GSTIN:</form:label>
             <form:input path="billToParty.gst" class="col-md-3"/>
             <form:errors path="billToParty.gst" cssClass="error"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:label path="shipToParty.gst" class="col-md-3">GSTIN:</form:label>
             <form:input path="shipToParty.gst" class="col-md-3"/>
             <form:errors path="shipToParty.gst" cssClass="error"/>
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="billToParty.address.state.id" />
             <form:hidden path="billToParty.address.state.country.id" />
             <form:label path="billToParty.address.state.name" class="col-md-3">State:</form:label>
@@ -158,7 +158,7 @@
             <form:input path="billToParty.address.state.code" class="col-md-2"/>
             <form:errors path="billToParty.address.state.code" cssClass="error"/>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 border">
             <form:hidden path="shipToParty.address.state.id" />
             <form:hidden path="shipToParty.address.state.country.id" />
             <form:label path="shipToParty.address.state.name" class="col-md-3">State:</form:label>
@@ -316,13 +316,14 @@
                 <form:input path="pnfCharge"/>
                 <form:errors path="pnfCharge" cssClass="error"/>
             </td>
+            <td></td>
         </tr>
     </tfoot>
     </table>
     </div>
 
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
             <form:label path="totalInvoiceAmountInWords">Total Invoice amount in words</form:label>
         </div>
         <div class="col-md-2">
@@ -334,7 +335,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
             <form:textarea path="totalInvoiceAmountInWords" style="width:100%;height:100%;" readonly="true"/>
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
@@ -347,7 +348,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
@@ -359,7 +360,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
@@ -371,7 +372,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
@@ -383,7 +384,7 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8">
+        <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
@@ -444,6 +445,7 @@ $(document).ready(function() {
         },
         minLength: 4,
         select : function(event, ui) {
+            console.log('selected')
             this.value = ui.item.name
             setBillToParty(ui.item)
             return false;

@@ -71,8 +71,10 @@ public class InvoiceController {
         log.info("show invoice");
         ModelAndView model = new ModelAndView("/invoice");
         try {
-            invoiceService.finById(id);
-        } catch (Exception e) {
+            Invoice invoice = invoiceService.finById(id);
+            actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
+            model.addObject(CommandConstants.INVOICE_COMMAND,invoice);
+        } catch (Throwable e) {
             log.error("Exception: {} prePopulation","getInvoiceById()",e);
         }
         return model;
