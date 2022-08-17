@@ -42,6 +42,7 @@
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.id}" target="_blank">${invoice.invoiceNo}</a>
+                        (<a href="${pageContext.request.contextPath}/invoices/print/${invoice.id}" target="_blank">Print</a>)
                     </td>
                     <td>${invoice.billToParty.gst}</td>
                     <td>${invoice.billToParty.name}</td>
