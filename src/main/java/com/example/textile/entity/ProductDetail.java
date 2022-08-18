@@ -17,7 +17,7 @@ public class ProductDetail implements Serializable {
     private Unit unitOfMeasure;
     private Double quantity;
     private Double rate;
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     private Date insertDt;
     private Date updateDt;
