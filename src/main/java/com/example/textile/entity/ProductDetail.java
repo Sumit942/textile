@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class ProductDetail implements Serializable {
@@ -110,5 +111,18 @@ public class ProductDetail implements Serializable {
     @Override
     public String toString() {
         return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductDetail that = (ProductDetail) o;
+        return Objects.equals(id, that.id) && product.equals(that.product) && chNo.equals(that.chNo) && quantity.equals(that.quantity) && rate.equals(that.rate) && totalPrice.compareTo(that.totalPrice)==0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, product, chNo, quantity, rate, totalPrice);
     }
 }

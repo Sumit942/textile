@@ -20,7 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,7 +39,7 @@ import java.util.*;
 @Slf4j
 @Controller
 @RequestMapping("/invoices")
-public class InvoiceController {
+public class InvoiceController extends BaseController {
 
     @Autowired
     InvoiceService invoiceService;
@@ -67,61 +71,74 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoice/{id}")
-    public ModelAndView getInvoiceById(@PathVariable("id") Long id) {
+    public ModelAndView getInvoiceById(@PathVariable("id") Long id,ModelMap model) {
         log.info("show invoice");
-        ModelAndView model = new ModelAndView("/invoice");
+        ModelAndView modelView = new ModelAndView("/invoice");
         try {
             Invoice invoice = invoiceService.finById(id);
             actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
-            model.addObject(CommandConstants.INVOICE_COMMAND,invoice);
+            model.addAttribute(CommandConstants.INVOICE_COMMAND,invoice);
         } catch (Throwable e) {
             log.error("Exception: {} prePopulation","getInvoiceById()",e);
         }
-        return model;
+        return modelView;
     }
 
     @GetMapping("/submit")
     public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
-                                   RedirectAttributes redirectAttributes) {
+                                   ModelMap model, RedirectAttributes redirectAttributes) {
         log.info("show invoice");
-        ModelAndView model = new ModelAndView("invoice");
+        ModelAndView modelView = new ModelAndView("invoice");
         try {
             actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
         } catch (InvalidObjectPopulationException e) {
             log.error("Exception: {} prePopulation","getInvoice()",e);
         }
-        return model;
+        return modelView;
     }
 
     @PostMapping("/submit")
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
-                                      BindingResult result, RedirectAttributes redirectAttr) throws ServiceActionException {
-        ModelAndView model =  new ModelAndView("invoice");
+                                    BindingResult result, HttpServletRequest request,
+                                    ModelMap model, RedirectAttributes redirectAttr) throws ServiceActionException {
+        ModelAndView modelAndView =  new ModelAndView("invoice");
         String logPrefix = "saveInvoice() |";
         log.info("{} Entry -> {}",logPrefix, invoice);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-
+        ActionResponse response = null;
         try {
-            ActionResponse response = actExecutor.execute(invoice, parameterMap, result,model);
+            response = actExecutor.execute(invoice, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
-                model.setViewName("redirect:submit");
+                modelAndView.setViewName("redirect:submit");
                 log.info("{} saved Successfully!!", logPrefix);
+                redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
                 redirectAttr.addFlashAttribute("printInvoice",true);
+                redirectAttr.addFlashAttribute("actionResponse",response);
             } else {
                 log.error("result has doValidation Errors");
                 result.getAllErrors().forEach(System.out::println);
                 log.info("{} save Unsuccessfull", logPrefix);
             }
-        } catch (Exception e) {
-            result.getAllErrors().forEach(System.out::println);
-            log.error("Error in saving invoice", e);
+        } catch (DataAccessException e) {
+            response = new ActionResponse(ResponseType.FAILURE);
+            if (e instanceof ObjectOptimisticLockingFailureException) {
+                response.addErrorMessage(messageSource.getMessage("System.Exception.Optimistic",new Object[]{invoice.getInvoiceNo(),invoice.getId()},request.getLocale()));
+            } else {
+                response.addErrorMessage(messageSource.getMessage("System.Exception.DB",new Object[]{},request.getLocale()));
+            }
+            model.addAttribute("actionResponse",response);
+        } catch (Throwable e) {
+            log.error("SystemError: in saving invoice", e);
+            response = new ActionResponse(ResponseType.FAILURE);
+            String message = messageSource.getMessage("System.Error",null,request.getLocale());
+            response.addErrorMessage(message);
+            model.addAttribute("actionResponse",response);
         }
         log.info("{} Exit",logPrefix);
-        return model;
+        return modelAndView;
     }
     @GetMapping("/bankInvoice")
     public @ResponseBody Invoice showNewInvoice() {

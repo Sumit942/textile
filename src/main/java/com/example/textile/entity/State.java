@@ -29,7 +29,7 @@ public class State implements Serializable {
         this.name = name;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public Country getCountry() {
         return country;
     }
@@ -53,7 +53,6 @@ public class State implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", code=" + code +
-                ", country=" + country +
                 '}';
     }
 }

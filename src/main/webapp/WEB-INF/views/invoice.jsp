@@ -32,8 +32,22 @@
 }
 </style>
 <body>
-<form:form name="invoice" action="submit" method="POST" modelAttribute="invoiceCommand">
+<form:form name="invoice" action="${pageContext.request.contextPath}/invoices/submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
+    <c:if test="${not empty actionResponse.errors}">
+        <div class="row mb-1 alert alert-danger" style="margin: 1%">
+            <ul>
+                <c:forEach items="${actionResponse.errors}" var="errorMessage">
+                    <li>${errorMessage}</li>
+                </c:forEach>
+            </ul>
+        </div>
+    </c:if>
+    <c:if test="${actionResponse.responseType == 'SUCCESS'}">
+        <div class="row mb-1 alert alert-success" style="margin: 1%">
+            Invoice ${invoice.getInvoiceNo()} Save Successfully!!
+        </div>
+    </c:if>
     <div class="row mb-1">
         <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">Tax Invoice</div>
     </div>
@@ -94,7 +108,7 @@
     </div>
     <div class="row mb-1">
         <div class="col-md-6 border">
-            <div class="fw-bold text-center">
+            <div class="fw-bold text-center bg-light">
                 <span>Bill to Party</span>
             </div>
             <div class="row mb-1">
@@ -131,7 +145,7 @@
             </div>
         </div>
         <div class="col-md-6 border">
-            <div class="fw-bold text-center">
+            <div class="fw-bold text-center bg-light">
                 <span>Ship to Party</span>
             </div>
             <div class="row mb-1">
@@ -204,7 +218,7 @@
         <tr>
             <td>
                 <span id="product[0].srNo">1</span>
-                <form:hidden path="product[0].id" />
+                <!-- <form:hidden path="product[0].id" /> -->
             </td>
             <td>
                 <input type="hidden" name="product[0].product.id" />
@@ -242,11 +256,11 @@
         </tr>
     </c:when>
     <c:otherwise>
-        <c:forEach items="product" varStatus="index">
+        <c:forEach items="${invoiceCommand.product}" var="product" varStatus="index">
             <tr>
                 <td>
                     <span id="product[${index.index}].srNo">${index.index + 1}</span>
-                    <form:hidden path="product[${index.index}].id" />
+                    <!-- <form:hidden path="product[${index.index}].id" /> -->
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
@@ -311,7 +325,7 @@
             <td></td>
             <td></td>
             <td>
-                <form:input path="pnfCharge" class="numbersOnly"/>
+                <form:input path="pnfCharge" class="numbersOnly" onkeyup="updateTotalAmount();"/>
                 <form:errors path="pnfCharge" cssClass="error"/>
             </td>
             <td></td>
@@ -358,8 +372,11 @@
         </div>
     </div>
     <div class="row mb-1">
-        <div class="col-md-8 border-end">
-
+        <div class="col-md-8 border-end bg-light">
+            <form:label path="selectedBank.id" class="col-md-2 fw-bold">Bank Details:</form:label>
+            <form:select path="selectedBank.id">
+                <form:options items="${invoiceCommand.invoiceBy.bankDetails}" itemValue="id" itemLabel="bankName" />
+            </form:select>
         </div>
         <div class="col-md-2">
             <span>Total Tax Amount</span>
@@ -407,14 +424,15 @@ $(document).ready(function() {
         dateFormat: 'dd/mm/yy'
     })
     $( "#invoiceDate" ).datepicker({
-       format: 'dd/mm/yy'
+       dateFormat: 'dd/mm/yy'
     })
     $(".numbersOnly").on("keypress paste",function(e){
         var charCode = (e.which) ? e.which : event.keyCode
-        console.log('charCode: '+charCode+', event: '+e.type)
+        //console.log('charCode: '+charCode+', event: '+e.type)
         if (e.type == "paste")
             e.preventDefault()
-        if (String.fromCharCode(charCode).match(/[^0-9]/g))
+
+        if (String.fromCharCode(charCode).match(/[^0-9+?.+0-9$]/g))
             return false
     })
 
@@ -446,7 +464,7 @@ $(document).ready(function() {
     function resetBillToPartyState() {
         $("#billToParty\\.address\\.state\\.id").val('')
         $("#billToParty\\.address\\.state\\.country\\.id").val('')
-        $("#billToParty\\.address\\.state\\.name").val('')
+        //$("#billToParty\\.address\\.state\\.name").val('')
         $("#billToParty\\.address\\.state\\.code").val('')
     }
 
@@ -487,7 +505,7 @@ $(document).ready(function() {
     function resetShipToPartyState() {
         $("#shipToParty\\.address\\.state\\.id").val('')
         $("#shipToParty\\.address\\.state\\.country\\.id").val('')
-        $("#shipToParty\\.address\\.state\\.name").val('')
+        //$("#shipToParty\\.address\\.state\\.name").val('')
         $("#shipToParty\\.address\\.state\\.code").val('')
     }
     //set state fields in billToParty
@@ -536,7 +554,6 @@ function billToPartyAutoComplete(thisObj) {
         },
         minLength: 4,
         select : function(event, ui) {
-            console.log('selected')
             this.value = ui.item.name
             setBillToParty(ui.item)
             return false;
@@ -633,20 +650,23 @@ function shipToPartyAutoComplete(thisObj) {
 
     /**                 productDescription script                  **/
 function autoSearchProduct(obj,index) {
-$("#product"+index+"\\.product\\.hsn").val('')
+//$("#product"+index+"\\.product\\.hsn").val('')
 $("#product"+index+"\\.product\\.id").val('')
     $(obj).autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "${pageContext.request.contextPath}/product/searchByName/"+request.term,
+                url : "${pageContext.request.contextPath}/product/searchByName",
                 dataType : 'json',
+                data : {
+                    name : request.term
+                },
                 success : function(data) {
-                    $("#product"+index+"\\.product\\.hsn").val('')
+                    //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
                     response(data);
                 },
                 error : function(err) {
-                    $("#product"+index+"\\.product\\.hsn").val('')
+                    //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
                     console.error(err)
                 }
@@ -655,7 +675,7 @@ $("#product"+index+"\\.product\\.id").val('')
         minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
-            $("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
+            //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
             $("#product"+index+"\\.product\\.id").val(ui.item.id)
             return false;
         }
@@ -674,7 +694,7 @@ function addProductDescRow() {
     var prodDescRow = '<tr>'+
                         '<td>'+
                             '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
-                            '<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
+                            //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" name="product['+i+'].product.id">'+
@@ -724,10 +744,11 @@ function updateRowAmount(index) {
     var quantity = $("#product"+index+"\\.quantity").val()
     var rate= $("#product"+index+"\\.rate").val()
     var amount = quantity * rate
+    amount = parseFloat(amount.toFixed(2))
     //console.log('quantity: '+quantity+', rate: '+rate+', amount: '+amount)
     $("#product"+index+"\\.totalPrice").val(amount)
     if ($("#product"+index+"\\.totalPrice").val())
-    updateTotalAmount()
+        updateTotalAmount()
 }
 function updateTotalAmount() {
 
@@ -746,11 +767,15 @@ function updateTotalAmount() {
     $("#totalTaxAmount").val(totalTaxAmount)
     //console.log('totalAmount: '+totalAmount+', gst: '+gst+', totalTaxAmount: '+totalTaxAmount)
 
+    var pnfCharge = parseFloat($("#pnfCharge").val())
     var totalAmountAfterTax = totalAmount + totalTaxAmount
     var roundedTotalAmountAfterTax = Math.round(totalAmountAfterTax)
 
-    $("#roundOff").val((totalAmountAfterTax-roundedTotalAmountAfterTax).toFixed(2))
-
+    var roundOff = (totalAmountAfterTax-roundedTotalAmountAfterTax).toFixed(2)
+    $("#roundOff").val(roundOff)
+    //console.log('pnfCharge: '+pnfCharge+', totalAmountAfterTax: '+totalAmountAfterTax)
+    //adding the pnfCharge after round off
+    roundedTotalAmountAfterTax += pnfCharge;
     $("#totalAmountAfterTax").val(roundedTotalAmountAfterTax)
 
     inWords(roundedTotalAmountAfterTax)

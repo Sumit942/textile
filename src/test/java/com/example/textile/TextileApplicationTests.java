@@ -1,6 +1,9 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
+import com.example.textile.repo.InvoiceRepository;
+import com.example.textile.repo.ProductRepository;
+import com.example.textile.repo.UnitRepository;
 import com.example.textile.service.InvoiceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 class TextileApplicationTests {
@@ -23,6 +27,16 @@ class TextileApplicationTests {
     @Test
     void testSaveInvoiceMapping() {
         System.out.println("SUMEET running checkSaveInvoiceService test1...");
+        Invoice invoice = getInvoice();
+        System.out.println("saving...sdf");
+        System.out.println(invoice);
+
+        invoiceService.save(invoice);
+        System.out.println(invoice);
+        System.out.println("save succesfull!!");
+    }
+
+    Invoice getInvoice() {
         Country country = new Country();
         country.setId(1L);
         country.setName("INDIA");
@@ -32,7 +46,8 @@ class TextileApplicationTests {
         state.setCode(27);
         state.setCountry(country);
         Address address = new Address();
-        address.setAddress("240  INDL ESTATE, MARG, PAREL WEST, MUMBAI");
+        address.setId(1L);
+        address.setAddress("full test");
         address.setPinCode(400013);
         address.setState(state);
         BankDetail bankDetail = new BankDetail();
@@ -50,10 +65,10 @@ class TextileApplicationTests {
         bankDetails.add(bankDetail2);
         Company company = new Company();
         company.setAddress(address);
-        company.setBankDetails(bankDetails);
-        company.setId(9L);
-        company.setName("EWWWST SQUARE CLOTHING");
-        company.setGst("27AWYFA0586B1ZB");
+        //company.setBankDetails(bankDetails);
+        company.setId(11L);
+        company.setName("SIMPANI");
+        company.setGst("27ACBPS6136N1Z4");
         SaleType saleType = new SaleType();
         saleType.setId(1L);
         saleType.setSaleType("Fabric Job Work");
@@ -63,7 +78,7 @@ class TextileApplicationTests {
 
         List<ProductDetail> prodList = new ArrayList<>();
         ProductDetail productDetail = new ProductDetail();
-        productDetail.setChNo("7");
+        productDetail.setChNo("test-16");
         productDetail.setQuantity(500.0);
         productDetail.setRate(15.0);
         productDetail.setTotalPrice(BigDecimal.ZERO);
@@ -73,16 +88,17 @@ class TextileApplicationTests {
         unit.setUnitOfMeasure("KG");
         productDetail.setUnitOfMeasure(unit);
         Product product = new Product();
-//        product.setId(3L);
+        product.setId(1L);
         product.setName("24s Cotton");
         product.setHsn(6006);
         productDetail.setProduct(product);
 
         Invoice invoice = new Invoice();
+        invoice.setId(23L);
         invoice.setcGst(BigDecimal.valueOf(2500));
         invoice.setDateOfSupply(new Date());
         invoice.setInvoiceDate(new Date());
-        invoice.setInvoiceNo("TEST001");
+        invoice.setInvoiceNo("TEST003");
         invoice.setPlaceOfSupply("Bhiwandi");
         invoice.setPnfCharge(BigDecimal.ZERO);
         invoice.setReverseCharge("NO");
@@ -98,11 +114,7 @@ class TextileApplicationTests {
         invoice.setShipToParty(company);
         invoice.setTransportMode(transportMode);
         invoice.setProduct(prodList);
-
-
-        invoiceService.save(invoice);
-        System.out.println(invoice);
-        System.out.println("save succesfull!!");
+        return invoice;
     }
 
 
@@ -149,4 +161,50 @@ class TextileApplicationTests {
 
     }
 
+    @Autowired
+    InvoiceRepository invoiceRepo;
+
+    @Autowired
+    ProductRepository productRepo;
+
+    @Autowired
+    UnitRepository unitRepo;
+
+    @Test
+    void updateInvoiceTest() {
+
+        Invoice invById = invoiceRepo.findById(23L).get();
+        System.out.println("invoice getByID-1");
+        System.out.println(invById);
+        Unit uom = unitRepo.findById(1L).get();
+        invById.setInvoiceNo("001-test-1");
+
+        ProductDetail productDetail = new ProductDetail();
+        Product product = productRepo.findById(2L).get();
+        productDetail.setProduct(product);
+        productDetail.setUnitOfMeasure(uom);
+        productDetail.setChNo("001-test-1-ch");
+        productDetail.setQuantity(100.0);
+        productDetail.setRate(10.0);
+        productDetail.setTotalPrice(BigDecimal.valueOf(1000));
+
+        invById.getProduct().add(productDetail);
+
+        System.out.println("saving....");
+        invoiceRepo.save(invById);
+    }
+
+    @Test
+    void checkDoubleSaveInvoice() {
+        Invoice invoice = new Invoice();
+        invoice.setId(23L);
+        invoice.setInvoiceNo("test-2");
+        invoice.setProduct(null);
+        invoice.setBillToParty(null);
+        invoice.setShipToParty(null);
+
+//        invoice.setTransportMode();
+
+        invoiceRepo.save(invoice);
+    }
 }

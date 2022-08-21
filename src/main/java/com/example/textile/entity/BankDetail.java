@@ -3,10 +3,7 @@ package com.example.textile.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
@@ -20,6 +17,8 @@ public class BankDetail implements Serializable {
     private String branch;
     private Date insert_dt;
     private Date update_dt;
+
+    private Company company;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,6 +78,16 @@ public class BankDetail implements Serializable {
 
     public void setUpdate_dt(Date update_dt) {
         this.update_dt = update_dt;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override

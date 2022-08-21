@@ -39,6 +39,33 @@ public class Invoice implements Serializable {
     private String totalInvoiceAmountInWords;
     private Date insertDate;
     private Date updateDate;
+    private Integer version;
+
+    //bank select from dropdown
+    private BankDetail selectedBank;
+
+    @Transient
+    public Company getInvoiceBy() {
+        return invoiceBy;
+    }
+
+    public void setInvoiceBy(Company invoiceBy) {
+        this.invoiceBy = invoiceBy;
+    }
+
+    @ManyToOne
+    public BankDetail getSelectedBank() {
+        return selectedBank;
+    }
+
+    public void setSelectedBank(BankDetail selectedBank) {
+        this.selectedBank = selectedBank;
+    }
+
+    @Transient
+    public boolean isNew() {
+        return id == null || id <= 0;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,15 +83,6 @@ public class Invoice implements Serializable {
 
     public void setInvoiceNo(String invoiceNo) {
         this.invoiceNo = invoiceNo;
-    }
-
-    @Transient
-    public Company getInvoiceBy() {
-        return invoiceBy;
-    }
-
-    public void setInvoiceBy(Company invoiceBy) {
-        this.invoiceBy = invoiceBy;
     }
 
     @ManyToOne
@@ -153,8 +171,8 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "invoice_id")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @JoinColumn(name = "invoice_id",referencedColumnName = "id")
     public List<ProductDetail> getProduct() {
         return product;
     }
@@ -252,12 +270,21 @@ public class Invoice implements Serializable {
         this.updateDate = updateDate;
     }
 
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
     @Override
     public String toString() {
         return "Invoice{" +
                 "id=" + id +
                 ", invoiceNo=" + invoiceNo +
-                ", invoiceBy=" + invoiceBy +
+                //", invoiceBy=" + invoiceBy +
                 ", user=" + user +
                 ", transportMode=" + transportMode +
                 ", invoiceDate=" + invoiceDate +
@@ -265,10 +292,10 @@ public class Invoice implements Serializable {
                 ", reverseCharge=" + reverseCharge +
                 ", dateOfSupply=" + dateOfSupply +
                 ", placeOfSupply='" + placeOfSupply + '\'' +
-                ", billToParty=" + billToParty +
-                ", shipToParty=" + shipToParty +
+//                ", billToParty=" + billToParty +
+//                ", shipToParty=" + shipToParty +
                 ", saleType=" + saleType +
-                ", product=" + product +
+                //", product=" + product +
                 ", pnfCharge=" + pnfCharge +
                 ", totalAmount=" + totalAmount +
                 ", cGst=" + cGst +

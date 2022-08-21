@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -37,6 +38,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private ProductRepository productRepo;
 
+    @Autowired
+    private BankDetailRepository bankDetailRepo;
+
     @Override
     public List<Invoice> findAll() {
         return invoiceRepo.findAll();
@@ -62,9 +66,52 @@ public class InvoiceServiceImpl implements InvoiceService {
                     }
                 });
 
-        Invoice saved = invoiceRepo.save(invoice);
-        log.info("{} Invoice [Action=Save, Response=SUCCESS, id={}, invoiceNo={},{}]", logPrefix, saved.getId(),saved.getInvoiceNo(), logSuffix);
+        Invoice persistedState = cloneInvoice(invoice);
+        Invoice saved = invoiceRepo.save(persistedState);
+        log.info("waiting 10 sec...");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            System.out.println("error: in thread sleep" + e.getLocalizedMessage());
+        }
+        log.info("continued after 10 sec...");
         return saved;
+    }
+
+    private Invoice cloneInvoice(Invoice invoice) {
+
+        if (invoice.isNew())
+            return invoice;
+
+        Optional<Invoice> findById = invoiceRepo.findById(invoice.getId());
+        if (!findById.isPresent()) {
+            return invoice;
+        }
+        Invoice persisted = findById.get();
+        persisted.setInvoiceNo(invoice.getInvoiceNo());
+        persisted.setUser(invoice.getUser());
+        persisted.setTransportMode(invoice.getTransportMode());
+        persisted.setInvoiceDate(invoice.getInvoiceDate());
+        persisted.setVehicleNo(invoice.getVehicleNo());
+        persisted.setReverseCharge(invoice.getReverseCharge());
+        persisted.setDateOfSupply(invoice.getDateOfSupply());
+        persisted.setPlaceOfSupply(invoice.getPlaceOfSupply());
+        persisted.setBillToParty(invoice.getBillToParty());
+        persisted.setShipToParty(invoice.getShipToParty());
+        persisted.setSaleType(invoice.getSaleType());
+        persisted.setPnfCharge(invoice.getPnfCharge());
+        persisted.setTotalAmount(invoice.getTotalAmount());
+        persisted.setcGst(invoice.getcGst());
+        persisted.setsGst(invoice.getsGst());
+        persisted.setTotalTaxAmount(invoice.getTotalTaxAmount());
+        persisted.setRoundOff(invoice.getRoundOff());
+        persisted.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());
+        persisted.setTotalInvoiceAmountInWords(invoice.getTotalInvoiceAmountInWords());
+
+        persisted.getProduct().clear();
+        persisted.getProduct().addAll(invoice.getProduct());
+
+        return persisted;
     }
 
     private void preCheckCompany(Invoice invoice) {
@@ -166,6 +213,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice finById(Long id) {
         return this.invoiceRepo.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<BankDetail> getBankDetailsByGst(String gst) {
+        return bankDetailRepo.findByCompanyGst(gst);
     }
 
 }

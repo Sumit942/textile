@@ -23,4 +23,6 @@ public interface InvoiceService {
     List<Company> getCompanyByGst(String gst);
 
     Invoice finById(Long id);
+
+    List<BankDetail> getBankDetailsByGst(String gst);
 }

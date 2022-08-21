@@ -57,13 +57,13 @@
             <c:otherwise>
                 <td colspan="10">
                     No Invoice Available
-                    <a href="${pageContext.request.contextPath}/invoices/submit"> click here </a> to Add...
+                    <a href="${pageContext.request.contextPath}/invoices/submit" target="_blank"> click here </a> to Add...
                 </td>
             </c:otherwise>
             </c:choose>
         </tbody>
         <tfoot>
-            <td colspan="10"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end">Add</a></td>
+            <td colspan="10"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
         </tfoot>
     </table>
 </div>

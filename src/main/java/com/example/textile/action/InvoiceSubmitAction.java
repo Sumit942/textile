@@ -9,6 +9,7 @@ import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,7 +28,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     }
 
     @Override
-    protected ActionResponse onSuccess(Invoice invoice, Map<String, Object> parameterMap, ModelAndView model) {
+    protected ActionResponse onSuccess(Invoice invoice, Map<String, Object> parameterMap, ModelMap model) {
         String logPrefix = "doSuccess() |";
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
@@ -43,7 +44,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         //saving by getting the invoiceId
         invoiceService.save(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
-        log.info("{} [Reponse=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
+        log.info("{} [Action=Save, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
         log.info("{} Exit", logPrefix);
         return actionResponse;
     }
@@ -90,7 +91,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     }
 
     @Override
-    protected void doValidation(Invoice invoice, Map<String, Object> parameterMap, BindingResult result, ModelAndView model) {
+    protected void doValidation(Invoice invoice, Map<String, Object> parameterMap, BindingResult result, ModelMap model) {
         String logPrefix = "doValidation() |";
         log.info("{} Entry", logPrefix);
         Map<String,String> errMap = new HashMap<>();
@@ -103,7 +104,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             errMap.put("transportMode","NotNull.invoiceCommand.transportMode");
         if (invoice.getId() == null) {
             if (invoice.getDateOfSupply() == null) {
-                errMap.put("dateOfSupply","NotNull.invoiceCommand.dateOfSupply");
+                //errMap.put("dateOfSupply","NotNull.invoiceCommand.dateOfSupply");
             } else if (invoice.getInvoiceDate() == null) {
                 errMap.put("invoiceDate","NotNull.invoiceCommand.invoiceDate");
             } else if (invoice.getDateOfSupply().after(invoice.getInvoiceDate())) {
@@ -215,20 +216,22 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     public void prePopulateOptionsAndFields(Invoice invoice, Object model) throws InvalidObjectPopulationException {
         String logPrefix = "populateOptionsAndFields() |";
         log.info("{} Entry", logPrefix);
-        if(!(model instanceof ModelAndView)) {
+        if(!(model instanceof ModelMap)) {
             throw new InvalidObjectPopulationException(invoice,model);
         }
-        ModelAndView modelView = (ModelAndView) model;
+        ModelMap modelView = (ModelMap) model;
 
         List<TransportMode> transportModes = invoiceService.getTransportModes();
         List<State> states = invoiceService.getStates();
         List<SaleType> saleTypes = invoiceService.getSaleTypes();
         List<Unit> unitOfMeasures = invoiceService.getUnitOfMeasure();
+        List<BankDetail> invoiceByBankDetails = invoiceService.getBankDetailsByGst(invoice.getInvoiceBy().getGst());
 
-        modelView.addObject("transportModes", transportModes);
-        modelView.addObject("states", states);
-        modelView.addObject("saleTypes", saleTypes);
-        modelView.addObject("unitOfMeasures", unitOfMeasures);
+        modelView.addAttribute("transportModes", transportModes);
+        modelView.addAttribute("states", states);
+        modelView.addAttribute("saleTypes", saleTypes);
+        modelView.addAttribute("unitOfMeasures", unitOfMeasures);
+        invoice.getInvoiceBy().setBankDetails(invoiceByBankDetails);
 
         log.info("{} Exit", logPrefix);
 
