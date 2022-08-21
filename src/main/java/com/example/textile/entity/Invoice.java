@@ -284,7 +284,7 @@ public class Invoice implements Serializable {
         return "Invoice{" +
                 "id=" + id +
                 ", invoiceNo=" + invoiceNo +
-                //", invoiceBy=" + invoiceBy +
+//                ", invoiceBy=" + invoiceBy +
                 ", user=" + user +
                 ", transportMode=" + transportMode +
                 ", invoiceDate=" + invoiceDate +
@@ -292,10 +292,10 @@ public class Invoice implements Serializable {
                 ", reverseCharge=" + reverseCharge +
                 ", dateOfSupply=" + dateOfSupply +
                 ", placeOfSupply='" + placeOfSupply + '\'' +
-//                ", billToParty=" + billToParty +
-//                ", shipToParty=" + shipToParty +
+                ", billToParty=" + billToParty +
+                ", shipToParty=" + shipToParty +
                 ", saleType=" + saleType +
-                //", product=" + product +
+                ", product=" + product +
                 ", pnfCharge=" + pnfCharge +
                 ", totalAmount=" + totalAmount +
                 ", cGst=" + cGst +
@@ -303,7 +303,8 @@ public class Invoice implements Serializable {
                 ", totalTaxAmount=" + totalTaxAmount +
                 ", roundOff=" + roundOff +
                 ", totalAmountAfterTax=" + totalAmountAfterTax +
-                ", totalInvoiceAmountInWords='" + totalInvoiceAmountInWords + '\'' +
+                ", totalInvoiceAmountInWords='" + totalInvoiceAmountInWords +
+                ", selectedBank='" + selectedBank +
                 '}';
     }
 }

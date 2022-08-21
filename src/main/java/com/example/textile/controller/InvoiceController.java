@@ -108,7 +108,7 @@ public class InvoiceController extends BaseController {
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-        ActionResponse response = null;
+        ActionResponse response;
         try {
             response = actExecutor.execute(invoice, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
@@ -123,11 +123,12 @@ public class InvoiceController extends BaseController {
                 log.info("{} save Unsuccessfull", logPrefix);
             }
         } catch (DataAccessException e) {
+            log.error("DB_Error: in saving invoice: ",e);
             response = new ActionResponse(ResponseType.FAILURE);
             if (e instanceof ObjectOptimisticLockingFailureException) {
                 response.addErrorMessage(messageSource.getMessage("System.Exception.Optimistic",new Object[]{invoice.getInvoiceNo(),invoice.getId()},request.getLocale()));
             } else {
-                response.addErrorMessage(messageSource.getMessage("System.Exception.DB",new Object[]{},request.getLocale()));
+                response.addErrorMessage(messageSource.getMessage("System.Exception.DB",null,request.getLocale()));
             }
             model.addAttribute("actionResponse",response);
         } catch (Throwable e) {

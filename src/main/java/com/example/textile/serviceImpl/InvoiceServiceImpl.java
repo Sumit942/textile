@@ -51,7 +51,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice save(Invoice invoice) {
         String logPrefix = "save() |";
         String logSuffix = "";
-        log.info("{} saving.... {}",logPrefix,invoice);
+        boolean isNew = invoice.isNew();
+        log.info("{} saving.... {}",logPrefix,invoice.getInvoiceNo());
         preCheckCompany(invoice);
         //check if the product name is already added. is yes then use it.
         invoice.getProduct().stream()
@@ -68,13 +69,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice persistedState = cloneInvoice(invoice);
         Invoice saved = invoiceRepo.save(persistedState);
-        log.info("waiting 10 sec...");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            System.out.println("error: in thread sleep" + e.getLocalizedMessage());
-        }
-        log.info("continued after 10 sec...");
+        if (isNew)
+            invoice.setInvoiceNo(getLatestInvoiceNo());
         return saved;
     }
 
@@ -110,6 +106,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         persisted.getProduct().clear();
         persisted.getProduct().addAll(invoice.getProduct());
+
+        persisted.setSelectedBank(invoice.getSelectedBank());
 
         return persisted;
     }

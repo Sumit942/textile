@@ -34,13 +34,13 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
 
 //        invoiceService.save(invoice);
-        if (ActionType.SUBMIT.equals(action)) {
-            log.info("{} [ActionType=SUBMIT]",logPrefix);
-            invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
-        } else {
-            log.info("{} [ActionType=SAVE]",logPrefix);
-            invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
-        }
+//        if (ActionType.SUBMIT.equals(action)) {
+//            log.info("{} [ActionType=SUBMIT]",logPrefix);
+//            invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
+//        } else {
+//            log.info("{} [ActionType=SAVE]",logPrefix);
+//            invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
+//        }
         //saving by getting the invoiceId
         invoiceService.save(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);

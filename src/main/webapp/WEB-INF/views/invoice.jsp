@@ -406,7 +406,7 @@
             <span>Total Amount after Tax</span>
         </div>
         <div class="col-md-2">
-            <form:input path="totalAmountAfterTax" class="numbersOnly"/>
+            <form:input path="totalAmountAfterTax" class="numbersOnly" onkeyup="javascript:inWords(this.value)"/>
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
@@ -483,6 +483,7 @@ $(document).ready(function() {
     //reset all fields in billToParty
     function resetBillToParty(){
         $("#billToParty\\.id").val('')
+        $("#billToParty\\.address\\.id").val('')
         $("#billToParty\\.address\\.address").val('')
         $("#billToParty\\.address\\.pinCode").val('')
         $("#billToParty\\.gst").val('')
@@ -492,6 +493,7 @@ $(document).ready(function() {
     function setBillToParty(item) {
         $("#billToParty\\.id").val(item.id)
         $("#billToParty\\.name").val(item.name)
+        $("#billToParty\\.address\\.id").val(item.address.id)
         $("#billToParty\\.address\\.address").val(item.address.address)
         $("#billToParty\\.address\\.pinCode").val(item.address.pinCode)
         $("#billToParty\\.gst").val(item.gst)
@@ -519,6 +521,7 @@ $(document).ready(function() {
     //reset all fields in shipToParty
     function resetShipToParty(){
         $("#shipToParty\\.id").val('')
+        $("#shipToParty\\.address\\.id").val('')
         $("#shipToParty\\.address\\.address").val('')
         $("#shipToParty\\.address\\.pinCode").val('')
         $("#shipToParty\\.gst").val('')
@@ -528,6 +531,7 @@ $(document).ready(function() {
     function setShipToParty(item) {
         $("#shipToParty\\.id").val(item.id)
         $("#shipToParty\\.name").val(item.name)
+        $("#shipToParty\\.address\\.id").val(item.address.id)
         $("#shipToParty\\.address\\.address").val(item.address.address)
         $("#shipToParty\\.address\\.pinCode").val(item.address.pinCode)
         $("#shipToParty\\.gst").val(item.gst)
@@ -771,7 +775,7 @@ function updateTotalAmount() {
     var totalAmountAfterTax = totalAmount + totalTaxAmount
     var roundedTotalAmountAfterTax = Math.round(totalAmountAfterTax)
 
-    var roundOff = (totalAmountAfterTax-roundedTotalAmountAfterTax).toFixed(2)
+    var roundOff = (roundedTotalAmountAfterTax-totalAmountAfterTax).toFixed(2)
     $("#roundOff").val(roundOff)
     //console.log('pnfCharge: '+pnfCharge+', totalAmountAfterTax: '+totalAmountAfterTax)
     //adding the pnfCharge after round off
@@ -785,6 +789,7 @@ var a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Ni
 var b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
 
 function inWords (num) {
+
     if ((num = num.toString()).length > 9) return 'overflow';
     n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
     if (!n) return; var str = '';
@@ -792,7 +797,7 @@ function inWords (num) {
     str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
     str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
     str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
-    str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only.' : '.';
+    str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only.' : '';
 
     $("#totalInvoiceAmountInWords").val(str)
 }
