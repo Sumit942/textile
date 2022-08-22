@@ -207,4 +207,12 @@ class TextileApplicationTests {
 
         invoiceRepo.save(invoice);
     }
+
+    @Test
+    void findAllInvoice_checkIfConvertedToInvoiceView() {
+        List<InvoiceView> view = invoiceRepo.viewList();
+        view.forEach(e ->{
+            System.out.println(e.getId()+","+e.getGst()+","+e.getInvoiceNo());
+        });
+    }
 }

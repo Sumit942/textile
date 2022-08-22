@@ -1,7 +1,6 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.*;
-import com.example.textile.exception.InvoiceNotFoundException;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
@@ -218,4 +217,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         return bankDetailRepo.findByCompanyGst(gst);
     }
 
+    @Override
+    public List<InvoiceView> viewList() {
+        return invoiceRepo.viewList();
+    }
 }

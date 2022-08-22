@@ -320,7 +320,8 @@
         <tr>
             <td></td>
             <td></td>
-            <td colspan="2">Packing & Forwarding Charges</div>
+            <td colspan="2">
+                <form:label path="pnfCharge">Packing & Forwarding Charges</form:label>
             <td></td>
             <td></td>
             <td></td>
@@ -438,19 +439,25 @@ $(document).ready(function() {
 
     /**                 billToParty script                  **/
     $("#billToParty\\.address\\.address").on("focusout",function(e){
-        $("#shipToParty\\.address\\.address").val(this.value);
         var pinCode = this.value.substr(-6)
-        if (isNaN(pinCode) && $("#billToParty.id").val() == '') {
+        if ($("#shipToParty\\.id").val() == '') {
+            $("#shipToParty\\.address\\.address").val(this.value);
+        }
+        if (isNaN(pinCode)) {
             return;
         }
         $("#billToParty\\.address\\.pinCode").val(pinCode);
-        $("#shipToParty\\.address\\.pinCode").val(pinCode);
+
+        if ($("#shipToParty\\.id").val() == '') {
+            $("#shipToParty\\.address\\.pinCode").val(pinCode);
+        }
     })
     $("#billToParty\\.address\\.pinCode").on("focusout",function(e){
         $("#shipToParty\\.address\\.pinCode").val(this.value);
     })
     $("#billToParty\\.gst").on("focusout",function(e){
-        $("#shipToParty\\.gst").val(this.value);
+        if ($("#shipToParty\\.id").val() == '')
+            $("#shipToParty\\.gst").val(this.value);
     })
     $("#billToParty\\.name").on("focusout",function(e){
         if (!$("#billToParty\\.id").val() && !$("#shipToParty\\.id").val()) {

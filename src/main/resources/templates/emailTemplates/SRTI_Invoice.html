@@ -2709,7 +2709,7 @@ x\:* {behavior:url(#default#VML);}
   <tr height=20 style='mso-height-source:userset;height:15.0pt'>
    <td height=20 class=xl7521738 style='height:15.0pt;border-top:none'><span th:text="${prodStat.count}"/></td>
    <td colspan=3 class=xl11921738 width=256 style='border-right:.5pt solid black;
-  border-left:none;width:192pt' ><span th:text="${product.product.name}"/> (Ch No.<span th:text="${product.chNo}"/>)</td>
+  border-left:none;width:192pt' ><span th:text="${product.product.name}"/><span th:if="${not #strings.isEmpty(product.chNo)}"> (Ch No.<span th:text="${product.chNo}"/>)</span></td>
    <td colspan=2 class=xl12221738 style='border-right:.5pt solid black;
   border-left:none'><span th:text="${product.product.hsn}"/></td>
    <td class=xl7621738 width=37 style='border-top:none;border-left:none;

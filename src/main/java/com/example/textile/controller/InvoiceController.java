@@ -4,6 +4,7 @@ import com.example.textile.action.InvoiceSubmitAction;
 import com.example.textile.command.CommandConstants;
 import com.example.textile.entity.Company;
 import com.example.textile.entity.Invoice;
+import com.example.textile.entity.InvoiceView;
 import com.example.textile.entity.State;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
@@ -64,7 +65,7 @@ public class InvoiceController extends BaseController {
     @GetMapping
     public ModelAndView showAllInvoices() {
         ModelAndView model = new ModelAndView("/invoiceList");
-        List<Invoice> invoices = invoiceService.findAll();
+        List<InvoiceView> invoices = invoiceService.viewList();
         model.addObject("invoices",invoices);
 
         return model;
@@ -78,6 +79,7 @@ public class InvoiceController extends BaseController {
             Invoice invoice = invoiceService.finById(id);
             actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
             model.addAttribute(CommandConstants.INVOICE_COMMAND,invoice);
+            model.addAttribute("printInvoice",true);
         } catch (Throwable e) {
             log.error("Exception: {} prePopulation","getInvoiceById()",e);
         }
