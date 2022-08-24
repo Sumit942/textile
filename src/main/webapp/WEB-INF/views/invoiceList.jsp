@@ -42,10 +42,11 @@
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.id}" target="_blank">${invoice.invoiceNo}</a>
-                        (<a href="${pageContext.request.contextPath}/invoices/print/${invoice.id}" target="_blank">Print</a>)
+                        (<a href="${pageContext.request.contextPath}/invoices/print/${invoice.id}" target="_blank">Print</a>
+                          |  <a href="${pageContext.request.contextPath}/invoices/downloadPdf/${invoice.invoiceNo}">Print</a>)
                     </td>
-                    <td>${invoice.billToParty.gst}</td>
-                    <td>${invoice.billToParty.name}</td>
+                    <td>${invoice.gst}</td>
+                    <td>${invoice.name}</td>
                     <td>${invoice.totalAmount}</td>
                     <td>${invoice.cGst + invoice.sGst}</td>
                     <td>${invoice.roundOff}</td>

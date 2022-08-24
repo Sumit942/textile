@@ -27,4 +27,6 @@ public interface InvoiceService {
     List<BankDetail> getBankDetailsByGst(String gst);
 
     List<InvoiceView> viewList();
+
+    List<Invoice> findByInvoiceNo(String invoiceNo);
 }

@@ -10,9 +10,13 @@ import java.util.List;
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query(value = "SELECT COUNT(*) FROM invoice WHERE invoice_no <> '######' or invoice_no is not null",nativeQuery = true)
-    Integer getLastestInvoiceNo();
+    Integer getLatestInvoiceNo();
 
-    @Query("SELECT i.id,i.invoiceDate,i.invoiceNo,i.billToParty.gst,i.billToParty.name," +
-            "i.totalAmount,i.cGst,i.sGst,i.roundOff,i.pnfCharge,i.totalAmountAfterTax FROM Invoice i")
+    @Query("SELECT new com.example.textile.entity.InvoiceView(i.id,i.invoiceDate,i.invoiceNo,i.billToParty.gst," +
+            "i.billToParty.name,i.totalAmount,i.cGst,i.sGst,i.roundOff,i.pnfCharge,i.totalAmountAfterTax) FROM Invoice i")
     List<InvoiceView> viewList();
+
+    List<Invoice> findByInvoiceNo(String invoiceNo);
+
+    Integer countByInvoiceNo(String latestInvNo);
 }

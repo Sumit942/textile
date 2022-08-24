@@ -5,6 +5,9 @@ import com.example.textile.repo.InvoiceRepository;
 import com.example.textile.repo.ProductRepository;
 import com.example.textile.repo.UnitRepository;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.utility.PdfUtility;
+import com.example.textile.utility.ThymeleafTemplateUtility;
+import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +15,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -214,5 +220,22 @@ class TextileApplicationTests {
         view.forEach(e ->{
             System.out.println(e.getId()+","+e.getGst()+","+e.getInvoiceNo());
         });
+    }
+
+    @Autowired
+    ThymeleafTemplateUtility templateUtility;
+
+    @Test
+    void testPdfDownload_Invoice() throws FileNotFoundException, DocumentException {
+        String invoiceNo = "SRTI/22-23/008";
+        List<Invoice> invoices = invoiceService.findByInvoiceNo(invoiceNo);
+        if (invoices != null && !invoices.isEmpty()) {
+            Invoice invoice = invoices.get(0);
+            String process = templateUtility
+                    .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
+
+            OutputStream os = new FileOutputStream("invoice_008.pdf");
+            PdfUtility.createPdf(os,process);
+        }
     }
 }

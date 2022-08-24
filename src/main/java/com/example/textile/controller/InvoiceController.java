@@ -14,8 +14,11 @@ import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.CompanyService;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
+import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.example.textile.utility.factory.ActionExecutorFactory;
+import com.lowagie.text.DocumentException;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +33,17 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,6 +56,9 @@ public class InvoiceController extends BaseController {
     InvoiceService invoiceService;
 
     private Map<String, ActionExecutor> actionExecutorMap;
+
+    @Autowired
+    ThymeleafTemplateUtility templateUtility;
 
     @PostConstruct
     public void init() {
@@ -67,6 +80,7 @@ public class InvoiceController extends BaseController {
         ModelAndView model = new ModelAndView("/invoiceList");
         List<InvoiceView> invoices = invoiceService.viewList();
         model.addObject("invoices",invoices);
+        model.addObject("printInvoice",true);
 
         return model;
     }
@@ -164,5 +178,26 @@ public class InvoiceController extends BaseController {
         log.info("showPrintInvoice() | {}",invoice);
         modelAndView.addObject("invoice",invoice);
         return modelAndView;
+    }
+
+    @GetMapping("/downloadPdf/{invoiceNo}")
+    public void downloadToPdf(@PathVariable(name = "invoiceNo",required = true) String invoiceNo,
+                              HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
+
+        String logPrefix = "downloadToPdf() |";
+        String logSuffix = "";
+        log.info("{} Entry",logPrefix);
+        List<Invoice> invoices = invoiceService.findByInvoiceNo(invoiceNo);
+        if (invoices != null && !invoices.isEmpty()) {
+            Invoice invoice = invoices.get(0);
+            logSuffix += "id="+invoice.getId()+";InvoiceNo="+invoice.getInvoiceNo()+";";
+            String process = templateUtility
+                    .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
+
+            OutputStream os = response.getOutputStream();
+            PdfUtility.createPdf(os,process);
+        }
+
+        log.info("{} Exit {}", logPrefix, logSuffix);
     }
 }

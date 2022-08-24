@@ -11,7 +11,7 @@ spring:
 #      ddl-auto: update
     properties:
       hibernate.format_sql: true
-    show-sql: true
+    show-sql: false
   mvc:
     view:
       prefix: /WEB-INF/views/

@@ -1,33 +1,93 @@
 package com.example.textile.entity;
 
-import org.springframework.data.rest.core.config.Projection;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Projection(name = "invoiceView",types = {Invoice.class})
-public interface InvoiceView {
+public class InvoiceView {
+    private long id;
+    private Date invoiceDate;
+    private String invoiceNo;
+    private String gst;
+    private String name;
+    private BigDecimal totalAmount;
+    private BigDecimal cGst;
+    private BigDecimal sGst;
+    private Double roundOff;
+    private BigDecimal pnfCharge;
+    private BigDecimal totalAmountAfterTax;
 
-    public Long getId();
+    public InvoiceView(long id, Date invoiceDate, String invoiceNo, String gst, String name, BigDecimal totalAmount, BigDecimal cGst, BigDecimal sGst, Double roundOff, BigDecimal pnfCharge, BigDecimal totalAmountAfterTax) {
+        this.id = id;
+        this.invoiceDate = invoiceDate;
+        this.invoiceNo = invoiceNo;
+        this.gst = gst;
+        this.name = name;
+        this.totalAmount = totalAmount;
+        this.cGst = cGst;
+        this.sGst = sGst;
+        this.roundOff = roundOff;
+        this.pnfCharge = pnfCharge;
+        this.totalAmountAfterTax = totalAmountAfterTax;
+    }
 
-    public Date getInvoiceDate();
+    public long getId() {
+        return id;
+    }
 
-    public String getInvoiceNo();
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-    public String getGst();
+    public String getInvoiceNo() {
+        return invoiceNo;
+    }
 
-    public String getName();
+    public String getGst() {
+        return gst;
+    }
 
-    public BigDecimal getTotalAmount();
+    public String getName() {
+        return name;
+    }
 
-    public BigDecimal getcGst();
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 
-    public BigDecimal getsGst();
+    public BigDecimal getcGst() {
+        return cGst;
+    }
 
-    public Double getRoundOff();
+    public BigDecimal getsGst() {
+        return sGst;
+    }
 
-    public BigDecimal getPnfCharge();
+    public Double getRoundOff() {
+        return roundOff;
+    }
 
-    public BigDecimal getTotalAmountAfterTax();
+    public BigDecimal getPnfCharge() {
+        return pnfCharge;
+    }
 
+    public BigDecimal getTotalAmountAfterTax() {
+        return totalAmountAfterTax;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceView{" +
+                "id=" + id +
+                ", invoiceDate=" + invoiceDate +
+                ", invoiceNo='" + invoiceNo + '\'' +
+                ", gst='" + gst + '\'' +
+                ", name='" + name + '\'' +
+                ", totalAmount=" + totalAmount +
+                ", cGst=" + cGst +
+                ", sGst=" + sGst +
+                ", roundOff=" + roundOff +
+                ", pnfCharge=" + pnfCharge +
+                ", totalAmountAfterTax=" + totalAmountAfterTax +
+                '}';
+    }
 }

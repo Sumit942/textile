@@ -13,7 +13,7 @@ import java.util.List;
 //@Repository
 public abstract class InvoiceRepositoryV2 implements InvoiceRepository {
 
-    @Autowired
+//    @Autowired
     EntityManager entityManager;
 
     @Override

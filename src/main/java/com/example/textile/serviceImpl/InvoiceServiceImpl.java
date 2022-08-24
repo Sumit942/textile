@@ -168,9 +168,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public String getLatestInvoiceNo() {
 
-        String latestInvNo;
-        int count = invoiceRepo.getLastestInvoiceNo() + 1;
+        int count = invoiceRepo.getLatestInvoiceNo() + 1;
+        String latestInvNo = getFormattedInvoiceNo(count);
 
+        while (invoiceRepo.countByInvoiceNo(latestInvNo) > 0) {
+            latestInvNo = getFormattedInvoiceNo(++count);
+        }
+
+        return latestInvNo;
+    }
+
+    public String getFormattedInvoiceNo(int count) {
+        String latestInvNo;
         if (count < 10) {
             latestInvNo = ShreeramTextileConstants.FORMAT_INVOICE_NO + "00" + count;
         } else if (count < 100) {
@@ -178,7 +187,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         } else {
             latestInvNo = ShreeramTextileConstants.FORMAT_INVOICE_NO + count;
         }
-
         return latestInvNo;
     }
 
@@ -220,5 +228,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceView> viewList() {
         return invoiceRepo.viewList();
+    }
+
+    @Override
+    public List<Invoice> findByInvoiceNo(String invoiceNo) {
+        return invoiceRepo.findByInvoiceNo(invoiceNo);
     }
 }

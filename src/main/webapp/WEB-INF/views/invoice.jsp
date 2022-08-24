@@ -19,6 +19,7 @@
 <style>
 .error {
     color: #ff0000;
+    font-size: 12px;
 }
 .errorblock {
      color: #000;
