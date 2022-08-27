@@ -1,6 +1,7 @@
 package com.example.textile.service;
 
 import com.example.textile.entity.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface InvoiceService {
 
     Invoice save(Invoice invoice);
 
+    Invoice saveOrUpdate(Invoice invoice);
+
     String getLatestInvoiceNo();
 
     List<Unit> getUnitOfMeasure();
@@ -25,8 +28,6 @@ public interface InvoiceService {
     Invoice finById(Long id);
 
     List<BankDetail> getBankDetailsByGst(String gst);
-
-    List<InvoiceView> viewList();
 
     List<Invoice> findByInvoiceNo(String invoiceNo);
 }

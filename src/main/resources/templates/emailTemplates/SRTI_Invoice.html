@@ -1,6 +1,4 @@
-<!DOCTYPE html [
-        <!ENTITY nbsp "&#160;">
-]>
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:v="http://www.w3.org/1999/xhtml">
 
@@ -2529,11 +2527,19 @@ x\:* {behavior:url(#default#VML);}
 	mso-pattern:auto;
 	white-space:normal;}
 -->
+@media print {
+ #PrintBtn {
+  visibility: hidden;
+ }
+}
 </style>
 <title>Invoice</title>
 </head>
 
 <body>
+<div>
+ <a href="#" class="btn btn-primary" id="PrintBtn">Print</a>
+</div>
 <div id="SRTI-Invoice" align="center" x:publishsource="Excel">
 
 <table border='0' cellpadding='0' cellspacing='0' width='654' style='border-collapse:
@@ -2568,7 +2574,7 @@ x\:* {behavior:url(#default#VML);}
   </v:shape><![endif]--><span style='mso-ignore:vglayout;
   position:absolute;z-index:1;margin-left:19px;margin-top:10px;width:135px;
   height:106px'><img width="135" height="106"
-  src="images/invoice/SRTI-logo-002.png" th:src="@{classpath:/images/invoice/SRTI-logo-002.png}"
+  src="images/invoice/SRTI-logo-002.png" th:src="@{/images/invoice/SRTI-logo-002.png}"
   v:shapes="Picture_x0020_1"></img></span><span style='mso-ignore:vglayout2'>
   <table cellpadding='0' cellspacing='0'>
    <tr>
@@ -2586,258 +2592,258 @@ x\:* {behavior:url(#default#VML);}
     Tel: <b th:text="${invoice.invoiceBy.mobileNo}" /><br>
     Email: <b th:text="${invoice.invoiceBy.emailId}" /><br>
     GSTIN: <b th:text="${invoice.invoiceBy.gst}" /></font></td>
-  <td colspan='2' class='xl8721738' width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl8721738' width='86' style='border-right:1.0pt solid black;
   width:65pt'><br>
     <br>
     Original for Recipent</td>
  </tr>
- <tr height=19 style='mso-height-source:userset;height:14.45pt'>
-  <td colspan=11 height=19 class=xl9121738 width=654 style='border-right:1.0pt solid black;
+ <tr height='19' style='mso-height-source:userset;height:14.45pt'>
+  <td colspan='11' height='19' class='xl9121738' width='654' style='border-right:1.0pt solid black;
   height:14.45pt;width:491pt'>&nbsp;</td>
  </tr>
- <tr height=42 style='mso-height-source:userset;height:31.5pt'>
-  <td colspan=11 height=42 class=xl9421738 width=654 style='border-right:1.0pt solid black;
+ <tr height='42' style='mso-height-source:userset;height:31.5pt'>
+  <td colspan='11' height='42' class='xl9421738' width='654' style='border-right:1.0pt solid black;
   height:31.5pt;width:491pt'><font class="font521738">Tax Invoice</font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=5 height=20 class=xl8121738 width=327 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='5' height='20' class='xl8121738' width='327' style='border-right:.5pt solid black;
   height:15.0pt;width:245pt'>Invoice No: <b th:text="${invoice.invoiceNo}" /></td>
-  <td colspan=6 class=xl8421738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl8421738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'><font class="font721738">Transport Mode: <b th:text="${invoice.transportMode.mode}" /></font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=5 height=20 class=xl8121738 width=327 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='5' height='20' class='xl8121738' width='327' style='border-right:.5pt solid black;
   height:15.0pt;width:245pt'>Invoice date: <b th:text="${{invoice.invoiceDate}}" /></td>
-  <td colspan=6 class=xl9721738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl9721738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>Vehicle number: <b th:text="${invoice.vehicleNo}" /></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=4 height=20 class=xl9821738 width=279 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='4' height='20' class='xl9821738' width='279' style='border-right:.5pt solid black;
   height:15.0pt;width:209pt'><font class="font721738">Reverse Charge (Y/N):</font></td>
-  <td class=xl6521738 width=48 style='border-top:none;border-left:none;
+  <td class='xl6521738' width='48' style='border-top:none;border-left:none;
   width:36pt'><font class="font721738"><b th:text="${invoice.reverseCharge}" /></font></td>
-  <td colspan=6 class=xl9721738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl9721738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>Date of Supply: <b th:text="${{invoice.dateOfSupply}}" /></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8121738 width=222 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>State: <b th:text="${invoice.invoiceBy.address.state.name}" /></td>
-  <td class=xl6421738 width=57 style='border-top:none;border-left:none;
+  <td class='xl6421738' width='57' style='border-top:none;border-left:none;
   width:43pt'><font class="font721738">Code</font></td>
-  <td class=xl6621738 style='border-top:none;border-left:none'><b th:text="${invoice.invoiceBy.address.state.code}" /></td>
-  <td colspan=6 class=xl9721738 width=327 style='border-right:1.0pt solid black;
+  <td class='xl6621738' style='border-top:none;border-left:none'><b th:text="${invoice.invoiceBy.address.state.code}" /></td>
+  <td colspan='6' class='xl9721738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>Place of Supply : <b th:text="${invoice.placeOfSupply}" /></td>
  </tr>
- <tr height=13 style='mso-height-source:userset;height:10.15pt'>
-  <td colspan=11 height=13 class=xl10621738 width=654 style='border-right:1.0pt solid black;
+ <tr height='13' style='mso-height-source:userset;height:10.15pt'>
+  <td colspan='11' height='13' class='xl10621738' width='654' style='border-right:1.0pt solid black;
   height:10.15pt;width:491pt'>&nbsp;</td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=5 height=20 class=xl10721738 width=327 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='5' height='20' class='xl10721738' width='327' style='border-right:.5pt solid black;
   height:15.0pt;width:245pt'><font class="font721738">Bill to Party</font></td>
-  <td colspan=6 class=xl11021738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl11021738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'><font class="font721738">Ship to Party</font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=5 height=20 class=xl8121738 width=327 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='5' height='20' class='xl8121738' width='327' style='border-right:.5pt solid black;
   height:15.0pt;width:245pt'>Name: <b th:text="${invoice.billToParty.name}" /></td>
-  <td colspan=6 class=xl9721738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl9721738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>Name: <b th:text="${invoice.shipToParty.name}" /></td>
  </tr>
- <tr height=76 style='mso-height-source:userset;height:57.0pt'>
-  <td colspan=5 height=76 class=xl9821738 width=327 style='border-right:.5pt solid black;
+ <tr height='76' style='mso-height-source:userset;height:57.0pt'>
+  <td colspan='5' height='76' class='xl9821738' width='327' style='border-right:.5pt solid black;
   height:57.0pt;width:245pt'>Address: <font class="font621738"><span th:text="${invoice.billToParty.address.address}" /></font></td>
-  <td colspan=6 class=xl8421738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl8421738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>Address: <font class="font621738"> <span th:text="${invoice.billToParty.address.address}" /> </font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=5 height=20 class=xl8121738 width=327 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='5' height='20' class='xl8121738' width='327' style='border-right:.5pt solid black;
   height:15.0pt;width:245pt'>GSTIN: <span th:text="${invoice.billToParty.gst}" /></td>
-  <td colspan=6 class=xl9721738 width=327 style='border-right:1.0pt solid black;
+  <td colspan='6' class='xl9721738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'>GSTIN: <span th:text="${invoice.shipToParty.gst}" /></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl9821738 width=222 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl9821738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'><font class="font721738">State:<span
   style='mso-spacerun:yes'>  </span><span th:text="${invoice.billToParty.address.state.name}" /></font></td>
-  <td class=xl6421738 width=57 style='border-top:none;border-left:none;
+  <td class='xl6421738' width='57' style='border-top:none;border-left:none;
   width:43pt'><font class="font721738">Code</font></td>
-  <td class=xl6721738 style='border-top:none;border-left:none'><span th:text="${invoice.billToParty.address.state.code}" /></td>
-  <td colspan=4 class=xl8421738 width=241 style='border-right:.5pt solid black;
+  <td class='xl6721738' style='border-top:none;border-left:none'><span th:text="${invoice.billToParty.address.state.code}" /></td>
+  <td colspan='4' class='xl8421738' width='241' style='border-right:.5pt solid black;
   border-left:none;width:181pt'><font class="font721738">State:<span
   style='mso-spacerun:yes'>  </span><span th:text="${invoice.shipToParty.address.state.name}" /></font></td>
-  <td class=xl6421738 width=45 style='border-top:none;border-left:none;
+  <td class='xl6421738' width='45' style='border-top:none;border-left:none;
   width:34pt'><font class="font721738">Code</font></td>
-  <td class=xl7021738 style='border-top:none;border-left:none'><span th:text="${invoice.shipToParty.address.state.code}" /></td>
+  <td class='xl7021738' style='border-top:none;border-left:none'><span th:text="${invoice.shipToParty.address.state.code}" /></td>
  </tr>
- <tr height=13 style='mso-height-source:userset;height:10.15pt'>
-  <td colspan=11 height=13 class=xl10621738 width=654 style='border-right:1.0pt solid black;
+ <tr height='13' style='mso-height-source:userset;height:10.15pt'>
+  <td colspan='11' height='13' class='xl10621738' width='654' style='border-right:1.0pt solid black;
   height:10.15pt;width:491pt'>&nbsp;</td>
  </tr>
- <tr height=36 style='mso-height-source:userset;height:27.0pt'>
-  <td height=36 class=xl7121738 width=23 style='height:27.0pt;border-top:none;
+ <tr height='36' style='mso-height-source:userset;height:27.0pt'>
+  <td height='36' class='xl7121738' width='23' style='height:27.0pt;border-top:none;
   width:17pt'><font class="font821738">S.<br>
     </font><font class="font821738">No.</font></td>
-  <td colspan=3 class=xl9921738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl9921738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'><font class="font821738">Product Description</font></td>
-  <td colspan=2 class=xl10221738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl10221738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'><font class="font821738">HSN code</font></td>
-  <td class=xl6921738 width=37 style='border-top:none;border-left:none;
+  <td class='xl6921738' width='37' style='border-top:none;border-left:none;
   width:28pt'><font class="font821738">UOM</font></td>
-  <td class=xl6821738 width=55 style='border-top:none;border-left:none;
+  <td class='xl6821738' width='55' style='border-top:none;border-left:none;
   width:41pt'><font class="font821738">Qty</font></td>
-  <td class=xl6821738 width=85 style='border-top:none;border-left:none;
+  <td class='xl6821738' width='85' style='border-top:none;border-left:none;
   width:64pt'><font class="font821738">Rate</font></td>
-  <td colspan=2 class=xl10421738 width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl10421738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'><font class="font821738">Amount</font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td height=20 class=xl7221738 width=23 style='height:15.0pt;border-top:none;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td height='20' class='xl7221738' width='23' style='height:15.0pt;border-top:none;
   width:17pt'>&nbsp;</td>
-  <td colspan=3 class=xl11421738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl11421738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'>&quot;<span th:text="${invoice.saleType.saleType}" />"</td>
-  <td colspan=2 class=xl11721738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl11721738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
-  <td class=xl6321738 width=37 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='37' style='border-top:none;border-left:none;
   width:28pt'>&nbsp;</td>
-  <td class=xl6321738 width=55 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='55' style='border-top:none;border-left:none;
   width:41pt'>&nbsp;</td>
-  <td class=xl6321738 width=85 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='85' style='border-top:none;border-left:none;
   width:64pt'>&nbsp;</td>
-  <td colspan=2 class=xl11721738 width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl11721738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'>&nbsp;</td>
  </tr>
  <th:block th:each="product, prodStat : ${invoice.product}">
-  <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-   <td height=20 class=xl7521738 style='height:15.0pt;border-top:none'><span th:text="${prodStat.count}"/></td>
-   <td colspan=3 class=xl11921738 width=256 style='border-right:.5pt solid black;
+  <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+   <td height='20' class='xl7521738' style='height:15.0pt;border-top:none'><span th:text="${prodStat.count}"/></td>
+   <td colspan='3' class='xl11921738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt' ><span th:text="${product.product.name}"/><span th:if="${not #strings.isEmpty(product.chNo)}"> (Ch No.<span th:text="${product.chNo}"/>)</span></td>
-   <td colspan=2 class=xl12221738 style='border-right:.5pt solid black;
+   <td colspan='2' class='xl12221738' style='border-right:.5pt solid black;
   border-left:none'><span th:text="${product.product.hsn}"/></td>
-   <td class=xl7621738 width=37 style='border-top:none;border-left:none;
+   <td class='xl7621738' width='37' style='border-top:none;border-left:none;
   width:28pt'><span th:text="${product.unitOfMeasure.unitOfMeasure}"/></td>
-   <td class=xl7721738 style='border-top:none;border-left:none'><span th:text="${product.quantity}"/></td>
-   <td class=xl7821738 style='border-top:none;border-left:none'><span th:text="${product.rate}"/></td>
-   <td colspan=2 class=xl12421738 style='border-right:1.0pt solid black;
+   <td class='xl7721738' style='border-top:none;border-left:none'><span th:text="${product.quantity}"/></td>
+   <td class='xl7821738' style='border-top:none;border-left:none'><span th:text="${product.rate}"/></td>
+   <td colspan='2' class='xl12421738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${product.totalPrice}"/></td>
   </tr>
  </th:block>
 
- <tr height=18 style='mso-height-source:userset;height:13.5pt'>
-  <td height=18 class=xl7321738 width=23 style='height:13.5pt;border-top:none;
+ <tr height='18' style='mso-height-source:userset;height:13.5pt'>
+  <td height='18' class='xl7321738' width='23' style='height:13.5pt;border-top:none;
   width:17pt'>&nbsp;</td>
-  <td colspan=3 class=xl12621738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl12621738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'>&nbsp;</td>
-  <td colspan=2 class=xl12621738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl12621738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
-  <td class=xl7421738 width=37 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='37' style='border-top:none;border-left:none;
   width:28pt'>&nbsp;</td>
-  <td class=xl7421738 width=55 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='55' style='border-top:none;border-left:none;
   width:41pt'>&nbsp;</td>
-  <td class=xl7421738 width=85 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='85' style='border-top:none;border-left:none;
   width:64pt'>&nbsp;</td>
-  <td colspan=2 class=xl12621738 width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl12621738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'>&nbsp;</td>
  </tr>
- <tr height=18 style='mso-height-source:userset;height:13.5pt'>
-  <td height=18 class=xl7321738 width=23 style='height:13.5pt;border-top:none;
+ <tr height='18' style='mso-height-source:userset;height:13.5pt'>
+  <td height='18' class='xl7321738' width='23' style='height:13.5pt;border-top:none;
   width:17pt'>&nbsp;</td>
-  <td colspan=3 class=xl12621738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl12621738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'>&nbsp;</td>
-  <td colspan=2 class=xl12621738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl12621738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
-  <td class=xl7421738 width=37 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='37' style='border-top:none;border-left:none;
   width:28pt'>&nbsp;</td>
-  <td class=xl7421738 width=55 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='55' style='border-top:none;border-left:none;
   width:41pt'>&nbsp;</td>
-  <td class=xl7421738 width=85 style='border-top:none;border-left:none;
+  <td class='xl7421738' width='85' style='border-top:none;border-left:none;
   width:64pt'>&nbsp;</td>
-  <td colspan=2 class=xl12621738 width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl12621738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'>&nbsp;</td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td height=20 class=xl7221738 width=23 style='height:15.0pt;border-top:none;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td height='20' class='xl7221738' width='23' style='height:15.0pt;border-top:none;
   width:17pt'>&nbsp;</td>
-  <td colspan=3 class=xl13021738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl13021738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'><font class="font921738">&nbsp;</font><font
   class="font1021738">Packing&nbsp;&amp;&nbsp;Forwarding&nbsp;Charges</font></td>
-  <td colspan=2 class=xl11721738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl11721738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
-  <td class=xl6321738 width=37 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='37' style='border-top:none;border-left:none;
   width:28pt'>&nbsp;</td>
-  <td class=xl6321738 width=55 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='55' style='border-top:none;border-left:none;
   width:41pt'>&nbsp;</td>
-  <td class=xl6321738 width=85 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='85' style='border-top:none;border-left:none;
   width:64pt'>&nbsp;</td>
-  <td colspan=2 class=xl13321738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13321738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.pnfCharge}"/></td>
  </tr>
 
- <tr height=19 style='mso-height-source:userset;height:14.25pt'>
-  <td height=19 class=xl7221738 width=23 style='height:14.25pt;border-top:none;
+ <tr height='19' style='mso-height-source:userset;height:14.25pt'>
+  <td height='19' class='xl7221738' width='23' style='height:14.25pt;border-top:none;
   width:17pt'>&nbsp;</td>
-  <td colspan=3 class=xl11721738 width=256 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl11721738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'>&nbsp;</td>
-  <td colspan=2 class=xl11721738 width=112 style='border-right:.5pt solid black;
+  <td colspan='2' class='xl11721738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
-  <td class=xl6321738 width=37 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='37' style='border-top:none;border-left:none;
   width:28pt'>&nbsp;</td>
-  <td class=xl6321738 width=55 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='55' style='border-top:none;border-left:none;
   width:41pt'>&nbsp;</td>
-  <td class=xl6321738 width=85 style='border-top:none;border-left:none;
+  <td class='xl6321738' width='85' style='border-top:none;border-left:none;
   width:64pt'>&nbsp;</td>
-  <td colspan=2 class=xl11721738 width=86 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl11721738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'>&nbsp;</td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=6 height=20 class=xl13721738 width=391 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='6' height='20' class='xl13721738' width='391' style='border-right:.5pt solid black;
   height:15.0pt;width:293pt'><font class="font721738">Total Invoice amount in
   words</font></td>
-  <td colspan=3 class=xl8421738 width=177 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl8421738' width='177' style='border-right:.5pt solid black;
   border-left:none;width:133pt'><font class="font721738">Total Amount</font></td>
-  <td colspan=2 class=xl13521738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.totalAmount}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=6 rowspan=5 height=100 class=xl17121738 width=391
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='6' rowspan='5' height='100' class='xl17121738' width='391'
   style='border-right:.5pt solid black;border-bottom:.5pt solid black;
   height:75.0pt;width:293pt'><span th:text="${invoice.totalInvoiceAmountInWords}"/></td>
-  <td colspan=3 class=xl9721738 width=177 style='border-right:.5pt solid black;
+  <td colspan='3' class='xl9721738' width='177' style='border-right:.5pt solid black;
   border-left:none;width:133pt'>Add: CGST 2.5%</td>
-  <td colspan=2 class=xl13521738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.cGst}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl9721738 width=177 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl9721738' width='177' style='border-right:.5pt solid black;
   height:15.0pt;border-left:none;width:133pt'>Add: SGST 2.5%</td>
-  <td colspan=2 class=xl13521738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.sGst}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8421738 width=177 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8421738' width='177' style='border-right:.5pt solid black;
   height:15.0pt;border-left:none;width:133pt'><font class="font721738">Total
   Tax Amount</font></td>
-  <td colspan=2 class=xl13521738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.totalTaxAmount}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8421738 width=177 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8421738' width='177' style='border-right:.5pt solid black;
   height:15.0pt;border-left:none;width:133pt'><font class="font721738">Round
   Off</font></td>
-  <td colspan=2 class=xl13521738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.roundOff}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8421738 width=177 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8421738' width='177' style='border-right:.5pt solid black;
   height:15.0pt;border-left:none;width:133pt'><font class="font721738">Total
   Amount after Tax:</font></td>
-  <td colspan=2 class=xl14021738 style='border-right:1.0pt solid black;
+  <td colspan='2' class='xl14021738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.totalAmountAfterTax}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl10721738 width=222 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl10721738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'><font class="font721738">Bank Details</font></td>
-  <td colspan=3 rowspan=5 height=152 class=xl14221738 width=169
+  <td colspan='3' rowspan='5' height='152' class='xl14221738' width='169'
   style='border-right:.5pt solid black;border-bottom:.5pt solid black;
   height:114.4pt;width:127pt'><!--[if gte vml 1]>
    <v:imagedata src="Shreeram%20Textile%20-%20Invoices_files/Shreeram%20Textile%20-%20Invoices_21738_image003.png"
@@ -2849,16 +2855,16 @@ x\:* {behavior:url(#default#VML);}
    </x:ClientData>
   </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
   position:absolute;z-index:2;margin-left:8px;margin-top:2px;width:151px;
-  height:148px'><img width=151 height=148
-  src="/images/invoice/SRTI-Stamp-004.png" th:src="@{classpath:/images/invoice/SRTI-Stamp-004.png}"
+  height:148px'><img width='151' height='148'
+  src="/images/invoice/SRTI-Stamp-004.png" th:src="@{/images/invoice/SRTI-Stamp-004.png}"
   v:shapes="Picture_x0020_2"></span><![endif]></td>
-  <td colspan=5 class=xl11021738 width=263 style='border-right:1.0pt solid black;
+  <td colspan='5' class='xl11021738' width='263' style='border-right:1.0pt solid black;
   border-left:none;width:198pt'>&nbsp;</td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8121738 width=222 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>Bank Name: <span th:text="${invoice.selectedBank.bankName}"/>,<span th:text="${invoice.selectedBank.branch}"/></td>
-  <td colspan=5 rowspan=5 class=xl15121738 width=263 style='border-right:1.0pt solid black;
+  <td colspan='5' rowspan='5' class='xl15121738' width='263' style='border-right:1.0pt solid black;
   border-bottom:1.0pt solid black;width:198pt'><font class="font1221738">Verified
   that the particulars given above are true and correct</font><font
   class="font1121738"><br>
@@ -2873,21 +2879,21 @@ x\:* {behavior:url(#default#VML);}
     </font><font class="font721738">For <span th:text="${invoice.invoiceBy.name}"/><br>
     Authorised signatory</font></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8121738 width=222 style='border-right:.5pt solid black;
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+  <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>Bank A/C: <span th:text="${invoice.selectedBank.accountNo}"/></td>
  </tr>
  <tr height=20 style='mso-height-source:userset;height:15.0pt'>
-  <td colspan=3 height=20 class=xl8121738 width=222 style='border-right:.5pt solid black;
+  <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>Bank IFSC: <span th:text="${invoice.selectedBank.ifsc}"/></td>
  </tr>
- <tr height=72 style='mso-height-source:userset;height:54.4pt'>
-  <td colspan=3 rowspan=2 height=104 class=xl16221738 width=222
+ <tr height='72' style='mso-height-source:userset;height:54.4pt'>
+  <td colspan='3' rowspan='2' height='104' class='xl16221738' width='222'
   style='border-right:.5pt solid black;border-bottom:1.0pt solid black;
   height:78.4pt;width:166pt'><font class="font721738">Terms &amp; conditions</font></td>
  </tr>
- <tr height=32 style='mso-height-source:userset;height:24.0pt'>
-  <td colspan=3 height=32 class=xl16821738 width=169 style='border-right:.5pt solid black;
+ <tr height='32' style='mso-height-source:userset;height:24.0pt'>
+  <td colspan='3' height='32' class='xl16821738' width='169' style='border-right:.5pt solid black;
   height:24.0pt;border-left:none;width:127pt'><font class="font721738">Common
   Seal</font></td>
  </tr>
@@ -2900,5 +2906,10 @@ x\:* {behavior:url(#default#VML);}
 <!--END OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD-->
 <!----------------------------->
 </body>
-
+<script>
+var button = document.getElementById("PrintBtn");
+button.onclick = function(){
+ window.print()
+}
+</script>
 </html>

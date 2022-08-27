@@ -6,16 +6,21 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <!-- css -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 </head>
 <style>
 </style>
 <body>
 <div class="container-fluid">
 
-    <table id="invoiceTable" class="table table-striped">
+    <table id="invoiceTable" class="table table-striped" style="width:100%;">
         <thead>
             <tr>
                 <th>Sr.No</th>
@@ -41,14 +46,13 @@
                         <c:out value="${invDateFormatted}">NA</c:out>
                     </td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.id}" target="_blank">${invoice.invoiceNo}</a>
-                        (<a href="${pageContext.request.contextPath}/invoices/print/${invoice.id}" target="_blank">Print</a>
-                          |  <a href="${pageContext.request.contextPath}/invoices/downloadPdf/${invoice.invoiceNo}">Print</a>)
+                        <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}" target="_blank">${invoice.invoiceNo}</a>
+                        (<a href="${pageContext.request.contextPath}/invoices/printById/${invoice.invoiceId}" target="_blank">Print</a>)
                     </td>
-                    <td>${invoice.gst}</td>
-                    <td>${invoice.name}</td>
+                    <td>${invoice.billToPartyGst}</td>
+                    <td>${invoice.billToPartyName}</td>
                     <td>${invoice.totalAmount}</td>
-                    <td>${invoice.cGst + invoice.sGst}</td>
+                    <td>${invoice.totalTaxAmount}</td>
                     <td>${invoice.roundOff}</td>
                     <td>${invoice.pnfCharge}</td>
                     <td>${invoice.totalAmountAfterTax}</td>
@@ -70,5 +74,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(e){
+    $("#invoiceTable").DataTable()
+})
+</script>
 </body>
 </html>

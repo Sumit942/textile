@@ -1,10 +1,13 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
+import com.example.textile.enums.UserProfileType;
 import com.example.textile.repo.InvoiceRepository;
+import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.repo.ProductRepository;
 import com.example.textile.repo.UnitRepository;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.service.UserService;
 import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
@@ -19,10 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootTest
 class TextileApplicationTests {
@@ -31,13 +31,18 @@ class TextileApplicationTests {
     InvoiceService invoiceService;
 
     @Test
+    void getInvoiceStartCountFromYml() {
+        System.out.println(invoiceService.getLatestInvoiceNo());
+    }
+
+    @Test
     void testSaveInvoiceMapping() {
         System.out.println("SUMEET running checkSaveInvoiceService test1...");
         Invoice invoice = getInvoice();
         System.out.println("saving...sdf");
         System.out.println(invoice);
 
-        invoiceService.save(invoice);
+        invoiceService.saveOrUpdate(invoice);
         System.out.println(invoice);
         System.out.println("save succesfull!!");
     }
@@ -167,13 +172,13 @@ class TextileApplicationTests {
 
     }
 
-    @Autowired
+//    @Autowired
     InvoiceRepository invoiceRepo;
 
-    @Autowired
+//    @Autowired
     ProductRepository productRepo;
 
-    @Autowired
+//    @Autowired
     UnitRepository unitRepo;
 
     @Test
@@ -214,11 +219,14 @@ class TextileApplicationTests {
         invoiceRepo.save(invoice);
     }
 
+    @Autowired
+    InvoiceViewRepository viewRepository;
+
     @Test
-    void findAllInvoice_checkIfConvertedToInvoiceView() {
-        List<InvoiceView> view = invoiceRepo.viewList();
+    void findAllInvoiceView() {
+        List<InvoiceView> view = viewRepository.findAll();
         view.forEach(e ->{
-            System.out.println(e.getId()+","+e.getGst()+","+e.getInvoiceNo());
+            System.out.println(e.getId()+","+e.getTotalTaxAmount()+","+e.getInvoiceNo());
         });
     }
 
@@ -237,5 +245,30 @@ class TextileApplicationTests {
             OutputStream os = new FileOutputStream("invoice_008.pdf");
             PdfUtility.createPdf(os,process);
         }
+    }
+
+//    @Autowired
+    UserService userService;
+
+    @Test
+    void test_creatUser() {
+        UserProfile userProfile = new UserProfile();
+        userProfile.setId(1L);
+        UserProfile userProfile1 = new UserProfile();
+        userProfile1.setId(2L);
+
+        Set<UserProfile> userProfiles = new HashSet<>();
+        userProfiles.add(userProfile);
+        userProfiles.add(userProfile1);
+
+        User user = new User();
+        user.setFirstName("Sumit");
+        user.setLastName("Paswan");
+        user.setUserName("sumit");
+        user.setPassword("1234");
+        user.setEmail("sumitpaswan942@gmail.com");
+        user.setUserProfiles(userProfiles);
+
+        System.out.println(userService.saveOrUpdate(user));
     }
 }

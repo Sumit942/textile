@@ -42,7 +42,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 //            invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
 //        }
         //saving by getting the invoiceId
-        invoiceService.save(invoice);
+        invoiceService.saveOrUpdate(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         log.info("{} [Action=Save, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
         log.info("{} Exit", logPrefix);

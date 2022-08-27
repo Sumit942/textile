@@ -22,7 +22,13 @@ public class StateController {
 
     @GetMapping("/searchByName/{name}")
     @ResponseBody
-    public List<State> searchByName(@PathVariable("name") String name) {
+    public List<State> searchByName(@PathVariable String name) {
         return stateService.findByNameLike(name);
+    }
+
+    @GetMapping("/findByCode/{code}")
+    @ResponseBody
+    public State findByCode(@PathVariable Integer code) {
+        return stateService.findByCode(code);
     }
 }

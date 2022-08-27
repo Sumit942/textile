@@ -115,7 +115,7 @@
             <div class="row mb-1">
                 <form:hidden path="billToParty.id" />
                 <form:label path="billToParty.name" class="col-md-3">Name:</form:label>
-                <form:input path="billToParty.name" onkeypress="billToPartyAutoComplete(this);" class="col-md-3"/>
+                <form:input path="billToParty.name" onkeyup="billToPartyAutoComplete(event,this);" class="col-md-3"/>
                 <form:errors path="billToParty.name" cssClass="error"/>
             </div>
             <div class="row mb-1">
@@ -137,7 +137,7 @@
                 <form:hidden path="billToParty.address.state.id" />
                 <form:hidden path="billToParty.address.state.country.id" />
                 <form:label path="billToParty.address.state.name" class="col-md-3">State:</form:label>
-                <form:input path="billToParty.address.state.name" onkeypress="billToPartyStateAutoComplete(this);" class="col-md-3"/>
+                <form:input path="billToParty.address.state.name" onkeyup="billToPartyStateAutoComplete(event, this);" class="col-md-3"/>
                 <form:errors path="billToParty.address.state.name" cssClass="error"/>
 
                 <form:label path="billToParty.address.state.code" class="col-md-3" style="">Code:</form:label>
@@ -152,7 +152,7 @@
             <div class="row mb-1">
                 <form:hidden path="shipToParty.id" />
                 <form:label path="shipToParty.name" class="col-md-3">Name:</form:label>
-                <form:input path="shipToParty.name" onkeypress="shipToPartyAutoComplete(this);" class="col-md-3"/>
+                <form:input path="shipToParty.name" onkeyup="shipToPartyAutoComplete(event, this);" class="col-md-3"/>
                 <form:errors path="shipToParty.name" cssClass="error"/>
             </div>
             <div class="row mb-1">
@@ -174,7 +174,7 @@
                 <form:hidden path="shipToParty.address.state.id" />
                 <form:hidden path="shipToParty.address.state.country.id" />
                 <form:label path="shipToParty.address.state.name" class="col-md-3">State:</form:label>
-                <form:input path="shipToParty.address.state.name" onkeypress="shipToPartyStateAutoComplete(this);" class="col-md-3"/>
+                <form:input path="shipToParty.address.state.name" onkeyup="shipToPartyStateAutoComplete(event, this);" class="col-md-3"/>
                 <form:errors path="shipToParty.address.state.name" cssClass="error"/>
 
                 <form:label path="shipToParty.address.state.code" class="col-md-3" style="">Code:</form:label>
@@ -222,8 +222,8 @@
                 <!-- <form:hidden path="product[0].id" /> -->
             </td>
             <td>
-                <input type="hidden" name="product[0].product.id" />
-                <form:input path="product[0].product.name" onkeypress="autoSearchProduct(this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                <form:hidden path="product[0].product.id"/>
+                <form:input path="product[0].product.name" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
@@ -265,7 +265,7 @@
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
-                    <form:input path="product[${index.index}].product.name" onkeypress="autoSearchProduct(this,${index.index})"/>
+                    <form:input path="product[${index.index}].product.name" onkeyup="autoSearchProduct(event,this,${index.index})"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
@@ -295,8 +295,8 @@
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
-                    <c:if test="${index.index > 0}">
-                        <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow()"/>
+                    <c:if test="${index.index == invoiceCommand.product.size()-1}">
+                        <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;"/>
                     </c:if>
                 </td>
             </tr>
@@ -414,7 +414,7 @@
     </div>
     <input type="Submit" class="btn btn-primary" />
     <c:if test="${printInvoice}">
-        <a href="${pageContext.request.contextPath}/invoices/print/${invoiceCommand.id}" target="_blank">
+        <a href="${pageContext.request.contextPath}/invoices/printById/${invoiceCommand.id}" target="_blank">
             <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
         </a>
     </c:if>
@@ -456,18 +456,48 @@ $(document).ready(function() {
     $("#billToParty\\.address\\.pinCode").on("focusout",function(e){
         $("#shipToParty\\.address\\.pinCode").val(this.value);
     })
-    $("#billToParty\\.gst").on("focusout",function(e){
-        if ($("#shipToParty\\.id").val() == '')
-            $("#shipToParty\\.gst").val(this.value);
-    })
     $("#billToParty\\.name").on("focusout",function(e){
         if (!$("#billToParty\\.id").val() && !$("#shipToParty\\.id").val()) {
             $("#shipToParty\\.name").val(this.value)
         }
     })
-
-
+    $("#billToParty\\.gst").on("focusout",function(e){
+        if (this.value.length <= 2)
+            return;
+        getStateByCode('billToParty',this.value.substr(0,2))  //get code from gst
+        if ($("#shipToParty\\.id").val() == '') {
+            $("#shipToParty\\.gst").val(this.value);
+        }
+    })
+    $("#shipToParty\\.gst").on("focusout",function(e){
+        if (this.value.length <= 2)
+            return;
+        getStateByCode('shipToParty',this.value.substr(0,2))  //get code from gst
+    })
 });
+    /**     get state by code ajax                         **/
+    function getStateByCode(party, stateCode) {
+        $.ajax({
+            url : "${pageContext.request.contextPath}/states/findByCode/"+stateCode,
+            dataType : 'json',
+            success : function(data) {
+                if (party == 'billToParty') {
+                    setBillToPartyState(data);
+                } else {
+                    setShipToPartyState(data);
+                }
+            },
+            error : function(err) {
+                console.log(err)
+                if (party == 'billToParty') {
+                    resetBillToPartyState();
+                } else {
+                    resetShipToPartyState();
+                }
+            }
+        })
+    }
+
     //reset state fields in billToParty
     function resetBillToPartyState() {
         $("#billToParty\\.address\\.state\\.id").val('')
@@ -489,7 +519,7 @@ $(document).ready(function() {
     }
 
     //reset all fields in billToParty
-    function resetBillToParty(){
+    function resetBillToParty() {
         $("#billToParty\\.id").val('')
         $("#billToParty\\.address\\.id").val('')
         $("#billToParty\\.address\\.address").val('')
@@ -518,7 +548,7 @@ $(document).ready(function() {
         //$("#shipToParty\\.address\\.state\\.name").val('')
         $("#shipToParty\\.address\\.state\\.code").val('')
     }
-    //set state fields in billToParty
+    //set state fields in shipToParty
     function setShipToPartyState(item) {
         $("#shipToParty\\.address\\.state\\.id").val(item.id)
         $("#shipToParty\\.address\\.state\\.country\\.id").val(item.country.id)
@@ -545,9 +575,10 @@ $(document).ready(function() {
         $("#shipToParty\\.gst").val(item.gst)
         setShipToPartyState(item.address.state)
     }
-
     /**                 billToParty AutoComplete functions                  **/
-function billToPartyAutoComplete(thisObj) {
+function billToPartyAutoComplete(event,thisObj) {
+    if (event.key == 'Enter')
+        return
     resetBillToParty()
     $(thisObj).autocomplete({
         source : function(request, response) {
@@ -575,7 +606,9 @@ function billToPartyAutoComplete(thisObj) {
                 "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
-function billToPartyStateAutoComplete(thisObj) {
+function billToPartyStateAutoComplete(event, thisObj) {
+    if (event.key == 'Enter')
+        return
     resetBillToPartyState()
     $( thisObj ).autocomplete({
         source : function(request, response) {
@@ -603,7 +636,9 @@ function billToPartyStateAutoComplete(thisObj) {
     };
 }
     /**                 shipToParty autocomplete functions script                  **/
-function shipToPartyStateAutoComplete(thisObj) {
+function shipToPartyStateAutoComplete(event,thisObj) {
+    if (event.key == 'Enter')
+        return
     resetShipToPartyState()
     $( thisObj ).autocomplete({
         source : function(request, response) {
@@ -631,7 +666,9 @@ function shipToPartyStateAutoComplete(thisObj) {
     };
 }
 
-function shipToPartyAutoComplete(thisObj) {
+function shipToPartyAutoComplete(event,thisObj) {
+    if (event.key == 'Enter')
+        return
     resetShipToParty()
     $(thisObj).autocomplete({
         source : function(request, response) {
@@ -661,7 +698,9 @@ function shipToPartyAutoComplete(thisObj) {
 }
 
     /**                 productDescription script                  **/
-function autoSearchProduct(obj,index) {
+function autoSearchProduct(event,obj,index) {
+if (event.key == 'Enter')
+    return
 //$("#product"+index+"\\.product\\.hsn").val('')
 $("#product"+index+"\\.product\\.id").val('')
     $(obj).autocomplete({
@@ -702,6 +741,31 @@ $("#product"+index+"\\.product\\.id").val('')
 function addProductDescRow() {
 
     var i = $("#productDescTBody > tr").length - 1;
+    //check if the last row data is entered or not
+    if ( $('#product'+(i-1)+'\\.product\\.name').val() == '' ) {
+        alert ("Please enter 'Product Description' in last row")
+        return;
+    }
+    if ( $('#product'+(i-1)+'\\.product\\.hsn').val() == '' ) {
+        alert ("Please enter 'HSN' in last row")
+        return;
+    }
+    if ( $('#product'+(i-1)+'\\.unitOfMeasure\\.id').val() == '' ) {
+        alert ("Please enter 'Unit Of Measure' in last row")
+        return;
+    }
+    if ( $('#product'+(i-1)+'\\.quantity').val() == '' ) {
+        alert ("Please enter 'Quantity' in last row")
+        return;
+    }
+    if ( $('#product'+(i-1)+'\\.rate').val() == '' ) {
+        alert ("Please enter 'Rate' in last row")
+        return;
+    }
+    if ( $('#product'+(i-1)+'\\.totalPrice').val() == '' ) {
+        alert ("Please enter 'Total Price' in last row")
+        return;
+    }
 
     var prodDescRow = '<tr>'+
                         '<td>'+
@@ -710,7 +774,7 @@ function addProductDescRow() {
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" name="product['+i+'].product.id">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" onkeypress="autoSearchProduct(this,'+i+')" type="text" value="">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly">'+

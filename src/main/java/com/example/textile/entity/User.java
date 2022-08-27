@@ -1,17 +1,25 @@
 package com.example.textile.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "APP_USER")
-public class User implements Serializable {
+public class User {
     private Long id;
     private String userName;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String email;
     private Set<UserProfile> userProfiles = new HashSet<>();
 
     @Id
@@ -43,6 +51,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "APP_USER_USER_PROFILE",
             joinColumns = {@JoinColumn(name = "USER_ID")},
@@ -55,12 +64,39 @@ public class User implements Serializable {
         this.userProfiles = userProfiles;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
+                ", password=[PROTECTED]" +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", email=" + email +
                 ", userProfiles=" + userProfiles +
                 '}';
     }

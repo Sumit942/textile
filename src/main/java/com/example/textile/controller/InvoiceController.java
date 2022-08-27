@@ -12,14 +12,13 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.service.CompanyService;
+import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import com.lowagie.text.DocumentException;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -33,19 +32,18 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -54,6 +52,9 @@ public class InvoiceController extends BaseController {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    InvoiceViewRepository viewRepository;
 
     private Map<String, ActionExecutor> actionExecutorMap;
 
@@ -76,9 +77,9 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping
-    public ModelAndView showAllInvoices() {
+    public ModelAndView findAll() {
         ModelAndView model = new ModelAndView("/invoiceList");
-        List<InvoiceView> invoices = invoiceService.viewList();
+        List<InvoiceView> invoices = viewRepository.findAll();
         model.addObject("invoices",invoices);
         model.addObject("printInvoice",true);
 
@@ -125,6 +126,9 @@ public class InvoiceController extends BaseController {
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         ActionResponse response;
+
+        Invoice oldInvoiceBackUp = getNewInstanceOfInvoice(invoice);
+
         try {
             response = actExecutor.execute(invoice, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
@@ -147,16 +151,47 @@ public class InvoiceController extends BaseController {
                 response.addErrorMessage(messageSource.getMessage("System.Exception.DB",null,request.getLocale()));
             }
             model.addAttribute("actionResponse",response);
+            model.addAttribute(CommandConstants.INVOICE_COMMAND,oldInvoiceBackUp);
         } catch (Throwable e) {
             log.error("SystemError: in saving invoice", e);
             response = new ActionResponse(ResponseType.FAILURE);
             String message = messageSource.getMessage("System.Error",null,request.getLocale());
             response.addErrorMessage(message);
             model.addAttribute("actionResponse",response);
+            model.addAttribute(CommandConstants.INVOICE_COMMAND,oldInvoiceBackUp);
         }
         log.info("{} Exit",logPrefix);
         return modelAndView;
     }
+
+    private Invoice getNewInstanceOfInvoice(Invoice invoice) {
+
+        Invoice invoiceBackUp = new Invoice();
+        invoiceBackUp.setInvoiceNo(invoice.getInvoiceNo());
+        invoiceBackUp.setUser(invoice.getUser());
+        invoiceBackUp.setTransportMode(invoice.getTransportMode());
+        invoiceBackUp.setInvoiceDate(invoice.getInvoiceDate());
+        invoiceBackUp.setVehicleNo(invoice.getVehicleNo());
+        invoiceBackUp.setReverseCharge(invoice.getReverseCharge());
+        invoiceBackUp.setDateOfSupply(invoice.getDateOfSupply());
+        invoiceBackUp.setPlaceOfSupply(invoice.getPlaceOfSupply());
+        invoiceBackUp.setBillToParty(invoice.getBillToParty());
+        invoiceBackUp.setShipToParty(invoice.getShipToParty());
+        invoiceBackUp.setSaleType(invoice.getSaleType());
+        invoiceBackUp.setPnfCharge(invoice.getPnfCharge());
+        invoiceBackUp.setTotalAmount(invoice.getTotalAmount());
+        invoiceBackUp.setcGst(invoice.getcGst());
+        invoiceBackUp.setsGst(invoice.getsGst());
+        invoiceBackUp.setTotalTaxAmount(invoice.getTotalTaxAmount());
+        invoiceBackUp.setRoundOff(invoice.getRoundOff());
+        invoiceBackUp.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());
+        invoiceBackUp.setTotalInvoiceAmountInWords(invoice.getTotalInvoiceAmountInWords());
+        invoiceBackUp.setProduct(invoice.getProduct());
+        invoiceBackUp.setSelectedBank(invoice.getSelectedBank());
+
+        return invoiceBackUp;
+    }
+
     @GetMapping("/bankInvoice")
     public @ResponseBody Invoice showNewInvoice() {
         return new Invoice();
@@ -170,7 +205,7 @@ public class InvoiceController extends BaseController {
         return new State();
     }
 
-    @GetMapping("/print/{id}")
+    @GetMapping("/printById/{id}")
     public ModelAndView showPrintInvoice(@PathVariable("id") Long id) {
         log.info("showPrintInvoice() | id-"+id);
         ModelAndView modelAndView = new ModelAndView("emailTemplates/SRTI_Invoice.html");

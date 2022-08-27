@@ -6,7 +6,9 @@ import com.example.textile.service.InvoiceService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -40,6 +42,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private BankDetailRepository bankDetailRepo;
 
+    @Value("${invoice.startCount}")
+    private Integer invoiceStartCount;
+
     @Override
     public List<Invoice> findAll() {
         return invoiceRepo.findAll();
@@ -47,7 +52,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Transactional
     @Override
-    public Invoice save(Invoice invoice) {
+    public Invoice saveOrUpdate(Invoice invoice) {
         String logPrefix = "save() |";
         String logSuffix = "";
         boolean isNew = invoice.isNew();
@@ -67,10 +72,30 @@ public class InvoiceServiceImpl implements InvoiceService {
                 });
 
         Invoice persistedState = cloneInvoice(invoice);
-        Invoice saved = invoiceRepo.save(persistedState);
-        if (isNew)
-            invoice.setInvoiceNo(getLatestInvoiceNo());
+        Invoice saved = save(persistedState);
+        if (isNew) {
+            //this code is added for giving a custom invoiceNo which is missed in between
+            if (invoice.getInvoiceNo() != null && !invoice.getInvoiceNo().isEmpty()) {
+                List<Invoice> byInvoiceNo = invoiceRepo.findByInvoiceNo(saved.getInvoiceNo());
+                if (byInvoiceNo != null && !byInvoiceNo.isEmpty()) {
+                    for (int i = 0; i < byInvoiceNo.size(); i++) {
+                        if (!byInvoiceNo.get(i).getId().equals(saved.getId())) {
+                            invoice.setInvoiceNo(getLatestInvoiceNo());
+                            break;
+                        }
+                    }
+                }
+            } else {
+                invoice.setInvoiceNo(getLatestInvoiceNo());
+            }
+
+        }
         return saved;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Invoice save(Invoice invoice) {
+        return invoiceRepo.save(invoice);
     }
 
     private Invoice cloneInvoice(Invoice invoice) {
@@ -167,8 +192,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public String getLatestInvoiceNo() {
-
-        int count = invoiceRepo.getLatestInvoiceNo() + 1;
+        log.info(">>invoiceStartCount: "+invoiceStartCount);
+        int count = invoiceRepo.getLatestInvoiceNo() + invoiceStartCount;
         String latestInvNo = getFormattedInvoiceNo(count);
 
         while (invoiceRepo.countByInvoiceNo(latestInvNo) > 0) {
@@ -223,11 +248,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<BankDetail> getBankDetailsByGst(String gst) {
         return bankDetailRepo.findByCompanyGst(gst);
-    }
-
-    @Override
-    public List<InvoiceView> viewList() {
-        return invoiceRepo.viewList();
     }
 
     @Override

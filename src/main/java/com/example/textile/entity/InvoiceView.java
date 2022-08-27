@@ -1,37 +1,35 @@
 package com.example.textile.entity;
 
+import org.hibernate.annotations.Immutable;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Entity
+@Immutable
 public class InvoiceView {
-    private long id;
+
+    private Long id;
+    private long invoiceId;
     private Date invoiceDate;
     private String invoiceNo;
-    private String gst;
-    private String name;
+    private String billToPartyGst;
+    private String billToPartyName;
     private BigDecimal totalAmount;
-    private BigDecimal cGst;
-    private BigDecimal sGst;
+    private BigDecimal totalTaxAmount;
     private Double roundOff;
     private BigDecimal pnfCharge;
     private BigDecimal totalAmountAfterTax;
 
-    public InvoiceView(long id, Date invoiceDate, String invoiceNo, String gst, String name, BigDecimal totalAmount, BigDecimal cGst, BigDecimal sGst, Double roundOff, BigDecimal pnfCharge, BigDecimal totalAmountAfterTax) {
-        this.id = id;
-        this.invoiceDate = invoiceDate;
-        this.invoiceNo = invoiceNo;
-        this.gst = gst;
-        this.name = name;
-        this.totalAmount = totalAmount;
-        this.cGst = cGst;
-        this.sGst = sGst;
-        this.roundOff = roundOff;
-        this.pnfCharge = pnfCharge;
-        this.totalAmountAfterTax = totalAmountAfterTax;
+    @Id
+    public Long getId() {
+        return id;
     }
 
-    public long getId() {
-        return id;
+    public long getInvoiceId() {
+        return invoiceId;
     }
 
     public Date getInvoiceDate() {
@@ -42,24 +40,20 @@ public class InvoiceView {
         return invoiceNo;
     }
 
-    public String getGst() {
-        return gst;
+    public String getBillToPartyGst() {
+        return billToPartyGst;
     }
 
-    public String getName() {
-        return name;
+    public String getBillToPartyName() {
+        return billToPartyName;
     }
 
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public BigDecimal getcGst() {
-        return cGst;
-    }
-
-    public BigDecimal getsGst() {
-        return sGst;
+    public BigDecimal getTotalTaxAmount() {
+        return totalTaxAmount;
     }
 
     public Double getRoundOff() {
@@ -74,20 +68,47 @@ public class InvoiceView {
         return totalAmountAfterTax;
     }
 
-    @Override
-    public String toString() {
-        return "InvoiceView{" +
-                "id=" + id +
-                ", invoiceDate=" + invoiceDate +
-                ", invoiceNo='" + invoiceNo + '\'' +
-                ", gst='" + gst + '\'' +
-                ", name='" + name + '\'' +
-                ", totalAmount=" + totalAmount +
-                ", cGst=" + cGst +
-                ", sGst=" + sGst +
-                ", roundOff=" + roundOff +
-                ", pnfCharge=" + pnfCharge +
-                ", totalAmountAfterTax=" + totalAmountAfterTax +
-                '}';
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setInvoiceId(long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
+    public void setInvoiceNo(String invoiceNo) {
+        this.invoiceNo = invoiceNo;
+    }
+
+    public void setBillToPartyGst(String billToPartyGst) {
+        this.billToPartyGst = billToPartyGst;
+    }
+
+    public void setBillToPartyName(String billToPartyName) {
+        this.billToPartyName = billToPartyName;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setTotalTaxAmount(BigDecimal totalTaxAmount) {
+        this.totalTaxAmount = totalTaxAmount;
+    }
+
+    public void setRoundOff(Double roundOff) {
+        this.roundOff = roundOff;
+    }
+
+    public void setPnfCharge(BigDecimal pnfCharge) {
+        this.pnfCharge = pnfCharge;
+    }
+
+    public void setTotalAmountAfterTax(BigDecimal totalAmountAfterTax) {
+        this.totalAmountAfterTax = totalAmountAfterTax;
     }
 }

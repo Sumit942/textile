@@ -11,7 +11,7 @@ spring:
 #      ddl-auto: update
     properties:
       hibernate.format_sql: true
-    show-sql: false
+    show-sql: true
   mvc:
     view:
       prefix: /WEB-INF/views/
@@ -31,3 +31,5 @@ spring:
 server:
   servlet:
     context-path: "/textile"
+invoice:
+  startCount: 1

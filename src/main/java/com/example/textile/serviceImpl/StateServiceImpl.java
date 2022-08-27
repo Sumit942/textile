@@ -18,4 +18,9 @@ public class StateServiceImpl implements StateService {
     public List<State> findByNameLike(String name) {
         return this.stateRepo.findByNameLike(name);
     }
+
+    @Override
+    public State findByCode(Integer code) {
+        return this.stateRepo.findByCode(code);
+    }
 }

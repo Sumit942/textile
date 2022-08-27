@@ -7,4 +7,6 @@ import java.util.List;
 public interface StateService {
 
     List<State> findByNameLike(String name);
+
+    State findByCode(Integer code);
 }
