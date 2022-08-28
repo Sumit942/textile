@@ -35,7 +35,7 @@ class TextileApplicationTests {
         System.out.println(invoiceService.getLatestInvoiceNo());
     }
 
-    @Test
+    //@Test
     void testSaveInvoiceMapping() {
         System.out.println("SUMEET running checkSaveInvoiceService test1...");
         Invoice invoice = getInvoice();
@@ -181,7 +181,7 @@ class TextileApplicationTests {
 //    @Autowired
     UnitRepository unitRepo;
 
-    @Test
+    //@Test
     void updateInvoiceTest() {
 
         Invoice invById = invoiceRepo.findById(23L).get();
@@ -205,7 +205,7 @@ class TextileApplicationTests {
         invoiceRepo.save(invById);
     }
 
-    @Test
+    //@Test
     void checkDoubleSaveInvoice() {
         Invoice invoice = new Invoice();
         invoice.setId(23L);
@@ -219,10 +219,10 @@ class TextileApplicationTests {
         invoiceRepo.save(invoice);
     }
 
-    @Autowired
+    //@Autowired
     InvoiceViewRepository viewRepository;
 
-    @Test
+    //@Test
     void findAllInvoiceView() {
         List<InvoiceView> view = viewRepository.findAll();
         view.forEach(e ->{
@@ -230,10 +230,10 @@ class TextileApplicationTests {
         });
     }
 
-    @Autowired
+    //@Autowired
     ThymeleafTemplateUtility templateUtility;
 
-    @Test
+    //@Test
     void testPdfDownload_Invoice() throws FileNotFoundException, DocumentException {
         String invoiceNo = "SRTI/22-23/008";
         List<Invoice> invoices = invoiceService.findByInvoiceNo(invoiceNo);
@@ -250,7 +250,7 @@ class TextileApplicationTests {
 //    @Autowired
     UserService userService;
 
-    @Test
+    //@Test
     void test_creatUser() {
         UserProfile userProfile = new UserProfile();
         userProfile.setId(1L);
