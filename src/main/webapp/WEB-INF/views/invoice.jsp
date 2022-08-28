@@ -29,7 +29,7 @@
     </c:if>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
         <div class="row mb-1 alert alert-success" style="margin: 1%">
-            Invoice ${invoice.getInvoiceNo()} Save Successfully!!
+            Invoice ${invoiceCommand.getInvoiceNo()} Save Successfully!!
         </div>
     </c:if>
     <div class="row mb-1">
@@ -168,7 +168,7 @@
     </div>
 
     <div class="">
-    <table class="table" id="productDescTable">
+    <table class="table" id="productDescTable" width="100%">
     <thead>
         <tr>
           <th>Sr.No</th>
@@ -176,7 +176,7 @@
           <th>Challan No</th>
           <th>HSN code</th>
           <th>UOM</th>
-          <th>Qty</th>
+          <th>Quantity</th>
           <th>Rate</th>
           <th>Amount</th>
           <th></th>
@@ -210,7 +210,7 @@
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].chNo" class="numbersOnly"/>
+                <form:input path="product[0].chNo" class="numbersOnly" style="width: 100%;"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
@@ -224,11 +224,11 @@
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].quantity" class="numbersOnly" onkeyup="updateRowAmount(0)"/>
+                <form:input path="product[0].quantity" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].rate" class="numbersOnly" onkeyup="updateRowAmount(0)"/>
+                <form:input path="product[0].rate" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
             <td>
@@ -252,7 +252,7 @@
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].chNo" class="numbersOnly"/>
+                    <form:input path="product[${index.index}].chNo" class="numbersOnly" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
@@ -266,11 +266,11 @@
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].quantity" class="numbersOnly" onkeyup="updateRowAmount(${index.index})"/>
+                    <form:input path="product[${index.index}].quantity" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].quantity" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].rate" class="numbersOnly" onkeyup="updateRowAmount(${index.index})"/>
+                    <form:input path="product[${index.index}].rate" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
@@ -304,10 +304,8 @@
         <tr>
             <td></td>
             <td></td>
-            <td colspan="2">
+            <td colspan="4">
                 <form:label path="pnfCharge">Packing & Forwarding Charges</form:label>
-            <td></td>
-            <td></td>
             <td></td>
             <td>
                 <form:input path="pnfCharge" class="numbersOnly" onkeyup="updateTotalAmount();"/>

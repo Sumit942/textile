@@ -12,8 +12,8 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.service.InvoiceViewService;
 import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.ThymeleafTemplateUtility;
@@ -54,7 +54,7 @@ public class InvoiceController extends BaseController {
     InvoiceService invoiceService;
 
     @Autowired
-    InvoiceViewRepository viewRepository;
+    InvoiceViewService viewService;
 
     private Map<String, ActionExecutor> actionExecutorMap;
 
@@ -77,13 +77,13 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping
-    public ModelAndView findAll() {
-        ModelAndView model = new ModelAndView("/invoiceList");
-        List<InvoiceView> invoices = viewRepository.findAll();
-        model.addObject("invoices",invoices);
-        model.addObject("printInvoice",true);
+    public ModelAndView findAll(ModelMap model) {
+        ModelAndView modelAndView = new ModelAndView("/invoiceList");
+        List<InvoiceView> invoices = viewService.findAll();
+        modelAndView.addObject("invoices",invoices);
+        modelAndView.addObject("printInvoice",true);
 
-        return model;
+        return modelAndView;
     }
 
     @GetMapping("/invoice/{id}")
@@ -132,11 +132,15 @@ public class InvoiceController extends BaseController {
         try {
             response = actExecutor.execute(invoice, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                modelAndView.setViewName("redirect:submit");
+                modelAndView.setViewName("redirect:/invoices");
                 log.info("{} saved Successfully!!", logPrefix);
                 redirectAttr.addFlashAttribute(CommandConstants.INVOICE_COMMAND,invoice);
                 redirectAttr.addFlashAttribute("printInvoice",true);
                 redirectAttr.addFlashAttribute("actionResponse",response);
+                redirectAttr.addFlashAttribute("successMessage",
+                        messageSource.getMessage("ActionResponse.Success.Submit",
+                                                    new Object[]{invoice.getInvoiceNo(),invoice.getId()},
+                                                    request.getLocale()));
             } else {
                 log.error("result has doValidation Errors");
                 result.getAllErrors().forEach(System.out::println);

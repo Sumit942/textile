@@ -78,8 +78,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (invoice.getInvoiceNo() != null && !invoice.getInvoiceNo().isEmpty()) {
                 List<Invoice> byInvoiceNo = invoiceRepo.findByInvoiceNo(saved.getInvoiceNo());
                 if (byInvoiceNo != null && !byInvoiceNo.isEmpty()) {
-                    for (int i = 0; i < byInvoiceNo.size(); i++) {
-                        if (!byInvoiceNo.get(i).getId().equals(saved.getId())) {
+                    for (Invoice value : byInvoiceNo) {
+                        if (!value.getId().equals(saved.getId())) {
                             invoice.setInvoiceNo(getLatestInvoiceNo());
                             break;
                         }
@@ -192,13 +192,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public String getLatestInvoiceNo() {
-        log.info(">>invoiceStartCount: "+invoiceStartCount);
         int count = invoiceRepo.getLatestInvoiceNo() + invoiceStartCount;
         String latestInvNo = getFormattedInvoiceNo(count);
 
         while (invoiceRepo.countByInvoiceNo(latestInvNo) > 0) {
             latestInvNo = getFormattedInvoiceNo(++count);
         }
+        log.info(">>latestInvNo: "+latestInvNo);
 
         return latestInvNo;
     }

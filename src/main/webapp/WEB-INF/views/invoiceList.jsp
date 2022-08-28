@@ -2,12 +2,14 @@
 <style>
 </style>
 <body>
-<div>
-    <%@ include file="./common/navigation.jspf" %>
-</div>
 <div class="container-fluid">
-
-    <table id="invoiceTable" class="table table-striped" style="width:100%;">
+    <%@ include file="./common/navigation.jspf" %>
+    <c:if test="${actionResponse.responseType == 'SUCCESS'}">
+        <div class="row mb-1 alert alert-success" style="margin: 1%">
+            ${successMessage}
+        </div>
+    </c:if>
+    <table id="invoiceTable" class="table table-striped">
         <thead>
             <tr>
                 <th>Sr.No</th>
