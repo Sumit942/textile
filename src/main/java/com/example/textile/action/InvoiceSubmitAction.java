@@ -1,5 +1,6 @@
 package com.example.textile.action;
 
+import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.*;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
@@ -32,16 +33,10 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         String logPrefix = "doSuccess() |";
         log.info("{} Entry", logPrefix);
         ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
+        //adding logged in user to entity for audit purpose
+        User user = (User) parameterMap.get(TextileConstants.USER);
+        invoice.setUser(user);
 
-//        invoiceService.save(invoice);
-//        if (ActionType.SUBMIT.equals(action)) {
-//            log.info("{} [ActionType=SUBMIT]",logPrefix);
-//            invoice.setInvoiceNo(invoiceService.getLatestInvoiceNo());
-//        } else {
-//            log.info("{} [ActionType=SAVE]",logPrefix);
-//            invoice.setInvoiceNo(ShreeramTextileConstants.FORMAT_SAVE_INVOICE_NO);
-//        }
-        //saving by getting the invoiceId
         invoiceService.saveOrUpdate(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         log.info("{} [Action=Save, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());

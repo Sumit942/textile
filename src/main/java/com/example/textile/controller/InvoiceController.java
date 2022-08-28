@@ -1,7 +1,8 @@
 package com.example.textile.controller;
 
 import com.example.textile.action.InvoiceSubmitAction;
-import com.example.textile.command.CommandConstants;
+import com.example.textile.constants.CommandConstants;
+import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.Company;
 import com.example.textile.entity.Invoice;
 import com.example.textile.entity.InvoiceView;
@@ -123,6 +124,7 @@ public class InvoiceController extends BaseController {
         log.info("{} Entry -> {}",logPrefix, invoice);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
+        parameterMap.put(TextileConstants.USER,getLoggedInUser());
 
         ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         ActionResponse response;

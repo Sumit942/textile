@@ -6,7 +6,7 @@
     <%@ include file="./common/navigation.jspf" %>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
         <div class="row mb-1 alert alert-success" style="margin: 1%">
-            ${successMessage}
+            <span>${successMessage}</span>
         </div>
     </c:if>
     <table id="invoiceTable" class="table table-striped">
