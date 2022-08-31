@@ -14,6 +14,9 @@ import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -29,8 +32,19 @@ class TextileApplicationTests {
 
     @Autowired
     InvoiceService invoiceService;
+    //@Autowired
+    InvoiceViewRepository viewRepository;
 
-    @Test
+    //@Test
+    void test_InvoiceView_withPageSize() {
+//        viewRepository.findAll(Pageable.ofSize(10).getSort().and(Sort.by("invoiceNo").descending())).forEach(System.out::println);
+        viewRepository
+                .findAll(PageRequest.of(0,10).withSort(Sort.by("invoiceNo").descending()))
+                .getContent()
+                .forEach(System.out::println);
+    }
+
+//    @Test
     void getInvoiceStartCountFromYml() {
         System.out.println(invoiceService.getLatestInvoiceNo());
     }
@@ -219,30 +233,26 @@ class TextileApplicationTests {
         invoiceRepo.save(invoice);
     }
 
-    //@Autowired
-    InvoiceViewRepository viewRepository;
 
     //@Test
     void findAllInvoiceView() {
         List<InvoiceView> view = viewRepository.findAll();
-        view.forEach(e ->{
-            System.out.println(e.getId()+","+e.getTotalTaxAmount()+","+e.getInvoiceNo());
-        });
+        view.forEach(e -> System.out.println(e.getId()+","+e.getTotalTaxAmount()+","+e.getInvoiceNo()));
     }
 
-    //@Autowired
+    @Autowired
     ThymeleafTemplateUtility templateUtility;
 
-    //@Test
+    @Test
     void testPdfDownload_Invoice() throws FileNotFoundException, DocumentException {
-        String invoiceNo = "SRTI/22-23/008";
+        String invoiceNo = "SRTI/22-23/009";
         List<Invoice> invoices = invoiceService.findByInvoiceNo(invoiceNo);
         if (invoices != null && !invoices.isEmpty()) {
             Invoice invoice = invoices.get(0);
             String process = templateUtility
                     .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
 
-            OutputStream os = new FileOutputStream("invoice_008.pdf");
+            OutputStream os = new FileOutputStream("invoice_009.pdf");
             PdfUtility.createPdf(os,process);
         }
     }

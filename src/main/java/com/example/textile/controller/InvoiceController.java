@@ -80,7 +80,7 @@ public class InvoiceController extends BaseController {
     @GetMapping
     public ModelAndView findAll(ModelMap model) {
         ModelAndView modelAndView = new ModelAndView("/invoiceList");
-        List<InvoiceView> invoices = viewService.findAll();
+        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit("invoiceNo",0,20);
         modelAndView.addObject("invoices",invoices);
         modelAndView.addObject("printInvoice",true);
 

@@ -27,7 +27,11 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-         http.formLogin().defaultSuccessUrl("/invoices");
+         http
+                 .authorizeHttpRequests(auth -> auth
+                         .antMatchers("/login").permitAll()
+                         .anyRequest().authenticated())
+                 .formLogin().defaultSuccessUrl("/invoices");
          return http.build();
     }
 

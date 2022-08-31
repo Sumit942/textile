@@ -111,4 +111,21 @@ public class InvoiceView {
     public void setTotalAmountAfterTax(BigDecimal totalAmountAfterTax) {
         this.totalAmountAfterTax = totalAmountAfterTax;
     }
+
+    @Override
+    public String toString() {
+        return "InvoiceView{" +
+                "id=" + id +
+                ", invoiceId=" + invoiceId +
+                ", invoiceDate=" + invoiceDate +
+                ", invoiceNo='" + invoiceNo + '\'' +
+                ", billToPartyGst='" + billToPartyGst + '\'' +
+                ", billToPartyName='" + billToPartyName + '\'' +
+                ", totalAmount=" + totalAmount +
+                ", totalTaxAmount=" + totalTaxAmount +
+                ", roundOff=" + roundOff +
+                ", pnfCharge=" + pnfCharge +
+                ", totalAmountAfterTax=" + totalAmountAfterTax +
+                '}';
+    }
 }

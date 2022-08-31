@@ -29,7 +29,7 @@ public class UserDetailManagerImpl implements UserDetailsManager {
     UserServiceImpl userService;
 
     @Override
-    @Transactional
+    @Transactional  //for lazy initialization of userProfiles
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userService.findByUserName(username);
