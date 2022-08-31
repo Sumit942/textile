@@ -38,8 +38,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -221,8 +220,8 @@ public class InvoiceController extends BaseController {
         return modelAndView;
     }
 
-    @GetMapping("/downloadPdf/{invoiceNo}")
-    public void downloadToPdf(@PathVariable(name = "invoiceNo",required = true) String invoiceNo,
+    //@GetMapping("/downloadPdf")
+    public void downloadToPdf(@RequestParam(name = "invoiceNo",required = true) String invoiceNo,
                               HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
 
         String logPrefix = "downloadToPdf() |";
@@ -235,8 +234,14 @@ public class InvoiceController extends BaseController {
             String process = templateUtility
                     .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
 
-            OutputStream os = response.getOutputStream();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
             PdfUtility.createPdf(os,process);
+
+            byte[] content = os.toByteArray();
+
+            response.setHeader("Content-Disposition","attachment; filename=Invtesting.pdf");
+            response.setContentLength(content.length);
+            response.getOutputStream().write(content);
         }
 
         log.info("{} Exit {}", logPrefix, logSuffix);

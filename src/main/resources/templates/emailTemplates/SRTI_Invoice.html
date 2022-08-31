@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html[
+        <!ENTITY nbsp "&#160;">
+]>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:v="http://www.w3.org/1999/xhtml">
 
@@ -7,7 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="ProgId" content="Excel.Sheet" />
 <meta name="Generator" content="Microsoft Excel 14" />
-<link rel="File-List" href="images/invoice/filelist.xml" />
+<link rel="File-List" href="/images/invoice/filelist.xml" />
 <!--[if !mso]>
 <style>
 v\:* {behavior:url(#default#VML);}
@@ -2527,10 +2529,7 @@ x\:* {behavior:url(#default#VML);}
 	mso-pattern:auto;
 	white-space:normal;}
 -->
-@media print {
- #PrintBtn {
-  visibility: hidden;
- }
+
 }
 </style>
 <title>Invoice</title>
@@ -2542,19 +2541,19 @@ x\:* {behavior:url(#default#VML);}
 </div>
 <div id="SRTI-Invoice" align="center" x:publishsource="Excel">
 
-<table border='0' cellpadding='0' cellspacing='0' width='654' style='border-collapse:
+<table id="SRTI_table" border='0' cellpadding='0' cellspacing='0' width='654' style='border-collapse:
  collapse;table-layout:fixed;width:491pt'>
- <col width='23' style='mso-width-source:userset;mso-width-alt:981;width:17pt'>
- <col width='131' style='mso-width-source:userset;mso-width-alt:5589;width:98pt'>
- <col width='68' style='mso-width-source:userset;mso-width-alt:2901;width:51pt'>
- <col width='57' style='mso-width-source:userset;mso-width-alt:2432;width:43pt'>
- <col width='48' style='mso-width-source:userset;mso-width-alt:2048;width:36pt'>
- <col width='64' style='mso-width-source:userset;mso-width-alt:2730;width:48pt'>
- <col width='37' style='mso-width-source:userset;mso-width-alt:1578;width:28pt'>
- <col width='55' style='mso-width-source:userset;mso-width-alt:2346;width:41pt'>
- <col width='85' style='mso-width-source:userset;mso-width-alt:3626;width:64pt'>
- <col width='45' style='mso-width-source:userset;mso-width-alt:1920;width:34pt'>
- <col width='41' style='mso-width-source:userset;mso-width-alt:1749;width:31pt'>
+ <col width='23' style='mso-width-source:userset;mso-width-alt:981;width:17pt' />
+ <col width='131' style='mso-width-source:userset;mso-width-alt:5589;width:98pt' />
+ <col width='68' style='mso-width-source:userset;mso-width-alt:2901;width:51pt' />
+ <col width='57' style='mso-width-source:userset;mso-width-alt:2432;width:43pt' />
+ <col width='48' style='mso-width-source:userset;mso-width-alt:2048;width:36pt' />
+ <col width='64' style='mso-width-source:userset;mso-width-alt:2730;width:48pt' />
+ <col width='37' style='mso-width-source:userset;mso-width-alt:1578;width:28pt' />
+ <col width='55' style='mso-width-source:userset;mso-width-alt:2346;width:41pt' />
+ <col width='85' style='mso-width-source:userset;mso-width-alt:3626;width:64pt' />
+ <col width='45' style='mso-width-source:userset;mso-width-alt:1920;width:34pt' />
+ <col width='41' style='mso-width-source:userset;mso-width-alt:1749;width:31pt' />
  <tr height='131' style='mso-height-source:userset;height:98.45pt'>
   <td colspan='2' height='131' width='154' style='height:98.45pt;width:115pt'
   align='left' valign='top'><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
@@ -2573,9 +2572,8 @@ x\:* {behavior:url(#default#VML);}
    </x:ClientData>
   </v:shape><![endif]--><span style='mso-ignore:vglayout;
   position:absolute;z-index:1;margin-left:19px;margin-top:10px;width:135px;
-  height:106px'><img width="135" height="106"
-  src="images/invoice/SRTI-logo-002.png" th:src="@{/images/invoice/SRTI-logo-002.png}"
-  v:shapes="Picture_x0020_1"></img></span><span style='mso-ignore:vglayout2'>
+  height:106px'><img width="135" height="106" th:src="@{/images/invoice/SRTI-logo-002.png}"
+  v:shapes="Picture_x0020_1" /></span><span style='mso-ignore:vglayout2'>
   <table cellpadding='0' cellspacing='0'>
    <tr>
     <td colspan='2' height='131' class='xl8621738' width='154' style='height:98.45pt;
@@ -2585,16 +2583,16 @@ x\:* {behavior:url(#default#VML);}
   </span></td>
   <td colspan='7' class='xl8821738' width='414' style='width:311pt'><font
   class="font1421738"><b th:text="${invoice.invoiceBy.name}" /></font><font
-  class="font1321738"><br>
-    202, Royal Building, Bangar Nagar, Bhiwandi Road,Kalher,<br>
+  class="font1321738"><br />
+    202, Royal Building, Bangar Nagar, Bhiwandi Road,Kalher,<br />
     Bhiwandi, Thane, Maharashtra, 421302<span
-  style='mso-spacerun:yes'>                  </span><br>
-    Tel: <b th:text="${invoice.invoiceBy.mobileNo}" /><br>
-    Email: <b th:text="${invoice.invoiceBy.emailId}" /><br>
+  style='mso-spacerun:yes'>                  </span><br />
+    Tel: <b th:text="${invoice.invoiceBy.mobileNo}" /><br />
+    Email: <b th:text="${invoice.invoiceBy.emailId}" /><br />
     GSTIN: <b th:text="${invoice.invoiceBy.gst}" /></font></td>
   <td colspan='2' class='xl8721738' width='86' style='border-right:1.0pt solid black;
-  width:65pt'><br>
-    <br>
+  width:65pt'><br />
+    <br />
     Original for Recipent</td>
  </tr>
  <tr height='19' style='mso-height-source:userset;height:14.45pt'>
@@ -2682,7 +2680,7 @@ x\:* {behavior:url(#default#VML);}
  </tr>
  <tr height='36' style='mso-height-source:userset;height:27.0pt'>
   <td height='36' class='xl7121738' width='23' style='height:27.0pt;border-top:none;
-  width:17pt'><font class="font821738">S.<br>
+  width:17pt'><font class="font821738">S.<br />
     </font><font class="font821738">No.</font></td>
   <td colspan='3' class='xl9921738' width='256' style='border-right:.5pt solid black;
   border-left:none;width:192pt'><font class="font821738">Product Description</font></td>
@@ -2745,23 +2743,8 @@ x\:* {behavior:url(#default#VML);}
   <td colspan='2' class='xl12621738' width='86' style='border-right:1.0pt solid black;
   border-left:none;width:65pt'>&nbsp;</td>
  </tr>
- <tr height='18' style='mso-height-source:userset;height:13.5pt'>
-  <td height='18' class='xl7321738' width='23' style='height:13.5pt;border-top:none;
-  width:17pt'>&nbsp;</td>
-  <td colspan='3' class='xl12621738' width='256' style='border-right:.5pt solid black;
-  border-left:none;width:192pt'>&nbsp;</td>
-  <td colspan='2' class='xl12621738' width='112' style='border-right:.5pt solid black;
-  border-left:none;width:84pt'>&nbsp;</td>
-  <td class='xl7421738' width='37' style='border-top:none;border-left:none;
-  width:28pt'>&nbsp;</td>
-  <td class='xl7421738' width='55' style='border-top:none;border-left:none;
-  width:41pt'>&nbsp;</td>
-  <td class='xl7421738' width='85' style='border-top:none;border-left:none;
-  width:64pt'>&nbsp;</td>
-  <td colspan='2' class='xl12621738' width='86' style='border-right:1.0pt solid black;
-  border-left:none;width:65pt'>&nbsp;</td>
- </tr>
- <tr height='20' style='mso-height-source:userset;height:15.0pt'>
+
+ <tr th:if="${invoice.pnfCharge > 0}" height='20' style='mso-height-source:userset;height:15.0pt'>
   <td height='20' class='xl7221738' width='23' style='height:15.0pt;border-top:none;
   width:17pt'>&nbsp;</td>
   <td colspan='3' class='xl13021738' width='256' style='border-right:.5pt solid black;
@@ -2853,11 +2836,10 @@ x\:* {behavior:url(#default#VML);}
     <x:CF>Bitmap</x:CF>
     <x:AutoPict/>
    </x:ClientData>
-  </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+  </v:shape><![endif]--><span style='mso-ignore:vglayout;
   position:absolute;z-index:2;margin-left:8px;margin-top:2px;width:151px;
-  height:148px'><img width='151' height='148'
-  src="/images/invoice/SRTI-Stamp-004.png" th:src="@{/images/invoice/SRTI-Stamp-004.png}"
-  v:shapes="Picture_x0020_2"></span><![endif]></td>
+  height:148px'><img width='151' height='148' th:src="@{/images/invoice/SRTI-Stamp-004.png}"
+  v:shapes="Picture_x0020_2" /></span></td>
   <td colspan='5' class='xl11021738' width='263' style='border-right:1.0pt solid black;
   border-left:none;width:198pt'>&nbsp;</td>
  </tr>
@@ -2867,23 +2849,23 @@ x\:* {behavior:url(#default#VML);}
   <td colspan='5' rowspan='5' class='xl15121738' width='263' style='border-right:1.0pt solid black;
   border-bottom:1.0pt solid black;width:198pt'><font class="font1221738">Verified
   that the particulars given above are true and correct</font><font
-  class="font1121738"><br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    </font><font class="font721738">For <span th:text="${invoice.invoiceBy.name}"/><br>
+  class="font1121738"><br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    </font><font class="font721738">For <span th:text="${invoice.invoiceBy.name}"/><br />
     Authorised signatory</font></td>
  </tr>
  <tr height='20' style='mso-height-source:userset;height:15.0pt'>
   <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>Bank A/C: <span th:text="${invoice.selectedBank.accountNo}"/></td>
  </tr>
- <tr height=20 style='mso-height-source:userset;height:15.0pt'>
+ <tr height='20' style='mso-height-source:userset;height:15.0pt'>
   <td colspan='3' height='20' class='xl8121738' width='222' style='border-right:.5pt solid black;
   height:15.0pt;width:166pt'>Bank IFSC: <span th:text="${invoice.selectedBank.ifsc}"/></td>
  </tr>
@@ -2901,15 +2883,28 @@ x\:* {behavior:url(#default#VML);}
 
 </div>
 
-
-<!----------------------------->
-<!--END OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD-->
-<!----------------------------->
 </body>
 <script>
 var button = document.getElementById("PrintBtn");
 button.onclick = function(){
- window.print()
+ var printWindow = window.open()
+ printWindow.document.write('<html><head><title>Invoice</title>')
+
+ //print the table CSS
+ var table_style = document.getElementById("SRTI-Invoice_Styles").innerHTML;
+ printWindow.document.write('<style type = "text/css">');
+ printWindow.document.write(table_style);
+ printWindow.document.write('</style>');
+ printWindow.document.write('</head>');
+
+ //Print the contents i.e. the HTML Table.
+ var invoiceTable = document.getElementById('SRTI-Invoice').innerHTML
+ printWindow.document.write('<body>')
+ printWindow.document.write(invoiceTable)
+ printWindow.document.write('</body>')
+ printWindow.document.write('</html>')
+ printWindow.document.close()
+ printWindow.print()
 }
 </script>
 </html>

@@ -21,6 +21,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -251,9 +252,10 @@ class TextileApplicationTests {
             Invoice invoice = invoices.get(0);
             String process = templateUtility
                     .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
-
-            OutputStream os = new FileOutputStream("invoice_009.pdf");
-            PdfUtility.createPdf(os,process);
+            System.out.println(process);
+//            File file = new File("invoice_009.pdf");
+//            OutputStream os = new FileOutputStream(file);
+//            PdfUtility.createPdf(os,process);
         }
     }
 

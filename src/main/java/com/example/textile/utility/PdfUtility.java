@@ -12,5 +12,6 @@ public class PdfUtility {
         renderer.setDocumentFromString(pdfTemplateProcess);
         renderer.layout();
         renderer.createPDF(outputStream);
+        renderer.finishPDF();
     }
 }
