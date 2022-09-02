@@ -2539,6 +2539,7 @@ x\:* {behavior:url(#default#VML);}
 <div>
  <a href="#" class="btn btn-primary" id="PrintBtn">Print</a>
 </div>
+<div id="SRTI-Invoice-div">
 <div id="SRTI-Invoice" align="center" x:publishsource="Excel">
 
 <table id="SRTI_table" border='0' cellpadding='0' cellspacing='0' width='654' style='border-collapse:
@@ -2605,7 +2606,7 @@ x\:* {behavior:url(#default#VML);}
  </tr>
  <tr height='20' style='mso-height-source:userset;height:15.0pt'>
   <td colspan='5' height='20' class='xl8121738' width='327' style='border-right:.5pt solid black;
-  height:15.0pt;width:245pt'>Invoice No: <b th:text="${invoice.invoiceNo}" /></td>
+  height:15.0pt;width:245pt'>Invoice No: <b id="invoiceNo" th:text="${invoice.invoiceNo}" /></td>
   <td colspan='6' class='xl8421738' width='327' style='border-right:1.0pt solid black;
   border-left:none;width:246pt'><font class="font721738">Transport Mode: <b th:text="${invoice.transportMode.mode}" /></font></td>
  </tr>
@@ -2699,7 +2700,7 @@ x\:* {behavior:url(#default#VML);}
   <td height='20' class='xl7221738' width='23' style='height:15.0pt;border-top:none;
   width:17pt'>&nbsp;</td>
   <td colspan='3' class='xl11421738' width='256' style='border-right:.5pt solid black;
-  border-left:none;width:192pt'>&quot;<span th:text="${invoice.saleType.saleType}" />"</td>
+  border-left:none;width:192pt'>&quot;<span id="saleType" th:text="${invoice.saleType.saleType}" />"</td>
   <td colspan='2' class='xl11721738' width='112' style='border-right:.5pt solid black;
   border-left:none;width:84pt'>&nbsp;</td>
   <td class='xl6321738' width='37' style='border-top:none;border-left:none;
@@ -2882,13 +2883,24 @@ x\:* {behavior:url(#default#VML);}
 </table>
 
 </div>
+</div>
 
 </body>
 <script>
 var button = document.getElementById("PrintBtn");
 button.onclick = function(){
  var printWindow = window.open()
- printWindow.document.write('<html><head><title>Invoice</title>')
+
+ var invoiceNo = document.getElementById('invoiceNo').innerHTML
+ var saleType = document.getElementById('saleType').innerHTML
+ var saleTypeForPrint = ""
+ //getting the print format text for sale type eg. FJW
+ saleType.split(" ").forEach(function(k){
+  saleTypeForPrint+=k.substr(0,1).toUpperCase()
+ })
+
+ var printTitle = invoiceNo.split("/")[0]+"-"+saleTypeForPrint+"-"+invoiceNo.split("/")[2]
+ printWindow.document.write('<html><head><title>'+printTitle+'</title>')
 
  //print the table CSS
  var table_style = document.getElementById("SRTI-Invoice_Styles").innerHTML;
@@ -2898,7 +2910,7 @@ button.onclick = function(){
  printWindow.document.write('</head>');
 
  //Print the contents i.e. the HTML Table.
- var invoiceTable = document.getElementById('SRTI-Invoice').innerHTML
+ var invoiceTable = document.getElementById('SRTI-Invoice-div').innerHTML
  printWindow.document.write('<body>')
  printWindow.document.write(invoiceTable)
  printWindow.document.write('</body>')

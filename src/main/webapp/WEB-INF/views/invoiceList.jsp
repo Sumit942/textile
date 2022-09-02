@@ -12,13 +12,13 @@
     <table id="invoiceTable" class="table table-striped">
         <thead>
             <tr>
-                <th>Sr.No</th>
+                <th>S.No</th>
                 <th>Date</th>
                 <th>Invoice No</th>
                 <th>GSTIN</th>
                 <th>Company Name</th>
                 <th>Total Amount</th>
-                <th>CGST+IGST(5%)</th>
+                <th>GST</th>
                 <th>Round Off</th>
                 <th>P&F</th>
                 <th>Total</th>
