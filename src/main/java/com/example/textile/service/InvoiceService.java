@@ -30,4 +30,8 @@ public interface InvoiceService {
     List<BankDetail> getBankDetailsByGst(String gst);
 
     List<Invoice> findByInvoiceNo(String invoiceNo);
+
+    void deleteById(Long id);
+
+    void deleteByInvoiceNo(String invoiceNo);
 }

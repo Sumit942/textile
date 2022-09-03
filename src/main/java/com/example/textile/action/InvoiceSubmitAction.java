@@ -82,6 +82,17 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 logSuffix+="sParty:isDuplicateGst=NO";
             }
         }
+        //the invoice no entered already exist in db
+        if (invoice.isNew() && invoice.getInvoiceNo() != null && !invoice.getInvoiceNo().isEmpty()) {
+            List<Invoice> byInvoiceNo = invoiceService.findByInvoiceNo(invoice.getInvoiceNo());
+            if (byInvoiceNo != null && !byInvoiceNo.isEmpty()) {
+                logSuffix += "isNew=true;isInvoiceAlreadyPreset=true;";
+                result.rejectValue("invoiceNo","invoiceCommand.invoiceNo.alreadyExist",
+                        new Object[]{byInvoiceNo.get(0).getBillToParty().getName(),byInvoiceNo.get(0).getInvoiceDate()},
+                        "Invoice Already exist");
+            }
+        }
+
         log.info("{} Exit [{}]", logPrefix, logSuffix);
     }
 

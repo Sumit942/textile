@@ -9,6 +9,11 @@
             <span>${successMessage}</span>
         </div>
     </c:if>
+    <c:if test="${not empty deleted}">
+        <div class="row mb-1 alert alert-success" style="margin: 1%">
+            <span>${successMessage}</span>
+        </div>
+    </c:if>
     <table id="invoiceTable" class="table table-striped">
         <thead>
             <tr>
@@ -22,6 +27,7 @@
                 <th>Round Off</th>
                 <th>P&F</th>
                 <th>Total</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -35,7 +41,7 @@
                         <c:out value="${invDateFormatted}">NA</c:out>
                     </td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}" target="_blank">${invoice.invoiceNo}</a>
+                        <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}">${invoice.invoiceNo}</a>
                         (<a href="${pageContext.request.contextPath}/invoices/printById/${invoice.invoiceId}" target="_blank">Print</a>)
                     </td>
                     <td>${invoice.billToPartyGst}</td>
@@ -45,13 +51,14 @@
                     <td>${invoice.roundOff}</td>
                     <td>${invoice.pnfCharge}</td>
                     <td>${invoice.totalAmountAfterTax}</td>
+                    <td><a href="${pageContext.request.contextPath}/invoices/deleteByInvoiceNo?invoiceNo=${invoice.invoiceNo}" class="btn btn-sm btn-danger">-</a></td>
                 </tr>
                 </c:forEach>
             </c:when>
             <c:otherwise>
                 <td colspan="10">
                     No Invoice Available
-                    <a href="${pageContext.request.contextPath}/invoices/submit" target="_blank"> click here </a> to Add...
+                    <a href="${pageContext.request.contextPath}/invoices/submit"> click here </a> to Add...
                 </td>
             </c:otherwise>
             </c:choose>

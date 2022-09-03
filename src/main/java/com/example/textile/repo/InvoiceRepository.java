@@ -14,4 +14,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByInvoiceNo(String invoiceNo);
 
     Integer countByInvoiceNo(String latestInvNo);
+
+    void deleteByInvoiceNo(String invoiceNo);
 }

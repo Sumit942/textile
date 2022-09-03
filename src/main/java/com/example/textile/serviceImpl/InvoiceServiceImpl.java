@@ -73,7 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice persistedState = cloneInvoice(invoice);
         Invoice saved = save(persistedState);
-        if (isNew) {
+        /*if (isNew) {
             //this code is added for giving a custom invoiceNo which is missed in between
             if (invoice.getInvoiceNo() != null && !invoice.getInvoiceNo().isEmpty()) {
                 List<Invoice> byInvoiceNo = invoiceRepo.findByInvoiceNo(saved.getInvoiceNo());
@@ -89,6 +89,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoice.setInvoiceNo(getLatestInvoiceNo());
             }
 
+        }*/
+        if (isNew && (invoice.getInvoiceNo() == null || invoice.getInvoiceNo().isEmpty())) {
+            invoice.setInvoiceNo(getLatestInvoiceNo());
         }
         return saved;
     }
@@ -253,5 +256,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Invoice> findByInvoiceNo(String invoiceNo) {
         return invoiceRepo.findByInvoiceNo(invoiceNo);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        invoiceRepo.deleteById(id);
+    }
+
+    @Override
+    public void deleteByInvoiceNo(String invoiceNo) {
+        invoiceRepo.deleteByInvoiceNo(invoiceNo);
     }
 }

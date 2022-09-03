@@ -1,21 +1,17 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
-import com.example.textile.enums.UserProfileType;
 import com.example.textile.repo.InvoiceRepository;
 import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.repo.ProductRepository;
 import com.example.textile.repo.UnitRepository;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.service.UserService;
-import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -23,29 +19,35 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.*;
+
 
 @SpringBootTest
 class TextileApplicationTests {
 
-    @Autowired
+    //    @Autowired
     InvoiceService invoiceService;
     //@Autowired
     InvoiceViewRepository viewRepository;
+    //    @Autowired
+    InvoiceRepository invoiceRepo;
+    //    @Autowired
+    ProductRepository productRepo;
+    //    @Autowired
+    UnitRepository unitRepo;
+    // @Autowired
+    ThymeleafTemplateUtility templateUtility;
+    //    @Autowired
+    UserService userService;
 
     //@Test
     void test_InvoiceView_withPageSize() {
 //        viewRepository.findAll(Pageable.ofSize(10).getSort().and(Sort.by("invoiceNo").descending())).forEach(System.out::println);
-        viewRepository
-                .findAll(PageRequest.of(0,10).withSort(Sort.by("invoiceNo").descending()))
-                .getContent()
-                .forEach(System.out::println);
+        viewRepository.findAll(PageRequest.of(0, 10).withSort(Sort.by("invoiceNo").descending())).getContent().forEach(System.out::println);
     }
 
-//    @Test
+    //    @Test
     void getInvoiceStartCountFromYml() {
         System.out.println(invoiceService.getLatestInvoiceNo());
     }
@@ -143,7 +145,6 @@ class TextileApplicationTests {
         return invoice;
     }
 
-
     //    @Test
     void checkSaveInvoiceService() {
 
@@ -187,15 +188,6 @@ class TextileApplicationTests {
 
     }
 
-//    @Autowired
-    InvoiceRepository invoiceRepo;
-
-//    @Autowired
-    ProductRepository productRepo;
-
-//    @Autowired
-    UnitRepository unitRepo;
-
     //@Test
     void updateInvoiceTest() {
 
@@ -234,33 +226,25 @@ class TextileApplicationTests {
         invoiceRepo.save(invoice);
     }
 
-
     //@Test
     void findAllInvoiceView() {
         List<InvoiceView> view = viewRepository.findAll();
-        view.forEach(e -> System.out.println(e.getId()+","+e.getTotalTaxAmount()+","+e.getInvoiceNo()));
+        view.forEach(e -> System.out.println(e.getId() + "," + e.getTotalTaxAmount() + "," + e.getInvoiceNo()));
     }
 
-    @Autowired
-    ThymeleafTemplateUtility templateUtility;
-
-    @Test
+    // @Test
     void testPdfDownload_Invoice() throws FileNotFoundException, DocumentException {
         String invoiceNo = "SRTI/22-23/009";
         List<Invoice> invoices = invoiceService.findByInvoiceNo(invoiceNo);
         if (invoices != null && !invoices.isEmpty()) {
             Invoice invoice = invoices.get(0);
-            String process = templateUtility
-                    .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
+            String process = templateUtility.getProcessedTemplate("emailTemplates/SRTI_Invoice.html", "invoice", invoice);
             System.out.println(process);
 //            File file = new File("invoice_009.pdf");
 //            OutputStream os = new FileOutputStream(file);
 //            PdfUtility.createPdf(os,process);
         }
     }
-
-//    @Autowired
-    UserService userService;
 
     //@Test
     void test_creatUser() {
@@ -283,4 +267,29 @@ class TextileApplicationTests {
 
         System.out.println(userService.saveOrUpdate(user));
     }
+
+    /*@Test
+    void read_pdf() {
+        String filePath = "C:/Users/acer/Downloads/SRTI-FJW-026.pdf";
+        try (PDDocument document = PDDocument.load(new File(filePath))) {
+
+            document.getClass();
+
+            if (!document.isEncrypted()) {
+
+                PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+                stripper.setSortByPosition(true);
+
+                PDFTextStripper tStripper = new PDFTextStripper();
+
+                String pdfFileInText = tStripper.getText(document);
+                System.out.println("Text:\n" + pdfFileInText);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
 }

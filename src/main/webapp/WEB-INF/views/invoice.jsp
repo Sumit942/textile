@@ -98,33 +98,34 @@
             <div class="row mb-1">
                 <form:hidden path="billToParty.id" />
                 <form:label path="billToParty.name" class="col-md-3">Name:</form:label>
-                <form:input path="billToParty.name" onkeyup="billToPartyAutoComplete(event,this);" class="col-md-3"/>
+                <form:input path="billToParty.name" onkeyup="billToPartyAutoComplete(event,this);" class="col-md-3" required="true"/>
                 <form:errors path="billToParty.name" cssClass="error"/>
             </div>
             <div class="row mb-1">
                 <form:hidden path="billToParty.address.id" />
                 <form:label path="billToParty.address.address" class="col-md-2">Address:</form:label>
-                <form:textarea path="billToParty.address.address" class="col-md-5"/>
+                <form:textarea path="billToParty.address.address" class="col-md-5" required="true"/>
                 <form:errors path="billToParty.address.address" cssClass="error"/>
 
                 <form:label path="billToParty.address.pinCode" class="col-md-2" style="">PinCode:</form:label>
-                <form:input path="billToParty.address.pinCode" class="col-md-3"/>
+                <form:input path="billToParty.address.pinCode" class="col-md-3" required="true"/>
                 <form:errors path="billToParty.address.pinCode" cssClass="error" />
             </div>
             <div class="row mb-1">
                 <form:label path="billToParty.gst" class="col-md-3">GSTIN:</form:label>
-                <form:input path="billToParty.gst" class="col-md-3"/>
+                <form:input path="billToParty.gst" class="col-md-3" required="true"/>
                 <form:errors path="billToParty.gst" cssClass="error"/>
+                <a class="col-md-3" href="https://services.gst.gov.in/services/searchtp" target="_blank">Verify GST</a>
             </div>
             <div class="row mb-1">
                 <form:hidden path="billToParty.address.state.id" />
                 <form:hidden path="billToParty.address.state.country.id" />
                 <form:label path="billToParty.address.state.name" class="col-md-3">State:</form:label>
-                <form:input path="billToParty.address.state.name" onkeyup="billToPartyStateAutoComplete(event, this);" class="col-md-3"/>
+                <form:input path="billToParty.address.state.name" required="true" onkeyup="billToPartyStateAutoComplete(event, this);" class="col-md-3"/>
                 <form:errors path="billToParty.address.state.name" cssClass="error"/>
 
                 <form:label path="billToParty.address.state.code" class="col-md-3" style="">Code:</form:label>
-                <form:input path="billToParty.address.state.code" class="col-md-3"/>
+                <form:input path="billToParty.address.state.code" class="col-md-3" required="true"/>
                 <form:errors path="billToParty.address.state.code" cssClass="error"/>
             </div>
         </div>
@@ -135,33 +136,34 @@
             <div class="row mb-1">
                 <form:hidden path="shipToParty.id" />
                 <form:label path="shipToParty.name" class="col-md-3">Name:</form:label>
-                <form:input path="shipToParty.name" onkeyup="shipToPartyAutoComplete(event, this);" class="col-md-3"/>
+                <form:input path="shipToParty.name" onkeyup="shipToPartyAutoComplete(event, this);" class="col-md-3" required="true"/>
                 <form:errors path="shipToParty.name" cssClass="error"/>
             </div>
             <div class="row mb-1">
                 <form:hidden path="shipToParty.address.id" />
                 <form:label path="shipToParty.address.address" class="col-md-2">Address:</form:label>
-                <form:textarea path="shipToParty.address.address" class="col-md-5"/>
+                <form:textarea path="shipToParty.address.address" class="col-md-5" required="true"/>
                 <form:errors path="shipToParty.address.address" cssClass="error"/>
 
                 <form:label path="shipToParty.address.pinCode" class="col-md-2" style="">PinCode:</form:label>
-                <form:input path="shipToParty.address.pinCode" class="col-md-3"/>
+                <form:input path="shipToParty.address.pinCode" class="col-md-3" required="true"/>
                 <form:errors path="shipToParty.address.pinCode" cssClass="error" />
             </div>
             <div class="row mb-1">
                 <form:label path="shipToParty.gst" class="col-md-3">GSTIN:</form:label>
-                <form:input path="shipToParty.gst" class="col-md-3"/>
+                <form:input path="shipToParty.gst" class="col-md-3" required="true"/>
                 <form:errors path="shipToParty.gst" cssClass="error"/>
+                <a class="col-md-3" href="https://services.gst.gov.in/services/searchtp" target="_blank">Verify GST</a>
             </div>
             <div class="row mb-1">
                 <form:hidden path="shipToParty.address.state.id" />
                 <form:hidden path="shipToParty.address.state.country.id" />
                 <form:label path="shipToParty.address.state.name" class="col-md-3">State:</form:label>
-                <form:input path="shipToParty.address.state.name" onkeyup="shipToPartyStateAutoComplete(event, this);" class="col-md-3"/>
+                <form:input path="shipToParty.address.state.name" required="true" onkeyup="shipToPartyStateAutoComplete(event, this);" class="col-md-3"/>
                 <form:errors path="shipToParty.address.state.name" cssClass="error"/>
 
                 <form:label path="shipToParty.address.state.code" class="col-md-3" style="">Code:</form:label>
-                <form:input path="shipToParty.address.state.code" class="col-md-3"/>
+                <form:input path="shipToParty.address.state.code" class="col-md-3" required="true"/>
                 <form:errors path="shipToParty.address.state.code" cssClass="error"/>
             </div>
         </div>
@@ -206,7 +208,7 @@
             </td>
             <td>
                 <form:hidden path="product[0].product.id"/>
-                <form:input path="product[0].product.name" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
@@ -214,25 +216,25 @@
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].product.hsn" class="numbersOnly" style="width: 100%;"/>
+                <form:input path="product[0].product.hsn" class="numbersOnly" required="true" style="width: 100%;"/>
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
             <td>
-                <form:select path="product[0].unitOfMeasure.id">
+                <form:select path="product[0].unitOfMeasure.id" required="true">
                     <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure" itemValue="id"/>
                 </form:select>
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].quantity" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+                <form:input path="product[0].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].rate" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+                <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].totalPrice" readonly="true"/>
+                <form:input path="product[0].totalPrice" required="true" readonly="true"/>
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
             <td>
@@ -248,7 +250,7 @@
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
-                    <form:input path="product[${index.index}].product.name" onkeyup="autoSearchProduct(event,this,${index.index})"/>
+                    <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
@@ -256,25 +258,25 @@
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].product.hsn" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].product.hsn" required="true" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].product.hsn" cssClass="error"/>
                 </td>
                 <td>
-                    <form:select path="product[${index.index}].unitOfMeasure.id">
+                    <form:select path="product[${index.index}].unitOfMeasure.id" required="true">
                         <form:options items="${unitOfMeasures}" itemValue="id" itemLabel="unitOfMeasure"/>
                     </form:select>
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].quantity" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].quantity" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].rate" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].totalPrice" readonly="true"/>
+                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true"/>
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
@@ -389,7 +391,7 @@
             <span>Total Amount after Tax</span>
         </div>
         <div class="col-md-2">
-            <form:input path="totalAmountAfterTax" class="numbersOnly" onkeyup="javascript:inWords(this.value)"/>
+            <form:input path="totalAmountAfterTax" required="true" class="numbersOnly" onkeyup="javascript:inWords(this.value)"/>
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
@@ -409,6 +411,10 @@ $(document).ready(function() {
     $( "#invoiceDate" ).datepicker({
        dateFormat: 'dd/mm/yy'
     })
+    if ($("#id").val() == '' ) {
+        $("#invoiceDate").focus()
+    }
+
     $(".numbersOnly").on("keypress paste",function(e){
         var charCode = (e.which) ? e.which : event.keyCode
         //console.log('charCode: '+charCode+', event: '+e.type)
@@ -558,8 +564,10 @@ $(document).ready(function() {
     }
     /**                 billToParty AutoComplete functions                  **/
 function billToPartyAutoComplete(event,thisObj) {
-    if (event.key == 'Enter')
+    if (event.key == 'Enter') {
+        autoFocusProductDescField()
         return
+    }
     resetBillToParty()
     $(thisObj).autocomplete({
         source : function(request, response) {
@@ -580,6 +588,7 @@ function billToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToParty(ui.item)
+            autoFocusProductDescField()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -588,8 +597,10 @@ function billToPartyAutoComplete(event,thisObj) {
     };
 }
 function billToPartyStateAutoComplete(event, thisObj) {
-    if (event.key == 'Enter')
+    if (event.key == 'Enter') {
+        autoFocusProductDescField()
         return
+    }
     resetBillToPartyState()
     $( thisObj ).autocomplete({
         source : function(request, response) {
@@ -610,6 +621,7 @@ function billToPartyStateAutoComplete(event, thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToPartyState(ui.item)
+            autoFocusProductDescField()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -640,6 +652,7 @@ function shipToPartyStateAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setShipToPartyState(ui.item)
+            autoFocusProductDescField()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -670,6 +683,7 @@ function shipToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setShipToParty(ui.item)
+            autoFocusProductDescField()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -680,8 +694,9 @@ function shipToPartyAutoComplete(event,thisObj) {
 
     /**                 productDescription script                  **/
 function autoSearchProduct(event,obj,index) {
-if (event.key == 'Enter')
-    return
+if (event.key == 'Enter') {
+    return;
+}
 //$("#product"+index+"\\.product\\.hsn").val('')
 $("#product"+index+"\\.product\\.id").val('')
     $(obj).autocomplete({
@@ -709,6 +724,7 @@ $("#product"+index+"\\.product\\.id").val('')
             this.value = ui.item.name
             //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
             $("#product"+index+"\\.product\\.id").val(ui.item.id)
+            $("#product"+index+"\\.chNo").focus()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -723,30 +739,40 @@ function addProductDescRow() {
 
     var i = $("#productDescTBody > tr").length - 1;
     //check if the last row data is entered or not
-    if ( $('#product'+(i-1)+'\\.product\\.name').val() == '' ) {
+    var lastPrdName = '#product'+(i-1)+'\\.product\\.name'
+    if ( $(lastPrdName).val() == '' ) {
         alert ("Please enter 'Product Description' in last row")
+        $(lastPrdName).focus()
         return;
     }
-    if ( $('#product'+(i-1)+'\\.product\\.hsn').val() == '' ) {
+    var lastHsn = '#product'+(i-1)+'\\.product\\.hsn'
+    if ( $(lastHsn).val() == '' ) {
         alert ("Please enter 'HSN' in last row")
+        $(lastHsn).focus()
         return;
     }
-    if ( $('#product'+(i-1)+'\\.unitOfMeasure\\.id').val() == '' ) {
+    var lastUom = '#product'+(i-1)+'\\.unitOfMeasure\\.id'
+    if ( $(lastUom).val() == '' ) {
         alert ("Please enter 'Unit Of Measure' in last row")
+        $(lastUom).focus()
         return;
     }
-    if ( $('#product'+(i-1)+'\\.quantity').val() == '' ) {
+    var lastQty = '#product'+(i-1)+'\\.quantity'
+    if ( $(lastQty).val() == '' ) {
         alert ("Please enter 'Quantity' in last row")
+        $(lastQty).focus()
         return;
     }
-    if ( $('#product'+(i-1)+'\\.rate').val() == '' ) {
+    var lastRate = '#product'+(i-1)+'\\.rate'
+    if ( $(lastRate).val() == '' ) {
         alert ("Please enter 'Rate' in last row")
+        $(lastRate).focus()
         return;
     }
-    if ( $('#product'+(i-1)+'\\.totalPrice').val() == '' ) {
+    /*if ( $('#product'+(i-1)+'\\.totalPrice').val() == '' ) {
         alert ("Please enter 'Total Price' in last row")
         return;
-    }
+    }*/
 
     var prodDescRow = '<tr>'+
                         '<td>'+
@@ -755,27 +781,27 @@ function addProductDescRow() {
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" name="product['+i+'].product.id">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" type="text" value="6006" style="width: 100%;">'+
+                            '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
-                            '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id">'+
+                            '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id" required="required">'+
                                 $("#product0\\.unitOfMeasure\\.id").html()+
                             '</select>'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
+                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')">'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" type="text" value="0" readonly>'+
+                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
                         '</td>'+
                         '<td>'+
                             '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
@@ -784,6 +810,7 @@ function addProductDescRow() {
 
     $("#productDescTBody > tr:eq("+i+")").find('td:eq(8)').html('')
     $("#productDescTBody").append(prodDescRow)
+    autoFocusProductDescField()
 }
 function productDelRow() {
     var rowCount = $("#productDescTBody > tr").length
@@ -794,6 +821,13 @@ function productDelRow() {
         }
     }
     updateTotalAmount()
+    autoFocusProductDescField()
+}
+/**             Auto focus to last product name fields              **/
+function autoFocusProductDescField() {
+
+    var rowCount = $("#productDescTBody > tr").length - 2
+    $("#product"+rowCount+"\\.product\\.name").focus()
 }
     /**                 calculation script                  **/
 function updateRowAmount(index) {
