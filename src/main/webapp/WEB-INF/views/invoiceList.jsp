@@ -32,8 +32,8 @@
         </thead>
         <tbody>
             <c:choose>
-            <c:when test="${not empty invoices}">
-                <c:forEach items="${invoices}" var="invoice" varStatus="index">
+            <c:when test="${not empty invoices.getContent()}">
+                <c:forEach items="${invoices.getContent()}" var="invoice" varStatus="index">
                 <tr>
                     <td>${index.index + 1}</td>
                     <td>

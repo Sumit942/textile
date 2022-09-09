@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -77,9 +78,13 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping
-    public ModelAndView findAll(ModelMap model) {
+    public ModelAndView findAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+                                @RequestParam(required = false, defaultValue = "invoiceNo") String fieldName,
+                                ModelMap model) {
         ModelAndView modelAndView = new ModelAndView("/invoiceList");
-        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit("invoiceNo",0,20);
+//        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit(fieldName,pageNumber,pageSize);
+        Page<InvoiceView> invoices = viewService.findAllByPageNumberAndPageSizeOrderByField(pageNumber, pageSize, fieldName);
         modelAndView.addObject("invoices",invoices);
         modelAndView.addObject("printInvoice",true);
 

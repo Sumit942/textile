@@ -4,6 +4,7 @@ import com.example.textile.entity.InvoiceView;
 import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.service.InvoiceViewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,12 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
 
     @Override
     public List<InvoiceView> findAllOrderByAndLimit(String fieldName, int pageNumber, int pageSize) {
+        return findAllByPageNumberAndPageSizeOrderByField(pageNumber, pageSize, fieldName).getContent();
+    }
+
+    @Override
+    public Page<InvoiceView> findAllByPageNumberAndPageSizeOrderByField(int pageNumber, int pageSize, String fieldName) {
         return viewRepository
-                .findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(fieldName).descending()))
-                .getContent();
+                .findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(fieldName).descending()));
     }
 }
