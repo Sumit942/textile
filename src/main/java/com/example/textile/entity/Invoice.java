@@ -104,6 +104,7 @@ public class Invoice implements Serializable {
     }
 
     @NotNull
+    @Temporal(TemporalType.DATE)
     public Date getInvoiceDate() {
         return invoiceDate;
     }
@@ -128,6 +129,7 @@ public class Invoice implements Serializable {
         this.reverseCharge = reverseCharge;
     }
 
+    @Temporal(TemporalType.DATE)
     public Date getDateOfSupply() {
         return dateOfSupply;
     }

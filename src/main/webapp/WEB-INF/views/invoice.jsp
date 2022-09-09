@@ -40,6 +40,7 @@
             <form:hidden path="id"/>
             <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
             <form:input path="invoiceNo" class="col-md-3"/>
+            <form:errors path="invoiceNo" cssClass="error" class="col-md-3"/>
         </div>
         <div class="col-md-6 border">
             <form:label path="transportMode" class="col-md-3">Transport Mode:</form:label>
@@ -811,6 +812,7 @@ function addProductDescRow() {
     $("#productDescTBody > tr:eq("+i+")").find('td:eq(8)').html('')
     $("#productDescTBody").append(prodDescRow)
     autoFocusProductDescField()
+    $(document).scrollTop($(document).height())
 }
 function productDelRow() {
     var rowCount = $("#productDescTBody > tr").length
@@ -825,7 +827,7 @@ function productDelRow() {
 }
 /**             Auto focus to last product name fields              **/
 function autoFocusProductDescField() {
-
+    $(document).scrollTop($(document).height())
     var rowCount = $("#productDescTBody > tr").length - 2
     $("#product"+rowCount+"\\.product\\.name").focus()
 }
