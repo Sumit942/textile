@@ -202,8 +202,8 @@ public class InvoiceController extends BaseController {
         return invoiceBackUp;
     }
 
-    @GetMapping("/deleteByInvoiceNo/{invoiceNo}")
-    public ModelAndView deleteInvoiceByBy(@PathVariable String invoiceNo,HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    @GetMapping("/deleteByInvoiceNo")
+    public ModelAndView deleteInvoiceByBy(@RequestParam String invoiceNo,HttpServletRequest request, RedirectAttributes redirectAttributes) {
         invoiceService.deleteByInvoiceNo(invoiceNo);
         String msg = messageSource.getMessage("invoice.delete.SUCCESS",new Object[]{invoiceNo},request.getLocale());
         redirectAttributes.addFlashAttribute("deleted",msg);

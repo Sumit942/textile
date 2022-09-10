@@ -10,8 +10,8 @@
         </div>
     </c:if>
     <c:if test="${not empty deleted}">
-        <div class="row mb-1 alert alert-success" style="margin: 1%">
-            <span>${successMessage}</span>
+        <div class="row mb-1 alert alert-danger" style="margin: 1%">
+            <span>${deleted}</span>
         </div>
     </c:if>
     <table id="invoiceTable" class="table table-striped">
@@ -51,7 +51,7 @@
                     <td>${invoice.roundOff}</td>
                     <td>${invoice.pnfCharge}</td>
                     <td>${invoice.totalAmountAfterTax}</td>
-                    <td><a href="${pageContext.request.contextPath}/invoices/deleteByInvoiceNo?invoiceNo=${invoice.invoiceNo}" class="btn btn-sm btn-danger">-</a></td>
+                    <td><input type="button" value="-" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" /></td>
                 </tr>
                 </c:forEach>
             </c:when>
@@ -72,5 +72,12 @@
 $(document).ready(function(e){
     $("#invoiceTable").DataTable()
 })
+
+function deleteByInvoiceNo(invNo) {
+    var del = confirm("Do you want to delete '"+invNo+"' ?")
+    if (del) {
+        window.location.href="${pageContext.request.contextPath}/invoices/deleteByInvoiceNo?invoiceNo="+invNo
+    }
+}
 </script>
 <%@ include file="./common/footer.jspf" %>
