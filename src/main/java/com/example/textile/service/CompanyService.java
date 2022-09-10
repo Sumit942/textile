@@ -9,4 +9,8 @@ public interface CompanyService {
     List<Company> findByNameLike(String name);
 
     Company save(Company billToParty);
+
+    List<Company> findAll();
+
+    Company findById(Long id);
 }

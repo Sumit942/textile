@@ -1,6 +1,7 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.Company;
+import com.example.textile.exception.CompanyNotFoundException;
 import com.example.textile.repo.CompanyRepository;
 import com.example.textile.service.CompanyService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,5 +26,15 @@ public class CompanyServiceImpl implements CompanyService {
     public Company save(Company company) {
         log.info("save() | "+company);
         return this.companyRepo.save(company);
+    }
+
+    @Override
+    public List<Company> findAll() {
+        return this.companyRepo.findAll();
+    }
+
+    @Override
+    public Company findById(Long id) {
+        return this.companyRepo.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
     }
 }
