@@ -233,6 +233,14 @@ public class InvoiceController extends BaseController {
         return modelAndView;
     }
 
+    @PostMapping("/demoInvoicePrint")
+    public ModelAndView showDemoPrintView(@ModelAttribute Invoice invoice) {
+        log.info("showDemoPrintView() | Entry");
+        ModelAndView modelAndView = new ModelAndView("emailTemplates/SRTI_Invoice.html");
+        modelAndView.addObject("invoice",invoice);
+        return modelAndView;
+    }
+
     //@GetMapping("/downloadPdf")
     public void downloadToPdf(@RequestParam(name = "invoiceNo",required = true) String invoiceNo,
                               HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {

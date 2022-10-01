@@ -397,11 +397,16 @@
         </div>
     </div>
     <input type="Submit" class="btn btn-primary" />
-    <c:if test="${printInvoice}">
+    <c:choose>
+    <c:when test="${printInvoice}">
         <a href="${pageContext.request.contextPath}/invoices/printById/${invoiceCommand.id}" target="_blank">
             <input id="printInvoice" class="btn btn-primary" type="button" value="Print"/>
         </a>
-    </c:if>
+    </c:when>
+    <c:otherwise>
+        <input id="demoInvoice" class="btn btn-primary" type="button" value="Demo Print" onclick="demoInvoicePrint()"/>
+    </c:otherwise>
+    </c:choose>
 </div>
 </form:form>
 <script>
@@ -889,6 +894,10 @@ function inWords (num) {
     str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only.' : '';
 
     $("#totalInvoiceAmountInWords").val(str)
+}
+function demoInvoicePrint() {
+    $("#invoiceCommand").attr("action","${pageContext.request.contextPath}/invoices/demoInvoicePrint");
+    $("#invoiceCommand").submit();
 }
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>
