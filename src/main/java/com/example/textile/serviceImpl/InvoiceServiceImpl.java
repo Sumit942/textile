@@ -263,6 +263,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceRepo.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void deleteByInvoiceNo(String invoiceNo) {
         invoiceRepo.deleteByInvoiceNo(invoiceNo);

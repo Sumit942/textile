@@ -728,15 +728,39 @@ $("#product"+index+"\\.product\\.id").val('')
         minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
+            var productId = ui.item.id
             //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
-            $("#product"+index+"\\.product\\.id").val(ui.item.id)
+            $("#product"+index+"\\.product\\.id").val(productId)
+            //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
+            if (productId != '') {
+                getProductMaxRateByCompanyId(index,productId)
+            }
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
                 "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
     };
+}
+/**             get Product Rate                    **/
+function getProductMaxRateByCompanyId(index,productId) {
+    var companyId = $("#billToParty\\.id").val()
+    var rate = $("#product"+index+"\\.rate").val();
+    if (productId != '' && productId != 0 && rate != '' && rate <= 0) {
+        $.ajax({
+            url : "${pageContext.request.contextPath}/product/rateByProductAndCompanyId?companyId="+companyId+"&productId="+productId,
+            success : function(data) {
+                if (data != '') {
+                    $("#product"+index+"\\.rate").val(data)
+                }
+            },
+            error : function(err) {
+                $("#product"+index+"\\.rate").val('')
+                console.error(err)
+            }
+        })
+    }
 }
 
 

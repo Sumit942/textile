@@ -108,8 +108,26 @@ public class InvoiceController extends BaseController {
 
     @GetMapping("/submit")
     public ModelAndView getInvoice(@ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice,
-                                   ModelMap model, RedirectAttributes redirectAttributes) {
+                                   BindingResult result,ModelMap model, RedirectAttributes redirectAttributes,
+                                   HttpServletRequest request) throws ServiceActionException {
         log.info("show invoice");
+
+        String action = request.getParameter(TextileConstants.ACTION);
+        if (action != null) {
+            //getting from session if redirected from demoInvoicePrint
+            Object demoInvoicePrint = request.getSession().getAttribute(TextileConstants.DEMO_INVOICE_PRINT);
+            if (demoInvoicePrint != null) {
+                log.info("getting invoice from session");
+                request.getSession().removeAttribute(TextileConstants.DEMO_INVOICE_PRINT);
+                if ("edit".equals(action)) {
+                    //if user wants to edit from print view
+                    copyInvoice(demoInvoicePrint, invoice);
+                } else if ("save".equals(action)) {
+                    if (demoInvoicePrint instanceof Invoice)
+                        return saveInvoice((Invoice) demoInvoicePrint, result,request,model,redirectAttributes);
+                }
+            }
+        }
         ModelAndView modelView = new ModelAndView("invoice");
         try {
             actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(invoice, model);
@@ -117,6 +135,38 @@ public class InvoiceController extends BaseController {
             log.error("Exception: {} prePopulation","getInvoice()",e);
         }
         return modelView;
+    }
+
+    private void copyInvoice(Object from, Invoice to) {
+        if (from instanceof Invoice){
+            Invoice temp = (Invoice) from;
+            to.setInvoiceNo(temp.getInvoiceNo());
+            to.setUser(temp.getUser());
+            to.setTransportMode(temp.getTransportMode());
+            to.setInvoiceDate(temp.getInvoiceDate());
+            to.setVehicleNo(temp.getVehicleNo());
+            to.setReverseCharge(temp.getReverseCharge());
+            to.setDateOfSupply(temp.getDateOfSupply());
+            to.setPlaceOfSupply(temp.getPlaceOfSupply());
+            to.setBillToParty(temp.getBillToParty());
+            to.setShipToParty(temp.getShipToParty());
+            to.setSaleType(temp.getSaleType());
+            to.setPnfCharge(temp.getPnfCharge());
+            to.setTotalAmount(temp.getTotalAmount());
+            to.setcGst(temp.getcGst());
+            to.setsGst(temp.getsGst());
+            to.setTotalTaxAmount(temp.getTotalTaxAmount());
+            to.setRoundOff(temp.getRoundOff());
+            to.setTotalAmountAfterTax(temp.getTotalAmountAfterTax());
+            to.setTotalInvoiceAmountInWords(temp.getTotalInvoiceAmountInWords());
+            if (to.getProduct() != null) {
+                to.getProduct().clear();
+                to.getProduct().addAll(temp.getProduct());
+            } else {
+                to.setProduct(temp.getProduct());
+            }
+            to.setSelectedBank(temp.getSelectedBank());
+        }
     }
 
     @PostMapping("/submit")
@@ -234,8 +284,11 @@ public class InvoiceController extends BaseController {
     }
 
     @PostMapping("/demoInvoicePrint")
-    public ModelAndView showDemoPrintView(@ModelAttribute Invoice invoice) {
+    public ModelAndView showDemoPrintView(@ModelAttribute Invoice invoice,HttpServletRequest request) {
         log.info("showDemoPrintView() | Entry");
+        //saving the invoice in session if user wants to save after seeing the print view
+        request.getSession().setAttribute(TextileConstants.DEMO_INVOICE_PRINT,invoice);
+
         ModelAndView modelAndView = new ModelAndView("emailTemplates/SRTI_Invoice.html");
         modelAndView.addObject("invoice",invoice);
         return modelAndView;
