@@ -17,18 +17,17 @@ public class ProductRateRepositoryImpl implements ProductRateRepository {
     EntityManager entityManager;
 
     @Override
-    public String getRateByCompanyAndProduct(Long companyId, Long productId) {
+    public Double getRateByCompanyAndProduct(Long companyId, Long productId) {
 
         String logPrefix = "getRateByCompanyAndProduct()";
         log.info("{} | Entry",logPrefix);
-        String maxRate = "0";
+        Double maxRate = 0.0;
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT max(pd.rate) FROM invoice i JOIN company c ON i.bill_to_party_id=c.id");
-        sb.append(" JOIN product_detail pd ON i.id=pd.invoice_id JOIN product p ON pd.product_id=p.id");
-        sb.append(" WHERE p.id IN (:productId)");
+        sb.append("SELECT MAX(pd.rate) FROM ProductDetail pd");
+        sb.append(" WHERE pd.product.id IN (:productId)");
 
         if (companyId != null && companyId != 0) {
-            sb.append(" and c.id IN (:companyId)");
+            sb.append(" AND pd.invoice.billToParty.id IN (:companyId)");
         }
 
         Query query = entityManager.createQuery(sb.toString());
@@ -40,7 +39,7 @@ public class ProductRateRepositoryImpl implements ProductRateRepository {
         List resultList = query.getResultList();
 
         if (resultList != null && !resultList.isEmpty()) {
-            maxRate = (String) resultList.get(0);
+            maxRate = (Double) resultList.get(0);
             log.info("{} [company={};product={};maxRate={}]",logPrefix,companyId,productId,maxRate);
         }
         log.info("{} | Exit",logPrefix);

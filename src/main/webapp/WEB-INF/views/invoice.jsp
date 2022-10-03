@@ -745,9 +745,11 @@ $("#product"+index+"\\.product\\.id").val('')
 }
 /**             get Product Rate                    **/
 function getProductMaxRateByCompanyId(index,productId) {
+
     var companyId = $("#billToParty\\.id").val()
     var rate = $("#product"+index+"\\.rate").val();
-    if (productId != '' && productId != 0 && rate != '' && rate <= 0) {
+    console.log('inside getProductRate(): compId-'+companyId+', prodId-'+productId+', rate-'+rate)
+    if (productId != '' && productId != 0 && rate == '') {
         $.ajax({
             url : "${pageContext.request.contextPath}/product/rateByProductAndCompanyId?companyId="+companyId+"&productId="+productId,
             success : function(data) {

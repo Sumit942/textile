@@ -28,7 +28,8 @@ public class ProductController {
     }
 
     @GetMapping("/rateByProductAndCompanyId")
-    public String getProductRateByCompanyId(@RequestParam(required = false) Long companyId, @RequestParam Long productId) {
+    @ResponseBody
+    public Double getProductRateByCompanyId(@RequestParam(required = false) Long companyId, @RequestParam Long productId) {
         return productRateService.getRateByCompanyAndProduct(companyId, productId);
     }
 }

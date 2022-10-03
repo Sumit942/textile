@@ -14,27 +14,27 @@ public class ProductRateServiceImpl implements ProductRateService {
     @Autowired
     ProductRateRepository productRateRepo;
 
-    Map<Long, Map<Long, String>> companyProductRateCacheMap = new HashMap<>();
+    private static Map<Long, Map<Long, Double>> companyProductRateCacheMap = new HashMap<>();
 
     @Override
-    public String getRateByCompanyAndProduct(Long companyId, Long productId) {
+    public Double getRateByCompanyAndProduct(Long companyId, Long productId) {
         return getRateByCompanyAndProductFromCache(companyId, productId);
     }
 
-    public String getRateByCompanyAndProductFromCache(Long companyId, Long productId) {
-        Map<Long, String> productRateMap = companyProductRateCacheMap.get(companyId);
+    public Double getRateByCompanyAndProductFromCache(Long companyId, Long productId) {
+        Map<Long, Double> productRateMap = companyProductRateCacheMap.get(companyId);
         if (productRateMap != null) {
-            String productRateByCompany = productRateMap.get(productId);
+            Double productRateByCompany = productRateMap.get(productId);
             if (productRateByCompany != null) {
                 return productRateByCompany;
             } else {
-                String rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
+                Double rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
                 productRateMap.put(productId, rate);
                 return rate;
             }
         } else {
             productRateMap = new HashMap<>();
-            String rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
+            Double rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
             productRateMap.put(productId, rate);
             return rate;
         }

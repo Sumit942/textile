@@ -19,6 +19,7 @@ public class ProductDetail implements Serializable {
     private Double quantity;
     private Double rate;
     private BigDecimal totalPrice = BigDecimal.ZERO;
+    private Invoice invoice;
 
     private Date insertDt;
     private Date updateDt;
@@ -88,6 +89,16 @@ public class ProductDetail implements Serializable {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "invoice_id")
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 
     @CreationTimestamp
