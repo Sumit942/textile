@@ -14,7 +14,7 @@ public class ProductRateServiceImpl implements ProductRateService {
     @Autowired
     ProductRateRepository productRateRepo;
 
-    private static Map<Long, Map<Long, Double>> companyProductRateCacheMap = new HashMap<>();
+    private static final Map<Long, Map<Long, Double>> companyProductRateCacheMap = new HashMap<>();
 
     @Override
     public Double getRateByCompanyAndProduct(Long companyId, Long productId) {
@@ -36,6 +36,7 @@ public class ProductRateServiceImpl implements ProductRateService {
             productRateMap = new HashMap<>();
             Double rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
             productRateMap.put(productId, rate);
+            companyProductRateCacheMap.put(companyId,productRateMap);
             return rate;
         }
     }

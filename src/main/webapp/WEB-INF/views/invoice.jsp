@@ -299,9 +299,11 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
             <td>
-                <input type="button" class="btn btn-primary" value="Add" id="add" onclick="addProductDescRow()"/>
+                <input type="button" class="btn btn-primary float-end" value="Duplicate" id="addDuplicate" onclick="addProductDescRow('duplicate')"/>
+            </td>
+            <td>
+                <input type="button" class="btn btn-primary" value="Add" id="add" onclick="addProductDescRow('new')"/>
             </td>
         </tr>
         <tr>
@@ -767,11 +769,13 @@ function getProductMaxRateByCompanyId(index,productId) {
 
 
     /**                 add button script                  **/
-function addProductDescRow() {
+function addProductDescRow(addRowType) {
 
     var i = $("#productDescTBody > tr").length - 1;
     //check if the last row data is entered or not
+    var lastPrdId = '#product'+(i-1)+'\\.product\\.id'
     var lastPrdName = '#product'+(i-1)+'\\.product\\.name'
+    var lastChNo = '#product'+(i-1)+'\\.chNo'
     if ( $(lastPrdName).val() == '' ) {
         alert ("Please enter 'Product Description' in last row")
         $(lastPrdName).focus()
@@ -812,11 +816,11 @@ function addProductDescRow() {
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
                         '</td>'+
                         '<td>'+
-                            '<input type="hidden" name="product['+i+'].product.id">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="">'+
+                            '<input type="hidden" name="product['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly">'+
+                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
@@ -830,7 +834,7 @@ function addProductDescRow() {
                             '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')">'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
@@ -846,6 +850,11 @@ function addProductDescRow() {
     $(document).scrollTop($(document).height())
 }
 function productDelRow() {
+    var del = confirm('Do you want to delete the row?')
+    if (!del){
+        return;
+    }
+
     var rowCount = $("#productDescTBody > tr").length
     if (rowCount > 2) {
         $("#productDescTBody > tr:last").remove()

@@ -21,26 +21,30 @@ public class ProductRateRepositoryImpl implements ProductRateRepository {
 
         String logPrefix = "getRateByCompanyAndProduct()";
         log.info("{} | Entry",logPrefix);
-        Double maxRate = 0.0;
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT MAX(pd.rate) FROM ProductDetail pd");
-        sb.append(" WHERE pd.product.id IN (:productId)");
+        Double maxRate = null;
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT MAX(pd.rate) FROM ProductDetail pd");
+            sb.append(" WHERE pd.product.id IN (:productId)");
 
-        if (companyId != null && companyId != 0) {
-            sb.append(" AND pd.invoice.billToParty.id IN (:companyId)");
-        }
+            if (companyId != null && companyId != 0) {
+                sb.append(" AND pd.invoice.billToParty.id IN (:companyId)");
+            }
 
-        Query query = entityManager.createQuery(sb.toString());
-        if (companyId != null && companyId != 0) {
-            query.setParameter("companyId", companyId);
-        }
-        query.setParameter("productId",productId);
+            Query query = entityManager.createQuery(sb.toString());
+            if (companyId != null && companyId != 0) {
+                query.setParameter("companyId", companyId);
+            }
+            query.setParameter("productId", productId);
 
-        List resultList = query.getResultList();
+            List resultList = query.getResultList();
 
-        if (resultList != null && !resultList.isEmpty()) {
-            maxRate = (Double) resultList.get(0);
-            log.info("{} [company={};product={};maxRate={}]",logPrefix,companyId,productId,maxRate);
+            if (resultList != null && !resultList.isEmpty()) {
+                maxRate = (Double) resultList.get(0);
+                log.info("{} [company={};product={};maxRate={}]", logPrefix, companyId, productId, maxRate);
+            }
+        }catch (Exception e) {
+            log.error(logPrefix+" Error: in getting max(rate)-"+e.getLocalizedMessage(),e);
         }
         log.info("{} | Exit",logPrefix);
         return maxRate;
