@@ -29,7 +29,8 @@ public class ProductRateServiceImpl implements ProductRateService {
                 return productRateByCompany;
             } else {
                 Double rate = productRateRepo.getRateByCompanyAndProduct(companyId, productId);
-                productRateMap.put(productId, rate);
+                if (rate != null && rate > 0)
+                    productRateMap.put(productId, rate);
                 return rate;
             }
         } else {

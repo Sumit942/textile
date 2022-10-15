@@ -24,7 +24,7 @@ public class ProductController {
     @GetMapping("/searchByName")
     @ResponseBody
     public List<Product> searchByName(@RequestParam("name") String name) {
-        return productService.findByNameLike(name);
+        return productService.findByNameAndLimit(name,6);
     }
 
     @GetMapping("/rateByProductAndCompanyId")

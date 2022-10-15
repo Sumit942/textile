@@ -757,6 +757,7 @@ function getProductMaxRateByCompanyId(index,productId) {
             success : function(data) {
                 if (data != '') {
                     $("#product"+index+"\\.rate").val(data)
+                    updateRowAmount(index)
                 }
             },
             error : function(err) {
