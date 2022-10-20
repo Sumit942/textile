@@ -817,7 +817,7 @@ function addProductDescRow(addRowType) {
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
                         '</td>'+
                         '<td>'+
-                            '<input type="hidden" name="product['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
+                            '<input type="hidden" name="product['+i+'].product.id" value="">'+
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
                         '</td>'+
                         '<td>'+
