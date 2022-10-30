@@ -469,7 +469,7 @@ $(document).ready(function() {
             return;
         getStateByCode('shipToParty',this.value.substr(0,2))  //get code from gst
     })
-});
+});// document.ready function ends
     /**     get state by code ajax                         **/
     function getStateByCode(party, stateCode) {
         $.ajax({
@@ -810,6 +810,12 @@ function addProductDescRow(addRowType) {
         alert ("Please enter 'Total Price' in last row")
         return;
     }*/
+    //check duplicate chNos
+    if (hasDuplicateChNos()){
+        alert ("Please entry unique 'challan no.' in last row")
+        $(lastChNo).focus()
+        return;
+    }
 
     var prodDescRow = '<tr>'+
                         '<td>'+
@@ -945,6 +951,21 @@ function inWords (num) {
 function demoInvoicePrint() {
     $("#invoiceCommand").attr("action","${pageContext.request.contextPath}/invoices/demoInvoicePrint");
     $("#invoiceCommand").submit();
+}
+
+function hasDuplicateChNos() {
+    console.log('duplicate chNos validation')
+    var tempArr = new Array();
+    var hasDupli = false;
+    $("input[id$='.chNo']").each(function(k,v){
+        if (tempArr.indexOf(v.value) >= 0) {
+            hasDupli = true;
+        } else {
+            tempArr.push(v.value)
+        }
+    })
+    console.log(tempArr)
+    return hasDupli
 }
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>

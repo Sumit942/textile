@@ -15,9 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
@@ -213,6 +211,22 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMap.put("totalAmountAfterTax","NotNull.invoiceCommand.totalAmountAfterTax");
             if (invoice.getTotalInvoiceAmountInWords() == null || invoice.getTotalInvoiceAmountInWords().equalsIgnoreCase("Zero"))
                 errMap.put("totalInvoiceAmountInWords","NotNull.invoiceCommand.totalInvoiceAmountInWords");
+        }
+
+        if (errMap.isEmpty()) {
+            //check for duplicate chNo
+            List<String> uniqChNo = new ArrayList<>();
+            for (int i = 0; i < invoice.getProduct().size(); i++) {
+                if (invoice.getProduct().get(i).getChNo() != null) {
+                    if (!uniqChNo.contains(invoice.getProduct().get(i).getChNo())) {
+                        uniqChNo.add(invoice.getProduct().get(i).getChNo());
+                    } else {
+                        errMap.put("product["+i+"].chNo","duplicate.invoiceCommand.product.chNo");
+                        int chNoIndex = uniqChNo.indexOf(invoice.getProduct().get(i).getChNo());
+                        errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
+                    }
+                }
+            }
         }
 
         //adding validation error in Binding result
