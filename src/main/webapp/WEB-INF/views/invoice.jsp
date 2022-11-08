@@ -897,7 +897,7 @@ function updateTotalAmount() {
         totalAmount += parseFloat(v.value)
         //console.log('adding... '+v.value)
     })
-    $("#totalAmount").val(totalAmount)
+    $("#totalAmount").val(totalAmount.toFixed(2))
 
     var gst = parseFloat((totalAmount*(2.5/100)).toFixed(2));
     $("#cGst").val(gst)
@@ -954,17 +954,19 @@ function demoInvoicePrint() {
 }
 
 function hasDuplicateChNos() {
-    console.log('duplicate chNos validation')
+    //console.log('duplicate chNos validation')
     var tempArr = new Array();
     var hasDupli = false;
     $("input[id$='.chNo']").each(function(k,v){
+        if (v.value === '')
+            return;
         if (tempArr.indexOf(v.value) >= 0) {
             hasDupli = true;
         } else {
             tempArr.push(v.value)
         }
     })
-    console.log(tempArr)
+    //console.log(tempArr)
     return hasDupli
 }
 </script>
