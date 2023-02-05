@@ -19,9 +19,7 @@ public class Employee implements Serializable {
     private BigDecimal salary;
     private List<Statement> statements;
 
-    private State state;
-    private String address;
-    private Integer pinCode;
+    private Address address;
     private Date insertDt;
     private Date updateDt;
 
@@ -78,30 +76,14 @@ public class Employee implements Serializable {
         this.statements = statements;
     }
 
-    @ManyToOne
-    public State getState() {
-        return state;
-    }
 
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    @NotNull
-    public String getAddress() {
+    @OneToOne(cascade = CascadeType.ALL)
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
-    }
-
-    public Integer getPinCode() {
-        return pinCode;
-    }
-
-    public void setPinCode(Integer pinCode) {
-        this.pinCode = pinCode;
     }
 
     @CreationTimestamp
@@ -122,18 +104,18 @@ public class Employee implements Serializable {
         this.updateDt = updateDt;
     }
 
-    @Transient
-    public String getFullAddress() {
-        return address + (state != null ? state.getName() : "")  + "-" + pinCode;
-    }
-
     @Override
     public String toString() {
-        return "Address{" +
+        return "Employee{" +
                 "id=" + id +
-                ", state=" + state +
-                ", address='" + address + '\'' +
-                ", pinCode=" + pinCode +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", designation=" + designation +
+                ", salary=" + salary +
+                ", statements=" + statements +
+                ", address=" + address +
+                ", insertDt=" + insertDt +
+                ", updateDt=" + updateDt +
                 '}';
     }
 }

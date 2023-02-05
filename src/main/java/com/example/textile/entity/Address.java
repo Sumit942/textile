@@ -55,6 +55,7 @@ public class Address implements Serializable {
     }
 
     @CreationTimestamp
+    @Column(updatable = false)
     public Date getInsertDt() {
         return insertDt;
     }
@@ -74,7 +75,7 @@ public class Address implements Serializable {
 
     @Transient
     public String getFullAddress() {
-        return address + (state != null ? state.getName() : "")  + "-" + pinCode;
+        return address + (state != null ? ","+state.getName() : "")  + "-" + pinCode;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.textile.controller;
 
 import com.example.textile.action.InvoiceSubmitAction;
+import com.example.textile.command.InvoiceCommand;
 import com.example.textile.constants.CommandConstants;
 import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.Company;
@@ -319,5 +320,17 @@ public class InvoiceController extends BaseController {
         }
 
         log.info("{} Exit {}", logPrefix, logSuffix);
+    }
+
+    @GetMapping("/report")
+    public ModelAndView getReport(@ModelAttribute InvoiceCommand invoice) {
+        ModelAndView modelAndView = new ModelAndView("invoiceReport");
+        return modelAndView;
+    }
+
+    @PostMapping("/report")
+    public ModelAndView showReport(@ModelAttribute Invoice invoice, RedirectAttributes redirectAttr) {
+
+        return new ModelAndView("redirect:/report");
     }
 }
