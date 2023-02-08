@@ -231,6 +231,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 
         //adding validation error in Binding result
         errMap.forEach(result::rejectValue);
+        invoice.getProduct().sort(Comparator.comparing(ProductDetail::getChNo));
 
         log.info("{} Exit", logPrefix);
     }
