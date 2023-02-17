@@ -17,6 +17,8 @@ public class Employee implements Serializable {
     private String lastName;
     private Designation designation;
     private BigDecimal salary;
+    private String accountNo;
+    private String ifscCode;
     private List<Statement> statements;
 
     private Address address;
@@ -39,6 +41,11 @@ public class Employee implements Serializable {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     public String getLastName() {
@@ -65,6 +72,24 @@ public class Employee implements Serializable {
 
     public void setSalary(BigDecimal salary) {
         this.salary = salary;
+    }
+
+    @Column
+    public String getAccountNo() {
+        return accountNo;
+    }
+
+    public void setAccountNo(String accountNo) {
+        this.accountNo = accountNo;
+    }
+
+    @Column
+    public String getIfscCode() {
+        return ifscCode;
+    }
+
+    public void setIfscCode(String ifscCode) {
+        this.ifscCode = ifscCode;
     }
 
     @OneToMany(mappedBy = "employee")
@@ -112,6 +137,8 @@ public class Employee implements Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", designation=" + designation +
                 ", salary=" + salary +
+                ", accountNo=" + accountNo +
+                ", ifscCode=" + ifscCode +
                 ", statements=" + statements +
                 ", address=" + address +
                 ", insertDt=" + insertDt +

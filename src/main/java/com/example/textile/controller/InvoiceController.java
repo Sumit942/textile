@@ -4,10 +4,7 @@ import com.example.textile.action.InvoiceSubmitAction;
 import com.example.textile.command.InvoiceCommand;
 import com.example.textile.constants.CommandConstants;
 import com.example.textile.constants.TextileConstants;
-import com.example.textile.entity.Company;
-import com.example.textile.entity.Invoice;
-import com.example.textile.entity.InvoiceView;
-import com.example.textile.entity.State;
+import com.example.textile.entity.*;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
@@ -42,10 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -248,6 +242,8 @@ public class InvoiceController extends BaseController {
         invoiceBackUp.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());
         invoiceBackUp.setTotalInvoiceAmountInWords(invoice.getTotalInvoiceAmountInWords());
         invoiceBackUp.setProduct(invoice.getProduct());
+        // sorting to show ProductList in UI with ascending order
+        invoiceBackUp.getProduct().sort(Comparator.comparing(ProductDetail::getChNo));
         invoiceBackUp.setSelectedBank(invoice.getSelectedBank());
 
         return invoiceBackUp;

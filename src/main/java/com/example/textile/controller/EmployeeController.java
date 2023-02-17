@@ -1,7 +1,10 @@
 package com.example.textile.controller;
 
+import com.example.textile.command.EmployeeCommand;
 import com.example.textile.constants.CommandConstants;
+import com.example.textile.entity.Designation;
 import com.example.textile.entity.Employee;
+import com.example.textile.repo.DesignationRepository;
 import com.example.textile.repo.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,18 +17,23 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-@RequestMapping("/employee")
+@RequestMapping("/employees")
 public class EmployeeController {
 
 
     @Autowired
     EmployeeRepository employeeRepo;
 
+    @Autowired
+    DesignationRepository designationRepo;
+
     @GetMapping
-    public ModelAndView viewEmployee(@ModelAttribute(CommandConstants.EMPLOYEE_COMMAND) Employee employee) {
+    public ModelAndView viewEmployee(@ModelAttribute(CommandConstants.EMPLOYEE_COMMAND) EmployeeCommand employee) {
         ModelAndView modelAndView = new ModelAndView("/employees");
         List<Employee> employees = employeeRepo.findAll();
         modelAndView.addObject("employees",employees);
+        List<Designation> designations = designationRepo.findAll();
+        modelAndView.addObject("designations", designations);
 
         return modelAndView;
     }
