@@ -19,6 +19,8 @@ public class Employee implements Serializable {
     private BigDecimal salary;
     private String accountNo;
     private String ifscCode;
+    private String panCardNo;
+
     private List<Statement> statements;
 
     private Address address;
@@ -90,6 +92,17 @@ public class Employee implements Serializable {
 
     public void setIfscCode(String ifscCode) {
         this.ifscCode = ifscCode;
+    }
+
+    //TODO: uncomment the below code after employee flow complete
+//    @Column(unique = true, nullable = false)
+    @Column
+    public String getPanCardNo() {
+        return panCardNo;
+    }
+
+    public void setPanCardNo(String panCardNo) {
+        this.panCardNo = panCardNo;
     }
 
     @OneToMany(mappedBy = "employee")
