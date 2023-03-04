@@ -33,6 +33,9 @@ public class Invoice implements Serializable {
     private BigDecimal totalAmount;
     private BigDecimal cGst;
     private BigDecimal sGst;
+    private BigDecimal iGst;
+    private Double gstPerc = 2.5;
+
     private BigDecimal totalTaxAmount;
     private Double roundOff = (double) 0;
     private BigDecimal totalAmountAfterTax;
@@ -218,6 +221,23 @@ public class Invoice implements Serializable {
         this.sGst = sGst;
     }
 
+    public BigDecimal getiGst() {
+        return iGst;
+    }
+
+    public void setiGst(BigDecimal iGst) {
+        this.iGst = iGst;
+    }
+
+    @Column(columnDefinition = "double default 2.5")
+    public Double getGstPerc() {
+        return gstPerc;
+    }
+
+    public void setGstPerc(Double gstPerc) {
+        this.gstPerc = gstPerc;
+    }
+
     @NotNull
     public BigDecimal getTotalTaxAmount() {
         return totalTaxAmount;
@@ -302,6 +322,8 @@ public class Invoice implements Serializable {
                 ", totalAmount=" + totalAmount +
                 ", cGst=" + cGst +
                 ", sGst=" + sGst +
+                ", iGst=" + iGst +
+                ", gstPerc=" + gstPerc +
                 ", totalTaxAmount=" + totalTaxAmount +
                 ", roundOff=" + roundOff +
                 ", totalAmountAfterTax=" + totalAmountAfterTax +

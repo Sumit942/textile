@@ -38,6 +38,7 @@
     <div class="row mb-1">
         <div class="col-md-6 border">
             <form:hidden path="id"/>
+            <form:hidden path="invoiceBy.address.state.code"/>
             <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
             <form:input path="invoiceNo" class="col-md-3"/>
             <form:errors path="invoiceNo" cssClass="error" class="col-md-3"/>
@@ -339,24 +340,42 @@
             <form:textarea path="totalInvoiceAmountInWords" style="width:100%;height:100%;" readonly="true"/>
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
+
+    </div>
+    <div class="row mb-1 stateGst">
+        <div class="col-md-8 border-end">
+
+        </div>
         <div class="col-md-2">
-            <span>Add: CGST 2.5%</span>
+            <form:label path="cGst">Add: CGST <span class="gstPercentage">2.5</span>%</form:label>
         </div>
         <div class="col-md-2">
             <form:input path="cGst" readonly="true"/>
             <form:errors path="cGst" cssClass="error"/>
         </div>
     </div>
-    <div class="row mb-1">
+    <div class="row mb-1 stateGst">
         <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
-            <span>Add: SGST 2.5%</span>
+           <form:label path="sGst">Add: SGST <span class="gstPercentage">2.5</span>%</form:label>
         </div>
         <div class="col-md-2">
             <form:input path="sGst" readonly="true"/>
             <form:errors path="sGst" cssClass="error"/>
+        </div>
+    </div>
+    <div class="row mb-1 interStateGst">
+        <div class="col-md-8 border-end">
+
+        </div>
+        <div class="col-md-2">
+           <form:label path="iGst">Add: IGST <span class="gstPercentage">2.5</span>%</form:label>
+        </div>
+        <div class="col-md-2">
+            <form:input path="iGst" readonly="true"/>
+            <form:errors path="iGst" cssClass="error"/>
         </div>
     </div>
     <div class="row mb-1">
@@ -412,7 +431,20 @@
 </div>
 </form:form>
 <script>
+function showHideGstTab() {
+    if ( $('#billToParty\\.address\\.state\\.code').val() == ''
+        || ($('#invoiceBy\\.address\\.state\\.code').val() == $('#billToParty\\.address\\.state\\.code').val())) {
+        $('.interStateGst').hide()
+        $('.stateGst').show()
+    } else {
+        $('.interStateGst').show()
+        $('.stateGst').hide()
+    }
+}
+
 $(document).ready(function() {
+    showHideGstTab()
+
     $( "#dateOfSupply" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
