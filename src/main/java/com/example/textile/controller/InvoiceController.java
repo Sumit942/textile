@@ -150,6 +150,8 @@ public class InvoiceController extends BaseController {
             to.setTotalAmount(temp.getTotalAmount());
             to.setcGst(temp.getcGst());
             to.setsGst(temp.getsGst());
+            to.setiGst(temp.getiGst());
+            to.setGstPerc(temp.getGstPerc());
             to.setTotalTaxAmount(temp.getTotalTaxAmount());
             to.setRoundOff(temp.getRoundOff());
             to.setTotalAmountAfterTax(temp.getTotalAmountAfterTax());

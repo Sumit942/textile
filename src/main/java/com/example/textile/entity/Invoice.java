@@ -34,7 +34,7 @@ public class Invoice implements Serializable {
     private BigDecimal cGst;
     private BigDecimal sGst;
     private BigDecimal iGst;
-    private Double gstPerc = 2.5;
+    private Double gstPerc = 5.0;
 
     private BigDecimal totalTaxAmount;
     private Double roundOff = (double) 0;
