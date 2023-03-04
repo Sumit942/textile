@@ -126,6 +126,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         persisted.setTotalAmount(invoice.getTotalAmount());
         persisted.setcGst(invoice.getcGst());
         persisted.setsGst(invoice.getsGst());
+        persisted.setiGst(invoice.getiGst());
+        persisted.setGstPerc(invoice.getGstPerc());
         persisted.setTotalTaxAmount(invoice.getTotalTaxAmount());
         persisted.setRoundOff(invoice.getRoundOff());
         persisted.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());

@@ -38,6 +38,7 @@
     <div class="row mb-1">
         <div class="col-md-6 border">
             <form:hidden path="id"/>
+            <form:hidden path="invoiceBy.address.state.code"/>
             <form:label path="invoiceNo" class="col-md-3">Invoice No:</form:label>
             <form:input path="invoiceNo" class="col-md-3"/>
             <form:errors path="invoiceNo" cssClass="error" class="col-md-3"/>
@@ -340,23 +341,48 @@
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
         <div class="col-md-2">
-            <span>Add: CGST 2.5%</span>
+            <form:label path="gstPerc">GST: </form:label>
+        </div>
+        <div class="col-md-2">
+            <form:input path="gstPerc" class="numbersOnly" style="width: 50%;" onkeyup="updateGstPerc(this.value)"/>  %
+            <form:errors path="gstPerc" cssClass="error"/>
+        </div>
+
+    </div>
+    <div class="row mb-1 stateGst">
+        <div class="col-md-8 border-end">
+
+        </div>
+        <div class="col-md-2">
+            <form:label path="cGst">Add: CGST <span class="gstPercentage">2.5</span>%</form:label>
         </div>
         <div class="col-md-2">
             <form:input path="cGst" readonly="true"/>
             <form:errors path="cGst" cssClass="error"/>
         </div>
     </div>
-    <div class="row mb-1">
+    <div class="row mb-1 stateGst">
         <div class="col-md-8 border-end">
 
         </div>
         <div class="col-md-2">
-            <span>Add: SGST 2.5%</span>
+           <form:label path="sGst">Add: SGST <span class="gstPercentage">2.5</span>%</form:label>
         </div>
         <div class="col-md-2">
             <form:input path="sGst" readonly="true"/>
             <form:errors path="sGst" cssClass="error"/>
+        </div>
+    </div>
+    <div class="row mb-1 interStateGst">
+        <div class="col-md-8 border-end">
+
+        </div>
+        <div class="col-md-2">
+           <form:label path="iGst">Add: IGST <span class="gstPercentage">2.5</span>%</form:label>
+        </div>
+        <div class="col-md-2">
+            <form:input path="iGst" readonly="true"/>
+            <form:errors path="iGst" cssClass="error"/>
         </div>
     </div>
     <div class="row mb-1">
@@ -412,7 +438,20 @@
 </div>
 </form:form>
 <script>
+function showHideGstTab() {
+    if ( $('#billToParty\\.address\\.state\\.code').val() == ''
+        || ($('#invoiceBy\\.address\\.state\\.code').val() == $('#billToParty\\.address\\.state\\.code').val())) {
+        $('.interStateGst').hide()
+        $('.stateGst').show()
+    } else {
+        $('.interStateGst').show()
+        $('.stateGst').hide()
+    }
+}
+
 $(document).ready(function() {
+    showHideGstTab()
+
     $( "#dateOfSupply" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
@@ -511,6 +550,7 @@ $(document).ready(function() {
         if (!$("#shipToParty\\.address\\.state\\.id").val()) {
             setShipToPartyState(item)
         }
+        showHideGstTab()
     }
 
     //reset all fields in billToParty
@@ -899,12 +939,16 @@ function updateTotalAmount() {
     })
     $("#totalAmount").val(totalAmount.toFixed(2))
 
-    var gst = parseFloat((totalAmount*(2.5/100)).toFixed(2));
-    $("#cGst").val(gst)
-    $("#sGst").val(gst)
+    let gstPerc = parseFloat($('#gstPerc').val())
+    if (isNaN(gstPerc))
+        gstPerc = 0
+    var gst = parseFloat((totalAmount*(gstPerc/100)).toFixed(2));
+    $("#cGst").val(parseFloat(gst/2))
+    $("#sGst").val(parseFloat(gst/2))
 
-    var totalTaxAmount = gst*2
+    var totalTaxAmount = gst
     $("#totalTaxAmount").val(totalTaxAmount)
+    $('#iGst').val(totalTaxAmount)
     //console.log('totalAmount: '+totalAmount+', gst: '+gst+', totalTaxAmount: '+totalTaxAmount)
 
     var pnfCharge = parseFloat($("#pnfCharge").val())
@@ -968,6 +1012,13 @@ function hasDuplicateChNos() {
     })
     //console.log(tempArr)
     return hasDupli
+}
+
+function updateGstPerc(value) {
+    $(".gstPercentage:eq(0)").text(parseFloat(value/2).toFixed(2))
+    $(".gstPercentage:eq(1)").text(parseFloat(value/2).toFixed(2))
+    $(".gstPercentage:eq(2)").text(parseFloat(value).toFixed(2))
+    updateTotalAmount()
 }
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>

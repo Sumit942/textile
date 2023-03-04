@@ -109,7 +109,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             invoice.setReverseCharge("No");
         if (invoice.getTransportMode() == null || invoice.getTransportMode().getMode() == null)
             errMap.put("transportMode","NotNull.invoiceCommand.transportMode");
-        if (invoice.getId() == null) {
+//        if (invoice.getId() == null) {
             if (invoice.getDateOfSupply() == null) {
                 //errMap.put("dateOfSupply","NotNull.invoiceCommand.dateOfSupply");
             } else if (invoice.getInvoiceDate() == null) {
@@ -199,10 +199,6 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMap.put("pnfCharge","NotNull.invoiceCommand.pnfCharge");
             if (invoice.getTotalAmount() == null || invoice.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0)
                 errMap.put("totalAmount","NotNull.invoiceCommand.totalAmount");
-            if (invoice.getcGst() == null || invoice.getcGst().compareTo(BigDecimal.ZERO) <= 0)
-                errMap.put("cGst","NotNull.invoiceCommand.cGst");
-            if (invoice.getsGst() == null || invoice.getsGst().compareTo(BigDecimal.ZERO) <= 0)
-                errMap.put("sGst","NotNull.invoiceCommand.sGst");
             if (invoice.getTotalTaxAmount() == null || invoice.getTotalTaxAmount().compareTo(BigDecimal.ZERO) <= 0)
                 errMap.put("totalTaxAmount","NotNull.invoiceCommand.totalTaxAmount");
             if (invoice.getRoundOff() == null)
@@ -211,7 +207,9 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMap.put("totalAmountAfterTax","NotNull.invoiceCommand.totalAmountAfterTax");
             if (invoice.getTotalInvoiceAmountInWords() == null || invoice.getTotalInvoiceAmountInWords().equalsIgnoreCase("Zero"))
                 errMap.put("totalInvoiceAmountInWords","NotNull.invoiceCommand.totalInvoiceAmountInWords");
-        }
+            if (invoice.getGstPerc() == null || invoice.getGstPerc().compareTo((double) 0) <= 0)
+                errMap.put("gstPerc","NotNull.invoiceCommand.gstPerc");
+//        }
 
         if (errMap.isEmpty()) {
             //check for duplicate chNo
@@ -226,6 +224,19 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                         errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
                     }
                 }
+            }
+            //adding condition to check for i / s gst
+            if (invoice.getInvoiceBy().getAddress().getState().getCode().equals(invoice.getBillToParty().getAddress().getState().getCode())) {
+                if (invoice.getcGst() == null || invoice.getcGst().compareTo(BigDecimal.ZERO) <= 0)
+                    errMap.put("cGst","NotNull.invoiceCommand.cGst");
+                if (invoice.getsGst() == null || invoice.getsGst().compareTo(BigDecimal.ZERO) <= 0)
+                    errMap.put("sGst","NotNull.invoiceCommand.sGst");
+                invoice.setiGst(null);
+            } else {
+                if (invoice.getiGst() == null || invoice.getiGst().compareTo(BigDecimal.ZERO) <= 0)
+                    errMap.put("iGst","NotNull.invoiceCommand.iGst");
+                invoice.setcGst(null);
+                invoice.setsGst(null);
             }
         }
 
