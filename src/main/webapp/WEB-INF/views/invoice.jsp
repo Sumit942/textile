@@ -340,6 +340,13 @@
             <form:textarea path="totalInvoiceAmountInWords" style="width:100%;height:100%;" readonly="true"/>
             <form:errors path="totalInvoiceAmountInWords" cssClass="error"/>
         </div>
+        <div class="col-md-2">
+            <form:label path="gstPerc">GST: </form:label>
+        </div>
+        <div class="col-md-2">
+            <form:input path="gstPerc" class="numbersOnly" style="width: 50%;" onkeyup="updateGstPerc(this.value)"/>  %
+            <form:errors path="gstPerc" cssClass="error"/>
+        </div>
 
     </div>
     <div class="row mb-1 stateGst">
@@ -543,6 +550,7 @@ $(document).ready(function() {
         if (!$("#shipToParty\\.address\\.state\\.id").val()) {
             setShipToPartyState(item)
         }
+        showHideGstTab()
     }
 
     //reset all fields in billToParty
@@ -931,12 +939,16 @@ function updateTotalAmount() {
     })
     $("#totalAmount").val(totalAmount.toFixed(2))
 
-    var gst = parseFloat((totalAmount*(2.5/100)).toFixed(2));
-    $("#cGst").val(gst)
-    $("#sGst").val(gst)
+    let gstPerc = parseFloat($('#gstPerc').val())
+    if (isNaN(gstPerc))
+        gstPerc = 0
+    var gst = parseFloat((totalAmount*(gstPerc/100)).toFixed(2));
+    $("#cGst").val(parseFloat(gst/2))
+    $("#sGst").val(parseFloat(gst/2))
 
-    var totalTaxAmount = gst*2
+    var totalTaxAmount = gst
     $("#totalTaxAmount").val(totalTaxAmount)
+    $('#iGst').val(totalTaxAmount)
     //console.log('totalAmount: '+totalAmount+', gst: '+gst+', totalTaxAmount: '+totalTaxAmount)
 
     var pnfCharge = parseFloat($("#pnfCharge").val())
@@ -1000,6 +1012,13 @@ function hasDuplicateChNos() {
     })
     //console.log(tempArr)
     return hasDupli
+}
+
+function updateGstPerc(value) {
+    $(".gstPercentage:eq(0)").text(parseFloat(value/2).toFixed(2))
+    $(".gstPercentage:eq(1)").text(parseFloat(value/2).toFixed(2))
+    $(".gstPercentage:eq(2)").text(parseFloat(value).toFixed(2))
+    updateTotalAmount()
 }
 </script>
 <script src="${pageContext.request.contextPath}/js/invoice.js" ></script>

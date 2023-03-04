@@ -203,7 +203,6 @@ public class Invoice implements Serializable {
         this.totalAmount = totalAmount;
     }
 
-    @NotNull
     public BigDecimal getcGst() {
         return cGst;
     }
@@ -212,7 +211,6 @@ public class Invoice implements Serializable {
         this.cGst = cGst;
     }
 
-    @NotNull
     public BigDecimal getsGst() {
         return sGst;
     }
@@ -229,7 +227,7 @@ public class Invoice implements Serializable {
         this.iGst = iGst;
     }
 
-    @Column(columnDefinition = "double default 2.5")
+    @Column(columnDefinition = "double default 5")
     public Double getGstPerc() {
         return gstPerc;
     }

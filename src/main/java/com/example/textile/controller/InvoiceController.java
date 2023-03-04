@@ -206,6 +206,7 @@ public class InvoiceController extends BaseController {
                 response.addErrorMessage(messageSource.getMessage("System.Exception.DB",null,request.getLocale()));
             }
             model.addAttribute("actionResponse",response);
+            actExecutor.prePopulateOptionsAndFields(oldInvoiceBackUp, model);
             model.addAttribute(CommandConstants.INVOICE_COMMAND,oldInvoiceBackUp);
         } catch (Throwable e) {
             log.error("SystemError: in saving invoice", e);
@@ -213,6 +214,7 @@ public class InvoiceController extends BaseController {
             String message = messageSource.getMessage("System.Error",null,request.getLocale());
             response.addErrorMessage(message);
             model.addAttribute("actionResponse",response);
+            actExecutor.prePopulateOptionsAndFields(oldInvoiceBackUp, model);
             model.addAttribute(CommandConstants.INVOICE_COMMAND,oldInvoiceBackUp);
         }
         log.info("{} Exit",logPrefix);
@@ -222,6 +224,7 @@ public class InvoiceController extends BaseController {
     private Invoice getNewInstanceOfInvoice(Invoice invoice) {
 
         Invoice invoiceBackUp = new Invoice();
+        invoiceBackUp.setId(invoice.getId());
         invoiceBackUp.setInvoiceNo(invoice.getInvoiceNo());
         invoiceBackUp.setUser(invoice.getUser());
         invoiceBackUp.setTransportMode(invoice.getTransportMode());
@@ -237,6 +240,8 @@ public class InvoiceController extends BaseController {
         invoiceBackUp.setTotalAmount(invoice.getTotalAmount());
         invoiceBackUp.setcGst(invoice.getcGst());
         invoiceBackUp.setsGst(invoice.getsGst());
+        invoiceBackUp.setiGst(invoice.getiGst());
+        invoiceBackUp.setGstPerc(invoice.getGstPerc());
         invoiceBackUp.setTotalTaxAmount(invoice.getTotalTaxAmount());
         invoiceBackUp.setRoundOff(invoice.getRoundOff());
         invoiceBackUp.setTotalAmountAfterTax(invoice.getTotalAmountAfterTax());

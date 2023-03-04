@@ -2795,13 +2795,18 @@ x\:* {behavior:url(#default#VML);}
   style='border-right:.5pt solid black;border-bottom:.5pt solid black;
   height:75.0pt;width:293pt'><span th:text="${invoice.totalInvoiceAmountInWords}"/></td>
   <td colspan='3' class='xl9721738' width='177' style='border-right:.5pt solid black;
-  border-left:none;width:133pt'>Add: CGST 2.5%</td>
+  border-left:none;width:133pt'>Add:
+   <span th:text="${invoice.invoiceBy.address.state.code == invoice.billToParty.address.state.code} ? 'CGST ' + ${invoice.gstPerc/2} : 'IGST ' + ${invoice.gstPerc}" />
+   %
+  </td>
   <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
-  border-left:none'><span th:text="${invoice.cGst}"/></td>
+  border-left:none'><span th:text="${invoice.cGst}"/><span th:text="${invoice.iGst}"/></td>
  </tr>
  <tr height='20' style='mso-height-source:userset;height:15.0pt'>
   <td colspan='3' height='20' class='xl9721738' width='177' style='border-right:.5pt solid black;
-  height:15.0pt;border-left:none;width:133pt'>Add: SGST 2.5%</td>
+  height:15.0pt;border-left:none;width:133pt'>
+   <span th:text="${invoice.invoiceBy.address.state.code == invoice.billToParty.address.state.code} ? 'Add: SGST ' + ${invoice.gstPerc/2} + '%' : ''" />
+   </td>
   <td colspan='2' class='xl13521738' style='border-right:1.0pt solid black;
   border-left:none'><span th:text="${invoice.sGst}"/></td>
  </tr>
