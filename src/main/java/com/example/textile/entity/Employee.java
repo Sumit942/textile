@@ -17,8 +17,7 @@ public class Employee implements Serializable {
     private String lastName;
     private Designation designation;
     private BigDecimal salary;
-    private String accountNo;
-    private String ifscCode;
+    private List<BankDetail> bankDetails;
     private String panCardNo;
 
     private List<Statement> statements;
@@ -76,22 +75,14 @@ public class Employee implements Serializable {
         this.salary = salary;
     }
 
-    @Column
-    public String getAccountNo() {
-        return accountNo;
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "company_id")
+    public List<BankDetail> getBankDetails() {
+        return bankDetails;
     }
 
-    public void setAccountNo(String accountNo) {
-        this.accountNo = accountNo;
-    }
-
-    @Column
-    public String getIfscCode() {
-        return ifscCode;
-    }
-
-    public void setIfscCode(String ifscCode) {
-        this.ifscCode = ifscCode;
+    public void setBankDetails(List<BankDetail> bankDetails) {
+        this.bankDetails = bankDetails;
     }
 
     //TODO: uncomment the below code after employee flow complete
@@ -150,8 +141,7 @@ public class Employee implements Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", designation=" + designation +
                 ", salary=" + salary +
-                ", accountNo=" + accountNo +
-                ", ifscCode=" + ifscCode +
+                ", bankDetail=" + bankDetails +
                 ", statements=" + statements +
                 ", address=" + address +
                 ", insertDt=" + insertDt +

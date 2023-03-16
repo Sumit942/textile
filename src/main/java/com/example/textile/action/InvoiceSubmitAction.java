@@ -37,7 +37,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 
         invoiceService.saveOrUpdate(invoice);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
-        log.info("{} [Action=Save, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
+        log.info("{} [Action={}, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,action.getActionType(),invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
         log.info("{} Exit", logPrefix);
         return actionResponse;
     }

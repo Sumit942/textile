@@ -2,7 +2,7 @@
 <style>
 </style>
 <body>
-<form:form name="employees" action="${pageContext.request.contextPath}/invoices/employees" method="POST" modelAttribute="employeeCommand">
+<form:form name="employees" action="${pageContext.request.contextPath}/employees" method="POST" modelAttribute="employeeCommand">
 <div class="container-fluid">
     <%@ include file="./common/navigation.jspf" %>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
@@ -57,16 +57,42 @@
             <form:errors path="employee.salary" cssClass="error" />
         </div>
         <div class="col-md-2 ">
-            <form:input path="employee.accountNo" required="true"/>
-            <form:errors path="employee.accountNo" cssClass="error" />
+            <form:input path="employee.bankDetail[0].bankName" required="true"/>
+            <form:errors path="employee.bankDetail[0].bankName" cssClass="error" />
         </div>
         <div class="col-md-2 ">
-            <form:input path="employee.ifscCode" required="true"/>
-            <form:errors path="employee.ifscCode" cssClass="error" />
+            <form:input path="employee.bankDetail[0].branch" required="true"/>
+            <form:errors path="employee.bankDetail[0].branch" cssClass="error" />
+        </div>
+        <div class="col-md-2 ">
+            <form:input path="employee.bankDetail[0].accountNo" required="true"/>
+            <form:errors path="employee.bankDetail[0].accountNo" cssClass="error" />
+        </div>
+        <div class="col-md-2 ">
+            <form:input path="employee.bankDetail[0].ifscCode" required="true"/>
+            <form:errors path="employee.bankDetail[0].ifscCode" cssClass="error" />
         </div>
         <div class="col-md-1 ">
             <input type="Submit" class="btn btn-primary" />
         </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-md-3">
+            <form:textarea path="employee.address.address" class="col-md-12" placeholder="Enter Address" required="true"/>
+            <form:errors path="employee.address.address" cssClass="error" />
+        </div>
+        <div class="col-md-2">
+            <form:input path="employee.address.pinCode" placeholder="Pincode" required="true"/>
+            <form:errors path="employee.address.pinCode" cssClass="error" />
+        </div>
+        <div class="col-md-2">
+            <form:select path="employee.address.state.name" placeholder="State Name" required="true">
+                <form:option value="">Select State</form:option>
+                <form:options items="${states}" itemValue="id" itemLabel="name" />
+            </form:select>
+            <form:errors path="employee.address.state.name" cssClass="error" />
+        </div>
+
     </div>
 
     <!-- employee tables -->
@@ -102,7 +128,7 @@
                 </c:when>
                 <c:otherwise>
                     <td colspan="7">
-                        No Invoice Available
+                        No Data Available
                     </td>
                 </c:otherwise>
                 </c:choose>

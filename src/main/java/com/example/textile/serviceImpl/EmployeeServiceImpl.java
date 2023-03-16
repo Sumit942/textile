@@ -2,8 +2,10 @@ package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.Designation;
 import com.example.textile.entity.Employee;
+import com.example.textile.entity.State;
 import com.example.textile.repo.DesignationRepository;
 import com.example.textile.repo.EmployeeRepository;
+import com.example.textile.repo.StateRepository;
 import com.example.textile.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     DesignationRepository designationRepo;
+
+    @Autowired
+    StateRepository stateRepo;
 
     @Override
     public Employee saveOrUpdate(Employee employee) {
@@ -47,5 +52,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Designation> findAllDesignations() {
         return designationRepo.findAll();
+    }
+
+    @Override
+    public List<State> findAllStates() {
+        return stateRepo.findAll();
     }
 }
