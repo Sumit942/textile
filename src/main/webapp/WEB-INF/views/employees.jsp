@@ -19,11 +19,11 @@
         <div class="col-md-1 ">
             <form:label path="employee.firstName" >First Name</form:label>
         </div>
-        <div class="col-md-2 ">
+        <div class="col-md-1 ">
             <form:label path="employee.lastName" >Last Name</form:label>
         </div>
-        <div class="col-md-1 ">
-            <form:label path="employee.designation" >Designation</form:label>
+        <div class="col-md-2 ">
+            <form:label path="employee.panCardNo" >Pan No.</form:label>
         </div>
         <div class="col-md-1 ">
             <form:label path="employee.salary" >Salary</form:label>
@@ -34,7 +34,10 @@
         <div class="col-md-1">
             <form:label path="employee.address.pinCode">Pincode</form:label>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1 ">
+            <form:label path="employee.designation" >Designation</form:label>
+        </div>
+        <div class="col-md-1">
             <form:label path="employee.address.state.id">State</form:label>
         </div>
         <div class="col-md-1">
@@ -47,16 +50,13 @@
             <form:input path="employee.firstName" required="true"/>
             <form:errors path="employee.firstName" cssClass="error" />
         </div>
-        <div class="col-md-2 ">
+        <div class="col-md-1 ">
             <form:input path="employee.lastName" required="true"/>
             <form:errors path="employee.lastName" cssClass="error" />
         </div>
-        <div class="col-md-1 ">
-            <form:select path="employee.designation" required="true">
-                <form:option value="" label="Select"/>
-                <form:options items="${designations}" itemValue="id" itemLabel="designation" />
-            </form:select>
-            <form:errors path="employee.designation" cssClass="error"/>
+        <div class="col-md-2 ">
+            <form:input path="employee.panCardNo" required="true"/>
+            <form:errors path="employee.panCardNo" cssClass="error" />
         </div>
         <div class="col-md-1 ">
             <form:input path="employee.salary" class="col-md-12" required="true"/>
@@ -70,12 +70,19 @@
             <form:input path="employee.address.pinCode" class="col-md-12 " placeholder="Pincode" required="true"/>
             <form:errors path="employee.address.pinCode" cssClass="error" />
         </div>
-        <div class="col-md-2">
-            <form:select path="employee.address.state.name" placeholder="State" required="true">
+        <div class="col-md-1 ">
+            <form:select path="employee.designation" required="true">
+                <form:option value="" label="Select"/>
+                <form:options items="${designations}" itemValue="id" itemLabel="designation" />
+            </form:select>
+            <form:errors path="employee.designation" cssClass="error"/>
+        </div>
+        <div class="col-md-1">
+            <form:select path="employee.address.state.id" placeholder="State" required="true">
                 <form:option value="">Select</form:option>
                 <form:options items="${states}" itemValue="id" itemLabel="name" />
             </form:select>
-            <form:errors path="employee.address.state.name" cssClass="error" />
+            <form:errors path="employee.address.state.id" cssClass="error" />
         </div>
         <div class="col-md-1">
             <form:select path="employee.status" placeholder="State" required="true">

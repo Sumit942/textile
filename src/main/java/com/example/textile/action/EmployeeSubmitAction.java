@@ -87,7 +87,7 @@ public class EmployeeSubmitAction extends ActionExecutor<EmployeeCommand> {
                 errMap.put("employee.panCardNo","NotNull.employeeCommand.employee.panCardNo");
             if (employee.getAddress() == null || employee.getAddress().getAddress() == null || employee.getAddress().getAddress().isEmpty()) {
                 errMap.put("employee.address.address", "NotNull.employeeCommand.employee.address.address");
-            } else if (employee.getAddress().getState() == null || employee.getAddress().getState().getId() == null || employee.getAddress().getId() <= 0) {
+            } else if (employee.getAddress().getState() == null || employee.getAddress().getState().getId() == null || employee.getAddress().getState().getId() <= 0) {
                 errMap.put("employee.address.state", "NotNull.employeeCommand.employee.address.state");
             }
             if (errMap.isEmpty()) {
@@ -109,11 +109,11 @@ public class EmployeeSubmitAction extends ActionExecutor<EmployeeCommand> {
     protected void doPreSaveOperation(EmployeeCommand employeeCommand, BindingResult result) {
         String logPrefix = "doPreSaveOperation() | ";
         String logSuffix = "";
-        Employee byPanCard = employeeService.findByPanCard(employeeCommand.getEmployee().getPanCardNo());
-        if (byPanCard != null) {
-            result.rejectValue("employee.panCardNo","employeeCommand.employee.panCardNo.alreadyExist",
-                    new Object[]{byPanCard.getFullName()},"Pan Card Already Exist");
-        }
+//        Employee byPanCard = employeeService.findByPanCard(employeeCommand.getEmployee().getPanCardNo());
+//        if (byPanCard != null) {
+//            result.rejectValue("employee.panCardNo","employeeCommand.employee.panCardNo.alreadyExist",
+//                    new Object[]{byPanCard.getFullName()},"Pan Card Already Exist");
+//        }
     }
 
     @Override
