@@ -19,6 +19,7 @@ public class BankDetail implements Serializable {
     private Date update_dt;
 
     private Company company;
+    private Employee employee;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,6 +89,16 @@ public class BankDetail implements Serializable {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     @Override

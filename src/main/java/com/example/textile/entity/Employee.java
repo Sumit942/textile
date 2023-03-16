@@ -19,6 +19,7 @@ public class Employee implements Serializable {
     private BigDecimal salary;
     private List<BankDetail> bankDetails;
     private String panCardNo;
+    private String status;
 
     private List<Statement> statements;
 
@@ -76,7 +77,7 @@ public class Employee implements Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "employee_id")
     public List<BankDetail> getBankDetails() {
         return bankDetails;
     }
@@ -94,6 +95,15 @@ public class Employee implements Serializable {
 
     public void setPanCardNo(String panCardNo) {
         this.panCardNo = panCardNo;
+    }
+
+    @Column
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @OneToMany(mappedBy = "employee")
@@ -140,6 +150,8 @@ public class Employee implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", designation=" + designation +
+                ", panCardNo=" + panCardNo +
+                ", status=" + status +
                 ", salary=" + salary +
                 ", bankDetail=" + bankDetails +
                 ", statements=" + statements +
