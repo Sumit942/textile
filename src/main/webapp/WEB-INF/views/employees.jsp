@@ -92,7 +92,7 @@
     </thead>
     <tbody id="bankDetailTbody">
 <c:choose>
-        <c:when test="${empty employee.bankDetails}">
+        <c:when test="${empty employeeCommand.employee.bankDetails}">
         <tr>
             <td>1</td>
             <td>
@@ -117,31 +117,32 @@
         </tr>
         </c:when>
         <c:otherwise>
-            <c:forEach items="${employee.bankDetails}" var="bankDetails" varStatus="index">
-            <tr>
+            <c:forEach items="${employeeCommand.employee.bankDetails}" var="bankDetails" varStatus="index">
+        <tr>
+            <td>${index.index+1}</td>
             <td>
-                <form:input path="employee.bankDetails[${index.index}].bankName" class="col-md-2 " placeholder="Enter Bank Name" required="true"/>
-                <form:errors path="employee.bankDetails[0].bankName" cssClass="error" />
+                <form:hidden path="employee.bankDetails[${index.index}].id" />
+                <form:input path="employee.bankDetails[${index.index}].bankName" class="form-control" placeholder="Enter Bank Name" required="true"/>
+                <form:errors path="employee.bankDetails[${index.index}].bankName" cssClass="error" />
             </td>
             <td>
-                <form:input path="employee.bankDetails[${index.index}].branch" class="col-md-2 " placeholder="Enter Bank Branch" required="true"/>
+                <form:input path="employee.bankDetails[${index.index}].branch" class="form-control"  placeholder="Enter Bank Branch" required="true"/>
                 <form:errors path="employee.bankDetails[${index.index}].branch" cssClass="error" />
             </td>
             <td>
-                <form:input path="employee.bankDetails[${index.index}].accountNo" class="col-md-2 " placeholder="Enter Bank Account No" required="true"/>
+                <form:input path="employee.bankDetails[${index.index}].accountNo" class="form-control"  placeholder="Enter Bank Account No" required="true"/>
                 <form:errors path="employee.bankDetails[${index.index}].accountNo" cssClass="error" />
             </td>
             <td>
-                <form:input path="employee.bankDetails[${index.index}].ifsc" class="col-md-2 " placeholder="Enter Bank IFSC" required="true"/>
+                <form:input path="employee.bankDetails[${index.index}].ifsc" class="form-control"  placeholder="Enter Bank IFSC" required="true"/>
                 <form:errors path="employee.bankDetails[${index.index}].ifsc" cssClass="error" />
             </td>
             <td>
-                <c:if test="${index.index == employee.bankDetails.size()-1}">
-                    <input type="button" value="+" id="bankDetailAdd_${index.index}" class="btn btn-sm btn-primary" onclick="bankDetailAddRow(this)"/>
-                    <input  type="button" value="-" id="bankDetailDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="bankDetailDelRow(this)" style="margin-left: 18%;width: 60%;"/>
+                <c:if test="${index.index == employeeCommand.employee.bankDetails.size()-1}">
+                    <input type="button" value="+" onclick="bankDetailAddRow(this)" class="btn btn-sm btn-primary">
                 </c:if>
             </td>
-            </tr>
+        </tr>
             </c:forEach>
         </c:otherwise>
         </c:choose>
@@ -150,6 +151,51 @@
 <input type="Submit" class="btn btn-primary" />
 </form:form>
 </div>
+<div class="row">
+<hr>
+<div class="col fw-bold" style="text-align: center;">List Of Emloyees</div>
+<hr>
+</div>
+    <!-- employee tables -->
+    <table id="invoiceTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Salary</th>
+                    <!-- <th>Acc No - Ifsc</th> -->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:choose>
+                <c:when test="${not empty employees}">
+                    <c:forEach items="${employees}" var="employeeList" varStatus="index">
+                    <tr>
+                        <td>${index.index + 1}</td>
+                        <td>
+                            <fmt:formatDate pattern="dd/MM/yyyy" value="${employeeList.insertDt}" var="invDateFormatted"/>
+                            <c:out value="${invDateFormatted}">NA</c:out>
+                        </td>
+                        <td>${employeeList.firstName} ${employeeList.lastName}</td>
+                        <td>${employeeList.designation.designation}</td>
+                        <td>${employeeList.salary}</td>
+                        <!-- <td>{employeeList.accountNo} - {employeeList.ifscCode}</td> -->
+                        <td><input type="button" value="-" onclick="deleteByEmployeeId('${employeeList.id}')" class="btn btn-sm btn-danger" /></td>
+                    </tr>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <td colspan="7">
+                        No Data Available
+                    </td>
+                </c:otherwise>
+                </c:choose>
+            </tbody>
+        </table>
+
 <script>
 function deleteByEmployeeId(){
 //TODO: write ajax to delete
@@ -216,8 +262,11 @@ function bankDetailDeleteRow(element) {
             return;
         }
         $("#bankDetailTbody > tr:last").remove()
-        const htmlBtns = `<input type="button" value="+" onclick="bankDetailAddRow(this)" class="btn btn-sm btn-primary">
-                          <input type="button" value="-" onclick="bankDetailDeleteRow(this)" class="btn btn-sm btn-danger">`
+        rowCount = $("#bankDetailTbody > tr").length
+        let htmlBtns = `<input type="button" value="+" onclick="bankDetailAddRow(this)" class="btn btn-sm btn-primary" /> `
+        if ($("#employee\\.bankDetails"+(rowCount-1)+"\\.id").val() == undefined) {
+          htmlBtns += `<input type="button" value="-" onclick="bankDetailDeleteRow(this)" class="btn btn-sm btn-danger">`
+        }
         $("#bankDetailTbody > tr:last > td:eq(5)").html(htmlBtns)
     }
 }
