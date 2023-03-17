@@ -91,9 +91,11 @@ public class EmployeeSubmitAction extends ActionExecutor<EmployeeCommand> {
                 errMap.put("employee.address.state", "NotNull.employeeCommand.employee.address.state");
             }
             if (errMap.isEmpty()) {
-                Employee savedEmployee = employeeService.findByPanCard(employeeCommand.getEmployee().getPanCardNo());
-                if (savedEmployee != null)
-                    errMap.put("employee.panCardNo","duplicate.employeeCommand.employee");
+                if (employeeCommand.getEmployee().getId() != null || employeeCommand.getEmployee().getId() > 0) {
+                    Employee savedEmployee = employeeService.findByPanCard(employeeCommand.getEmployee().getPanCardNo());
+                    if (savedEmployee != null)
+                        errMap.put("employee.panCardNo", "duplicate.employeeCommand.employee");
+                }
             } else {
                 logSuffix += ("validationError count ="+errMap.size());
             }

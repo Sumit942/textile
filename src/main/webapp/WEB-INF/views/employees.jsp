@@ -140,6 +140,9 @@
             <td>
                 <c:if test="${index.index == employeeCommand.employee.bankDetails.size()-1}">
                     <input type="button" value="+" onclick="bankDetailAddRow(this)" class="btn btn-sm btn-primary">
+                    <c:if test="${empty employeeCommand.employee.bankDetails[index.index].id  || employeeCommand.employee.bankDetails[index.index].id <= 0}">
+                        <input type="button" value="-" onclick="bankDetailDeleteRow(this)" class="btn btn-sm btn-danger">
+                    </c:if>
                 </c:if>
             </td>
         </tr>
