@@ -8,10 +8,20 @@
 <%@ include file="./common/navigation.jspf" %>
   <div class="row">
     <div class="col text-center mb-1 fw-bold">Employee Details</div>
+    <hr>
   </div>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
         <div class="row mb-1 alert alert-success" style="margin: 1%">
             <span>${successMessage}</span>
+        </div>
+    </c:if>
+    <c:if test="${actionResponse.responseType == 'FAILURE'}">
+        <div class="row mb-1 alert alert-danger" style="margin: 1%">
+            <ul>
+            <c:forEach items="${actionResponse.getErrorList()}" var="error">
+                <li>${error.objectName()}</li>
+            </c:forEach>
+            </ul>
         </div>
     </c:if>
     <c:if test="${not empty deleted}">
@@ -160,7 +170,7 @@
 <hr>
 </div>
     <!-- employee tables -->
-    <table id="invoiceTable" class="table table-striped">
+    <table id="employeeTable" class="table table-striped">
             <thead>
                 <tr>
                     <th>S.No</th>
@@ -172,7 +182,7 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="employeeTBody">
                 <c:choose>
                 <c:when test="${not empty employees}">
                     <c:forEach items="${employees}" var="employeeList" varStatus="index">
@@ -186,7 +196,10 @@
                         <td>${employeeList.designation.designation}</td>
                         <td>${employeeList.salary}</td>
                         <!-- <td>{employeeList.accountNo} - {employeeList.ifscCode}</td> -->
-                        <td><input type="button" value="-" onclick="deleteByEmployeeId('${employeeList.id}')" class="btn btn-sm btn-danger" /></td>
+                        <td>
+                        <a href="${pageContext.request.contextPath}/employees/${employeeList.id}" value="-" id="editEmp${index.index}"  class="btn btn-sm btn-info">Edit</a>
+                        <input type="button" value="-" id="deleteEmp${index.index}" onclick="deleteByEmployeeId(this,${index.index},${employeeList.id})" class="btn btn-sm btn-danger" />
+                        </td>
                     </tr>
                     </c:forEach>
                 </c:when>
@@ -200,8 +213,27 @@
         </table>
 
 <script>
-function deleteByEmployeeId(){
-//TODO: write ajax to delete
+function deleteByEmployeeId(element,index,id){
+        let del = confirm('Do you want to delete the "Employee(ID: '+id+')" row?')
+        if (!del){
+            return;
+        }
+    //write ajax to delete
+    $.ajax({
+        url: '${pageContext.request.contextPath}/employees/deleteById',
+        type: 'DELETE',
+        data : {
+            id : id,
+            _csrf: $("input[name='_csrf']").val()
+        },
+        success: function (response) {
+            alert('EmployeeID - '+id+' Deleted Success !!',response)
+            $("#employeeTBody > tr:eq("+index+")").remove()
+        },
+        error: function(err) {
+            console.log('error while deleting employee:',id,err)
+        }
+    })
 }
 
 function bankDetailAddRow(element) {

@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -172,4 +173,17 @@ public class EmployeeController extends BaseController {
         return employeeCommand;
     }
 
+    @DeleteMapping("/deleteById")
+    @ResponseBody
+    public String deleteById(@PathParam("id") Long id) {
+
+        try {
+            employeeService.deleteById(id);
+            log.info("EmployeeId:"+id+" Deleted !!");
+            return ResponseType.SUCCESS.getActResponse();
+        } catch (Exception e) {
+            log.error("Exception while deleting employee id:"+id,e);
+            return ResponseType.FAILURE.getActResponse();
+        }
+    }
 }
