@@ -17,6 +17,9 @@ public class Statement implements Serializable {
 
     private Employee employee;
 
+    private BankDetail debitFrom;
+    private BankDetail creditTo;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
@@ -74,6 +77,24 @@ public class Statement implements Serializable {
         this.employee = employee;
     }
 
+    @ManyToOne
+    public BankDetail getDebitFrom() {
+        return debitFrom;
+    }
+
+    public void setDebitFrom(BankDetail debitFrom) {
+        this.debitFrom = debitFrom;
+    }
+
+    @ManyToOne
+    public BankDetail getCreditTo() {
+        return creditTo;
+    }
+
+    public void setCreditTo(BankDetail creditTo) {
+        this.creditTo = creditTo;
+    }
+
     @Override
     public String toString() {
         return "Statement{" +
@@ -82,6 +103,9 @@ public class Statement implements Serializable {
                 ", txnDt=" + txnDt +
                 ", amount=" + amount +
                 ", remarks='" + remarks + '\'' +
+                ", employee ='" + employee + '\'' +
+                ", debitFrom='" + debitFrom + '\'' +
+                ", creditTo='" + creditTo + '\'' +
                 '}';
     }
 }
