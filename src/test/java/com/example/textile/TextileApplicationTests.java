@@ -6,10 +6,12 @@ import com.example.textile.repo.InvoiceViewRepository;
 import com.example.textile.repo.ProductRepository;
 import com.example.textile.repo.UnitRepository;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.service.StatementService;
 import com.example.textile.service.UserService;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -40,6 +42,38 @@ class TextileApplicationTests {
     ThymeleafTemplateUtility templateUtility;
     //    @Autowired
     UserService userService;
+
+    @Autowired
+    StatementService statementService;
+
+    //@Test
+    void test_statement_save() {
+
+
+        for (int i = 0 ; i < 1; i++) {
+            Statement statement = new Statement();
+            statement.setAmount(BigDecimal.TEN);
+            BankDetail bd = new BankDetail();
+            bd.setId(1L);
+            statement.setCreditTo(bd);
+            statement.setRemarks("remark2-sla");
+            statement.setDebitFrom(bd);
+            statement.setCreditTo(bd);
+            Employee emp = new Employee();
+            emp.setId(4L);
+            statement.setEmployee(emp);
+            statement.setTxnDt(new Date());
+            statement.setRemarks("remark"+i+"-sla");
+            statementService.saveOrUpdate(statement);
+        }
+//        System.out.println(statement1);
+    }
+
+    //@Test
+    void test_findByFieldNameLatest() {
+        List<Statement> byTxnDate = statementService.findAllOrderByAndLimit("insertDt", 0, 10);
+        byTxnDate.forEach(System.out::println);
+    }
 
     //@Test
     void test_InvoiceView_withPageSize() {

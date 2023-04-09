@@ -25,6 +25,7 @@
             <li><a class="dropdown-item" href="#">Company</a></li>
             <li><a class="dropdown-item" href="#">State</a></li>
             <li><a class="dropdown-item" href="#">Product</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/statements">Statement</a></li>
           </ul>
         </li>
         <!-- <li class="nav-item">

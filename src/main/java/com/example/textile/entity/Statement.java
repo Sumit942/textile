@@ -19,6 +19,7 @@ public class Statement implements Serializable {
 
     private BankDetail debitFrom;
     private BankDetail creditTo;
+    private StatementType type;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -95,6 +96,15 @@ public class Statement implements Serializable {
         this.creditTo = creditTo;
     }
 
+    @ManyToOne
+    public StatementType getType() {
+        return type;
+    }
+
+    public void setType(StatementType type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "Statement{" +
@@ -103,9 +113,10 @@ public class Statement implements Serializable {
                 ", txnDt=" + txnDt +
                 ", amount=" + amount +
                 ", remarks='" + remarks + '\'' +
-                ", employee ='" + employee + '\'' +
-                ", debitFrom='" + debitFrom + '\'' +
-                ", creditTo='" + creditTo + '\'' +
+                ", employee ='" + employee.getId() + '\'' +
+                ", debitFrom='" + debitFrom.getId() + '\'' +
+                ", creditTo='" + creditTo.getId() + '\'' +
+                ", type='" + type.getType() + '\'' +
                 '}';
     }
 }
