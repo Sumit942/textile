@@ -15,11 +15,10 @@ public class Statement implements Serializable {
     private BigDecimal amount;
     private String remarks;
 
-    private Employee employee;
-
-    private BankDetail debitFrom;
     private BankDetail creditTo;
-    private StatementType type;
+    private BankDetail debitFrom;
+
+    private User user;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +39,7 @@ public class Statement implements Serializable {
         this.insertDt = insertDt;
     }
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     public Date getTxnDt() {
         return txnDt;
     }
@@ -50,7 +48,6 @@ public class Statement implements Serializable {
         this.txnDt = txnDt;
     }
 
-    @Column
     public BigDecimal getAmount() {
         return amount;
     }
@@ -59,7 +56,6 @@ public class Statement implements Serializable {
         this.amount = amount;
     }
 
-    @Column
     public String getRemarks() {
         return remarks;
     }
@@ -69,13 +65,21 @@ public class Statement implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "employee_id",nullable = false)
-    public Employee getEmployee() {
-        return employee;
+    public User getUser() {
+        return user;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @ManyToOne
+    public BankDetail getCreditTo() {
+        return creditTo;
+    }
+
+    public void setCreditTo(BankDetail creEditTo) {
+        this.creditTo = creditTo;
     }
 
     @ManyToOne
@@ -87,24 +91,6 @@ public class Statement implements Serializable {
         this.debitFrom = debitFrom;
     }
 
-    @ManyToOne
-    public BankDetail getCreditTo() {
-        return creditTo;
-    }
-
-    public void setCreditTo(BankDetail creditTo) {
-        this.creditTo = creditTo;
-    }
-
-    @ManyToOne
-    public StatementType getType() {
-        return type;
-    }
-
-    public void setType(StatementType type) {
-        this.type = type;
-    }
-
     @Override
     public String toString() {
         return "Statement{" +
@@ -113,10 +99,9 @@ public class Statement implements Serializable {
                 ", txnDt=" + txnDt +
                 ", amount=" + amount +
                 ", remarks='" + remarks + '\'' +
-                ", employee ='" + employee.getId() + '\'' +
-                ", debitFrom='" + debitFrom.getId() + '\'' +
-                ", creditTo='" + creditTo.getId() + '\'' +
-                ", type='" + type.getType() + '\'' +
+                ", creditTo=" + creditTo +
+                ", debitFrom=" + debitFrom +
+                ", user=" + user +
                 '}';
     }
 }

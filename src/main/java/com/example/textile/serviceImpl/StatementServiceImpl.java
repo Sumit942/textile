@@ -27,9 +27,10 @@ public class StatementServiceImpl implements StatementService {
         return statementRepo.findById(id).orElse(null);
     }
 
+    //TODO: fetch employee with statement
     @Override
     public List<Statement> findByEmployeeId(Long id) {
-        return statementRepo.findByEmployeeId(id);
+        return null;
     }
 
     @Override

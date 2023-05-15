@@ -21,8 +21,6 @@ public class Employee implements Serializable {
     private String panCardNo;
     private String status;
 
-    private List<Statement> statements;
-
     private Address address;
     private Date insertDt;
     private Date updateDt;
@@ -106,16 +104,6 @@ public class Employee implements Serializable {
         this.status = status;
     }
 
-    @OneToMany(mappedBy = "employee")
-    public List<Statement> getStatements() {
-        return statements;
-    }
-
-    public void setStatements(List<Statement> statements) {
-        this.statements = statements;
-    }
-
-
     @OneToOne(cascade = CascadeType.ALL)
     public Address getAddress() {
         return address;
@@ -154,7 +142,6 @@ public class Employee implements Serializable {
                 ", status=" + status +
                 ", salary=" + salary +
                 ", bankDetail=" + bankDetails +
-                ", statements=" + statements +
                 ", address=" + address +
                 ", insertDt=" + insertDt +
                 ", updateDt=" + updateDt +

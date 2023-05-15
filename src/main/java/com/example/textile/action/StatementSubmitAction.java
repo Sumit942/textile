@@ -1,8 +1,11 @@
 package com.example.textile.action;
 
 import com.example.textile.command.StatementCommand;
+import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.Employee;
 import com.example.textile.entity.Statement;
+import com.example.textile.entity.User;
+import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
@@ -26,7 +29,15 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
 
     @Override
     protected ActionResponse onSuccess(StatementCommand statementCommand, Map<String, Object> parameterMap, ModelMap model) {
-        return null;
+        String logPrefix = "onSuccess() | ";
+        log.info("{} Entry",logPrefix);
+        User user = (User) parameterMap.get(TextileConstants.USER);
+        statementCommand.getStatements().forEach(e -> e.setUser(user));
+        List<Statement> statements = statementService.saveAll(statementCommand.getStatements());
+        statementCommand.setStatements(statements);
+        ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
+        actionResponse.setDbObj(statementCommand);
+        return actionResponse;
     }
 
     @Override
@@ -39,18 +50,23 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
         if (statements != null && !statements.isEmpty()) {
             for (int i=0; i < statements.size(); i++) {
 
-                if (statements.get(i).getAmount() == null || statements.get(i).getAmount().intValue() <= 0) {
-                    errMap.put("statement["+i+"].amount","NotNull.statements.amount");
+                if (statements.get(i).getTxnDt() == null) {
+                    errMap.put("statement["+i+"].txnDt","NotNull.statement.txnDt");
                 }
+                if (statements.get(i).getAmount() == null || statements.get(i).getAmount().intValue() <= 0) {
+                    errMap.put("statement["+i+"].amount","NotNull.statement.amount");
+                }
+                if (statements.get(i).getRemarks() == null || statements.get(i).getRemarks().isEmpty()) {
+                    errMap.put("statement["+i+"].remarks","NotNull.statement.remark");
+                }
+                /**  TODO: add column for employee in statement later
                 if (statements.get(i).getEmployee() == null || statements.get(i).getEmployee().getId() <= 0) {
                     errMap.put("statement["+i+"].employee","NotNull.statements.employee");
-                }
-                if (statements.get(i).getTxnDt() == null) {
-
-                }
+                }*/
             }
         }
 
+        errMap.forEach(result::rejectValue);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.textile;
 
+import com.example.textile.action.StatementSubmitAction;
+import com.example.textile.command.StatementCommand;
 import com.example.textile.entity.*;
 import com.example.textile.repo.InvoiceRepository;
 import com.example.textile.repo.InvoiceViewRepository;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -46,27 +49,26 @@ class TextileApplicationTests {
     @Autowired
     StatementService statementService;
 
-    //@Test
+    @Test
     void test_statement_save() {
 
+        List<Statement> statementList = new ArrayList<>();
+        for (int i = 0 ; i < 4; i++) {
 
-        for (int i = 0 ; i < 1; i++) {
+            BankDetail credit = new BankDetail();
+            credit.setId(1L);
+            BankDetail debit = new BankDetail();
+            debit.setId(2L);
+
             Statement statement = new Statement();
             statement.setAmount(BigDecimal.TEN);
-            BankDetail bd = new BankDetail();
-            bd.setId(1L);
-            statement.setCreditTo(bd);
-            statement.setRemarks("remark2-sla");
-            statement.setDebitFrom(bd);
-            statement.setCreditTo(bd);
-            Employee emp = new Employee();
-            emp.setId(4L);
-            statement.setEmployee(emp);
             statement.setTxnDt(new Date());
             statement.setRemarks("remark"+i+"-sla");
-            statementService.saveOrUpdate(statement);
+            statement.setCreditTo(credit);
+            statement.setDebitFrom(debit);
+            statementList.add(statement);
         }
-//        System.out.println(statement1);
+        statementService.saveAll(statementList);
     }
 
     //@Test
