@@ -1,7 +1,7 @@
 package com.example.textile.serviceImpl;
 
+import com.example.textile.entity.BankStatement;
 import com.example.textile.entity.Employee;
-import com.example.textile.entity.Statement;
 import com.example.textile.repo.EmployeeRepository;
 import com.example.textile.repo.StatementRepository;
 import com.example.textile.service.StatementService;
@@ -23,13 +23,13 @@ public class StatementServiceImpl implements StatementService {
     private EmployeeRepository employeeRepo;
 
     @Override
-    public Statement findById(Long id) {
+    public BankStatement findById(Long id) {
         return statementRepo.findById(id).orElse(null);
     }
 
     //TODO: fetch employee with statement
     @Override
-    public List<Statement> findByEmployeeId(Long id) {
+    public List<BankStatement> findByEmployeeId(Long id) {
         return null;
     }
 
@@ -39,12 +39,12 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public Statement saveOrUpdate(Statement statement) {
+    public BankStatement saveOrUpdate(BankStatement statement) {
         return statementRepo.save(statement);
     }
 
     @Override
-    public List<Statement> saveAll(List<Statement> statements) {
+    public List<BankStatement> saveAll(List<BankStatement> statements) {
         return statementRepo.saveAll(statements);
     }
 
@@ -54,12 +54,12 @@ public class StatementServiceImpl implements StatementService {
     }
 
     @Override
-    public List<Statement> findAllOrderByAndLimit(String fieldName, int pageNumber, int pageSize) {
+    public List<BankStatement> findAllOrderByAndLimit(String fieldName, int pageNumber, int pageSize) {
         return findAllByPageNumberAndPageSizeOrderByField(pageNumber, pageSize, fieldName).getContent();
     }
 
     @Override
-    public Page<Statement> findAllByPageNumberAndPageSizeOrderByField(int pageNumber, int pageSize, String field) {
+    public Page<BankStatement> findAllByPageNumberAndPageSizeOrderByField(int pageNumber, int pageSize, String field) {
         return statementRepo.findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending()));
     }
 }

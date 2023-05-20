@@ -2,8 +2,8 @@ package com.example.textile.action;
 
 import com.example.textile.command.StatementCommand;
 import com.example.textile.constants.TextileConstants;
+import com.example.textile.entity.BankStatement;
 import com.example.textile.entity.Employee;
-import com.example.textile.entity.Statement;
 import com.example.textile.entity.User;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
 
-    private StatementService statementService;
+    private final StatementService statementService;
 
     public StatementSubmitAction(StatementService statementService) {
         this.statementService = statementService;
@@ -33,7 +33,7 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
         log.info("{} Entry",logPrefix);
         User user = (User) parameterMap.get(TextileConstants.USER);
         statementCommand.getStatements().forEach(e -> e.setUser(user));
-        List<Statement> statements = statementService.saveAll(statementCommand.getStatements());
+        List<BankStatement> statements = statementService.saveAll(statementCommand.getStatements());
         statementCommand.setStatements(statements);
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         actionResponse.setDbObj(statementCommand);
@@ -46,7 +46,7 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
         String logSuffix = "";
         log.info("{} Entry", logPrefix);
         Map<String,String> errMap = new HashMap<>();
-        List<Statement> statements = statementCommand.getStatements();
+        List<BankStatement> statements = statementCommand.getStatements();
         if (statements != null && !statements.isEmpty()) {
             for (int i=0; i < statements.size(); i++) {
 
@@ -56,7 +56,7 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
                 if (statements.get(i).getAmount() == null || statements.get(i).getAmount().intValue() <= 0) {
                     errMap.put("statement["+i+"].amount","NotNull.statement.amount");
                 }
-                if (statements.get(i).getRemarks() == null || statements.get(i).getRemarks().isEmpty()) {
+                if (statements.get(i).getDescription() == null || statements.get(i).getDescription().isEmpty()) {
                     errMap.put("statement["+i+"].remarks","NotNull.statement.remark");
                 }
                 /**  TODO: add column for employee in statement later
@@ -82,7 +82,7 @@ public class StatementSubmitAction extends ActionExecutor<StatementCommand> {
         ModelMap modelView = (ModelMap) model;
 
         List<Employee> employees = statementService.findAllEmployees();
-        List<Statement> statements = statementService.findAllOrderByAndLimit("txnDt",0,20);
+        List<BankStatement> statements = statementService.findAllOrderByAndLimit("txnDt",0,20);
         modelView.addAttribute("employees",employees);
         modelView.addAttribute("statements",statements);
     }

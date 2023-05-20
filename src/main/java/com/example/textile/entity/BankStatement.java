@@ -8,12 +8,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-public class Statement implements Serializable {
-    private Long id;
+@Inheritance(strategy = InheritanceType.JOINED)
+public class BankStatement implements Serializable {
+    private Long bankStatementId;
     private Date insertDt;
     private Date txnDt;
     private BigDecimal amount;
-    private String remarks;
+    private String description;
 
     private BankDetail creditTo;
     private BankDetail debitFrom;
@@ -22,12 +23,12 @@ public class Statement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return id;
+    public Long getBankStatementId() {
+        return bankStatementId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBankStatementId(Long bankStatementId) {
+        this.bankStatementId = bankStatementId;
     }
 
     @CreationTimestamp
@@ -56,12 +57,12 @@ public class Statement implements Serializable {
         this.amount = amount;
     }
 
-    public String getRemarks() {
-        return remarks;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @ManyToOne
@@ -78,7 +79,7 @@ public class Statement implements Serializable {
         return creditTo;
     }
 
-    public void setCreditTo(BankDetail creEditTo) {
+    public void setCreditTo(BankDetail creditTo) {
         this.creditTo = creditTo;
     }
 
@@ -93,15 +94,15 @@ public class Statement implements Serializable {
 
     @Override
     public String toString() {
-        return "Statement{" +
-                "id=" + id +
+        return "BankStatement{" +
+                "id=" + bankStatementId +
                 ", insertDt=" + insertDt +
                 ", txnDt=" + txnDt +
                 ", amount=" + amount +
-                ", remarks='" + remarks + '\'' +
-                ", creditTo=" + creditTo +
-                ", debitFrom=" + debitFrom +
-                ", user=" + user +
+                ", remarks='" + description + '\'' +
+                ", creditTo=" + creditTo.getId() +
+                ", debitFrom=" + debitFrom.getId() +
+                ", user=" + user.getId() +
                 '}';
     }
 }
