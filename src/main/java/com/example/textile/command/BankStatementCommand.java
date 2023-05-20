@@ -5,7 +5,7 @@ import com.example.textile.entity.BankStatement;
 
 import java.util.List;
 
-public class StatementCommand {
+public class BankStatementCommand {
 
     private Employee employee;
 

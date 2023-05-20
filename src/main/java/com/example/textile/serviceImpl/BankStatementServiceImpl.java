@@ -4,7 +4,7 @@ import com.example.textile.entity.BankStatement;
 import com.example.textile.entity.Employee;
 import com.example.textile.repo.EmployeeRepository;
 import com.example.textile.repo.StatementRepository;
-import com.example.textile.service.StatementService;
+import com.example.textile.service.BankStatementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StatementServiceImpl implements StatementService {
+public class BankStatementServiceImpl implements BankStatementService {
 
     @Autowired
     private StatementRepository statementRepo;

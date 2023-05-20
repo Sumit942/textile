@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface StatementService {
+public interface BankStatementService {
 
     BankStatement findById(Long id);
 

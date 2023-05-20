@@ -23,7 +23,7 @@ public class SalaryStatement extends ExpenseStatement {
     public String toString() {
         return "SalaryStatement{" +
                 "employee=" + employee.getId() +
-                "statementType=" + this.getStatementType() +
-                '}';
+                "expense=[" + super.toString() +
+                "]}";
     }
 }

@@ -9,20 +9,25 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @PrimaryKeyJoinColumn(name = "expense_statement_id")
 public class ExpenseStatement extends BankStatement {
 
-    private String statementType;
+    private String crDr;
 
-    public String getStatementType() {
-        return statementType;
+    public ExpenseStatement() {
+        this.crDr = StatementTypeEnum.DEBIT.name();
     }
 
-    public void setStatementType(String statementType) {
-        this.statementType = statementType;
+    public String getCrDr() {
+        return crDr;
+    }
+
+    public void setCrDr(String crDr) {
+        this.crDr = crDr;
     }
 
     @Override
     public String toString() {
         return "ExpenseStatement{" +
-                "statementType='" + statementType + '\'' +
+                "bankStatementId='" + this.getBankStatementId() + '\'' +
+                "crDr='" + crDr + '\'' +
                 '}';
     }
 }
