@@ -4,7 +4,7 @@ import com.example.textile.entity.*;
 import com.example.textile.enums.StatementTypeEnum;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
-import com.example.textile.service.StatementService;
+import com.example.textile.service.BankStatementService;
 import com.example.textile.service.UserService;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
@@ -41,7 +41,7 @@ class TextileApplicationTests {
     UserService userService;
 
     //@Autowired
-    StatementService statementService;
+    BankStatementService bankStatementService;
 
     @Autowired
     SalaryStatementRepository statementRepository;
@@ -62,10 +62,11 @@ class TextileApplicationTests {
         statement.setAmount(BigDecimal.valueOf(15000.00));
         statement.setCreditTo(credit);
         statement.setDebitFrom(debit);
-        statement.setStatementType(StatementTypeEnum.DEBIT.name());
+        statement.setCrDr(StatementTypeEnum.DEBIT.name());
         statement.setTxnDt(new Date());
         statement.setDescription("Testing slalary statment save");
         statement.setUser(user);
+        statement.setName("Anjali");
 
         SalaryStatement save = statementRepository.save(statement);
         System.out.println("saved salary statment:---> \n"+save);
@@ -91,12 +92,12 @@ class TextileApplicationTests {
             statement.setDebitFrom(debit);
             statementList.add(statement);
         }
-        statementService.saveAll(statementList);
+        bankStatementService.saveAll(statementList);
     }
 
     //@Test
     void test_findByFieldNameLatest() {
-        List<BankStatement> byTxnDate = statementService.findAllOrderByAndLimit("insertDt", 0, 10);
+        List<BankStatement> byTxnDate = bankStatementService.findAllOrderByAndLimit("insertDt", 0, 10);
         byTxnDate.forEach(System.out::println);
     }
 
