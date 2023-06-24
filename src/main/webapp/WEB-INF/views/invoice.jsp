@@ -18,6 +18,7 @@
 <body>
 <form:form name="invoice" action="${pageContext.request.contextPath}/invoices/submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
+    <%@ include file="./common/navigation.jspf" %>
     <c:if test="${not empty actionResponse.errors}">
         <div class="row mb-1 alert alert-danger" style="margin: 1%">
             <ul>

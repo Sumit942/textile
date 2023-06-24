@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -86,6 +87,7 @@ public class Company implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "company_id")
+    @JsonManagedReference
     public List<BankDetail> getBankDetails() {
         return bankDetails;
     }
@@ -121,7 +123,7 @@ public class Company implements Serializable {
                 ", gst='" + gst + '\'' +
                 ", emailId='" + emailId + '\'' +
                 ", mobileNo='" + mobileNo + '\'' +
-                ", bankDetails=" + bankDetails +
+//                ", bankDetails=" + bankDetails +
                 '}';
     }
 }
