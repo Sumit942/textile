@@ -21,6 +21,7 @@ public class Challan {
     private String gsm;
     private Machine machine;
     private String finishDia;
+    private String quality;
     private Double quantity;
     private List<Roll> rolls;
 
@@ -107,6 +108,14 @@ public class Challan {
 
     public void setFinishDia(String finishDia) {
         this.finishDia = finishDia;
+    }
+
+    public String getQuality() {
+        return quality;
+    }
+
+    public void setQuality(String quality) {
+        this.quality = quality;
     }
 
     public Double getQuantity() {

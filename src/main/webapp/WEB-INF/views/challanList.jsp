@@ -40,15 +40,15 @@
                         <c:out value="${chDateFormatted}">NA</c:out>
                     </td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/challan/${challan.challanId}">${challan.fullChallanNo}</a>
+                        <a href="${pageContext.request.contextPath}/challan/${challan.challanNo}">${challan.fullChallanNo}</a>
                     </td>
                     <td>${challan.type}</td>
                     <td>${challan.partyName.name}</td>
-                    <td>${challan.totalAmount}</td>
-                    <td>${challan.totalTaxAmount}</td>
-                    <td>${challan.roundOff}</td>
-                    <td>${challan.pnfCharge}</td>
-                    <td>${challan.totalAmountAfterTax}</td>
+                    <td>${challan.quality}</td>
+                    <td>${challan.machine.machineNo}</td>
+                    <td>${challan.gsm}</td>
+                    <td>${challan.finishDia}</td>
+                    <td>${challan.quantity}</td>
                     <td><input type="button" value="-" onclick="deleteBychallanNo('${challan.challanNo}')" class="btn btn-sm btn-danger" /></td>
                 </tr>
                 </c:forEach>
@@ -56,7 +56,7 @@
             <c:otherwise>
                 <td colspan="10">
                     No challan Available
-                    <a href="${pageContext.request.contextPath}/challan/submit"> click here </a> to Add...
+                    <a href="${pageContext.request.contextPath}/challan"> click here </a> to Add...
                 </td>
             </c:otherwise>
             </c:choose>
