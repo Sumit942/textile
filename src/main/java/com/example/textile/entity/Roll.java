@@ -21,6 +21,7 @@ public class Roll {
         this.id = id;
     }
 
+    @Column
     public Double getWeight() {
         return weight;
     }
@@ -29,6 +30,7 @@ public class Roll {
         this.weight = weight;
     }
 
+    @Column
     public int getRollNo() {
         return rollNo;
     }
@@ -37,6 +39,7 @@ public class Roll {
         this.rollNo = rollNo;
     }
 
+    @Column
     public String getType() {
         return type;
     }
@@ -45,6 +48,7 @@ public class Roll {
         this.type = type;
     }
 
+    @Column
     public boolean isRejected() {
         return isRejected;
     }

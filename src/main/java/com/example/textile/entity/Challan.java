@@ -69,7 +69,7 @@ public class Challan {
         this.transportName = transportName;
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "id")
     public List<Yarn> getYarn() {
         return yarn;
     }
@@ -111,6 +111,7 @@ public class Challan {
         this.quantity = quantity;
     }
 
+    @OneToMany
     public List<Roll> getRolls() {
         return rolls;
     }

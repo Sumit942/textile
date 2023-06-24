@@ -62,11 +62,10 @@ class TextileApplicationTests {
         statement.setAmount(BigDecimal.valueOf(15000.00));
         statement.setCreditTo(credit);
         statement.setDebitFrom(debit);
-        statement.setCrDr(StatementTypeEnum.DEBIT.name());
+//        statement.setStatementType(StatementTypeEnum.DEBIT.name());
         statement.setTxnDt(new Date());
         statement.setDescription("Testing slalary statment save");
         statement.setUser(user);
-        statement.setName("Anjali");
 
         SalaryStatement save = statementRepository.save(statement);
         System.out.println("saved salary statment:---> \n"+save);
@@ -92,13 +91,13 @@ class TextileApplicationTests {
             statement.setDebitFrom(debit);
             statementList.add(statement);
         }
-        bankStatementService.saveAll(statementList);
+//        statementService.saveAll(statementList);
     }
 
     //@Test
     void test_findByFieldNameLatest() {
-        List<BankStatement> byTxnDate = bankStatementService.findAllOrderByAndLimit("insertDt", 0, 10);
-        byTxnDate.forEach(System.out::println);
+//        List<BankStatement> byTxnDate = statementService.findAllOrderByAndLimit("insertDt", 0, 10);
+//        byTxnDate.forEach(System.out::println);
     }
 
     //@Test
