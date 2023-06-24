@@ -5,11 +5,13 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.ChallanService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import java.util.Map;
 
+@Slf4j
 public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
 
     private final ChallanService challanService;
@@ -35,6 +37,12 @@ public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
 
     @Override
     public void prePopulateOptionsAndFields(ChallanCommand challanCommand, Object model) throws InvalidObjectPopulationException {
+        String logPrefix = "populateOptionsAndFields() |";
+        log.info("{} Entry", logPrefix);
+        if(!(model instanceof ModelMap)) {
+            throw new InvalidObjectPopulationException(challanCommand,model);
+        }
+        ModelMap modelView = (ModelMap) model;
 
     }
 }

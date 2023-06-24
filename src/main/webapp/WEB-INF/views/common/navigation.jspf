@@ -20,6 +20,7 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/invoices/submit">Invoice</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/challan">Challan</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/employees">Employees</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/designation">Designation</a></li>
