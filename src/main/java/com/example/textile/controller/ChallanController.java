@@ -118,7 +118,7 @@ public class ChallanController extends BaseController{
         try {
             response = actExecutor.execute(command, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                modelAndView.setViewName("redirect:viewAll");
+                modelAndView.setViewName("redirect:challan/viewAll");
             } else {
                 log.error("result has doValidation Errors - [" + result.getAllErrors() + "]");
                 log.info("{} save Unsuccessfull", logPrefix);

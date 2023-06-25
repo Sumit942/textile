@@ -156,6 +156,7 @@ function billToPartyAutoComplete(event,thisObj) {
                 },
                 error : function(err) {
                     console.error(err)
+                    $("#challan\\.partyName\\.id").val()
                 }
             });
         },

@@ -44,7 +44,7 @@
                     </td>
                     <td>${challan.type}</td>
                     <td>${challan.partyName.name}</td>
-                    <td>${challan.quality}</td>
+                    <td>${challan.fabricDesign.design}</td>
                     <td>${challan.machine.machineNo}</td>
                     <td>${challan.gsm}</td>
                     <td>${challan.finishDia}</td>
