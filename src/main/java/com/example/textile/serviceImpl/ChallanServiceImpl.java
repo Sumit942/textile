@@ -2,7 +2,7 @@ package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.Challan;
 import com.example.textile.exception.ChallanNotFoundException;
-import com.example.textile.repo.ChallanRepository;
+import com.example.textile.repo.*;
 import com.example.textile.service.ChallanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +17,36 @@ public class ChallanServiceImpl implements ChallanService {
 
     @Autowired
     ChallanRepository repo;
+
+    @Autowired
+    SaleTypeRepository saleTypeRepo;
+
+    @Autowired
+    MachineRepo machineRepo;
+
+    @Autowired
+    YarnRepository yarnRepo;
+
+    @Autowired
+    FabricDesignRepo fabricDesignRepo;
+
+    @Override
+    public SaleTypeRepository getSaleTypeRepo() {
+        return saleTypeRepo;
+    }
+
+    @Override
+    public MachineRepo getMachineRepo() {return machineRepo;}
+
+    @Override
+    public YarnRepository getYarnRepo() {
+        return yarnRepo;
+    }
+
+    @Override
+    public FabricDesignRepo getFabricDesignRepo() {
+        return fabricDesignRepo;
+    }
 
     @Override
     public Challan save(Challan challan) {

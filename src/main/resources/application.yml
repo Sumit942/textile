@@ -8,10 +8,10 @@ spring:
     password: 12345678
   jpa:
     hibernate:
-      ddl-auto: update
+#      ddl-auto: update
     properties:
       hibernate.format_sql: true
-#    show-sql: true
+    show-sql: true
   mvc:
     view:
       prefix: /WEB-INF/views/

@@ -49,7 +49,7 @@
                     <td>${challan.gsm}</td>
                     <td>${challan.finishDia}</td>
                     <td>${challan.quantity}</td>
-                    <td><input type="button" value="-" onclick="deleteBychallanNo('${challan.challanNo}')" class="btn btn-sm btn-danger" /></td>
+                    <td><input type="button" value="-" onclick="deleteByChallanNo('${challan.challanNo}')" class="btn btn-sm btn-danger" /></td>
                 </tr>
                 </c:forEach>
             </c:when>
@@ -71,8 +71,8 @@ $(document).ready(function(e){
     $("#challanTable").DataTable()
 })
 
-function deleteBychallanNo(invNo) {
-    var del = confirm("Do you want to delete '"+invNo+"' ?")
+function deleteByChallanNo(chNo) {
+    var del = confirm("Do you want to delete '"+chNo+"' ?")
     if (del) {
         window.location.href="${pageContext.request.contextPath}/challans/deleteBychallanNo?challanNo="+invNo
     }

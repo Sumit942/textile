@@ -1,12 +1,14 @@
 package com.example.textile.controller;
 
 import com.example.textile.action.ChallanSubmitAction;
+import com.example.textile.command.ChallanCommand;
 import com.example.textile.constants.CommandConstants;
 import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.Challan;
 import com.example.textile.entity.Invoice;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
+import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
@@ -90,12 +92,22 @@ public class ChallanController extends BaseController{
         return modelView;
     }
 
+    @GetMapping
+    public ModelAndView saveChallanGet(@ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand challan,
+                                       BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
+                                       HttpServletRequest request) throws InvalidObjectPopulationException {
+        ModelAndView modelAndView =  new ModelAndView("challan");
+        actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(challan, model);
+
+        return modelAndView;
+    }
+
     @PostMapping
-    public ModelAndView saveChallan(@Valid @ModelAttribute(CommandConstants.CHALLAN_COMMAND) Challan challan,
+    public ModelAndView saveChallan(@Valid @ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand command,
                                    BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
                                    HttpServletRequest request) throws ServiceActionException {
         String logPrefix = "saveChallan() |";
-        log.info("{} Entry -> {}",logPrefix, challan);
+        log.info("{} Entry -> {}",logPrefix, command);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
         parameterMap.put(TextileConstants.USER,getLoggedInUser());
@@ -104,7 +116,7 @@ public class ChallanController extends BaseController{
         ActionResponse response;
         ModelAndView modelAndView =  new ModelAndView("challan");
         try {
-            response = actExecutor.execute(challan, parameterMap, result,model);
+            response = actExecutor.execute(command, parameterMap, result,model);
             if (ResponseType.SUCCESS.equals(response.getResponseType())) {
                 modelAndView.setViewName("redirect:/viewAll");
             } else {
@@ -112,26 +124,26 @@ public class ChallanController extends BaseController{
                 log.info("{} save Unsuccessfull", logPrefix);
             }
         }catch (DataAccessException e) {
-            log.error("DB_Error: in saving challan: ",e);
+            log.error("DB_Error: in saving challan command: ",e);
             response = new ActionResponse(ResponseType.FAILURE);
             if (e instanceof ObjectOptimisticLockingFailureException) {
-                response.addErrorMessage(messageSource.getMessage("System.Exception.Optimistic",new Object[]{challan.getChallanNo(),challan.getId()},request.getLocale()));
+                response.addErrorMessage(messageSource.getMessage("System.Exception.Optimistic",new Object[]{command.getChallan().getChallanNo(),command.getChallan().getId()},request.getLocale()));
             } else {
                 response.addErrorMessage(messageSource.getMessage("System.Exception.DB",null,request.getLocale()));
             }
             model.addAttribute("actionResponse",response);
             //TODO: add oldChallan backkup
-            actExecutor.prePopulateOptionsAndFields(challan, model);
-            model.addAttribute(CommandConstants.CHALLAN_COMMAND,challan);
+            actExecutor.prePopulateOptionsAndFields(command, model);
+            model.addAttribute(CommandConstants.CHALLAN_COMMAND,command);
         } catch (Throwable e) {
-            log.error("SystemError: in saving invoice", e);
+            log.error("SystemError: in saving challan", e);
             response = new ActionResponse(ResponseType.FAILURE);
             String message = messageSource.getMessage("System.Error",null,request.getLocale());
             response.addErrorMessage(message);
             model.addAttribute("actionResponse",response);
             //TODO: add oldChallan backkup
-            actExecutor.prePopulateOptionsAndFields(challan, model);
-            model.addAttribute(CommandConstants.CHALLAN_COMMAND,challan);
+            actExecutor.prePopulateOptionsAndFields(command, model);
+            model.addAttribute(CommandConstants.CHALLAN_COMMAND,command);
         }
 
         return modelAndView;

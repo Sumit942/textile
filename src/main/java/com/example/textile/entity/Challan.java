@@ -16,17 +16,19 @@ public class Challan {
     private String challanNo;
     private String type;
     private Company partyName;
+    private String deliveryAddress;
     private String transportName;
     private List<Yarn> yarn;
     private String gsm;
     private Machine machine;
     private String finishDia;
-    private String quality;
+    private FabricDesign fabricDesign;
     private Double quantity;
     private List<Roll> rolls;
 
     private Date insertDt;
     private Date updateDt;
+    private User user;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,12 +112,13 @@ public class Challan {
         this.finishDia = finishDia;
     }
 
-    public String getQuality() {
-        return quality;
+    @ManyToOne
+    public FabricDesign getFabricDesign() {
+        return fabricDesign;
     }
 
-    public void setQuality(String quality) {
-        this.quality = quality;
+    public void setFabricDesign(FabricDesign fabricDesign) {
+        this.fabricDesign = fabricDesign;
     }
 
     public Double getQuantity() {
@@ -126,7 +129,7 @@ public class Challan {
         this.quantity = quantity;
     }
 
-    @OneToMany
+    @OneToMany(mappedBy = "id")
     public List<Roll> getRolls() {
         return rolls;
     }
@@ -160,5 +163,22 @@ public class Challan {
 
     public void setUpdateDt(Date updateDt) {
         this.updateDt = updateDt;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+    @ManyToOne
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

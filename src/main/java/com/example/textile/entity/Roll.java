@@ -7,9 +7,10 @@ public class Roll {
     private Long id;
     private Double weight;
     private int rollNo;
-    private String type;
+    private FabricDesign fabricDesign;
     private boolean isRejected = false;
     private Machine machine;
+    private Challan roll;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +40,13 @@ public class Roll {
         this.rollNo = rollNo;
     }
 
-    @Column
-    public String getType() {
-        return type;
+    @ManyToOne
+    public FabricDesign getFabricDesign() {
+        return fabricDesign;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setFabricDesign(FabricDesign fabricDesign) {
+        this.fabricDesign = fabricDesign;
     }
 
     @Column
@@ -64,5 +65,14 @@ public class Roll {
 
     public void setMachine(Machine machine) {
         this.machine = machine;
+    }
+
+    @ManyToOne
+    public Challan getRoll() {
+        return roll;
+    }
+
+    public void setRoll(Challan roll) {
+        this.roll = roll;
     }
 }

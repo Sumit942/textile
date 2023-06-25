@@ -1,14 +1,20 @@
 package com.example.textile.action;
 
 import com.example.textile.command.ChallanCommand;
+import com.example.textile.constants.TextileConstants;
+import com.example.textile.entity.*;
+import com.example.textile.enums.ActionType;
+import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.ChallanService;
+import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -22,7 +28,23 @@ public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
 
     @Override
     protected ActionResponse onSuccess(ChallanCommand challanCommand, Map<String, Object> parameterMap, ModelMap model) {
-        return null;
+        String logPrefix = "onSuccess() ";
+        String logSufix = "";
+        log.debug("{} Entry",logPrefix);
+        ActionType action = (ActionType) parameterMap.get(ShreeramTextileConstants.ACTION);
+        if (ActionType.SUBMIT.equals(action)) {
+            Challan challan = challanCommand.getChallan();
+            logSufix += challan.getChallanNo()+"; ";
+            User user = (User) parameterMap.get(TextileConstants.USER);
+            challan.setUser(user);
+            Challan save = challanService.save(challan);
+            logSufix += challan.getId() + "; SUBMIT= Success";
+            challanCommand.setChallan(save);
+        }
+
+        ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
+        log.debug("{} Exit [{}]",logPrefix,logSufix);
+        return actionResponse;
     }
 
     @Override
@@ -44,5 +66,14 @@ public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
         }
         ModelMap modelView = (ModelMap) model;
 
+        List<SaleType> saleTypes = challanService.getSaleTypeRepo().findAll();
+        List<Machine> machines = challanService.getMachineRepo().findAll();
+        List<Yarn> yarns = challanService.getYarnRepo().findAll();
+        List<FabricDesign> fabricDesigns = challanService.getFabricDesignRepo().findAll();
+
+        modelView.addAttribute("saleTypes",saleTypes);
+        modelView.addAttribute("machines",machines);
+        modelView.addAttribute("yarns",yarns);
+        modelView.addAttribute("fabricDesigns",fabricDesigns);
     }
 }
