@@ -77,4 +77,9 @@ public class ChallanServiceImpl implements ChallanService {
     public Page<Challan> findAllByPageNumberAndPageSizeOrderByField(Integer pageNumber, Integer pageSize, String fieldName) {
         return repo.findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(fieldName).descending()));
     }
+
+    @Override
+    public Challan findByChallanNo(Long challanNo) {
+        return repo.findByChallanNo(challanNo);
+    }
 }

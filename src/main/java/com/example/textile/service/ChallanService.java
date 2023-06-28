@@ -30,4 +30,6 @@ public interface ChallanService {
     void deleteById(Long id);
 
     Page<Challan> findAllByPageNumberAndPageSizeOrderByField(Integer pageNumber, Integer pageSize, String fieldName);
+
+    Challan findByChallanNo(Long challanNo);
 }

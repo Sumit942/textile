@@ -75,5 +75,6 @@ public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
         modelView.addAttribute("machines",machines);
         modelView.addAttribute("yarns",yarns);
         modelView.addAttribute("fabricDesigns",fabricDesigns);
+        log.info("{} Exit", logPrefix);
     }
 }

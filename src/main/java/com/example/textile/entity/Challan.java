@@ -13,7 +13,7 @@ public class Challan {
     private Long id;
     private Date chDate;
     private String fullChallanNo;
-    private String challanNo;
+    private Long challanNo;
     private String type;
     private Company partyName;
     private String deliveryAddress;
@@ -45,11 +45,11 @@ public class Challan {
         return SaleTypeEnum.FJW.getChallanFormat() + challanNo;
     }
 
-    public String getChallanNo() {
+    public Long getChallanNo() {
         return challanNo;
     }
 
-    public void setChallanNo(String challanNo) {
+    public void setChallanNo(Long challanNo) {
         this.challanNo = challanNo;
     }
 
@@ -78,7 +78,7 @@ public class Challan {
         this.transportName = transportName;
     }
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany
     public List<Yarn> getYarn() {
         return yarn;
     }
@@ -148,6 +148,7 @@ public class Challan {
     }
 
     @CreationTimestamp
+    @Column(updatable = false)
     public Date getInsertDt() {
         return insertDt;
     }

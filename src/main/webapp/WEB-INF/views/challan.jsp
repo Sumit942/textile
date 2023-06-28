@@ -68,11 +68,51 @@
             <form:errors path="challan.transportName" cssClass="error"/>
         </div>
         <div class="col-md-6 border">
-            <form:label path="challan.yarn[0].id" class="col-md-3">Yarn:</form:label>
-            <form:select path="challan.yarn[0].id" class="col-md-3">
-                <form:option value="" >--Select--</form:option>
-                <form:options items="${yarns}" itemValue="id" itemLabel="yarn" />
-            </form:select>
+            <table class="table yarnDiv">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th scope="col"><form:label path="challan.yarn[0].id" class="col-md-3">Yarn:</form:label></th>
+                </tr>
+            </thead>
+            <tbody id="yarnTBody">
+            <c:choose>
+            <c:when test="${empty challanCommand.challan.yarn}">
+            <tr>
+                <td>1</td>
+                <td>
+                <form:select path="challan.yarn[0].id" class="col-md-3">
+                    <form:option value="" >--Select--</form:option>
+                    <form:options items="${yarns}" itemValue="id" itemLabel="yarn" />
+                </form:select>
+                </td>
+            </tr>
+            </c:when>
+            <c:otherwise>
+                <c:forEach items="${challanCommand.challan.yarn}" var="yarn" varStatus="index">
+                <tr>
+                    <td>${index.index + 1}</td>
+                    <td>
+                    <form:select path="challan.yarn[${index.index}].id" class="col-md-3">
+                        <form:option value="" >--Select--</form:option>
+                        <form:options items="${yarns}" itemValue="id" itemLabel="yarn" />
+                    </form:select>
+                    </td>
+                </tr>
+                </c:forEach>
+            </c:otherwise>
+            </c:choose>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <input type="button" class="btn btn-primary btn-sm rounded" id="yarnAdd0" value="Add" onclick="addYarnRow()"/>
+                </td>
+            </tr>
+            </tfoot>
+            </table>
             <form:errors path="challan.yarn[0].id" cssClass="error"/>
         </div>
     </div>
@@ -173,103 +213,45 @@ function billToPartyAutoComplete(event,thisObj) {
 }
 
     /**                 add button script                  **/
-function addProductDescRow(addRowType) {
+function addYarnRow() {
 
-    var i = $("#productDescTBody > tr").length - 1;
+    var i = $("#yarnTBody > tr").length;
     //check if the last row data is entered or not
-    var lastPrdId = '#product'+(i-1)+'\\.product\\.id'
-    var lastPrdName = '#product'+(i-1)+'\\.product\\.name'
-    var lastChNo = '#product'+(i-1)+'\\.chNo'
-    if ( $(lastPrdName).val() == '' ) {
-        alert ("Please enter 'Product Description' in last row")
-        $(lastPrdName).focus()
+    var lastYarnId = '#challan\\.yarn'+(i-1)+'\\.id'
+    if ( $(lastYarnId).val() == '' ) {
+        alert ("Please select 'Yarn' in last row")
+        $(lastYarnId).focus()
         return;
     }
-    var lastHsn = '#product'+(i-1)+'\\.product\\.hsn'
-    if ( $(lastHsn).val() == '' ) {
-        alert ("Please enter 'HSN' in last row")
-        $(lastHsn).focus()
-        return;
-    }
-    var lastUom = '#product'+(i-1)+'\\.unitOfMeasure\\.id'
-    if ( $(lastUom).val() == '' ) {
-        alert ("Please enter 'Unit Of Measure' in last row")
-        $(lastUom).focus()
-        return;
-    }
-    var lastQty = '#product'+(i-1)+'\\.quantity'
-    if ( $(lastQty).val() == '' ) {
-        alert ("Please enter 'Quantity' in last row")
-        $(lastQty).focus()
-        return;
-    }
-    var lastRate = '#product'+(i-1)+'\\.rate'
-    if ( $(lastRate).val() == '' ) {
-        alert ("Please enter 'Rate' in last row")
-        $(lastRate).focus()
-        return;
-    }
-    /*if ( $('#product'+(i-1)+'\\.totalPrice').val() == '' ) {
-        alert ("Please enter 'Total Price' in last row")
-        return;
-    }*/
-    //check duplicate chNos
-    if (hasDuplicateChNos()){
-        alert ("Please entry unique 'challan no.' in last row")
-        $(lastChNo).focus()
-        return;
-    }
+    var yarnRow = '<tr>'+
+                    '<td>'+(i+1)+'</td>'+
+                    '<td>'+
+                        '<select id="challan.yarn'+i+'.id" name="challan.yarn['+i+'].id" required="required">'+
+                            $("#challan\\.yarn0\\.id").html()+
+                        '</select>'+
+                    '</td>'+
+                    '<td>'+
+                        '<input type="button" value="-" id="yarnDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="yarnDelRow()" style="width: 20%;">'+
+                    '</td>'+
+                  '</tr>';
 
-    var prodDescRow = '<tr>'+
-                        '<td>'+
-                            '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
-                            //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
-                        '</td>'+
-                        '<td>'+
-                            '<input type="hidden" name="product['+i+'].product.id" value="">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
-                        '</td>'+
-                        '<td>'+
-                            '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id" required="required">'+
-                                $("#product0\\.unitOfMeasure\\.id").html()+
-                            '</select>'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
-                        '</td>'+
-                        '<td>'+
-                            '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
-                        '</td>'+
-                      '</tr>';
-
-    $("#productDescTBody > tr:eq("+i+")").find('td:eq(8)').html('')
-    $("#productDescTBody").append(prodDescRow)
-    autoFocusProductDescField()
-    $(document).scrollTop($(document).height())
+    $("#yarnTBody > tr:eq("+(i)+")").find('td:eq(2)').html('')
+    $("#yarnTBody").append(yarnRow)
+    $('#challan\\.yarn'+(i)+'\\.id').focus()
+    //$(document).scrollTop($(document).height())
 }
-function productDelRow() {
+
+function yarnDelRow() {
     var del = confirm('Do you want to delete the row?')
     if (!del){
         return;
     }
 
-    var rowCount = $("#productDescTBody > tr").length
-    if (rowCount > 2) {
-        $("#productDescTBody > tr:last").remove()
-        if (rowCount > 3) {
-            $("#productDescTBody > tr:last > td:eq(8)").html('<input type="button" value="-" id="productDel_'+(rowCount-1)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">')
+    var rowCount = $("#yarnTBody > tr").length
+    if (rowCount > 1) {
+        $("#yarnTBody > tr:last").remove()
+        if (rowCount > 2) {
+            $("#yarnTBody > tr:last > td:eq(2)").html('<input type="button" value="-" id="productDel_'+(rowCount-1)+'" class="btn btn-sm btn-danger rounded" onclick="yarnDelRow()" style="width: 20%;">')
         }
     }
 }

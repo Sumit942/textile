@@ -77,31 +77,6 @@ public class ChallanController extends BaseController{
         return modelAndView;
     }
 
-    @GetMapping("/{id}")
-    public ModelAndView getChallanById(@PathVariable("id") Long id, ModelMap model) {
-        log.info("getInvoiceById() Entry");
-        ModelAndView modelView = new ModelAndView("/challan");
-        try {
-            Challan challan = challanService.findById(id);
-            actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(challan, model);
-            model.addAttribute(CommandConstants.CHALLAN_COMMAND,challan);
-        } catch (Throwable e) {
-            log.error("Exception: {} prePopulation","getChallanById()",e);
-        }
-
-        return modelView;
-    }
-
-    @GetMapping
-    public ModelAndView saveChallanGet(@ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand challan,
-                                       BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
-                                       HttpServletRequest request) throws InvalidObjectPopulationException {
-        ModelAndView modelAndView =  new ModelAndView("challan");
-        actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(challan, model);
-
-        return modelAndView;
-    }
-
     @PostMapping
     public ModelAndView saveChallan(@Valid @ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand command,
                                    BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
@@ -147,5 +122,34 @@ public class ChallanController extends BaseController{
         }
 
         return modelAndView;
+    }
+
+    @GetMapping
+    public ModelAndView saveChallanGet(@ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand challan,
+                                       BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
+                                       HttpServletRequest request) throws InvalidObjectPopulationException {
+        ModelAndView modelAndView =  new ModelAndView("challan");
+        actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(challan, model);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/{challanNo}")
+    public ModelAndView getChallanById(@PathVariable("challanNo") Long challanNo,
+                                       @ModelAttribute(CommandConstants.CHALLAN_COMMAND) ChallanCommand challanCommand,
+                                       BindingResult result, ModelMap model, RedirectAttributes redirectAttributes,
+                                       HttpServletRequest request) {
+        log.info("getInvoiceById() Entry");
+        ModelAndView modelView = new ModelAndView("/challan");
+        try {
+            Challan challan = challanService.findByChallanNo(challanNo);
+            challanCommand.setChallan(challan);
+            actionExecutorMap.get(ActionType.SUBMIT.getActionType()).prePopulateOptionsAndFields(challanCommand, model);
+            model.addAttribute(CommandConstants.CHALLAN_COMMAND,challanCommand);
+        } catch (Throwable e) {
+            log.error("Exception: {} prePopulation","getChallanById()-"+e.getLocalizedMessage(),e);
+        }
+
+        return modelView;
     }
 }
