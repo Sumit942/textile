@@ -25,6 +25,7 @@ public class Challan {
     private FabricDesign fabricDesign;
     private Double quantity;
     private List<Roll> rolls;
+    private Double rate;
 
     private Date insertDt;
     private Date updateDt;
@@ -145,6 +146,14 @@ public class Challan {
 
     public void setChDate(Date chDate) {
         this.chDate = chDate;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
     }
 
     @CreationTimestamp

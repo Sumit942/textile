@@ -57,15 +57,15 @@
             <form:input path="challan.partyName.name" onkeyup="billToPartyAutoComplete(event,this);" class="col-md-3"/>
         </div>
         <div class="col-md-6 border">
-            <form:label path="challan.deliveryAddress" class="col-md-3">Delivery address:</form:label>
-            <form:textarea path="challan.deliveryAddress" class="col-md-3"/>
-        </div>
+              <form:label path="challan.transportName" class="col-md-3">Transport Name:</form:label>
+              <form:input path="challan.transportName" class="col-md-3"/>
+              <form:errors path="challan.transportName" cssClass="error"/>
+          </div>
     </div>
     <div class="row mb-1">
         <div class="col-md-6 border">
-            <form:label path="challan.transportName" class="col-md-3">Transport Name:</form:label>
-            <form:input path="challan.transportName" class="col-md-3"/>
-            <form:errors path="challan.transportName" cssClass="error"/>
+            <form:label path="challan.deliveryAddress" class="col-md-3">Delivery address:</form:label>
+            <form:textarea path="challan.deliveryAddress" class="col-md-3"/>
         </div>
         <div class="col-md-6 border">
             <table class="table yarnDiv">
