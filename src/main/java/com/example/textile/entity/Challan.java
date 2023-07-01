@@ -26,6 +26,7 @@ public class Challan {
     private Double quantity;
     private List<Roll> rolls;
     private Double rate;
+    private Invoice invoice;
 
     private Date insertDt;
     private Date updateDt;
@@ -146,6 +147,16 @@ public class Challan {
 
     public void setChDate(Date chDate) {
         this.chDate = chDate;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "invoice_id")
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 
     public Double getRate() {

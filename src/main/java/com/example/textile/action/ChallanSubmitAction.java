@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,68 @@ public class ChallanSubmitAction extends ActionExecutor<ChallanCommand> {
 
     @Override
     protected void doValidation(ChallanCommand challanCommand, Map<String, Object> parameterMap, BindingResult result, ModelMap model) {
+        Challan challan = challanCommand.getChallan();
+        String logPrefix = "doValidation() |";
+        String logSuffix = "";
+        log.info("{} Entry", logPrefix);
+        Map<String,String> errMap = new HashMap<>();
+
+        validateChallan(challan, errMap);
+
+        errMap.forEach(result::rejectValue);
+        log.info("{} Exit [{}]", logPrefix, logSuffix);
+
+    }
+
+    protected void validateChallan(Challan challan, Map<String,String> errMap) {
+        if (challan.getChDate() == null) {
+            errMap.put("challanCommand.chDate","NotNull.challanCommand.chDate");
+        }
+        if (challan.getChallanNo() == null || challan.getChallanNo().compareTo(0L) <= 0) {
+            errMap.put("challanCommand.challanNo","NotNull.challanCommand.challanNo");
+        }
+//        if (challan.getType() == null || challan.getType().isEmpty()) {
+//            errMap.put("challanCommand.type","NotNull.challanCommand.type");
+//        }
+        if (challan.getPartyName() == null || challan.getPartyName().getId() == null
+                || challan.getPartyName().getId().compareTo(0L) <= 0) {
+            errMap.put("challanCommand.partyName","NotNull.challanCommand.partyName");
+        }
+        /*if (challan.getDeliveryAddress() == null || challan.getDeliveryAddress().isEmpty()) {
+            errMap.put("challanCommand.deliveryAddress","NotNull.challanCommand.deliveryAddress");
+        }
+        if (challan.getTransportName() == null || challan.getTransportName().isEmpty()) {
+            errMap.put("challanCommand.transportName","NotNull.challanCommand.transportName");
+        }*/
+        if (challan.getYarn() == null | challan.getYarn().isEmpty()) {
+            errMap.put("challanCommand.yarn","NotNull.challanCommand.yarn");
+        } else {
+            for (int i = 0; i < challan.getYarn().size(); i++) {
+                Yarn yarn = challan.getYarn().get(i);
+                if (yarn.getId() == null || yarn.getId().compareTo(0L) <= 0) {
+                    errMap.put("challanCommand.yarn[0]","NotNull.challanCommand.yarn");
+                }
+            }
+        }
+//        if (challan.getGsm() == null || challan.getGsm().isEmpty()) {
+//            errMap.put("challanCommand.gsm","NotNull.challanCommand.gsm");
+//        }
+        if (challan.getMachine().getId() == null || challan.getMachine().getId().compareTo(0L) <= 0) {
+            errMap.put("challanCommand.machine","NotNull.challanCommand.machine");
+        }
+        if (challan.getFinishDia() == null || challan.getFinishDia().isEmpty()) {
+            errMap.put("challanCommand.finishDia","NotNull.challanCommand.finishDia");
+        }
+        if (challan.getFabricDesign().getId() == null || challan.getFabricDesign().getId().compareTo(0L) <= 0) {
+            errMap.put("challanCommand.fabricDesign","NotNull.challanCommand.fabricDesign");
+        }
+        if (challan.getQuantity() == null || challan.getQuantity().compareTo(0.0) <= 0) {
+            errMap.put("challanCommand.quantity","NotNull.challanCommand.quantity");
+        }
+        //TODO: Roll
+        if (challan.getRate() == null || challan.getRate().compareTo(0.0) <= 0) {
+            errMap.put("challanCommand.rate","NotNull.challanCommand.rate");
+        }
 
     }
 

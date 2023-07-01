@@ -62,7 +62,7 @@
             </c:choose>
         </tbody>
         <tfoot>
-            <td colspan="10"><a href="${pageContext.request.contextPath}/challans/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
+            <td colspan="10"><a href="${pageContext.request.contextPath}/challan" class="btn btn-primary float-end" target="_blank">Add</a></td>
         </tfoot>
     </table>
 </div>
