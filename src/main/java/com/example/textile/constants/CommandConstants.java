@@ -6,4 +6,5 @@ public class CommandConstants {
     public static final String EMPLOYEE_COMMAND = "employeeCommand";
     public static final String STATEMENT_COMMAND = "statementCommand";
     public static final String CHALLAN_COMMAND = "challanCommand";
+    public static final String PRODUCT_DETAILS_COMMAND = "productDetailsCommand";
 }

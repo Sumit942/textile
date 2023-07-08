@@ -216,7 +216,10 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
     private void validateChallans(Invoice invoice, Map<String, String> errMap, BindingResult result) {
         log.info("validateChallans() Entry");
         if (invoice.getChallans() != null && !invoice.getChallans().isEmpty()) {
+            for (int i = 0; i < invoice.getChallans().size(); i++) {
+                Challan challan = invoice.getChallans().get(i);
 
+            }
         } else {
             errMap.put("challans","NotNull.invoiceCommand.challans");
         }
@@ -238,8 +241,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                     if (prod.getProduct().getHsn() == null)
                         errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
                 }
-//                    if (prod.getChNo() == null)
-//                        errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
+                if (prod.getChNo() == null)
+                    errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
                 if (prod.getQuantity() == null || prod.getQuantity() <= 0)
                     errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
                 if (prod.getRate() == null || prod.getRate() <= 0)
