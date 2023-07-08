@@ -169,33 +169,12 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMap.put("saleType","NotNull.invoiceCommand.saleType");
             }
             //validating product list
-            if (invoice.getProduct() == null || invoice.getProduct().isEmpty()) {
-                errMap.put("product","NotNull.invoiceCommand.product");
-            } else {
-                for (int i = 0; i < invoice.getProduct().size(); i++) {
-                    ProductDetail prod = invoice.getProduct().get(i);
-                    if (prod.getProduct() == null) {
-                        errMap.put("product.product","NotNull.invoiceCommand.product.product");
-                    } else {
-
-                        if (prod.getProduct().getName() == null)
-                            errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
-                        if (prod.getProduct().getHsn() == null)
-                            errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
-                    }
-//                    if (prod.getChNo() == null)
-//                        errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
-                    if (prod.getQuantity() == null || prod.getQuantity() <= 0)
-                        errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
-                    if (prod.getRate() == null || prod.getRate() <= 0)
-                        errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
-                    if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
-                        errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");
-                    if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
-                        errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
-                }
-            }
-            if (invoice.getPnfCharge() == null || invoice.getPnfCharge().compareTo(BigDecimal.ZERO) < 0)
+        if (invoice.isNew() || invoice.getId() > invoiceService.getOldInvoiceLastId()) {
+            validateChallans(invoice, errMap, result);
+        } else {
+            validateProdDetail(invoice, errMap, result);
+        }
+        if (invoice.getPnfCharge() == null || invoice.getPnfCharge().compareTo(BigDecimal.ZERO) < 0)
                 errMap.put("pnfCharge","NotNull.invoiceCommand.pnfCharge");
             if (invoice.getTotalAmount() == null || invoice.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0)
                 errMap.put("totalAmount","NotNull.invoiceCommand.totalAmount");
@@ -212,19 +191,6 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
 //        }
 
         if (errMap.isEmpty()) {
-            //check for duplicate chNo
-            List<String> uniqChNo = new ArrayList<>();
-            for (int i = 0; i < invoice.getProduct().size(); i++) {
-                if (invoice.getProduct().get(i).getChNo() != null) {
-                    if (!uniqChNo.contains(invoice.getProduct().get(i).getChNo())) {
-                        uniqChNo.add(invoice.getProduct().get(i).getChNo());
-                    } else {
-                        errMap.put("product["+i+"].chNo","duplicate.invoiceCommand.product.chNo");
-                        int chNoIndex = uniqChNo.indexOf(invoice.getProduct().get(i).getChNo());
-                        errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
-                    }
-                }
-            }
             //adding condition to check for i / s gst
             if (invoice.getInvoiceBy().getAddress().getState().getCode().equals(invoice.getBillToParty().getAddress().getState().getCode())) {
                 if (invoice.getcGst() == null || invoice.getcGst().compareTo(BigDecimal.ZERO) <= 0)
@@ -245,6 +211,72 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         invoice.getProduct().sort(Comparator.comparing(ProductDetail::getChNo));
 
         log.info("{} Exit", logPrefix);
+    }
+
+    private void validateChallans(Invoice invoice, Map<String, String> errMap, BindingResult result) {
+        log.info("validateChallans() Entry");
+        if (invoice.getChallans() != null && !invoice.getChallans().isEmpty()) {
+
+        } else {
+            errMap.put("challans","NotNull.invoiceCommand.challans");
+        }
+    }
+
+    private void validateProdDetail(Invoice invoice, Map<String, String> errMap, BindingResult result) {
+        log.info("validateProdDetail() Entry");
+        if (invoice.getProduct() == null || invoice.getProduct().isEmpty()) {
+            errMap.put("product","NotNull.invoiceCommand.product");
+        } else {
+            for (int i = 0; i < invoice.getProduct().size(); i++) {
+                ProductDetail prod = invoice.getProduct().get(i);
+                if (prod.getProduct() == null) {
+                    errMap.put("product.product","NotNull.invoiceCommand.product.product");
+                } else {
+
+                    if (prod.getProduct().getName() == null)
+                        errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
+                    if (prod.getProduct().getHsn() == null)
+                        errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
+                }
+//                    if (prod.getChNo() == null)
+//                        errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
+                if (prod.getQuantity() == null || prod.getQuantity() <= 0)
+                    errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
+                if (prod.getRate() == null || prod.getRate() <= 0)
+                    errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
+                if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
+                    errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");
+                if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
+                    errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
+            }
+            if (errMap.isEmpty()) {
+                //check for duplicate chNo
+                List<String> uniqChNo = new ArrayList<>();
+                for (int i = 0; i < invoice.getProduct().size(); i++) {
+                    if (invoice.getProduct().get(i).getChNo() != null) {
+                        if (!uniqChNo.contains(invoice.getProduct().get(i).getChNo())) {
+                            uniqChNo.add(invoice.getProduct().get(i).getChNo());
+                        } else {
+                            errMap.put("product["+i+"].chNo","duplicate.invoiceCommand.product.chNo");
+                            int chNoIndex = uniqChNo.indexOf(invoice.getProduct().get(i).getChNo());
+                            errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
+                        }
+                    }
+                }
+                if (errMap.isEmpty()) {
+                    for (int i = 0; i < uniqChNo.size(); i++) {
+                        List<ProductDetail> byChNo = invoiceService.findByChNo(uniqChNo.get(i));
+                        if (!byChNo.isEmpty() && (invoice.isNew()
+                                || byChNo.get(0).getInvoice().getId().compareTo(invoice.getId()) != 0)) {
+//                            errMap.put("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo");
+                            result.rejectValue("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo",
+                                    new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()},"Challan No Already Used");
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     @Override

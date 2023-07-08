@@ -42,8 +42,23 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private BankDetailRepository bankDetailRepo;
 
+    @Autowired private ProductDetailRepository productDetailRepo;
+
     @Value("${invoice.startCount}")
     private Integer invoiceStartCount;
+
+    @Value("${invoice.oldInvoiceLastId}")
+    private Integer oldInvoiceLastId;
+
+    @Override
+    public Integer getOldInvoiceLastId() {
+        return oldInvoiceLastId;
+    }
+
+    @Override
+    public List<ProductDetail> findByChNo(String chNo) {
+        return productDetailRepo.findByChNo(chNo);
+    }
 
     @Override
     public List<Invoice> findAll() {
@@ -197,6 +212,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public String getLatestInvoiceNo() {
+        log.info(">>invoiceStartCount " + invoiceStartCount);
         int count = invoiceRepo.getLatestInvoiceNo() + invoiceStartCount;
         String latestInvNo = getFormattedInvoiceNo(count);
 

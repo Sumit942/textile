@@ -66,7 +66,7 @@ public class Invoice implements Serializable {
         this.selectedBank = selectedBank;
     }
 
-    @OneToMany(mappedBy = "invoice",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "invoice")
     public List<Challan> getChallans() {
         return challans;
     }

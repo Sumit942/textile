@@ -11,6 +11,10 @@ public interface InvoiceService {
 
     List<TransportMode> getTransportModes();
 
+    Integer getOldInvoiceLastId();
+
+    List<ProductDetail> findByChNo(String chNo);
+
     List<Invoice> findAll();
 
     Invoice save(Invoice invoice);

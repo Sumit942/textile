@@ -25,7 +25,7 @@ import java.util.*;
 @SpringBootTest
 class TextileApplicationTests {
 
-    //    @Autowired
+        @Autowired
     InvoiceService invoiceService;
     //@Autowired
     InvoiceViewRepository viewRepository;
@@ -45,6 +45,11 @@ class TextileApplicationTests {
 
     @Autowired
     SalaryStatementRepository statementRepository;
+
+    @Test
+    void getInvoiceStartCount() {
+        System.out.println("invoiceStartCount>>> " + invoiceService.getLatestInvoiceNo());
+    }
 
     @Test
     void test_salaryStatmentSave() {
