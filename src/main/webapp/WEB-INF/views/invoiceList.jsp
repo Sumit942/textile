@@ -97,7 +97,12 @@
 </div>
 <script>
 $(document).ready(function(e){
-    $("#invoiceTable").DataTable()
+    $("#invoiceTable").DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'excelHtml5', 'csvHtml5', 'pdfHtml5'
+        ]
+    })
     $( "#fromDate" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
