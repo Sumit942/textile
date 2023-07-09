@@ -33,3 +33,4 @@ server:
     context-path: "/textile"
 invoice:
   startCount: 1
+  oldInvoiceLastId: 207

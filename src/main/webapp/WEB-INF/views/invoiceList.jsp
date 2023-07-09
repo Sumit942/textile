@@ -30,15 +30,14 @@
         </tr>
         </thead>
         <tbody>
-            <td><input id="fromDate" name="fromDate" class="form-control"/></td>
-            <td><input id="toDate" name="toDate" class="form-control" /></td>
-            <td><input id="invoiceNo" name="invoiceNo" class="form-control" /></td>
-            <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
+            <td><input id="fromDate" name="fromDate" readonly="readonly" class="form-control" placeholder="Select From date"/></td>
+            <td><input id="toDate" name="toDate" readonly="readonly" class="form-control" placeholder="Select To date"/></td>
+            <td><input id="invoiceNo" name="invoiceNo" class="form-control" placeholder="Enter Invoice No"/></td>
+            <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
             <td><input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/></td>
         </tbody>
     <table>
     </form:form>
-    <hr>
     <div class="row mb-1">
         <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Invoice</div>
     </div>

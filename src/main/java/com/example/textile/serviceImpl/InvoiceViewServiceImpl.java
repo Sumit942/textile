@@ -52,7 +52,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
             sb.append("and view.invoiceDate <= :toDate ");
         }
         if (invoiceNo != null && !invoiceNo.isEmpty()) {
-            sb.append("and view.invoiceNo = :invoiceNo ");
+            sb.append("and view.invoiceNo like concat('%',lower(:invoiceNo))");
         }
         if (companyId != null) {
             sb.append("and view.billToPartyId = :companyId");

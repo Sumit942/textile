@@ -17,7 +17,7 @@ public class InvoiceView {
     private long invoiceId;
     private Date invoiceDate;
     private String invoiceNo;
-    private String billToPartyId;
+    private Long billToPartyId;
     private String billToPartyGst;
     private String billToPartyName;
     private BigDecimal totalAmount;
@@ -88,11 +88,11 @@ public class InvoiceView {
         this.invoiceNo = invoiceNo;
     }
 
-    public String getBillToPartyId() {
+    public Long getBillToPartyId() {
         return billToPartyId;
     }
 
-    public void setBillToPartyId(String billToPartyId) {
+    public void setBillToPartyId(Long billToPartyId) {
         this.billToPartyId = billToPartyId;
     }
 
