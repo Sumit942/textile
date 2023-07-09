@@ -7,14 +7,17 @@ import com.example.textile.constants.TextileConstants;
 import com.example.textile.entity.ProductDetail;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
+import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.repo.ProductDetailRepository;
+import com.example.textile.service.ProductDetailService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,18 +37,22 @@ import java.util.stream.Collectors;
 @RequestMapping("/productDetail")
 public class ProductDetailController extends BaseController{
 
-    @Autowired private ProductDetailRepository repository;
+    @Autowired private ProductDetailService productDetailService;
 
     Map<String, ActionExecutor> actionExecutorMap;
 
     @PostConstruct
     public void init() {
         actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(ProductDetailController.class);
-        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new ProductDetailSubmitAction(repository));
+        actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new ProductDetailSubmitAction(productDetailService));
     }
 
     @GetMapping()
-    public String showForm(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command) {
+    public String showForm(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
+                           Model model) throws InvalidObjectPopulationException {
+        ActionExecutor actionExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
+        actionExecutor.prePopulateOptionsAndFields(command, model);
+
         return "/productDetails";
     }
 
@@ -82,7 +89,7 @@ public class ProductDetailController extends BaseController{
         } catch (Throwable e) {
             log.error("Error while saving productDetails-"+e.getLocalizedMessage(), e);
         }
-        return "redirect:/";
+        return "redirect:/productDetail";
 
     }
 }

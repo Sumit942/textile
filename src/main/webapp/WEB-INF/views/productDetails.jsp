@@ -1,21 +1,48 @@
 <%@ include file="./common/header.jspf" %>
 <style>
+.error {
+    color: #ff0000;
+    font-size: 12px;
+}
+.errorblock {
+     color: #000;
+     background-color: #ffEEEE;
+     border: 3px solid #ff0000;
+     padding: 8px;
+     margin: 16px;
+}
+.ui-autocomplete-loading {
+    background: white url("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+}
 </style>
 <body>
-    <h1>Student Details</h1>
-    <form:form method="POST" action="/submit" modelAttribute="productDetailsCommand">
+<%@ include file="./common/navigation.jspf" %>
+    <c:if test="${not empty actionResponse.errors}">
+        <div class="row mb-1 alert alert-danger" style="margin: 1%">
+            <ul>
+                <c:forEach items="${actionResponse.errors}" var="errorMessage">
+                    <li>${errorMessage}</li>
+                </c:forEach>
+            </ul>
+        </div>
+    </c:if>
+    <c:if test="${actionResponse.responseType == 'SUCCESS'}">
+        <div class="row mb-1 alert alert-success" style="margin: 1%">
+            Invoice ${invoiceCommand.getInvoiceNo()} Save Successfully!!
+        </div>
+    </c:if>
+    <form:form method="POST" action="productDetail" modelAttribute="productDetailsCommand">
         <table id="productDetailsTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
-                  <th>Sr.No</th>
-                  <th>Product Description</th>
-                  <th>Challan No</th>
-                  <th>HSN code</th>
-                  <th>UOM</th>
-                  <th>Quantity</th>
-                  <th>Rate</th>
-                  <th>Amount</th>
-                  <th></th>
+                  <th style="width: 10%;">Sr.No</th>
+                  <th style="width: 14%;">Product Description</th>
+                  <th style="width: 14%;">Challan No</th>
+                  <th style="width: 14%;">HSN code</th>
+                  <th style="width: 14%;">UOM</th>
+                  <th style="width: 14%;">Quantity</th>
+                  <th style="width: 14%;">Rate</th>
+                  <th style="width: 14%;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -46,23 +73,19 @@
                                 <form:errors path="productDetails[0].unitOfMeasure" cssClass="error"/>
                             </td>
                             <td>
-                                <form:input path="productDetails[0].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+                                <form:input path="productDetails[0].quantity" required="true" class="numbersOnly" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].quantity" cssClass="error"/>
                             </td>
                             <td>
-                                <form:input path="productDetails[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+                                <form:input path="productDetails[0].rate" class="numbersOnly" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].rate" cssClass="error"/>
-                            </td>
-                            <td>
-                                <form:input path="productDetails[0].totalPrice" required="true" readonly="true"/>
-                                <form:errors path="productDetails[0].totalPrice" cssClass="error"/>
                             </td>
                             <td>
                             </td>
                         </tr>
                     </c:when>
                     <c:otherwise>
-                        <c:forEach items="${invoiceCommand.product}" var="productDetails" varStatus="index">
+                        <c:forEach items="${productDetailsCommand.productDetails}" var="productDetails" varStatus="index">
                                 <tr>
                                     <td>
                                         <span id="productDetails[${index.index}].srNo">${index.index + 1}</span>
@@ -92,12 +115,8 @@
                                         <form:errors path="productDetails[${index.index}].quantity" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <form:input path="productDetails[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                                        <form:input path="productDetails[${index.index}].rate" class="numbersOnly" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].rate" cssClass="error"/>
-                                    </td>
-                                    <td>
-                                        <form:input path="productDetails[${index.index}].totalPrice" readonly="true" required="true"/>
-                                        <form:errors path="productDetails[${index.index}].totalPrice" cssClass="error"/>
                                     </td>
                                     <td>
                                         <c:if test="${index.index == invoiceCommand.product.size()-1}">
@@ -149,16 +168,6 @@
                     $(lastQty).focus()
                     return;
                 }
-                var lastRate = '#productDetails'+(i-1)+'\\.rate'
-                if ( $(lastRate).val() == '' ) {
-                    alert ("Please enter 'Rate' in last row")
-                    $(lastRate).focus()
-                    return;
-                }
-                /*if ( $('#productDetails'+(i-1)+'\\.totalPrice').val() == '' ) {
-                    alert ("Please enter 'Total Price' in last row")
-                    return;
-                }*/
                 //check duplicate chNos
                 if (hasDuplicateChNos()){
                     alert ("Please entry unique 'challan no.' in last row")
@@ -190,10 +199,7 @@
                             '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="productDetails'+i+'.rate" name="productDetails['+i+'].rate" required="required" type="text" class="numbersOnly" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
-                        '</td>'+
-                        '<td>'+
-                            '<input id="productDetails'+i+'.totalPrice" name="productDetails['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
+                            '<input id="productDetails'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
@@ -215,14 +221,12 @@
                     tempArr.push(v.value)
                 }
             })
-            //console.log(tempArr)
             return hasDupli
         }
         function autoSearchProduct(event,obj,index) {
         if (event.key == 'Enter') {
             return;
         }
-        //$("#productDetails"+index+"\\.product\\.hsn").val('')
         $("#productDetails"+index+"\\.product\\.id").val('')
             $(obj).autocomplete({
                 source : function(request, response) {
@@ -248,13 +252,8 @@
                 select : function(event, ui) {
                     this.value = ui.item.name
                     var productId = ui.item.id
-                    //$("#productDetails"+index+"\\.product\\.hsn").val(ui.item.hsn)
                     $("#productDetails"+index+"\\.product\\.id").val(productId)
-                    //get the max rate for company
                     $("#productDetails"+index+"\\.chNo").focus()
-                    //if (productId != '') {
-                    //    getProductMaxRateByCompanyId(index,productId)
-                    //}
                     return false;
                 }
             }).data("ui-autocomplete")._renderItem = function(ul, item) {

@@ -6,12 +6,14 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.repo.ProductDetailRepository;
+import com.example.textile.service.ProductDetailService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +21,17 @@ import java.util.Map;
 @Slf4j
 public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailCommand> {
 
-    private final ProductDetailRepository productDetailRepo;
+    private final ProductDetailService productDetailService;
 
-    public ProductDetailSubmitAction(ProductDetailRepository productDetailRepository) {
-        this.productDetailRepo = productDetailRepository;
+    public ProductDetailSubmitAction(ProductDetailService productDetailRepository) {
+        this.productDetailService = productDetailRepository;
     }
 
     @Override
     protected ActionResponse onSuccess(ProductDetailCommand productDetailCommand, Map<String, Object> parameterMap, ModelMap model) {
         log.info("onSuccess() Entry");
 
-        List<ProductDetail> productDetails = productDetailRepo.saveAll(productDetailCommand.getProductDetails());
+        List<ProductDetail> productDetails = productDetailService.saveAll(productDetailCommand.getProductDetails());
         productDetailCommand.setProductDetails(productDetails);
 
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
@@ -43,8 +45,8 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
         String logSuffix = "";
         List<ProductDetail> productDetails = command.getProductDetails();
         Map<String, String> errMap = new HashMap<>();
-        if (productDetails == null || !productDetails.isEmpty()) {
-            errMap.put("productDetailsCommand","NotNull.productDetailsCommand");
+        if (productDetails == null || productDetails.isEmpty()) {
+            errMap.put("product","NotNull.productDetailsCommand");
         } else {
             for (int i = 0; i < productDetails.size(); i++) {
                 ProductDetail prod = productDetails.get(i);
@@ -61,12 +63,36 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
                     errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
                 if (prod.getQuantity() == null || prod.getQuantity() <= 0)
                     errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
-                if (prod.getRate() == null || prod.getRate() <= 0)
+                /*if (prod.getRate() == null || prod.getRate() <= 0)
                     errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
                 if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
-                    errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");
+                    errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");*/
                 if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
                     errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
+            }
+
+            if (errMap.isEmpty()) {
+                //check for duplicate chNo
+                List<String> uniqChNo = new ArrayList<>();
+                for (int i = 0; i < productDetails.size(); i++) {
+                    if (productDetails.get(i).getChNo() != null) {
+                        if (!uniqChNo.contains(productDetails.get(i).getChNo())) {
+                            List<ProductDetail> byChNo = productDetailService.findByChNo(productDetails.get(i).getChNo());
+                            if (!byChNo.isEmpty() && (productDetails.get(i).getId() == null
+                                    || byChNo.get(0).getId().compareTo(productDetails.get(i).getId()) != 0)) {
+                                if (byChNo.get(0).getInvoice() != null)
+                                    result.rejectValue("productDetails[" + i + "].chNo", "alreadyExist.invoiceCommand.product.chNo",
+                                        new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()}, "Challan No Already Used");
+                                else
+                                    errMap.put("productDetails[" + i + "].chNo","alreadyAdded.invoiceCommand.product.chNo");
+                            } else
+                                uniqChNo.add(productDetails.get(i).getChNo());
+                        } else {
+                            int chNoIndex = uniqChNo.indexOf(productDetails.get(i).getChNo());
+                            errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
+                        }
+                    }
+                }
             }
         }
 
@@ -81,6 +107,13 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
 
     @Override
     public void prePopulateOptionsAndFields(ProductDetailCommand productDetailCommand, Object model) throws InvalidObjectPopulationException {
-
+        String logPrefix = "populateOptionsAndFields() |";
+        log.info("{} Entry", logPrefix);
+        if(!(model instanceof Model)) {
+            throw new InvalidObjectPopulationException(productDetailCommand,model);
+        }
+        Model models = (Model) model;
+        models.addAttribute("unitOfMeasures", productDetailService.findAllUnit());
+        log.info("{} Exit", logPrefix);
     }
 }

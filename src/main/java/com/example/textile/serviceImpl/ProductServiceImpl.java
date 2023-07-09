@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
         Query query = entityManager
                 .createQuery("select p from Product p where lower(p.name) like lower(:name)");
         if (limit > 0) {
-            query.setMaxResults(6);
+            query.setMaxResults(limit);
         }
         query.setParameter("name","%"+name+"%");
         return (List<Product>) query.getResultList();

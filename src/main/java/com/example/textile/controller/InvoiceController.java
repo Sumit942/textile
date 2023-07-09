@@ -24,6 +24,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -79,9 +80,31 @@ public class InvoiceController extends BaseController {
                                 ModelMap model) {
         ModelAndView modelAndView = new ModelAndView("/invoiceList");
 //        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit(fieldName,pageNumber,pageSize);
-        Page<InvoiceView> invoices = viewService.findAllByPageNumberAndPageSizeOrderByField(pageNumber, pageSize, fieldName);
-        modelAndView.addObject("invoices",invoices);
-        modelAndView.addObject("printInvoice",true);
+        String isRedirect = (String) model.getAttribute("isRedirect");
+        if ("YES".equals(isRedirect)) {
+            log.info("findAll() | Entry [isRedirect=YES]");
+        } else {
+            log.info("findAll() | Entry [isRedirect=NO]");
+            Page<InvoiceView> invoices = viewService.findAllByPageNumberAndPageSizeOrderByField(pageNumber, pageSize, fieldName);
+            modelAndView.addObject("invoices", invoices);
+            modelAndView.addObject("printInvoice", true);
+        }
+        return modelAndView;
+    }
+
+    @PostMapping
+    public ModelAndView invoiceReport(@RequestParam(value = "fromDate", required = false) Date fromDate,
+                                       @RequestParam(value="toDate", required = false) Date toDate,
+                                       @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
+                                       @RequestParam(value = "companyId", required = false) Long companyId,
+                                      RedirectAttributes redirectAttributes) {
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
+
+        List<InvoiceView> invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
+        Page<InvoiceView> invoiceViewsReportPage = new PageImpl<InvoiceView>(invoiceReport);
+        redirectAttributes.addFlashAttribute("invoices",invoiceViewsReportPage);
+        redirectAttributes.addFlashAttribute("isRedirect","YES");
 
         return modelAndView;
     }
@@ -299,7 +322,7 @@ public class InvoiceController extends BaseController {
     }
 
     //@GetMapping("/downloadPdf")
-    public void downloadToPdf(@RequestParam(name = "invoiceNo",required = true) String invoiceNo,
+    public void downloadToPdf(@RequestParam(name = "invoiceNo") String invoiceNo,
                               HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
 
         String logPrefix = "downloadToPdf() |";
@@ -325,11 +348,6 @@ public class InvoiceController extends BaseController {
         log.info("{} Exit {}", logPrefix, logSuffix);
     }
 
-    @GetMapping("/report")
-    public ModelAndView getReport(@ModelAttribute InvoiceCommand invoice) {
-        ModelAndView modelAndView = new ModelAndView("invoiceReport");
-        return modelAndView;
-    }
 
     @PostMapping("/report")
     public ModelAndView showReport(@ModelAttribute Invoice invoice, RedirectAttributes redirectAttr) {

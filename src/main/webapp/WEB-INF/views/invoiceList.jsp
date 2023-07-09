@@ -14,6 +14,34 @@
             <span>${deleted}</span>
         </div>
     </c:if>
+    <div class="row mb-1">
+        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">Invoice Report</div>
+    </div>
+    </hr>
+    <form:form method="post">
+    <table class="table">
+        <thead>
+        <tr>
+            <th style="width: 15%">From Date</th>
+            <th style="width: 15%">To Date</th>
+            <th style="width: 15%">Invoice No</th>
+            <th style="width: 40%">Company Name</th>
+            <th style="width: 15%"></th>
+        </tr>
+        </thead>
+        <tbody>
+            <td><input id="fromDate" name="fromDate" class="form-control"/></td>
+            <td><input id="toDate" name="toDate" class="form-control" /></td>
+            <td><input id="invoiceNo" name="invoiceNo" class="form-control" /></td>
+            <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
+            <td><input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/></td>
+        </tbody>
+    <table>
+    </form:form>
+    <hr>
+    <div class="row mb-1">
+        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Invoice</div>
+    </div>
     <table id="invoiceTable" class="table table-striped">
         <thead>
             <tr>
@@ -71,6 +99,12 @@
 <script>
 $(document).ready(function(e){
     $("#invoiceTable").DataTable()
+    $( "#fromDate" ).datepicker({
+        dateFormat: 'dd/mm/yy'
+    })
+    $( "#toDate" ).datepicker({
+        dateFormat: 'dd/mm/yy'
+    })
 })
 
 function deleteByInvoiceNo(invNo) {
@@ -78,6 +112,37 @@ function deleteByInvoiceNo(invNo) {
     if (del) {
         window.location.href="${pageContext.request.contextPath}/invoices/deleteByInvoiceNo?invoiceNo="+invNo
     }
+}
+    /**                 billToParty AutoComplete functions                  **/
+function billToPartyAutoComplete(event,thisObj) {
+    if (event.key == 'Enter') {
+        return
+    }
+    $(thisObj).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
+                dataType : 'json',
+                success : function(data) {
+                    $("#companyId").val('')
+                    response(data);
+                },
+                error : function(err) {
+                    $("#companyId").val('')
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 4,
+        select : function(event, ui) {
+            this.value = ui.item.name
+            $("#companyId").val(ui.item.id)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+    };
 }
 </script>
 <%@ include file="./common/footer.jspf" %>

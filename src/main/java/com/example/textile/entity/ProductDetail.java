@@ -71,7 +71,6 @@ public class ProductDetail implements Serializable {
         this.quantity = quantity;
     }
 
-    @NotNull
     @Column(nullable = false)
     public Double getRate() {
         return rate;
@@ -81,7 +80,6 @@ public class ProductDetail implements Serializable {
         this.rate = rate;
     }
 
-    @NotNull
     @Column(nullable = false)
     public BigDecimal getTotalPrice() {
         return totalPrice;

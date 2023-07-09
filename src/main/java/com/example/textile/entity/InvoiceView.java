@@ -4,6 +4,8 @@ import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -15,6 +17,7 @@ public class InvoiceView {
     private long invoiceId;
     private Date invoiceDate;
     private String invoiceNo;
+    private String billToPartyId;
     private String billToPartyGst;
     private String billToPartyName;
     private BigDecimal totalAmount;
@@ -32,6 +35,7 @@ public class InvoiceView {
         return invoiceId;
     }
 
+    @Temporal(TemporalType.DATE)
     public Date getInvoiceDate() {
         return invoiceDate;
     }
@@ -82,6 +86,14 @@ public class InvoiceView {
 
     public void setInvoiceNo(String invoiceNo) {
         this.invoiceNo = invoiceNo;
+    }
+
+    public String getBillToPartyId() {
+        return billToPartyId;
+    }
+
+    public void setBillToPartyId(String billToPartyId) {
+        this.billToPartyId = billToPartyId;
     }
 
     public void setBillToPartyGst(String billToPartyGst) {
