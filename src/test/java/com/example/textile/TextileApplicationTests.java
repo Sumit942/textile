@@ -1,10 +1,8 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
-import com.example.textile.enums.StatementTypeEnum;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
-import com.example.textile.service.BankStatementService;
 import com.example.textile.service.UserService;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
@@ -40,63 +38,10 @@ class TextileApplicationTests {
     //    @Autowired
     UserService userService;
 
-    //@Autowired
-    BankStatementService bankStatementService;
-
-    @Autowired
-    SalaryStatementRepository statementRepository;
 
     @Test
     void getInvoiceStartCount() {
         System.out.println("invoiceStartCount>>> " + invoiceService.getLatestInvoiceNo());
-    }
-
-    @Test
-    void test_salaryStatmentSave() {
-        SalaryStatement statement = new SalaryStatement();
-        Employee employee = new Employee();
-        employee.setId(4L);
-        BankDetail credit = new BankDetail();
-        credit.setId(1L);
-        BankDetail debit = new BankDetail();
-        debit.setId(2L);
-        User user = new User();
-        user.setId(1L);
-
-        statement.setEmployee(employee);
-        statement.setAmount(BigDecimal.valueOf(15000.00));
-        statement.setCreditTo(credit);
-        statement.setDebitFrom(debit);
-//        statement.setStatementType(StatementTypeEnum.DEBIT.name());
-        statement.setTxnDt(new Date());
-        statement.setDescription("Testing slalary statment save");
-        statement.setUser(user);
-
-        SalaryStatement save = statementRepository.save(statement);
-        System.out.println("saved salary statment:---> \n"+save);
-
-    }
-
-    @Test
-    void test_statement_save() {
-
-        List<BankStatement> statementList = new ArrayList<>();
-        for (int i = 0 ; i < 4; i++) {
-
-            BankDetail credit = new BankDetail();
-            credit.setId(1L);
-            BankDetail debit = new BankDetail();
-            debit.setId(2L);
-
-            BankStatement statement = new BankStatement();
-            statement.setAmount(BigDecimal.TEN);
-            statement.setTxnDt(new Date());
-            statement.setDescription("remark"+i+"-sla");
-            statement.setCreditTo(credit);
-            statement.setDebitFrom(debit);
-            statementList.add(statement);
-        }
-//        statementService.saveAll(statementList);
     }
 
     //@Test

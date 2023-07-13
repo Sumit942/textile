@@ -46,7 +46,6 @@ public class Invoice implements Serializable {
 
     //bank select from dropdown
     private BankDetail selectedBank;
-    private List<Challan> challans;
 
     @Transient
     public Company getInvoiceBy() {
@@ -64,15 +63,6 @@ public class Invoice implements Serializable {
 
     public void setSelectedBank(BankDetail selectedBank) {
         this.selectedBank = selectedBank;
-    }
-
-    @OneToMany(mappedBy = "invoice")
-    public List<Challan> getChallans() {
-        return challans;
-    }
-
-    public void setChallans(List<Challan> challans) {
-        this.challans = challans;
     }
 
     @Transient

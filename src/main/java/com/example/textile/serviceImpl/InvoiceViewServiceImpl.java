@@ -52,12 +52,12 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
             sb.append("and view.invoiceDate <= :toDate ");
         }
         if (invoiceNo != null && !invoiceNo.isEmpty()) {
-            sb.append("and view.invoiceNo like concat('%',lower(:invoiceNo))");
+            sb.append("and view.invoiceNo like concat('%',lower(:invoiceNo)) ");
         }
         if (companyId != null) {
-            sb.append("and view.billToPartyId = :companyId");
+            sb.append("and view.billToPartyId = :companyId ");
         }
-
+        sb.append("order by view.invoiceId desc");
         Query query = entityManager.createQuery(sb.toString());
 
         if (fromDate != null) {
@@ -74,5 +74,10 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         }
 
         return (List<InvoiceView>) query.getResultList();
+    }
+
+    @Override
+    public List<InvoiceView> findByInvoiceId(List<Long> invoiceId) {
+        return viewRepository.findByInvoiceId(invoiceId);
     }
 }

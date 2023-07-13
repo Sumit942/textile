@@ -169,11 +169,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 errMap.put("saleType","NotNull.invoiceCommand.saleType");
             }
             //validating product list
-        if (invoice.isNew() || invoice.getId() > invoiceService.getOldInvoiceLastId()) {
-            validateChallans(invoice, errMap, result);
-        } else {
             validateProdDetail(invoice, errMap, result);
-        }
         if (invoice.getPnfCharge() == null || invoice.getPnfCharge().compareTo(BigDecimal.ZERO) < 0)
                 errMap.put("pnfCharge","NotNull.invoiceCommand.pnfCharge");
             if (invoice.getTotalAmount() == null || invoice.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0)
@@ -211,18 +207,6 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         invoice.getProduct().sort(Comparator.comparing(ProductDetail::getChNo));
 
         log.info("{} Exit", logPrefix);
-    }
-
-    private void validateChallans(Invoice invoice, Map<String, String> errMap, BindingResult result) {
-        log.info("validateChallans() Entry");
-        if (invoice.getChallans() != null && !invoice.getChallans().isEmpty()) {
-            for (int i = 0; i < invoice.getChallans().size(); i++) {
-                Challan challan = invoice.getChallans().get(i);
-
-            }
-        } else {
-            errMap.put("challans","NotNull.invoiceCommand.challans");
-        }
     }
 
     private void validateProdDetail(Invoice invoice, Map<String, String> errMap, BindingResult result) {

@@ -13,6 +13,7 @@ import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.service.InvoiceViewService;
+import com.example.textile.service.ProductDetailService;
 import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.ThymeleafTemplateUtility;
@@ -49,9 +50,10 @@ public class InvoiceController extends BaseController {
 
     @Autowired
     InvoiceService invoiceService;
-
     @Autowired
     InvoiceViewService viewService;
+    @Autowired
+    ProductDetailService productDetailService;
 
     private Map<String, ActionExecutor> actionExecutorMap;
 
@@ -97,14 +99,29 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value="toDate", required = false) Date toDate,
                                        @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                        @RequestParam(value = "companyId", required = false) Long companyId,
+                                       @RequestParam(value = "companyId", required = false) String chNo,
                                       RedirectAttributes redirectAttributes) {
-
+        String logPrefix = "invoiceReport() ";
+        log.info("{} Entry",logPrefix);
         ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
-        List<InvoiceView> invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
+        List<InvoiceView> invoiceReport = null;
+        if (null != chNo && !chNo.isEmpty()) {
+            log.info("{} findByChNo", logPrefix);
+            List<Long> invoiceId = new ArrayList<>();
+            List<ProductDetail> productDetails = productDetailService.findByChNo(chNo);
+            if (productDetails != null)
+                productDetails.stream().forEach(e -> invoiceId.add(e.getInvoice().getId()));
+            if (!invoiceId.isEmpty())
+                invoiceReport = viewService.findByInvoiceId(invoiceId);
+
+        } else {
+            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
+        }
         Page<InvoiceView> invoiceViewsReportPage = new PageImpl<InvoiceView>(invoiceReport);
         redirectAttributes.addFlashAttribute("invoices",invoiceViewsReportPage);
         redirectAttributes.addFlashAttribute("isRedirect","YES");
+        log.info("{} Exit",logPrefix);
 
         return modelAndView;
     }
