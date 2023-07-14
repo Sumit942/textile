@@ -39,6 +39,21 @@
     <div class="row mb-1">
         <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Invoice</div>
     </div>
+    <div class="filterDiv row">
+        <c:choose>
+            <c:when test="${isRedirect == 'YES'}">
+                <div class="col-md-2">
+                    Filters:
+                </div>
+                <div class="col-md-10">
+
+                </div>
+            </c:when>
+            <c:otherwise>
+                Showing the Last 20 invoices
+            </c:otherwise>
+        </c:choose>
+    </div>
     <table id="invoiceTable" class="table table-striped">
         <thead>
             <tr>

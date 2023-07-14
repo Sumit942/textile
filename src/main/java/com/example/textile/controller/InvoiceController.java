@@ -102,6 +102,7 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value = "challanNo", required = false) String challanNo,
                                       RedirectAttributes redirectAttributes) {
         String logPrefix = "invoiceReport() ";
+        String companyName = null;
         log.info("{} Entry",logPrefix);
         ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
@@ -118,9 +119,20 @@ public class InvoiceController extends BaseController {
         } else {
             invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
         }
-        Page<InvoiceView> invoiceViewsReportPage = new PageImpl<InvoiceView>(invoiceReport);
-        redirectAttributes.addFlashAttribute("invoices",invoiceViewsReportPage);
+        if (invoiceReport != null && !invoiceReport.isEmpty()) {
+            Page<InvoiceView> invoiceViewsReportPage = new PageImpl<InvoiceView>(invoiceReport);
+            redirectAttributes.addFlashAttribute("invoices", invoiceViewsReportPage);
+            if (companyId != null) {
+                companyName = invoiceReport.get(0).getBillToPartyName();
+            }
+        }
         redirectAttributes.addFlashAttribute("isRedirect","YES");
+        redirectAttributes.addFlashAttribute("fromDate",fromDate);
+        redirectAttributes.addFlashAttribute("toDate",toDate);
+        redirectAttributes.addFlashAttribute("invoiceNo",invoiceNo);
+        redirectAttributes.addFlashAttribute("companyId",companyName);
+        redirectAttributes.addFlashAttribute("challanNo",challanNo);
+
         log.info("{} Exit",logPrefix);
 
         return modelAndView;
