@@ -12,5 +12,6 @@ public interface InvoiceViewRepository extends JpaRepository<InvoiceView,Long> {
     @Query("FROM InvoiceView view ORDER BY view.invoiceNo DESC")
     List<InvoiceView> findAll();
 
-    List<InvoiceView> findByInvoiceId(List<Long> invoiceId);
+    @Query("FROM InvoiceView view WHERE view.invoiceId IN (:invoiceIds) ORDER BY view.invoiceNo DESC")
+    List<InvoiceView> findByInvoiceId(List<Long> invoiceIds);
 }

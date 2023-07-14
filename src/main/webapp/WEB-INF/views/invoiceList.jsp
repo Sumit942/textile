@@ -25,7 +25,8 @@
             <th style="width: 15%">From Date</th>
             <th style="width: 15%">To Date</th>
             <th style="width: 15%">Invoice No</th>
-            <th style="width: 40%">Company Name</th>
+            <th style="width: 15%">Challan No</th>
+            <th style="width: 25%">Company Name</th>
             <th style="width: 15%"></th>
         </tr>
         </thead>
@@ -33,6 +34,7 @@
             <td><input id="fromDate" name="fromDate" readonly="readonly" class="form-control" placeholder="Select From date"/></td>
             <td><input id="toDate" name="toDate" readonly="readonly" class="form-control" placeholder="Select To date"/></td>
             <td><input id="invoiceNo" name="invoiceNo" class="form-control" placeholder="Enter Invoice No"/></td>
+            <td><input id="challanNo" name="challanNo" class="form-control" placeholder="Enter Challan No"/></td>
             <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
             <td><input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/></td>
         </tbody>

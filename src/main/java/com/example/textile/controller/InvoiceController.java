@@ -99,17 +99,17 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value="toDate", required = false) Date toDate,
                                        @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                        @RequestParam(value = "companyId", required = false) Long companyId,
-                                       @RequestParam(value = "companyId", required = false) String chNo,
+                                       @RequestParam(value = "challanNo", required = false) String challanNo,
                                       RedirectAttributes redirectAttributes) {
         String logPrefix = "invoiceReport() ";
         log.info("{} Entry",logPrefix);
         ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
         List<InvoiceView> invoiceReport = null;
-        if (null != chNo && !chNo.isEmpty()) {
+        if (null != challanNo && !challanNo.isEmpty()) {
             log.info("{} findByChNo", logPrefix);
             List<Long> invoiceId = new ArrayList<>();
-            List<ProductDetail> productDetails = productDetailService.findByChNo(chNo);
+            List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
             if (productDetails != null)
                 productDetails.stream().forEach(e -> invoiceId.add(e.getInvoice().getId()));
             if (!invoiceId.isEmpty())
