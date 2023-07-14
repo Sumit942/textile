@@ -14,10 +14,6 @@
             <span>${deleted}</span>
         </div>
     </c:if>
-    <div class="row mb-1">
-        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">Invoice Report</div>
-    </div>
-    </hr>
     <form:form method="post">
     <table class="table">
         <thead>
