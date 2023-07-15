@@ -21,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findByName(String name) {
-        return this.productRepo.findByName(name);
+        return this.productRepo.findByNameIgnoreCase(name);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findByNameAndLimit(String name, int limit) {
         Query query = entityManager
-                .createQuery("select p from Product p where lower(p.name) like lower(:name)");
+                .createQuery("select p from Product p where lower(p.name) like lower(:name) and p.active = true");
         if (limit > 0) {
             query.setMaxResults(limit);
         }

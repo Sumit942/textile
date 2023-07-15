@@ -75,14 +75,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         preCheckCompany(invoice);
         //check if the product name is already added. is yes then use it.
         invoice.getProduct().stream()
-                .filter(e -> e.getProduct().getId() == null)
+                .filter(e -> e.getProduct().getId() == null || e.getProduct().getId() <= 0L)
                 .forEach(e -> {
-                    Product savedPrdt = productRepo.findByName(e.getProduct().getName());
+                    Product savedPrdt = productRepo.findByNameIgnoreCase(e.getProduct().getName());
                     if (savedPrdt != null) {
                         e.getProduct().setId(savedPrdt.getId());
                     } else {
                         productRepo.save(e.getProduct());
                         log.info("{} saving product{} ", logPrefix,e.getProduct());
+                    }
+                });
+
+        //setting product status active
+        invoice.getProduct().stream()
+                .filter(e -> e.getProduct().getId() != null && e.getProduct().getId() > 0L)
+                .forEach(e -> {
+                    if (!e.getProduct().isActive()) {
+                        e.getProduct().setActive(true);
+                        productRepo.save(e.getProduct());
+                        log.info("{} updating Product active=[true] {}", logPrefix, e.getProduct().getId());
                     }
                 });
 

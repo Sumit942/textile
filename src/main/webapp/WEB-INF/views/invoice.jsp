@@ -211,6 +211,7 @@
             </td>
             <td>
                 <form:hidden path="product[0].product.id"/>
+                <form:hidden path="product[0].product.active"/>
                 <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
@@ -253,6 +254,7 @@
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
+                    <form:hidden path="product[${index.index}].product.active" />
                     <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
@@ -865,6 +867,7 @@ function addProductDescRow(addRowType) {
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" name="product['+i+'].product.id" value="">'+
+                            '<input type="hidden" name="product['+i+'].product.active" value="true">'+
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
                         '</td>'+
                         '<td>'+

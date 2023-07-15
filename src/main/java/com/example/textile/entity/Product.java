@@ -15,6 +15,7 @@ public class Product implements Serializable {
     private Long id;
     private String name;
     private Integer hsn = ShreeramTextileConstants.PRODUCT_HSN;
+    private boolean active = true;
     private Date insertDt;
     private Date updateDt;
 
@@ -46,7 +47,16 @@ public class Product implements Serializable {
         this.hsn = hsn;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @CreationTimestamp
+    @Column(updatable = false)
     public Date getInsertDt() {
         return insertDt;
     }

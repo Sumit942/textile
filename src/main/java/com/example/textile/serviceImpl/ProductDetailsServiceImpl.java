@@ -35,7 +35,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         productDetails.stream()
                 .filter(e -> e.getProduct().getId() == null)
                 .forEach(e -> {
-                    Product savedPrdt = productRepo.findByName(e.getProduct().getName());
+                    Product savedPrdt = productRepo.findByNameIgnoreCase(e.getProduct().getName());
                     if (savedPrdt != null) {
                         e.getProduct().setId(savedPrdt.getId());
                     } else {
