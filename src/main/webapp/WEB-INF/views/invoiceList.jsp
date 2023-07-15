@@ -39,18 +39,40 @@
     <div class="row mb-1">
         <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Invoice</div>
     </div>
-    <div class="filterDiv row">
+    <div class="filterDiv row border">
         <c:choose>
             <c:when test="${isRedirect == 'YES'}">
-                <div class="col-md-2">
-                    Filters:
+                <div class="col-md-12">
+                    <span><b>Filters:</b></span>
                 </div>
-                <div class="col-md-10">
-
-                </div>
+                <c:if test="${not empty fromDate}">
+                    <div class="col-md-2">
+                        <span><b>From Date:</b> <fmt:formatDate value="${fromDate}" type="date" pattern="dd-MMM-yyyy"/></span>
+                    </div>
+                </c:if>
+                <c:if test="${not empty toDate}">
+                    <div class="col-md-2">
+                        <span><b>To Date:</b> <fmt:formatDate value="${toDate}" type="date" pattern="dd-MMM-yyyy"/></span>
+                    </div>
+                </c:if>
+                <c:if test="${not empty invoiceNo}">
+                    <div class="col-md-2">
+                        <span><b>Invoice No:</b> ${invoiceNo}</span>
+                    </div>
+                </c:if>
+                <c:if test="${not empty challanNo}">
+                    <div class="col-md-2">
+                        <span><b>Challan No:</b> ${challanNo}</span>
+                    </div>
+                </c:if>
+                <c:if test="${not empty companyName}">
+                    <div class="col-md-4">
+                        <span><b>Company Name :</b> ${companyName}</span>
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
-                Showing the Last 20 invoices
+                <span class="col-md-12 text-center">Showing the Last 20 invoices<span>
             </c:otherwise>
         </c:choose>
     </div>

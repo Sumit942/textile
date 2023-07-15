@@ -130,7 +130,7 @@ public class InvoiceController extends BaseController {
         redirectAttributes.addFlashAttribute("fromDate",fromDate);
         redirectAttributes.addFlashAttribute("toDate",toDate);
         redirectAttributes.addFlashAttribute("invoiceNo",invoiceNo);
-        redirectAttributes.addFlashAttribute("companyId",companyName);
+        redirectAttributes.addFlashAttribute("companyName",companyName);
         redirectAttributes.addFlashAttribute("challanNo",challanNo);
 
         log.info("{} Exit",logPrefix);
