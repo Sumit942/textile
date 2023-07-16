@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -91,5 +89,31 @@ public class ProductDetailController extends BaseController{
         }
         return "redirect:/productDetail";
 
+    }
+
+    @GetMapping("/missingChallans")
+    public String challanOverview(ModelMap model) {
+        String logPrefix = "challanOverview() ";
+        log.info("{} Entry",logPrefix);
+        List<Long> missingChNos = new ArrayList<>();
+
+        List<Long> allChNo = productDetailService.findAllChNo().stream()
+                .map(Long::parseLong).collect(Collectors.toList());
+
+        if (!allChNo.isEmpty()){
+            long min = allChNo.stream().min(Long::compareTo).orElse(0L);
+            long max = allChNo.stream().max(Long::compareTo).orElse(-1L);
+
+            for (long i = min; i <= max; i++)
+                if (!allChNo.contains(i))
+                    missingChNos.add(i);
+
+            model.addAttribute("missingChallanNos", missingChNos);
+            model.addAttribute("minChallanNo", min);
+            model.addAttribute("maxChallanNo", max);
+            log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
+        }
+
+        return "/challanOverview";
     }
 }

@@ -12,4 +12,7 @@ public interface ProductDetailService {
     List<ProductDetail> saveAll(List<ProductDetail> productDetails);
 
     List<ProductDetail> findByChNo(String s);
+
+    List<String> findAllChNo();
+
 }
