@@ -45,6 +45,14 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                         log.info("{} saving product{} ", logPrefix,e.getProduct());
                     }
                 });
+        productDetails.stream().filter(e -> e.getProduct().getId() != null)
+                    .forEach(e -> {
+                        if (!e.getProduct().isActive()) {
+                            e.getProduct().setActive(true);
+                            productRepo.save(e.getProduct());
+                            log.info("{} updating Product [Active =true; id ={}]", logPrefix, e.getProduct().getId());
+                        }
+                    });
 
         log.info("{} Exit", logPrefix);
         return productDetailRepo.saveAll(productDetails);

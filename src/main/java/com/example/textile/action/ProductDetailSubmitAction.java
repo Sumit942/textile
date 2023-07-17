@@ -69,6 +69,9 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
                     errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");*/
                 if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
                     errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
+                if (prod.getParty() == null || prod.getParty().getId() == null || prod.getParty().getId().compareTo(0L) < 0) {
+                    errMap.put("product["+i+"].party","NotNull.invoiceCommand.product.party");
+                }
             }
 
             if (errMap.isEmpty()) {

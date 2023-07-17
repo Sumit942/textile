@@ -20,6 +20,7 @@ public class ProductDetail implements Serializable {
     private Double rate;
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private Invoice invoice;
+    private Company party;
 
     private Date insertDt;
     private Date updateDt;
@@ -97,6 +98,15 @@ public class ProductDetail implements Serializable {
 
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+    }
+
+    @ManyToOne
+    public Company getParty() {
+        return party;
+    }
+
+    public void setParty(Company party) {
+        this.party = party;
     }
 
     @CreationTimestamp
