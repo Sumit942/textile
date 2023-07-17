@@ -3,6 +3,7 @@ package com.example.textile;
 import com.example.textile.entity.*;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.service.ProductDetailService;
 import com.example.textile.service.UserService;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
@@ -37,6 +38,9 @@ class TextileApplicationTests {
     ThymeleafTemplateUtility templateUtility;
     //    @Autowired
     UserService userService;
+
+//    @Autowired
+    ProductDetailService productDetailService;
 
 
     @Test

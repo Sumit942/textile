@@ -11,9 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,6 +23,9 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     @Autowired private ProductDetailRepository productDetailRepo;
 
     @Autowired private ProductRepository productRepo;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Override
     public List<Unit> findAllUnit() {
@@ -66,6 +68,11 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     @Override
     public List<String> findAllChNo() {
         return productDetailRepo.findAllChNo();
+    }
+
+    @Override
+    public List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId, Long invoiceId) {
+        return productDetailRepo.findByPartyIdAndInvoiceId(partyId, invoiceId);
     }
 
 }

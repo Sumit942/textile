@@ -922,6 +922,32 @@ function autoFocusProductDescField() {
     var rowCount = $("#productDescTBody > tr").length - 2
     $("#product"+rowCount+"\\.product\\.name").focus()
 }
+
+/**             get Challans by Company/billToParty                    **/
+function getProductDetailsByCompanyId(companyId) {
+
+    console.log('inside getProductRate(): compId-'+companyId)
+    if (companyId != '' && companyId != 0) {
+        $.ajax({
+            url : "${pageContext.request.contextPath}/productDetail/getByParty?partyId="+companyId,
+            success : function(data) {
+                if (data != '') {
+                    createProductDetailsRow(data)
+                    updateTotalAmount()
+                }
+            },
+            error : function(err) {
+                //TODO: create Empty Row
+                console.error(err)
+            }
+        })
+    }
+}
+
+function createProductDetailsRow(prodDetails) {
+    console.log(prodDetails)
+}
+
     /**                 calculation script                  **/
 function updateRowAmount(index) {
 
