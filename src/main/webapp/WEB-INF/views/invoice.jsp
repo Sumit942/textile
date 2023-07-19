@@ -920,6 +920,25 @@ function productDelRow(i) {
     updateTotalAmount()
     //autoFocusProductDescField()
 }
+/**     remove all the challan row from tr>1 and set tr=1 value to ''    **/
+function resetProdDetailsRow() {
+    var row = 'productDescTBody > tr:eq(1)'
+
+    $('#'+row).find('td:eq(1)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(1)').find('input:eq(1)').val('')
+    $('#'+row).find('td:eq(1)').find('input:eq(2)').val('')
+    $('#'+row).find('td:eq(2)').find('input:eq(0)').val('')
+    //$('#'+row).find('td:eq(3)').find('input:eq(0)')
+    //$('#'+row).find('td:eq(4)').find('select:eq(0)').val('')
+    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(6)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+
+    while ($('#productDescTBody > tr').length > 2) {
+        $('#productDescTBody > tr:last').remove()
+    }
+}
+
 /**             update all the <input> 'id' and 'name'              **/
 function updateProdDetailsInputTagsIdAndName() {
     var rowIdSelector = 'productDescTBody > tr'
@@ -927,8 +946,21 @@ function updateProdDetailsInputTagsIdAndName() {
     for (var i = 2; i < $("#"+rowIdSelector).length; i++) {
         var row = rowIdSelector+':eq('+i+')'
         console.log('row-->', row)
-        $('#'+row).find('td:eq(0)').find('span:eq(0)').html('<span id="product[0].srNo">'+i+'</span>')
-        //TODO: replicate above line for other tags
+        $('#'+row).find('td:eq(0)').html('<span id="product['+(i-1)+'].srNo">'+i+'</span>')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+(i-1)+'.product.id').attr('name','product['+(i-1)+'].product.id')
+        $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
+        $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
+        $('#'+row).find('td:eq(4)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
+        try {
+            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+        } catch (err) {
+            console.log('error in change id for productDelRow ',err)
+        }
     }
 }
 
@@ -936,7 +968,7 @@ function updateProdDetailsInputTagsIdAndName() {
 /**             Auto focus to last product name fields              **/
 function autoFocusProductDescField() {
     $(document).scrollTop($(document).height())
-    if ($("#product"+rowCount+"\\.product\\.id").val()) {
+    if ($("#product"+rowCount+"\\.id").val()) {
     var rowCount = $("#productDescTBody > tr").length - 2
         $("#product"+rowCount+"\\.product\\.name").focus()
     } else {
@@ -955,11 +987,13 @@ function getProductDetailsByCompanyId(companyId) {
                 if (data != '' && data != null && data.length > 0) {
                     createProductDetailsRow(data)
                 } else {
+                    resetProdDetailsRow()
                     autoFocusProductDescField()
                 }
             },
             error : function(err) {
                 //TODO: create Empty Row
+                resetProdDetailsRow()
                 console.error(err)
             }
         })
@@ -977,8 +1011,8 @@ function createProductDetailsRow(prodDetails) {
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="'+prodDetails[i].id+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input type="hidden" name="product['+i+'].product.id" value="'+prodDetails[i].product.id+'">'+
-                            '<input type="hidden" name="product['+i+'].product.active" value="'+prodDetails[i].product.active+'">'+
+                            '<input type="hidden" id="product'+i+'.product.id" name="product['+i+'].product.id" value="'+prodDetails[i].product.id+'">'+
+                            '<input type="hidden" id="product'+i+'.product.active" name="product['+i+'].product.active" value="'+prodDetails[i].product.active+'">'+
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+prodDetails[i].product.name+'">'+
                         '</td>'+
                         '<td>'+

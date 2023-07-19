@@ -176,7 +176,7 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "invoice_id",referencedColumnName = "id")
     public List<ProductDetail> getProduct() {
         return product;

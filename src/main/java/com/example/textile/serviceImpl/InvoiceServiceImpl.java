@@ -73,7 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         boolean isNew = invoice.isNew();
         log.info("{} saving.... {}",logPrefix,invoice.getInvoiceNo());
         preCheckCompany(invoice);
-        //check if the product name is already added. is yes then use it.
+        //check if the product name is already added. if yes then use it.
         invoice.getProduct().stream()
                 .filter(e -> e.getProduct().getId() == null || e.getProduct().getId() <= 0L)
                 .forEach(e -> {
