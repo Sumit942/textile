@@ -46,31 +46,31 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
         List<ProductDetail> productDetails = command.getProductDetails();
         Map<String, String> errMap = new HashMap<>();
         if (productDetails == null || productDetails.isEmpty()) {
-            errMap.put("product","NotNull.productDetailsCommand");
+            errMap.put("productDetails","NotNull.productDetailsCommand");
         } else {
             for (int i = 0; i < productDetails.size(); i++) {
                 ProductDetail prod = productDetails.get(i);
                 if (prod.getProduct() == null) {
-                    errMap.put("product.product","NotNull.invoiceCommand.product.product");
+                    errMap.put("productDetails.product","NotNull.invoiceCommand.product.product");
                 } else {
 
                     if (prod.getProduct().getName() == null)
-                        errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
+                        errMap.put("productDetails["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
                     if (prod.getProduct().getHsn() == null)
-                        errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
+                        errMap.put("productDetails["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
                 }
                 if (prod.getChNo() == null)
-                    errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
+                    errMap.put("productDetails["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
                 if (prod.getQuantity() == null || prod.getQuantity() <= 0)
-                    errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
+                    errMap.put("productDetails["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
                 /*if (prod.getRate() == null || prod.getRate() <= 0)
                     errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
                 if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
                     errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");*/
                 if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
-                    errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
+                    errMap.put("productDetails["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
                 if (prod.getParty() == null || prod.getParty().getId() == null || prod.getParty().getId().compareTo(0L) < 0) {
-                    errMap.put("product["+i+"].party","NotNull.invoiceCommand.product.party");
+                    errMap.put("productDetails["+i+"].party","NotNull.invoiceCommand.product.party");
                 }
             }
 
@@ -92,7 +92,7 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
                                 uniqChNo.add(productDetails.get(i).getChNo());
                         } else {
                             int chNoIndex = uniqChNo.indexOf(productDetails.get(i).getChNo());
-                            errMap.put("product["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
+                            errMap.put("productDetails["+chNoIndex+"].chNo","duplicate.invoiceCommand.product.chNo");
                         }
                     }
                 }

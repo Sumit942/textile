@@ -74,6 +74,7 @@ public class ProductDetailController extends BaseController{
                                         command.getProductDetails().stream().map(ProductDetail::getChNo).collect(Collectors.toList()),
                                         command.getProductDetails().stream().map(ProductDetail::getId).collect(Collectors.toList())},
                                         Locale.ENGLISH));
+                return "redirect:/productDetail";
             } else {
                 redirectAttr.addFlashAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND,command);
                 log.error("result has doValidation Errors");
@@ -81,10 +82,11 @@ public class ProductDetailController extends BaseController{
                 log.info("{} save Unsuccessfull", logPrefix);
             }
             redirectAttr.addFlashAttribute("actionResponse",response);
+            return "/productDetails";
         } catch (Throwable e) {
             log.error("Error while saving productDetails-"+e.getLocalizedMessage(), e);
+            return "/productDetails";
         }
-        return "redirect:/productDetail";
 
     }
 

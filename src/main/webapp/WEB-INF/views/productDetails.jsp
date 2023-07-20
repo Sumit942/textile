@@ -46,7 +46,7 @@
                   <th style="width: 5%;"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="productDescTBody">
                 <c:choose>
                     <c:when test="${empty productDetailsCommand.productDetails}">
                         <tr>
@@ -62,6 +62,7 @@
                             <td>
                                 <form:hidden path="productDetails[0].product.id"/>
                                 <form:input path="productDetails[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                                <form:hidden path="productDetails[0].product.active" />
                                 <form:errors path="productDetails[0].product.name" cssClass="error"/>
                             </td>
                             <td>
@@ -95,7 +96,7 @@
                                 <tr>
                                     <td>
                                         <span id="productDetails[${index.index}].srNo">${index.index + 1}</span>
-                                        <!-- <form:hidden path="productDetails[${index.index}].id" /> -->
+                                        <form:hidden path="productDetails[${index.index}].id" />
                                     </td>
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].party.id" />
@@ -105,6 +106,7 @@
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].product.id" />
                                         <form:input path="productDetails[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
+                                        <form:hidden path="productDetails[${index.index}].product.active" />
                                         <form:errors path="productDetails[${index.index}].product.name" cssClass="error"/>
                                     </td>
                                     <td>
@@ -130,8 +132,8 @@
                                         <form:errors path="productDetails[${index.index}].rate" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <c:if test="${index.index == invoiceCommand.product.size()-1}">
-                                            <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;"/>
+                                        <c:if test="${index.index > 0}">
+                                            <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow(${index.index})" style="margin-left: 18%;width: 60%;"/>
                                         </c:if>
                                     </td>
                                 </tr>
@@ -203,8 +205,9 @@
                         '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].product.party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPartyName).val() : '')+'">'+
                     '</td>'+
                     '<td>'+
-                        '<input type="hidden" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
+                        '<input type="hidden" id="productDetails='+i+'.product.id" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
                         '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
+                        '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active />'+
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
@@ -221,16 +224,56 @@
                         '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
+                        '<input id="productDetails'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" style="width: 100%;" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
                     '</td>'+
                     '<td>'+
-                        '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
+                        '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
                     '</td>'+
                   '</tr>';
 
         $('#productDetailsTable tbody').append(row);
+        $('#productDetails'+i+'.party.name').focus()
     }
 
+function productDelRow(i) {
+    console.log('delete: ' + i)
+    var del = confirm('Do you want to delete '+(i ? i : "last")+' row?')
+    if (!del){
+        return;
+    }
+
+    var rowCount = $("#productDescTBody > tr").length
+    if (rowCount > 1) {
+        $("#productDescTBody > tr:eq("+i+")").remove()
+        updateProdDetailsInputTagsIdAndName()
+    }
+}
+function updateProdDetailsInputTagsIdAndName() {
+    var rowIdSelector = 'productDescTBody > tr'
+
+    for (var i = 1; i < $("#"+rowIdSelector).length; i++) {
+        var row = rowIdSelector+':eq('+i+')'
+        console.log('row-->', row)
+        $('#'+row).find('td:eq(0)').html('<span id="productDetails['+(i-1)+'].srNo">'+i+'</span>')
+        $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+(i-1)+'.id').attr('name','product['+(i-1)+'].id')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+(i-1)+'.party.id').attr('name','product['+(i-1)+'].party.id')
+
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.product.id').attr('name','product['+(i-1)+'].product.id')
+        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name')
+        $('#'+row).find('td:eq(2)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
+
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo')
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
+        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        try {
+            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+        } catch (err) {
+            console.log('error in change id for productDelRow ',err)
+        }
+    }
+}
     function hasDuplicateChNos() {
         var tempArr = new Array();
         var hasDupli = false;
@@ -259,7 +302,6 @@
                         name : request.term
                     },
                     success : function(data) {
-                        //$("#productDetails"+index+"\\.product\\.hsn").val('')
                         $("#productDetails"+index+"\\.product\\.id").val('')
                         response(data);
                     },
@@ -275,7 +317,7 @@
                 this.value = ui.item.name
                 var productId = ui.item.id
                 $("#productDetails"+index+"\\.product\\.id").val(productId)
-                $("#productDetails"+index+"\\.party.name").focus()
+                $("#productDetails"+index+"\\.chNo").focus()
                 if (productId != '') {
                     getProductMaxRateByCompanyId(index,productId)
                 }
