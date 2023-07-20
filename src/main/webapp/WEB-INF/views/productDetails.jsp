@@ -96,7 +96,7 @@
                                 <tr>
                                     <td>
                                         <span id="productDetails[${index.index}].srNo">${index.index + 1}</span>
-                                        <form:hidden path="productDetails[${index.index}].id" />
+                                        <!-- <form:hidden path="productDetails[${index.index}].id" /> -->
                                     </td>
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].party.id" />

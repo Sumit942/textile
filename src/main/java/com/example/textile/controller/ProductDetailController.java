@@ -122,4 +122,10 @@ public class ProductDetailController extends BaseController{
                                             @RequestParam(value = "invoiceId",required = false) Long invoiceId)  {
         return productDetailService.findByPartyIdAndInvoiceId(partyId, invoiceId);
     }
+
+    @GetMapping("/searchByChallanNo")
+    @ResponseBody
+    public List<ProductDetail> findByChallanNo(@RequestParam("chNo") String chNo) {
+        return productDetailService.findByChNo(chNo);
+    }
 }

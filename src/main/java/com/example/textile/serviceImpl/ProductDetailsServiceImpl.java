@@ -41,8 +41,14 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                 .forEach(e -> {
                     Product savedPrdt = productRepo.findByNameIgnoreCase(e.getProduct().getName());
                     if (savedPrdt != null) {
+                        if (!savedPrdt.getActive()) {
+                            savedPrdt.setActive(true);
+                            productRepo.save(savedPrdt);
+                        }
                         e.getProduct().setId(savedPrdt.getId());
                     } else {
+                        if (!e.getProduct().getActive())
+                            e.getProduct().setActive(true);
                         productRepo.save(e.getProduct());
                         log.info("{} saving product{} ", logPrefix,e.getProduct());
                     }

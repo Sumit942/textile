@@ -216,7 +216,7 @@
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].chNo" class="numbersOnly" style="width: 100%;"/>
+                <form:input path="product[0].chNo" class="numbersOnly" required="true" style="width: 100%;" onkeyup="autoSearchChallanNo(event,this, 0)"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
@@ -259,7 +259,7 @@
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].chNo" class="numbersOnly" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" style="width: 100%;" onkeyup="autoSearchChallanNo(event, this, ${index.index})"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
@@ -742,7 +742,49 @@ function shipToPartyAutoComplete(event,thisObj) {
                 "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
-
+    /**                 productDescription script                  **/
+function autoSearchChallanNo(event,obj,index) {
+    if (event.key == 'Enter') {
+        return;
+    }
+    $(obj).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/productDetail/searchByChallanNo",
+                dataType : 'json',
+                data : {
+                    chNo : request.term
+                },
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 3,
+        select : function(event, ui) {
+            populateProductDetail(ui, index)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
+    };
+}
+function populateProductDetail(ui,i) {
+    $('#product'+i+'\\.product\\.id').val(ui.item.product.id)
+    $('#product'+i+'\\.product\\.active').val(ui.item.product.active)
+    $('#product'+i+'\\.product\\.name').val(ui.item.product.name)
+    $('#product'+i+'\\.chNo').val(ui.item.chNo)
+    $('#product'+i+'\\.hsn').val(ui.item.hsn)
+    $('#product'+i+'\\.unitOfMeasure\\.id').val(ui.item.unitOfMeasure.id)
+    $('#product'+i+'\\.quantity').val(ui.item.quantity)
+    $('#product'+i+'\\.rate').val(ui.item.rate)
+    //$('#product'+i+'\\.totalPrice').val(ui.item.totalPrice)
+    updateRowAmount(i)
+}
     /**                 productDescription script                  **/
 function autoSearchProduct(event,obj,index) {
 if (event.key == 'Enter') {
@@ -872,7 +914,7 @@ function addProductDescRow(addRowType) {
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
@@ -950,8 +992,8 @@ function updateProdDetailsInputTagsIdAndName() {
         $('#'+row).find('td:eq(0)').html('<span id="product['+(i-1)+'].srNo">'+i+'</span>')
         $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+(i-1)+'.product.id').attr('name','product['+(i-1)+'].product.id')
         $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
-        $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name')
-        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo')
+        $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name').attr('onkeyup','autoSearchProduct(event,this,'+(i-1)+')')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo').attr('onkeyup','autoSearchChallanNo(event, this, '+(i-1)+')')
         $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
         $('#'+row).find('td:eq(4)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
         $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
@@ -1017,7 +1059,7 @@ function createProductDetailsRow(prodDetails) {
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+prodDetails[i].product.name+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'">'+
+                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" required="required" type="text" class="numbersOnly" value="prodDetails['+i+'].chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="'+prodDetails[i].product.hsn+'" style="width: 100%;">'+

@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -90,8 +91,9 @@ public class ProductDetail implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
+    @JsonBackReference
     public Invoice getInvoice() {
         return invoice;
     }
