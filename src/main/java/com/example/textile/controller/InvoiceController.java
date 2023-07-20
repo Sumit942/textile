@@ -99,7 +99,7 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value="toDate", required = false) Date toDate,
                                        @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                        @RequestParam(value = "companyId", required = false) Long companyId,
-                                       @RequestParam(value = "challanNo", required = false) String challanNo,
+                                       @RequestParam(value = "challanNo", required = false) Long challanNo,
                                       RedirectAttributes redirectAttributes) {
         String logPrefix = "invoiceReport() ";
         String companyName = null;
@@ -107,12 +107,12 @@ public class InvoiceController extends BaseController {
         ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
         List<InvoiceView> invoiceReport = null;
-        if (null != challanNo && !challanNo.isEmpty()) {
+        if (null != challanNo && challanNo.compareTo(0L) > 0) {
             log.info("{} findByChNo", logPrefix);
             List<Long> invoiceId = new ArrayList<>();
             List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
             if (productDetails != null)
-                productDetails.stream().forEach(e -> invoiceId.add(e.getInvoice().getId()));
+                productDetails.forEach(e -> invoiceId.add(e.getInvoice().getId()));
             if (!invoiceId.isEmpty())
                 invoiceReport = viewService.findByInvoiceId(invoiceId);
 
@@ -120,7 +120,7 @@ public class InvoiceController extends BaseController {
             invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
         }
         if (invoiceReport != null && !invoiceReport.isEmpty()) {
-            Page<InvoiceView> invoiceViewsReportPage = new PageImpl<InvoiceView>(invoiceReport);
+            Page<InvoiceView> invoiceViewsReportPage = new PageImpl<>(invoiceReport);
             redirectAttributes.addFlashAttribute("invoices", invoiceViewsReportPage);
             if (companyId != null) {
                 companyName = invoiceReport.get(0).getBillToPartyName();

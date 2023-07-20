@@ -11,9 +11,9 @@ public interface ProductDetailService {
 
     List<ProductDetail> saveAll(List<ProductDetail> productDetails);
 
-    List<ProductDetail> findByChNo(String s);
+    List<ProductDetail> findByChNo(Long s);
 
-    List<String> findAllChNo();
+    List<Long> findAllChNo();
 
     List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId, Long invoiceId);
 

@@ -119,7 +119,7 @@ class TextileApplicationTests {
 
         List<ProductDetail> prodList = new ArrayList<>();
         ProductDetail productDetail = new ProductDetail();
-        productDetail.setChNo("test-16");
+        productDetail.setChNo(16L);
         productDetail.setQuantity(500.0);
         productDetail.setRate(15.0);
         productDetail.setTotalPrice(BigDecimal.ZERO);
@@ -214,7 +214,7 @@ class TextileApplicationTests {
         Product product = productRepo.findById(2L).get();
         productDetail.setProduct(product);
         productDetail.setUnitOfMeasure(uom);
-        productDetail.setChNo("001-test-1-ch");
+        productDetail.setChNo(1L);
         productDetail.setQuantity(100.0);
         productDetail.setRate(10.0);
         productDetail.setTotalPrice(BigDecimal.valueOf(1000));

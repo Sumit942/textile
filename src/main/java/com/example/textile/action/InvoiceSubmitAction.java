@@ -238,7 +238,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             }
             if (errMap.isEmpty()) {
                 //check for duplicate chNo
-                List<String> uniqChNo = new ArrayList<>();
+                List<Long> uniqChNo = new ArrayList<>();
                 for (int i = 0; i < invoice.getProduct().size(); i++) {
                     if (invoice.getProduct().get(i).getChNo() != null) {
                         if (!uniqChNo.contains(invoice.getProduct().get(i).getChNo())) {

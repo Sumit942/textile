@@ -1,7 +1,6 @@
 package com.example.textile.service;
 
 import com.example.textile.entity.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public interface InvoiceService {
 
     Integer getOldInvoiceLastId();
 
-    List<ProductDetail> findByChNo(String chNo);
+    List<ProductDetail> findByChNo(Long chNo);
 
     List<Invoice> findAll();
 

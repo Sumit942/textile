@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Long> {
-    List<ProductDetail> findByChNo(String chNo);
+    List<ProductDetail> findByChNo(Long chNo);
 
     @Query("SELECT pd.chNo FROM ProductDetail pd WHERE pd.chNo IS NOT NULL")
-    List<String> findAllChNo();
+    List<Long> findAllChNo();
 
     List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId,Long invoiceId);
 }

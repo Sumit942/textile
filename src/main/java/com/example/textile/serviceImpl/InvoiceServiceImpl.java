@@ -56,7 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<ProductDetail> findByChNo(String chNo) {
+    public List<ProductDetail> findByChNo(Long chNo) {
         return productDetailRepo.findByChNo(chNo);
     }
 

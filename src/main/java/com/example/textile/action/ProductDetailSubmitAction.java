@@ -76,7 +76,7 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
 
             if (errMap.isEmpty()) {
                 //check for duplicate chNo
-                List<String> uniqChNo = new ArrayList<>();
+                List<Long> uniqChNo = new ArrayList<>();
                 for (int i = 0; i < productDetails.size(); i++) {
                     if (productDetails.get(i).getChNo() != null) {
                         if (!uniqChNo.contains(productDetails.get(i).getChNo())) {

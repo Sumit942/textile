@@ -96,8 +96,7 @@ public class ProductDetailController extends BaseController{
         log.info("{} Entry",logPrefix);
         List<Long> missingChNos = new ArrayList<>();
 
-        List<Long> allChNo = productDetailService.findAllChNo().stream()
-                .map(Long::parseLong).collect(Collectors.toList());
+        List<Long> allChNo = productDetailService.findAllChNo();
 
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);
@@ -125,7 +124,7 @@ public class ProductDetailController extends BaseController{
 
     @GetMapping("/searchByChallanNo")
     @ResponseBody
-    public List<ProductDetail> findByChallanNo(@RequestParam("chNo") String chNo) {
+    public List<ProductDetail> findByChallanNo(@RequestParam("chNo") Long chNo) {
         return productDetailService.findByChNo(chNo);
     }
 }

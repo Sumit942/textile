@@ -67,12 +67,12 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public List<ProductDetail> findByChNo(String chNo) {
+    public List<ProductDetail> findByChNo(Long chNo) {
         return productDetailRepo.findByChNo(chNo);
     }
 
     @Override
-    public List<String> findAllChNo() {
+    public List<Long> findAllChNo() {
         return productDetailRepo.findAllChNo();
     }
 

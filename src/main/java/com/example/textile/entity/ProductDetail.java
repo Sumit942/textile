@@ -15,7 +15,7 @@ import java.util.Objects;
 public class ProductDetail implements Serializable {
     private Long id;
     private Product product;
-    private String chNo;
+    private Long chNo;
     private Unit unitOfMeasure;
     private Double quantity;
     private Double rate;
@@ -36,7 +36,7 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     public Product getProduct() {
         return product;
@@ -46,15 +46,15 @@ public class ProductDetail implements Serializable {
         this.product = product;
     }
 
-    public String getChNo() {
+    public Long getChNo() {
         return chNo;
     }
 
-    public void setChNo(String chNo) {
+    public void setChNo(Long chNo) {
         this.chNo = chNo;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public Unit getUnitOfMeasure() {
         return unitOfMeasure;
     }
@@ -102,7 +102,7 @@ public class ProductDetail implements Serializable {
         this.invoice = invoice;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public Company getParty() {
         return party;
     }
