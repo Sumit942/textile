@@ -124,7 +124,7 @@
                                         <form:errors path="productDetails[${index.index}].unitOfMeasure" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <form:input path="productDetails[${index.index}].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                                        <form:input path="productDetails[${index.index}].quantity" required="true" class="numbersOnly" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].quantity" cssClass="error"/>
                                     </td>
                                     <td>
@@ -201,13 +201,13 @@
                         //'<input id="productDetails'+i+'.id" name="productDetails['+i+'].id" type="hidden" value="">'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].product.party.id" type="hidden" value="'+(addRowType == 'duplicate' ? $(lastPartyId).val() : '')+'">'+
-                        '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].product.party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPartyName).val() : '')+'">'+
+                        '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].party.id" type="hidden" value="'+(addRowType == 'duplicate' ? $(lastPartyId).val() : '')+'">'+
+                        '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPartyName).val() : '')+'">'+
                     '</td>'+
                     '<td>'+
-                        '<input type="hidden" id="productDetails='+i+'.product.id" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
+                        '<input type="hidden" id="productDetails'+i+'.product.id" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
                         '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
-                        '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active />'+
+                        '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active" value="true" />'+
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
@@ -221,7 +221,7 @@
                         '</select>'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
+                        '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly" >'+
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" style="width: 100%;" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
@@ -232,7 +232,7 @@
                   '</tr>';
 
         $('#productDetailsTable tbody').append(row);
-        $('#productDetails'+i+'.party.name').focus()
+        $('#productDetails'+i+'\\.party\\.name').focus()
     }
 
 function productDelRow(i) {
@@ -254,21 +254,22 @@ function updateProdDetailsInputTagsIdAndName() {
     for (var i = 1; i < $("#"+rowIdSelector).length; i++) {
         var row = rowIdSelector+':eq('+i+')'
         console.log('row-->', row)
-        $('#'+row).find('td:eq(0)').html('<span id="productDetails['+(i-1)+'].srNo">'+i+'</span>')
-        $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+(i-1)+'.id').attr('name','product['+(i-1)+'].id')
-        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+(i-1)+'.party.id').attr('name','product['+(i-1)+'].party.id')
+        $('#'+row).find('td:eq(0)').html('<span id="productDetails['+i+'].srNo">'+(i+1)+'</span>')
+        $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+i+'.id').attr('name','product['+i+'].id')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+i+'.party.id').attr('name','product['+i+'].party.id')
+        $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+i+'.party.name').attr('name','product['+i+'].party.name')
 
-        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.product.id').attr('name','product['+(i-1)+'].product.id')
-        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name')
-        $('#'+row).find('td:eq(2)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+i+'.product.id').attr('name','product['+i+'].product.id')
+        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+i+'.product.name').attr('name','product['+i+'].product.name')
+        $('#'+row).find('td:eq(2)').find('input:eq(2)').attr('id','product'+i+'.product.active').attr('name','product['+i+'].product.active')
 
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo')
-        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
-        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
-        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
-        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+i+'.chNo').attr('name','product['+i+'].chNo')
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+i+'.hsn').attr('name','product['+i+'].hsn')
+        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+i+'.unitOfMeasure.id').attr('name','product['+i+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+i+'.quantity').attr('name','product['+i+'].quantity')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+i+'.rate').attr('name','product['+i+'].rate')
         try {
-            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+i+')')
         } catch (err) {
             console.log('error in change id for productDelRow ',err)
         }
@@ -317,6 +318,7 @@ function updateProdDetailsInputTagsIdAndName() {
                 this.value = ui.item.name
                 var productId = ui.item.id
                 $("#productDetails"+index+"\\.product\\.id").val(productId)
+                $("#productDetails"+index+"\\.product\\.active").val(ui.item.active)
                 $("#productDetails"+index+"\\.chNo").focus()
                 if (productId != '') {
                     getProductMaxRateByCompanyId(index,productId)

@@ -54,7 +54,7 @@ public class ProductDetailController extends BaseController{
     @PostMapping
     public String submit(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
                          BindingResult result, ModelMap model, RedirectAttributes redirectAttr) {
-        //TODO: saving stuffs
+
         String logPrefix = "submit() |";
         log.info("{} Entry",logPrefix);
         Map<String, Object> parameterMap = new HashMap<>();

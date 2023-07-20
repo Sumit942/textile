@@ -49,7 +49,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                 });
         productDetails.stream().filter(e -> e.getProduct().getId() != null)
                     .forEach(e -> {
-                        if (!e.getProduct().isActive()) {
+                        if (!e.getProduct().getActive()) {
                             e.getProduct().setActive(true);
                             productRepo.save(e.getProduct());
                             log.info("{} updating Product [Active =true; id ={}]", logPrefix, e.getProduct().getId());

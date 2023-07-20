@@ -776,6 +776,7 @@ $("#product"+index+"\\.product\\.id").val('')
             var productId = ui.item.id
             //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
             $("#product"+index+"\\.product\\.id").val(productId)
+            $("#product"+index+"\\.product\\.active").val(ui.item.active)
             //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
             if (productId != '') {

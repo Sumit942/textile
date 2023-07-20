@@ -90,7 +90,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.getProduct().stream()
                 .filter(e -> e.getProduct().getId() != null && e.getProduct().getId() > 0L)
                 .forEach(e -> {
-                    if (!e.getProduct().isActive()) {
+                    if (!e.getProduct().getActive()) {
                         e.getProduct().setActive(true);
                         productRepo.save(e.getProduct());
                         log.info("{} updating Product active=[true] {}", logPrefix, e.getProduct().getId());
