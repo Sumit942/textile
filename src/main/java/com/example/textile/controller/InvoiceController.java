@@ -112,7 +112,10 @@ public class InvoiceController extends BaseController {
             List<Long> invoiceId = new ArrayList<>();
             List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
             if (productDetails != null)
-                productDetails.forEach(e -> invoiceId.add(e.getInvoice().getId()));
+                productDetails.forEach(e -> {
+                    if (e.getInvoice() != null)
+                    invoiceId.add(e.getInvoice().getId());
+                });
             if (!invoiceId.isEmpty())
                 invoiceReport = viewService.findByInvoiceId(invoiceId);
 
