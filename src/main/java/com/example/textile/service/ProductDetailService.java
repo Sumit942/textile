@@ -17,4 +17,5 @@ public interface ProductDetailService {
 
     List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId, Long invoiceId);
 
+    List<Long> findAllChNoAndInvoice_IsNull();
 }

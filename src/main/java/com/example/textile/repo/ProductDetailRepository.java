@@ -14,6 +14,9 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, Lo
     @Query("SELECT pd.chNo FROM ProductDetail pd WHERE pd.chNo IS NOT NULL")
     List<Long> findAllChNo();
 
+    @Query("SELECT pd.chNo FROM ProductDetail pd WHERE pd.invoice IS NULL ORDER BY pd.chNo ASC")
+    List<Long> findAllChNoAndInvoice_IsNull();
+
     List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId,Long invoiceId);
 
     @Modifying

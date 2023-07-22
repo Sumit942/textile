@@ -4,7 +4,7 @@
 <body>
 <%@ include file="./common/navigation.jspf" %>
 <div class="container">
-<table id="challanTable" class="table table-striped table-bordered">
+<table id="missingChallanTable" class="table table-striped table-bordered">
 
     <thead>
         <tr><th class="text-center" colspan="20">Missing Challan Nos</th></tr>
@@ -24,6 +24,24 @@
         </c:forEach>
         </tr>
     </tbody>
+</table>
+<hr>
+<table id="unBilledChallanTable" class="table table-striped table-bordered">
+
+    <thead>
+        <tr><th class="text-center" colspan="20">UnBilled Challan Nos</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+        <c:forEach items="${unBilledChNo}" var="challanNo" varStatus="index">
+            <td>${challanNo}</td>
+            ${(index.index + 1) % 20 == 0 ? '</tr><tr>' : ''}
+        </c:forEach>
+        <c:forEach begin="1" end="${20 - unBilledChNo.size() % 20}" >
+            <td></td>
+        </c:forEach>
+        </tr>
+    </tbody>
     <tfoot>
         <tr><td class="text-center" colspan="20">--------------END------------</td></tr>
     </tfoot>
@@ -31,7 +49,7 @@
 </div>
 <script>
 $(document).ready(function(e){
-    $("#challanTable").DataTable({
+    $("#missingChallanTable").DataTable({
         dom: 'Bfrtip',
         buttons: [
             'excelHtml5', 'csvHtml5', 'pdfHtml5'

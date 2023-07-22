@@ -81,4 +81,8 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         return productDetailRepo.findByPartyIdAndInvoiceId(partyId, invoiceId);
     }
 
+    @Override
+    public List<Long> findAllChNoAndInvoice_IsNull() {
+        return productDetailRepo.findAllChNoAndInvoice_IsNull();
+    }
 }

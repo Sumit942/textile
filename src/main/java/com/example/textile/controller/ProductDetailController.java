@@ -97,6 +97,7 @@ public class ProductDetailController extends BaseController{
         List<Long> missingChNos = new ArrayList<>();
 
         List<Long> allChNo = productDetailService.findAllChNo();
+        List<Long> unBilledChNo = productDetailService.findAllChNoAndInvoice_IsNull();
 
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);
@@ -107,6 +108,7 @@ public class ProductDetailController extends BaseController{
                     missingChNos.add(i);
 
             model.addAttribute("missingChallanNos", missingChNos);
+            model.addAttribute("unBilledChNo", unBilledChNo);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
