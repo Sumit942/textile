@@ -37,4 +37,6 @@ public interface InvoiceService {
     void deleteById(Long id);
 
     void deleteByInvoiceNo(String invoiceNo);
+
+    void deleteProductDetailsByChNoAndInvoice_isNull(List<Long> challanNo);
 }

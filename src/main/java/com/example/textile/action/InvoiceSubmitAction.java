@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
@@ -34,8 +35,16 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
         //adding logged in user to entity for audit purpose
         User user = (User) parameterMap.get(TextileConstants.USER);
         invoice.setUser(user);
-
-        invoiceService.saveOrUpdate(invoice);
+        try {
+            List<Long> savedChallanId = new ArrayList<>();
+            for (ProductDetail e : invoice.getProduct()) {
+                savedChallanId.add(e.getChNo());
+            }
+            invoiceService.saveOrUpdate(invoice);
+            invoiceService.deleteProductDetailsByChNoAndInvoice_isNull(savedChallanId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         ActionResponse actionResponse = new ActionResponse(ResponseType.SUCCESS);
         log.info("{} [Action={}, Response=SUCCESS, invoiceNo={}, totalAmount={}]",logPrefix,action.getActionType(),invoice.getInvoiceNo(),invoice.getTotalAmountAfterTax());
         log.info("{} Exit", logPrefix);
@@ -253,11 +262,16 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                 if (errMap.isEmpty()) {
                     for (int i = 0; i < uniqChNo.size(); i++) {
                         List<ProductDetail> byChNo = invoiceService.findByChNo(uniqChNo.get(i));
-                        if (!byChNo.isEmpty() && (invoice.isNew()
-                                || byChNo.get(0).getInvoice().getId().compareTo(invoice.getId()) != 0)) {
-//                            errMap.put("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo");
-                            result.rejectValue("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo",
-                                    new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()},"Challan No Already Used");
+                        if (!byChNo.isEmpty()) {
+                            log.info("doValidation() checking challanNos: {}",byChNo.get(0));
+                            if (invoice.isNew() || (byChNo.get(0).getInvoice() !=null && byChNo.get(0).getInvoice().getId().compareTo(invoice.getId()) != 0)) {
+//                              errMap.put("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo");
+                                result.rejectValue("product[" + i + "].chNo", "alreadyExist.invoiceCommand.product.chNo",
+                                        new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()}, "Challan No Already Used");
+                            } else if (byChNo.get(0).getInvoice() == null && byChNo.get(0).getParty().getId().compareTo(invoice.getBillToParty().getId()) != 0) {
+                                result.rejectValue("product[" + i + "].chNo", "alreadyAdded.diffParty.invoiceCommand.product.chNo",
+                                        new Object[]{byChNo.get(0).getParty().getName()}, "Challan No Already Used");
+                            }
                         }
                     }
                 }

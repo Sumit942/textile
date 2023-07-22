@@ -131,7 +131,7 @@ public class ProductDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
+        return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", party=" + party +", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
     }
 
     @Override

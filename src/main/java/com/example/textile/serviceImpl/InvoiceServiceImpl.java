@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +45,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     private BankDetailRepository bankDetailRepo;
 
     @Autowired private ProductDetailRepository productDetailRepo;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Value("${invoice.startCount}")
     private Integer invoiceStartCount;
@@ -296,5 +301,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void deleteByInvoiceNo(String invoiceNo) {
         invoiceRepo.deleteByInvoiceNo(invoiceNo);
+    }
+
+    @Override
+    public void deleteProductDetailsByChNoAndInvoice_isNull(List<Long> challanNo) {
+
+        productDetailRepo.deleteAllByChNoAndInvoice_IsNull(challanNo);
+//        Query query = entityManager.createQuery("DELETE FROM ProductDetail pd WHERE pd.id IN (:id) AND pd.invoice IS NULL");
+//        query.setParameter("id",challanId);
+//        int i = query.executeUpdate();
+//        log.info("deleteProductDetailsByIdAndInvoice_isNull() count:[{}]",i);
     }
 }

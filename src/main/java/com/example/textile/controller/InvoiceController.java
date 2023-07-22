@@ -279,6 +279,10 @@ public class InvoiceController extends BaseController {
     }
 
     private Invoice getNewInstanceOfInvoice(Invoice invoice) {
+        //validating invoice
+        invoice.getProduct().forEach(e-> {
+            e.getParty().setId(invoice.getBillToParty().getId());
+        });
 
         Invoice invoiceBackUp = new Invoice();
         invoiceBackUp.setId(invoice.getId());
