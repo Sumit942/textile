@@ -97,7 +97,8 @@ public class ProductDetailController extends BaseController{
         List<Long> missingChNos = new ArrayList<>();
 
         List<Long> allChNo = productDetailService.findAllChNo();
-        List<Long> unBilledChNo = productDetailService.findAllChNoAndInvoice_IsNull();
+//        List<Long> unBilledChNo = productDetailService.findAllChNoAndInvoice_IsNull();
+        List<ProductDetail> unBilledChNo = productDetailService.findAllByInvoice(null);
 
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);

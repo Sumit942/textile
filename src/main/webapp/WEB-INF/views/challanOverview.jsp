@@ -33,8 +33,10 @@
     </thead>
     <tbody>
         <tr>
-        <c:forEach items="${unBilledChNo}" var="challanNo" varStatus="index">
-            <td>${challanNo}</td>
+        <c:forEach items="${unBilledChNo}" var="productDetail" varStatus="index">
+            <td><a data-bs-toggle="tooltip" data-bs-placement="top" title="${productDetail.party.name}">
+                ${productDetail.chNo}</a>
+            </td>
             ${(index.index + 1) % 20 == 0 ? '</tr><tr>' : ''}
         </c:forEach>
         <c:forEach begin="1" end="${20 - unBilledChNo.size() % 20}" >

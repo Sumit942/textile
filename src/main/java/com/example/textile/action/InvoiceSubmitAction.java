@@ -264,13 +264,16 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                         List<ProductDetail> byChNo = invoiceService.findByChNo(uniqChNo.get(i));
                         if (!byChNo.isEmpty()) {
                             log.info("doValidation() checking challanNos: {}",byChNo.get(0));
-                            if (invoice.isNew() || (byChNo.get(0).getInvoice() !=null && byChNo.get(0).getInvoice().getId().compareTo(invoice.getId()) != 0)) {
+                            if (byChNo.get(0).getInvoice() == null && byChNo.get(0).getParty().getId().compareTo(invoice.getBillToParty().getId()) != 0) {
+                                result.rejectValue("product[" + i + "].chNo", "alreadyAdded.diffParty.invoiceCommand.product.chNo",
+                                        new Object[]{byChNo.get(0).getParty().getName()}, "Challan No Already Added");
+                            } else if (byChNo.get(0).getInvoice() !=null && !invoice.isNew() && byChNo.get(0).getInvoice().getId().compareTo(invoice.getId()) != 0) {
 //                              errMap.put("product["+i+"].chNo","alreadyExist.invoiceCommand.product.chNo");
                                 result.rejectValue("product[" + i + "].chNo", "alreadyExist.invoiceCommand.product.chNo",
                                         new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()}, "Challan No Already Used");
-                            } else if (byChNo.get(0).getInvoice() == null && byChNo.get(0).getParty().getId().compareTo(invoice.getBillToParty().getId()) != 0) {
-                                result.rejectValue("product[" + i + "].chNo", "alreadyAdded.diffParty.invoiceCommand.product.chNo",
-                                        new Object[]{byChNo.get(0).getParty().getName()}, "Challan No Already Used");
+                            } else if (invoice.isNew() && byChNo.get(0).getInvoice() != null) {
+                                result.rejectValue("product[" + i + "].chNo", "alreadyExist.invoiceCommand.product.chNo",
+                                        new Object[]{byChNo.get(0).getInvoice().getInvoiceNo()}, "Challan No Already Used");
                             }
                         }
                     }
