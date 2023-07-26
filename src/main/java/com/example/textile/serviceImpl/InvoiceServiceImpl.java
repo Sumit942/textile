@@ -220,6 +220,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setBillToParty(bParty);
             invoice.setShipToParty(sParty);
         }
+        //setting invoice.billToParty.id to productDetail.party.id to avoid transient exception
+        for (ProductDetail pd : invoice.getProduct())
+            pd.setParty(invoice.getBillToParty());
 
         log.info("{} saving-> bParty{}; sParty{}; [{}]", logPrefix, invoice.getBillToParty().getId(), invoice.getShipToParty().getId(), logSuffix);
         log.info("{} Exit {}",logPrefix,logSuffix);

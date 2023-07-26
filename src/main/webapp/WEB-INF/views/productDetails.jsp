@@ -36,13 +36,13 @@
             <thead>
                 <tr>
                   <th style="width: 5%;">Sr.No</th>
-                  <th style="width: 20%;">Party Name</th>
-                  <th style="width: 20%;">Product Description</th>
                   <th style="width: 10%;">Challan No</th>
-                  <th style="width: 10%;">HSN code</th>
+                  <th style="width: 25%;">Party Name</th>
+                  <th style="width: 25%;">Product Description</th>
+                  <th style="width: 7%;">HSN code</th>
                   <th style="width: 5%;">UOM</th>
-                  <th style="width: 15%;">Quantity</th>
-                  <th style="width: 5%;">Rate</th>
+                  <th style="width: 10%;">Qty</th>
+                  <th style="width: 8%;">Rate</th>
                   <th style="width: 5%;"></th>
                 </tr>
             </thead>
@@ -55,22 +55,22 @@
                                 <!-- <form:hidden path="productDetails[0].id" /> -->
                             </td>
                             <td>
+                                <form:input path="productDetails[0].chNo" class="numbersOnly form-control" style="width: 100%;"/>
+                                <form:errors path="productDetails[0].chNo" cssClass="error"/>
+                            </td>
+                            <td>
                                 <form:hidden path="productDetails[0].party.id" />
-                                <form:input path="productDetails[0].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, 0)" class="ui-autocomplete-input" autocomplete="off"/>
+                                <form:input path="productDetails[0].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, 0)" class="form-control ui-autocomplete-input" autocomplete="off" />
                                 <form:errors path="productDetails[0].party" cssClass="error"/>
                             </td>
                             <td>
                                 <form:hidden path="productDetails[0].product.id"/>
-                                <form:input path="productDetails[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                                <form:input path="productDetails[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="form-control ui-autocomplete-input" autocomplete="off"/>
                                 <form:hidden path="productDetails[0].product.active" />
                                 <form:errors path="productDetails[0].product.name" cssClass="error"/>
                             </td>
                             <td>
-                                <form:input path="productDetails[0].chNo" class="numbersOnly" style="width: 100%;"/>
-                                <form:errors path="productDetails[0].chNo" cssClass="error"/>
-                            </td>
-                            <td>
-                                <form:input path="productDetails[0].product.hsn" class="numbersOnly" required="true" style="width: 100%;"/>
+                                <form:input path="productDetails[0].product.hsn" class="numbersOnly form-control" required="true" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].product.hsn" cssClass="error"/>
                             </td>
                             <td>
@@ -80,11 +80,11 @@
                                 <form:errors path="productDetails[0].unitOfMeasure" cssClass="error"/>
                             </td>
                             <td>
-                                <form:input path="productDetails[0].quantity" required="true" class="numbersOnly" style="width: 100%;"/>
+                                <form:input path="productDetails[0].quantity" required="true" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].quantity" cssClass="error"/>
                             </td>
                             <td>
-                                <form:input path="productDetails[0].rate" class="numbersOnly" style="width: 100%;"/>
+                                <form:input path="productDetails[0].rate" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].rate" cssClass="error"/>
                             </td>
                             <td>
@@ -99,22 +99,22 @@
                                         <!-- <form:hidden path="productDetails[${index.index}].id" /> -->
                                     </td>
                                     <td>
+                                        <form:input path="productDetails[${index.index}].chNo" class="numbersOnly form-control" />
+                                        <form:errors path="productDetails[${index.index}].chNo" cssClass="error"/>
+                                    </td>
+                                    <td>
                                         <form:hidden path="productDetails[${index.index}].party.id" />
-                                        <form:input path="productDetails[${index.index}].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, ${index.index})"/>
+                                        <form:input path="productDetails[${index.index}].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, ${index.index})" class="form-control"/>
                                         <form:errors path="productDetails[${index.index}].party" cssClass="error"/>
                                     </td>
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].product.id" />
-                                        <form:input path="productDetails[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
+                                        <form:input path="productDetails[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})" class="form-control"/>
                                         <form:hidden path="productDetails[${index.index}].product.active" />
                                         <form:errors path="productDetails[${index.index}].product.name" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <form:input path="productDetails[${index.index}].chNo" class="numbersOnly" style="width: 100%;"/>
-                                        <form:errors path="productDetails[${index.index}].chNo" cssClass="error"/>
-                                    </td>
-                                    <td>
-                                        <form:input path="productDetails[${index.index}].product.hsn" required="true" style="width: 100%;"/>
+                                        <form:input path="productDetails[${index.index}].product.hsn" required="true" class="form-control"/>
                                         <form:errors path="productDetails[${index.index}].product.hsn" cssClass="error"/>
                                     </td>
                                     <td>
@@ -124,11 +124,11 @@
                                         <form:errors path="productDetails[${index.index}].unitOfMeasure" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <form:input path="productDetails[${index.index}].quantity" required="true" class="numbersOnly" style="width: 100%;"/>
+                                        <form:input path="productDetails[${index.index}].quantity" required="true" class="numbersOnly form-control" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].quantity" cssClass="error"/>
                                     </td>
                                     <td>
-                                        <form:input path="productDetails[${index.index}].rate" class="numbersOnly" style="width: 100%;"/>
+                                        <form:input path="productDetails[${index.index}].rate" class="numbersOnly form-control" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].rate" cssClass="error"/>
                                     </td>
                                     <td>
@@ -141,9 +141,14 @@
                     </c:otherwise>
                     </c:choose>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td></td><td></td><td></td><td></td><td></td>
+                    <td colspan="2"><button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button></td>
+                    <td colspan="2"><button type="submit" class="btn btn-success">Submit</button></td>
+                </tr>
+            </tfoot>
         </table>
-        <button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button>
-        <button type="submit" class="btn btn-success">Submit</button>
     </form:form>
 
 
@@ -201,19 +206,19 @@
                         //'<input id="productDetails'+i+'.id" name="productDetails['+i+'].id" type="hidden" value="">'+
                     '</td>'+
                     '<td>'+
+                        '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly form-control" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                    '</td>'+
+                    '<td>'+
                         '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].party.id" type="hidden" value="'+(addRowType == 'duplicate' ? $(lastPartyId).val() : '')+'">'+
-                        '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPartyName).val() : '')+'">'+
+                        '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPartyName).val() : '')+'" class="form-control">'+
                     '</td>'+
                     '<td>'+
                         '<input type="hidden" id="productDetails'+i+'.product.id" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
-                        '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
+                        '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'" class="form-control">'+
                         '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active" value="true" />'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
-                    '</td>'+
-                    '<td>'+
-                        '<input id="productDetails'+i+'.product.hsn" name="productDetails['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
+                        '<input id="productDetails'+i+'.product.hsn" name="productDetails['+i+'].product.hsn" required="required" type="text" value="6006" class="form-control">'+
                     '</td>'+
                     '<td>'+
                         '<select id="productDetails'+i+'.unitOfMeasure.id" name="productDetails['+i+'].unitOfMeasure.id" required="required">'+
@@ -221,10 +226,10 @@
                         '</select>'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly" >'+
+                        '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly form-control" >'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" style="width: 100%;" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
+                        '<input id="productDetails'+i+'.rate" name="productDetails['+i+'].rate" required="required" type="text" class="numbersOnly form-control" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
                     '</td>'+
                     '<td>'+
                         '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
@@ -232,7 +237,7 @@
                   '</tr>';
 
         $('#productDetailsTable tbody').append(row);
-        $('#productDetails'+i+'\\.party\\.name').focus()
+        $('#productDetails'+i+'\\.chNo').focus()
     }
 
 function productDelRow(i) {
@@ -256,14 +261,16 @@ function updateProdDetailsInputTagsIdAndName() {
         console.log('row-->', row)
         $('#'+row).find('td:eq(0)').html('<span id="productDetails['+i+'].srNo">'+(i+1)+'</span>')
         $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+i+'.id').attr('name','product['+i+'].id')
-        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+i+'.party.id').attr('name','product['+i+'].party.id')
-        $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+i+'.party.name').attr('name','product['+i+'].party.name')
 
-        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+i+'.product.id').attr('name','product['+i+'].product.id')
-        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+i+'.product.name').attr('name','product['+i+'].product.name')
-        $('#'+row).find('td:eq(2)').find('input:eq(2)').attr('id','product'+i+'.product.active').attr('name','product['+i+'].product.active')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+i+'.chNo').attr('name','product['+i+'].chNo')
 
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+i+'.chNo').attr('name','product['+i+'].chNo')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+i+'.party.id').attr('name','product['+i+'].party.id')
+        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+i+'.party.name').attr('name','product['+i+'].party.name')
+
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+i+'.product.id').attr('name','product['+i+'].product.id')
+        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','product'+i+'.product.name').attr('name','product['+i+'].product.name')
+        $('#'+row).find('td:eq(3)').find('input:eq(2)').attr('id','product'+i+'.product.active').attr('name','product['+i+'].product.active')
+
         $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+i+'.hsn').attr('name','product['+i+'].hsn')
         $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+i+'.unitOfMeasure.id').attr('name','product['+i+'].unitOfMeasure.id')
         $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+i+'.quantity').attr('name','product['+i+'].quantity')
@@ -319,7 +326,7 @@ function updateProdDetailsInputTagsIdAndName() {
                 var productId = ui.item.id
                 $("#productDetails"+index+"\\.product\\.id").val(productId)
                 $("#productDetails"+index+"\\.product\\.active").val(ui.item.active)
-                $("#productDetails"+index+"\\.chNo").focus()
+                $("#productDetails"+index+"\\.quantity").focus()
                 if (productId != '') {
                     getProductMaxRateByCompanyId(index,productId)
                 }
