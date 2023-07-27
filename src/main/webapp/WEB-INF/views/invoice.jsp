@@ -819,9 +819,15 @@ $("#product"+index+"\\.product\\.id").val('')
         minLength: 3,
         select : function(event, ui) {
             this.value = ui.item.name
+            var productId = ui.item.id
             //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
-            $("#product"+index+"\\.product\\.id").val(ui.item.id)
-            $("#product"+index+"\\.product\\.party.id").val(ui.item.party.id)
+            $("#product"+index+"\\.product\\.id").val(productId)
+            if (ui.item.party != undefined) {
+                $("#product"+index+"\\.product\\.party.id").val(ui.item.party.id)
+            } else {
+                $("#product"+index+"\\.product\\.party.id").val($("#billToParty\\.id"))
+            }
+
             $("#product"+index+"\\.product\\.active").val(ui.item.active)
             //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
