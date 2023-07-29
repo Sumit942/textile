@@ -41,8 +41,8 @@
                 </select>
             </td>
             <td>
-                <input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/>
-                <input id="downloadInvoiceReport" value="Download" type="submit" class="btn btn-primary"/>
+                <input name="showInvoiceReport" value="search" type="submit" class="btn btn-primary"/>
+                <input name="downloadInvoiceReport" value="Download" type="submit" class="btn btn-primary"/>
             </td>
 
         </tbody>
@@ -172,8 +172,8 @@ $(document).ready(function(e){
     }
     $("#invoiceTable").on('draw.dt',function(){
         console.log('datepicker initialized')
-        $('.paymentDt').datepicker();
-        $('.invoiceDate').datepicker();
+        $('.paymentDt').datepicker({dateFormat: 'dd/mm/yy'});
+        $('.invoiceDate').datepicker({dateFormat: 'dd/mm/yy'});
     })
 
     $( "#fromDate, #toDate, .paymentDt, .invoiceDate" ).datepicker({
@@ -229,7 +229,7 @@ function updateInvoice(invId, index, invNo) {
     var amtDebit = $('#invoice'+index+'\\.amtDr').val();
     $.ajax({
         url : "${pageContext.request.contextPath}/invoices/update",
-        type : 'POST',
+        type : 'PATCH',
         data : {
             invoiceId : invId,
             invoiceDt : invDt,
@@ -240,12 +240,12 @@ function updateInvoice(invId, index, invNo) {
             _csrf : $('input[name="_csrf"]').val()
         },
         success : function(data) {
-            alert('Invoice: '+invNo+' details updated successfully!!')
             if ( paidStatus == 'true' ) {
                 $('#tr'+index).css("background-color","rgba(144, 238, 144)")
             } else {
                 $('#tr'+index).css("background-color","rgba(0, 0, 0, 0)")
             }
+            alert('Invoice: '+invNo+' details updated successfully!!')
         },
         error : function(err) {
             alert('Failed to Update Invoice: '+invNo+' Details')
@@ -262,8 +262,5 @@ function autoSetAmtCr(index) {
     }
 }
 
-function downloadInvoiceReport() {
-    //TODO: ajax for download Excel
-}
 </script>
 <%@ include file="./common/footer.jspf" %>

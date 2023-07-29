@@ -106,13 +106,24 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value = "companyId", required = false) Long companyId,
                                        @RequestParam(value = "challanNo", required = false) Long challanNo,
                                        @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
-                                      RedirectAttributes redirectAttributes) {
+                                       @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport,
+                                       @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport,
+                                      RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String logPrefix = "invoiceReport() ";
         String companyName = null;
         log.info("{} Entry",logPrefix);
-        ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
         List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNo, companyId, challanNo, paymentStatus);
+
+        /* downloading excel report  **/
+        if (downloadInvoiceReport != null) {
+            invoiceReportDownloadExcel(invoiceReport, response);
+            return null;
+        }
+
+        /*  showing invoiceReport to FE  **/
+        ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
+
         if (invoiceReport != null && !invoiceReport.isEmpty()) {
             Page<InvoiceView> invoiceViewsReportPage = new PageImpl<>(invoiceReport);
             redirectAttributes.addFlashAttribute("invoices", invoiceViewsReportPage);
@@ -399,7 +410,7 @@ public class InvoiceController extends BaseController {
     }
 
 
-    @PostMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<String> updateInvoiceDetails(@RequestParam("invoiceId") Long invoiceId,
                                                        @RequestParam("invoiceDt") Date invoiceDt,
                                                        @RequestParam("paymentDt") Date paymentDt,
@@ -417,20 +428,9 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>("Something went wrong",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PostMapping("/downloadExcel")
-    public void invoiceReportDownloadExcel(@RequestParam(value = "fromDate", required = false) Date fromDate,
-                                      @RequestParam(value="toDate", required = false) Date toDate,
-                                      @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
-                                      @RequestParam(value = "companyId", required = false) Long companyId,
-                                      @RequestParam(value = "challanNo", required = false) Long challanNo,
-                                      @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
-                                      RedirectAttributes redirectAttributes,HttpServletResponse response) {
+    public void invoiceReportDownloadExcel(List<InvoiceView> invoiceReport,HttpServletResponse response) {
         String logPrefix = "invoiceReportDownloadExcel() ";
         log.info("{} Entry",logPrefix);
-
-        List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNo,
-                companyId, challanNo, paymentStatus);
-
 
         if (invoiceReport != null) {
             Map<String, String> headerMap = new LinkedHashMap<>();
@@ -456,6 +456,7 @@ public class InvoiceController extends BaseController {
             try {
                 workBook.write(bos);
                 byte[] content = bos.toByteArray();
+                log.info("Excel file created..");
 
                 response.setContentType("application/vnd.ms-excel");
                 response.setContentLength(content.length);
@@ -465,7 +466,7 @@ public class InvoiceController extends BaseController {
                 os.write(content, 0, content.length);
                 os.flush();
                 os.close();
-
+                log.info("Excel file write to reponse completed!!");
             } catch (IOException e) {
                 log.error(logPrefix + "Error writing workbook in response "+e.getLocalizedMessage(),e);
             }
