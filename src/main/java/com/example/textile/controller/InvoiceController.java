@@ -103,6 +103,7 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
                                        @RequestParam(value = "companyId", required = false) Long companyId,
                                        @RequestParam(value = "challanNo", required = false) Long challanNo,
+                                       @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
                                       RedirectAttributes redirectAttributes) {
         String logPrefix = "invoiceReport() ";
         String companyName = null;
@@ -123,7 +124,7 @@ public class InvoiceController extends BaseController {
                 invoiceReport = viewService.findByInvoiceId(invoiceId);
 
         } else {
-            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId);
+            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId, paymentStatus);
         }
         if (invoiceReport != null && !invoiceReport.isEmpty()) {
             Page<InvoiceView> invoiceViewsReportPage = new PageImpl<>(invoiceReport);
@@ -138,6 +139,7 @@ public class InvoiceController extends BaseController {
         redirectAttributes.addFlashAttribute("invoiceNo",invoiceNo);
         redirectAttributes.addFlashAttribute("companyName",companyName);
         redirectAttributes.addFlashAttribute("challanNo",challanNo);
+        redirectAttributes.addFlashAttribute("paymentStatus",paymentStatus);
 
         log.info("{} Exit",logPrefix);
 

@@ -42,7 +42,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
     EntityManager entityManager;
 
     @Override
-    public List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, String invoiceNo, Long companyId) {
+    public List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, String invoiceNo, Long companyId, Boolean paymentStatus) {
 
         StringBuilder sb = new StringBuilder("select view from InvoiceView view where view.invoiceId > 0 ");
         if (fromDate != null) {
@@ -56,6 +56,9 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         }
         if (companyId != null) {
             sb.append("and view.billToPartyId = :companyId ");
+        }
+        if (paymentStatus != null) {
+            sb.append("and view.paid = :paid ");
         }
         sb.append("order by view.invoiceId desc");
         Query query = entityManager.createQuery(sb.toString());
@@ -71,6 +74,9 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         }
         if (companyId != null) {
             query.setParameter("companyId", companyId);
+        }
+        if (paymentStatus != null) {
+            query.setParameter("paid", paymentStatus);
         }
 
         return (List<InvoiceView>) query.getResultList();

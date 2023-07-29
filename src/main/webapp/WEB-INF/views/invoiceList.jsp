@@ -23,7 +23,8 @@
             <th style="width: 15%">Invoice No</th>
             <th style="width: 15%">Challan No</th>
             <th style="width: 25%">Company Name</th>
-            <th style="width: 15%"></th>
+            <th style="width: 9%">Payment Status</th>
+            <th style="width: 6%"></th>
         </tr>
         </thead>
         <tbody>
@@ -32,6 +33,13 @@
             <td><input id="invoiceNo" name="invoiceNo" class="form-control" placeholder="Enter Invoice No"/></td>
             <td><input id="challanNo" name="challanNo" class="form-control" placeholder="Enter Challan No"/></td>
             <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
+            <td>
+                <select id="paymentStatus" name="paymentStatus" class="form-select">
+                    <option value="">-Select-</option>
+                    <option value="false">UnPaid</option>
+                    <option value="true" >Paid</option>
+                </select>
+            </td>
             <td><input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/></td>
         </tbody>
     <table>
@@ -70,6 +78,11 @@
                         <span><b>Company Name :</b> ${companyName}</span>
                     </div>
                 </c:if>
+                <c:if test="${not empty paymentStatus}">
+                    <div class="col-md-4">
+                        <span><b>Payment Status :</b> ${paymentStatus ? 'Paid' : 'UnPaid'}</span>
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <span class="col-md-12 text-center">Showing the Last 20 invoices<span>
@@ -96,7 +109,7 @@
             <c:choose>
             <c:when test="${not empty invoices.getContent()}">
                 <c:forEach items="${invoices.getContent()}" var="invoice" varStatus="index">
-                <tr>
+                <tr id="tr${index.index}" style="${invoice.paid ? 'background: lightgreen;' : ''}">
                     <td>${index.index + 1}</td>
                     <td>
                         <fmt:formatDate pattern="dd/MM/yyyy" value="${invoice.invoiceDate}" var="invDateFormatted"/>
@@ -111,7 +124,7 @@
                     <td>${invoice.totalAmount}</td>
                     <td>${invoice.totalAmountAfterTax}</td>
                     <td>
-                    <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select">
+                    <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select paidClass" onchange="autoSetAmtCr(${index.index})">
                         <option value="false">UnPaid</option>
                         <option value="true" ${invoice.paid ? "selected='selected'" : ""}>Paid</option>
                     </select>
@@ -124,7 +137,7 @@
                     <td><input id="invoice${index.index}.amtDr" name="invoice[${index.index}].amtDr" value="${invoice.amtDr}" class="form-control" /></td>
                     <td>
                     <input type="button" value="Delete" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" />
-                    <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index})" class="btn btn-sm btn-primary" />
+                    <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index},'${invoice.invoiceNo}')" class="btn btn-sm btn-primary" />
                     </td>
                 </tr>
                 </c:forEach>
@@ -162,6 +175,7 @@ $(document).ready(function(e){
     $( "#fromDate, #toDate, .paymentDt, .invoiceDate" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
+
 })
 
 function deleteByInvoiceNo(invNo) {
@@ -222,13 +236,26 @@ function updateInvoice(invId, index, invNo) {
             _csrf : $('input[name="_csrf"]').val()
         },
         success : function(data) {
-            alert('Invoice: <b>'+invNo+'</b> details updated successfully!!')
+            alert('Invoice: '+invNo+' details updated successfully!!')
+            if ( paidStatus == 'true' ) {
+                $('#tr'+index).css("background-color","rgba(144, 238, 144)")
+            } else {
+                $('#tr'+index).css("background-color","rgba(0, 0, 0, 0)")
+            }
         },
         error : function(err) {
             alert('Failed to Update Invoice: <b>'+invNo+'</b> Details')
             console.error(err)
         }
     });
+}
+
+function autoSetAmtCr(index) {
+    if ( $('#invoice'+index+'\\.paid').val() == 'true') {
+        $('#invoice'+index+'\\.paidAmount').val( $('#tr'+index).find('td:eq(6)').text() )
+    } else {
+        $('#invoice'+index+'\\.paidAmount').val('0.00')
+    }
 }
 </script>
 <%@ include file="./common/footer.jspf" %>
