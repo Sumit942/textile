@@ -23,4 +23,7 @@ public class ShreeramTextileConstants {
     public static final String ACTION = "action";
 
     public static final Integer PRODUCT_HSN = 6006;
+
+    public static final String DATE_FORMAT_ddMMYYYY = "dd-MM-yyyy";
+    public static final String SRNO = "srNo";
 }

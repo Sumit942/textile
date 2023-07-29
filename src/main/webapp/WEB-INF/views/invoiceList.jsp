@@ -40,7 +40,11 @@
                     <option value="true" >Paid</option>
                 </select>
             </td>
-            <td><input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/></td>
+            <td>
+                <input id="invoiceReport" value="search" type="submit" class="btn btn-primary"/>
+                <input id="downloadInvoiceReport" value="Download" type="submit" class="btn btn-primary"/>
+            </td>
+
         </tbody>
     <table>
     </form:form>
@@ -244,7 +248,7 @@ function updateInvoice(invId, index, invNo) {
             }
         },
         error : function(err) {
-            alert('Failed to Update Invoice: <b>'+invNo+'</b> Details')
+            alert('Failed to Update Invoice: '+invNo+' Details')
             console.error(err)
         }
     });
@@ -256,6 +260,10 @@ function autoSetAmtCr(index) {
     } else {
         $('#invoice'+index+'\\.paidAmount').val('0.00')
     }
+}
+
+function downloadInvoiceReport() {
+    //TODO: ajax for download Excel
 }
 </script>
 <%@ include file="./common/footer.jspf" %>

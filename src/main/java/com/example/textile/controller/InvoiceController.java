@@ -14,12 +14,14 @@ import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.service.InvoiceViewService;
 import com.example.textile.service.ProductDetailService;
+import com.example.textile.utility.ExcelUtility;
 import com.example.textile.utility.PdfUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import com.lowagie.text.DocumentException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -110,22 +112,7 @@ public class InvoiceController extends BaseController {
         log.info("{} Entry",logPrefix);
         ModelAndView modelAndView = new ModelAndView("redirect:/invoices");
 
-        List<InvoiceView> invoiceReport = null;
-        if (null != challanNo && challanNo.compareTo(0L) > 0) {
-            log.info("{} findByChNo", logPrefix);
-            List<Long> invoiceId = new ArrayList<>();
-            List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
-            if (productDetails != null)
-                productDetails.forEach(e -> {
-                    if (e.getInvoice() != null)
-                    invoiceId.add(e.getInvoice().getId());
-                });
-            if (!invoiceId.isEmpty())
-                invoiceReport = viewService.findByInvoiceId(invoiceId);
-
-        } else {
-            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId, paymentStatus);
-        }
+        List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNo, companyId, challanNo, paymentStatus);
         if (invoiceReport != null && !invoiceReport.isEmpty()) {
             Page<InvoiceView> invoiceViewsReportPage = new PageImpl<>(invoiceReport);
             redirectAttributes.addFlashAttribute("invoices", invoiceViewsReportPage);
@@ -144,6 +131,30 @@ public class InvoiceController extends BaseController {
         log.info("{} Exit",logPrefix);
 
         return modelAndView;
+    }
+
+    private List<InvoiceView> getInvoiceViews(Date fromDate, Date toDate, String invoiceNo, Long companyId, Long challanNo, Boolean paymentStatus) {
+        String logPrefix = "getInvoiceViews() ";
+        List<InvoiceView> invoiceReport = null;
+        if (null != challanNo && challanNo.compareTo(0L) > 0) {
+            log.info("{} findByChNo", logPrefix);
+            List<Long> invoiceId = new ArrayList<>();
+            List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
+            if (productDetails != null)
+                productDetails.forEach(e -> {
+                    if (e.getInvoice() != null)
+                    invoiceId.add(e.getInvoice().getId());
+                });
+            if (!invoiceId.isEmpty())
+                invoiceReport = viewService.findByInvoiceId(invoiceId);
+
+        } else {
+            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId, paymentStatus);
+        }
+
+        log.info("{} Exit[count={}]",logPrefix,(invoiceReport != null ? invoiceReport.size() : 0));
+
+        return invoiceReport;
     }
 
     @GetMapping("/invoice/{id}")
@@ -388,12 +399,6 @@ public class InvoiceController extends BaseController {
     }
 
 
-    @PostMapping("/report")
-    public ModelAndView showReport(@ModelAttribute Invoice invoice, RedirectAttributes redirectAttr) {
-
-        return new ModelAndView("redirect:/report");
-    }
-
     @PostMapping("/update")
     public ResponseEntity<String> updateInvoiceDetails(@RequestParam("invoiceId") Long invoiceId,
                                                        @RequestParam("invoiceDt") Date invoiceDt,
@@ -410,5 +415,62 @@ public class InvoiceController extends BaseController {
         }
 
         return new ResponseEntity<>("Something went wrong",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping("/downloadExcel")
+    public void invoiceReportDownloadExcel(@RequestParam(value = "fromDate", required = false) Date fromDate,
+                                      @RequestParam(value="toDate", required = false) Date toDate,
+                                      @RequestParam(value = "invoiceNo", required = false) String invoiceNo,
+                                      @RequestParam(value = "companyId", required = false) Long companyId,
+                                      @RequestParam(value = "challanNo", required = false) Long challanNo,
+                                      @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
+                                      RedirectAttributes redirectAttributes,HttpServletResponse response) {
+        String logPrefix = "invoiceReportDownloadExcel() ";
+        log.info("{} Entry",logPrefix);
+
+        List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNo,
+                companyId, challanNo, paymentStatus);
+
+
+        if (invoiceReport != null) {
+            Map<String, String> headerMap = new LinkedHashMap<>();
+            headerMap.put("S.No", "srNo");
+            headerMap.put("Invoice Date", "invoiceDate");
+            headerMap.put("Invoice No", "invoiceNo");
+            headerMap.put("Party Gst", "billToPartyGst");
+            headerMap.put("Party Name", "billToPartyName");
+            headerMap.put("Amount", "totalAmount");
+            headerMap.put("Total Tax", "totalTaxAmount");
+            headerMap.put("PnF", "pnfCharge");
+            headerMap.put("Total Amount", "totalAmountAfterTax");
+            headerMap.put("Payment Status", "paid");
+            headerMap.put("Paid", "paidAmount");
+            headerMap.put("Payment Date", "paymentDt");
+            headerMap.put("Debit", "amtDr");
+
+
+            ExcelUtility<InvoiceView> excelUtility = new ExcelUtility<>(invoiceReport);
+            XSSFWorkbook workBook = excelUtility.getWorkBook(headerMap);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+            try {
+                workBook.write(bos);
+                byte[] content = bos.toByteArray();
+
+                response.setContentType("application/vnd.ms-excel");
+                response.setContentLength(content.length);
+                response.setHeader("Content-Disposition","attachment; filename=Invoice_Report.xlsx");
+
+                OutputStream os = response.getOutputStream();
+                os.write(content, 0, content.length);
+                os.flush();
+                os.close();
+
+            } catch (IOException e) {
+                log.error(logPrefix + "Error writing workbook in response "+e.getLocalizedMessage(),e);
+            }
+
+        }
+
     }
 }
