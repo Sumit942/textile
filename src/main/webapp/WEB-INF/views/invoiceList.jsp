@@ -141,17 +141,18 @@
             <td colspan="11"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
         </tfoot>
     </table>
+    <input type="hidden" id="listSize" value="${invoices.getContent().size()}" />
 </div>
 <script>
 $(document).ready(function(e){
-    console.log('table rows: ' + ${invoices.getContent().size()})
-    $("#invoiceTable").DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'excelHtml5', 'csvHtml5', 'pdfHtml5'
-        ]
-    })
-
+    if ( $('#listSize').val() != '') {
+        $("#invoiceTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5', 'csvHtml5', 'pdfHtml5'
+            ]
+        })
+    }
     $("#invoiceTable").on('draw.dt',function(){
         console.log('datepicker initialized')
         $('.paymentDt').datepicker();
