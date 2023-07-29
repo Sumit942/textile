@@ -2,6 +2,8 @@ package com.example.textile.service;
 
 import com.example.textile.entity.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface InvoiceService {
@@ -39,4 +41,6 @@ public interface InvoiceService {
     void deleteByInvoiceNo(String invoiceNo);
 
     void deleteProductDetailsByChNoAndInvoice_isNull(List<Long> challanNo);
+
+    int updateInvoiceDetails(Long invoiceId, Date invoiceDt, Date paymentDt, Boolean paymentStatus, BigDecimal paidAmount, BigDecimal amtDr);
 }

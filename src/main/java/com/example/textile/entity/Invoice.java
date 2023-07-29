@@ -45,8 +45,49 @@ public class Invoice implements Serializable {
     private Date updateDate;
     private Integer version;
 
+    private Boolean paid;
+    private BigDecimal paidAmount;
+    private BigDecimal amtDr;
+    private Date paymentDt;
+
     //bank select from dropdown
     private BankDetail selectedBank;
+
+    @Column(columnDefinition = "BIT DEFAULT false")
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
+
+    @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    @Temporal(TemporalType.DATE)
+    public Date getPaymentDt() {
+        return paymentDt;
+    }
+
+    public void setPaymentDt(Date paymentDt) {
+        this.paymentDt = paymentDt;
+    }
+
+    @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    public BigDecimal getAmtDr() {
+        return amtDr;
+    }
+
+    public void setAmtDr(BigDecimal amtDr) {
+        this.amtDr = amtDr;
+    }
 
     @Transient
     public Company getInvoiceBy() {

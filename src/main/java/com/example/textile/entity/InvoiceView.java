@@ -25,6 +25,10 @@ public class InvoiceView {
     private Double roundOff;
     private BigDecimal pnfCharge;
     private BigDecimal totalAmountAfterTax;
+    private Boolean paid;
+    private BigDecimal paidAmount;
+    private BigDecimal amtDr;
+    private Date paymentDt;
 
     @Id
     public Long getId() {
@@ -124,6 +128,38 @@ public class InvoiceView {
         this.totalAmountAfterTax = totalAmountAfterTax;
     }
 
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public BigDecimal getAmtDr() {
+        return amtDr;
+    }
+
+    public void setAmtDr(BigDecimal amtDr) {
+        this.amtDr = amtDr;
+    }
+
+    public Date getPaymentDt() {
+        return paymentDt;
+    }
+
+    public void setPaymentDt(Date paymentDt) {
+        this.paymentDt = paymentDt;
+    }
+
     @Override
     public String toString() {
         return "InvoiceView{" +
@@ -131,6 +167,7 @@ public class InvoiceView {
                 ", invoiceId=" + invoiceId +
                 ", invoiceDate=" + invoiceDate +
                 ", invoiceNo='" + invoiceNo + '\'' +
+                ", billToPartyId=" + billToPartyId +
                 ", billToPartyGst='" + billToPartyGst + '\'' +
                 ", billToPartyName='" + billToPartyName + '\'' +
                 ", totalAmount=" + totalAmount +
@@ -138,6 +175,10 @@ public class InvoiceView {
                 ", roundOff=" + roundOff +
                 ", pnfCharge=" + pnfCharge +
                 ", totalAmountAfterTax=" + totalAmountAfterTax +
+                ", paid=" + paid +
+                ", paidAmount=" + paidAmount +
+                ", amtDr=" + amtDr +
+                ", paymentDt=" + paymentDt +
                 '}';
     }
 }

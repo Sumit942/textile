@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -314,5 +316,22 @@ public class InvoiceServiceImpl implements InvoiceService {
 //        query.setParameter("id",challanId);
 //        int i = query.executeUpdate();
 //        log.info("deleteProductDetailsByIdAndInvoice_isNull() count:[{}]",i);
+    }
+
+    @Transactional
+    @Override
+    public int updateInvoiceDetails(Long invoiceId, Date invoiceDt, Date paymentDt, Boolean paymentStatus, BigDecimal paidAmount, BigDecimal amtDr) {
+
+        Query query = entityManager.createQuery("UPDATE Invoice SET invoiceDate= :invoiceDt, paid= :paymentStatus," +
+                "paidAmount= :paidAmount, amtDr= :amtDr, paymentDt= :paymentDt, updateDate= :updateDate WHERE id= :invoiceId");
+        query.setParameter("invoiceDt",invoiceDt);
+        query.setParameter("paymentStatus",paymentStatus);
+        query.setParameter("paidAmount",paidAmount);
+        query.setParameter("amtDr",amtDr);
+        query.setParameter("paymentDt",paymentDt);
+        query.setParameter("updateDate",new Date());
+        query.setParameter("invoiceId",invoiceId);
+
+        return query.executeUpdate();
     }
 }

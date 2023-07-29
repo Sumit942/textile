@@ -85,10 +85,10 @@
                 <th>GSTIN</th>
                 <th>Company Name</th>
                 <th>Total Amount</th>
-                <th>GST</th>
-                <th>Round Off</th>
-                <th>P&F</th>
                 <th>Total</th>
+                <th>Pymt Date/Status</th>
+                <th>Amt Cr</th>
+                <th>Amt Dr</th>
                 <th></th>
             </tr>
         </thead>
@@ -100,7 +100,7 @@
                     <td>${index.index + 1}</td>
                     <td>
                         <fmt:formatDate pattern="dd/MM/yyyy" value="${invoice.invoiceDate}" var="invDateFormatted"/>
-                        <c:out value="${invDateFormatted}">NA</c:out>
+                        <input id="invoice${index.index}.invoiceDate" name="invoice[${index.index}].invoiceDate" value="${invDateFormatted}" class="form-control invoiceDate" readonly/>
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}">${invoice.invoiceNo}</a>
@@ -109,16 +109,28 @@
                     <td>${invoice.billToPartyGst}</td>
                     <td>${invoice.billToPartyName}</td>
                     <td>${invoice.totalAmount}</td>
-                    <td>${invoice.totalTaxAmount}</td>
-                    <td>${invoice.roundOff}</td>
-                    <td>${invoice.pnfCharge}</td>
                     <td>${invoice.totalAmountAfterTax}</td>
-                    <td><input type="button" value="-" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" /></td>
+                    <td>
+                    <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select">
+                        <option value="false">UnPaid</option>
+                        <option value="true" ${invoice.paid ? "selected='selected'" : ""}>Paid</option>
+                    </select>
+                    <span>
+                        <fmt:formatDate pattern="dd/MM/yyyy" value="${invoice.paymentDt}" var="paymentDtFmt"/>
+                        <input id="invoice${index.index}.paymentDt" name="invoice[${index.index}].paymentDt" value="${paymentDtFmt}" class="form-control paymentDt" readonly/>
+                    </span>
+                    </td>
+                    <td><input id="invoice${index.index}.paidAmount" name="invoice[${index.index}].paidAmount" value="${invoice.paidAmount}" class="form-control" /></td>
+                    <td><input id="invoice${index.index}.amtDr" name="invoice[${index.index}].amtDr" value="${invoice.amtDr}" class="form-control" /></td>
+                    <td>
+                    <input type="button" value="Delete" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" />
+                    <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index})" class="btn btn-sm btn-primary" />
+                    </td>
                 </tr>
                 </c:forEach>
             </c:when>
             <c:otherwise>
-                <td colspan="10">
+                <td colspan="11">
                     No Invoice Available
                     <a href="${pageContext.request.contextPath}/invoices/submit"> click here </a> to Add...
                 </td>
@@ -126,22 +138,27 @@
             </c:choose>
         </tbody>
         <tfoot>
-            <td colspan="10"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
+            <td colspan="11"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
         </tfoot>
     </table>
 </div>
 <script>
 $(document).ready(function(e){
+    console.log('table rows: ' + ${invoices.getContent().size()})
     $("#invoiceTable").DataTable({
         dom: 'Bfrtip',
         buttons: [
             'excelHtml5', 'csvHtml5', 'pdfHtml5'
         ]
     })
-    $( "#fromDate" ).datepicker({
-        dateFormat: 'dd/mm/yy'
+
+    $("#invoiceTable").on('draw.dt',function(){
+        console.log('datepicker initialized')
+        $('.paymentDt').datepicker();
+        $('.invoiceDate').datepicker();
     })
-    $( "#toDate" ).datepicker({
+
+    $( "#fromDate, #toDate, .paymentDt, .invoiceDate" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
 })
@@ -182,6 +199,35 @@ function billToPartyAutoComplete(event,thisObj) {
         return $("<li>").append(
                 "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
+}
+
+/**  update invoice date and payment details function   **/
+function updateInvoice(invId, index, invNo) {
+    var invDt = $('#invoice'+index+'\\.invoiceDate').val();
+    var paidDt = $('#invoice'+index+'\\.paymentDt').val();
+    var paidStatus = $('#invoice'+index+'\\.paid').val();
+    var paidAmount = $('#invoice'+index+'\\.paidAmount').val();
+    var amtDebit = $('#invoice'+index+'\\.amtDr').val();
+    $.ajax({
+        url : "${pageContext.request.contextPath}/invoices/update",
+        type : 'POST',
+        data : {
+            invoiceId : invId,
+            invoiceDt : invDt,
+            paymentDt : paidDt,
+            paymentStatus : paidStatus,
+            paidAmount : paidAmount,
+            amtDr : amtDebit,
+            _csrf : $('input[name="_csrf"]').val()
+        },
+        success : function(data) {
+            alert('Invoice: <b>'+invNo+'</b> details updated successfully!!')
+        },
+        error : function(err) {
+            alert('Failed to Update Invoice: <b>'+invNo+'</b> Details')
+            console.error(err)
+        }
+    });
 }
 </script>
 <%@ include file="./common/footer.jspf" %>

@@ -26,6 +26,8 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -280,9 +283,7 @@ public class InvoiceController extends BaseController {
 
     private Invoice getNewInstanceOfInvoice(Invoice invoice) {
         //validating invoice
-        invoice.getProduct().forEach(e-> {
-            e.getParty().setId(invoice.getBillToParty().getId());
-        });
+        invoice.getProduct().forEach(e-> e.getParty().setId(invoice.getBillToParty().getId()));
 
         Invoice invoiceBackUp = new Invoice();
         invoiceBackUp.setId(invoice.getId());
@@ -389,5 +390,23 @@ public class InvoiceController extends BaseController {
     public ModelAndView showReport(@ModelAttribute Invoice invoice, RedirectAttributes redirectAttr) {
 
         return new ModelAndView("redirect:/report");
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateInvoiceDetails(@RequestParam("invoiceId") Long invoiceId,
+                                                       @RequestParam("invoiceDt") Date invoiceDt,
+                                                       @RequestParam("paymentDt") Date paymentDt,
+                                                       @RequestParam("paymentStatus") Boolean paymentStatus,
+                                                       @RequestParam("paidAmount") BigDecimal paidAmount,
+                                                       @RequestParam("amtDr") BigDecimal amtDr) {
+
+        int updatedRowCount = invoiceService
+                .updateInvoiceDetails(invoiceId, invoiceDt, paymentDt, paymentStatus, paidAmount, amtDr);
+
+        if (updatedRowCount > 0) {
+            return new ResponseEntity<>("Invoice Update Successfully!!",HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>("Something went wrong",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
