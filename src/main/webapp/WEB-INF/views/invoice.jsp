@@ -1061,6 +1061,10 @@ function getProductDetailsByCompanyId(companyId) {
                 console.error(err)
             }
         })
+    } else {
+        $('.challanLoader').removeClass('spinner-border');
+        $('#loadChallan').removeClass("disabled")
+        alert('Please Select Bill To party bill')
     }
 }
 

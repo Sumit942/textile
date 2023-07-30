@@ -3,7 +3,7 @@
 </style>
 <body>
 <%@ include file="./common/navigation.jspf" %>
-<div class="container">
+<div class="container-fluid">
 <table id="missingChallanTable" class="table table-striped table-bordered">
 
     <thead>

@@ -1,6 +1,7 @@
 package com.example.textile.service;
 
 import com.example.textile.entity.User;
+import com.example.textile.entity.UserProfile;
 
 public interface UserService {
 
@@ -15,4 +16,6 @@ public interface UserService {
     User saveOrUpdate(User user);
 
     boolean userExists(String username);
+
+    UserProfile findByType(String type);
 }

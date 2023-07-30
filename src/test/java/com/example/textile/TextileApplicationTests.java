@@ -1,6 +1,7 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
+import com.example.textile.enums.UserProfileType;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.service.ProductDetailService;
@@ -36,7 +37,7 @@ class TextileApplicationTests {
     UnitRepository unitRepo;
     // @Autowired
     ThymeleafTemplateUtility templateUtility;
-    //    @Autowired
+    @Autowired
     UserService userService;
 
 //    @Autowired
@@ -261,22 +262,15 @@ class TextileApplicationTests {
 
     //@Test
     void test_creatUser() {
-        UserProfile userProfile = new UserProfile();
-        userProfile.setId(1L);
-        UserProfile userProfile1 = new UserProfile();
-        userProfile1.setId(2L);
-
-        Set<UserProfile> userProfiles = new HashSet<>();
-        userProfiles.add(userProfile);
-        userProfiles.add(userProfile1);
+        UserProfile userProfile = userService.findByType(UserProfileType.USER.getUserProfileType());
 
         User user = new User();
-        user.setFirstName("Sumit");
-        user.setLastName("Paswan");
-        user.setUserName("sumit");
-        user.setPassword("1234");
-        user.setEmail("sumitpaswan942@gmail.com");
-        user.setUserProfiles(userProfiles);
+        user.setFirstName("");
+        user.setLastName("");
+        user.setUserName("");
+        user.setPassword("");
+        user.setEmail("@gmail.com");
+        user.setUserProfiles(new HashSet<>(Arrays.asList(userProfile)));
 
         System.out.println(userService.saveOrUpdate(user));
     }
@@ -304,5 +298,4 @@ class TextileApplicationTests {
             e.printStackTrace();
         }
     }*/
-
 }
