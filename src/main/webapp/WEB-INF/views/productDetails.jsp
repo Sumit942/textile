@@ -229,7 +229,7 @@
                         '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly form-control" >'+
                     '</td>'+
                     '<td>'+
-                        '<input id="productDetails'+i+'.rate" name="productDetails['+i+'].rate" required="required" type="text" class="numbersOnly form-control" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
+                        '<input id="productDetails'+i+'.rate" name="productDetails['+i+'].rate" type="text" class="numbersOnly form-control" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
                     '</td>'+
                     '<td>'+
                         '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
@@ -260,21 +260,21 @@ function updateProdDetailsInputTagsIdAndName() {
         var row = rowIdSelector+':eq('+i+')'
         console.log('row-->', row)
         $('#'+row).find('td:eq(0)').html('<span id="productDetails['+i+'].srNo">'+(i+1)+'</span>')
-        $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+i+'.id').attr('name','product['+i+'].id')
+        $('#'+row).find('td:eq(0)').find('input:eq(1)').attr('id','productDetails'+i+'.id').attr('name','productDetails['+i+'].id')
 
-        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+i+'.chNo').attr('name','product['+i+'].chNo')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','productDetails'+i+'.chNo').attr('name','productDetails['+i+'].chNo')
 
-        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+i+'.party.id').attr('name','product['+i+'].party.id')
-        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','product'+i+'.party.name').attr('name','product['+i+'].party.name')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','productDetails'+i+'.party.id').attr('name','productDetails['+i+'].party.id')
+        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','productDetails'+i+'.party.name').attr('name','productDetails['+i+'].party.name')
 
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+i+'.product.id').attr('name','product['+i+'].product.id')
-        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','product'+i+'.product.name').attr('name','product['+i+'].product.name')
-        $('#'+row).find('td:eq(3)').find('input:eq(2)').attr('id','product'+i+'.product.active').attr('name','product['+i+'].product.active')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','productDetails'+i+'.product.id').attr('name','productDetails['+i+'].product.id')
+        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('name','productDetails['+i+'].product.name')
+        $('#'+row).find('td:eq(3)').find('input:eq(2)').attr('id','productDetails'+i+'.product.active').attr('name','productDetails['+i+'].product.active')
 
-        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+i+'.hsn').attr('name','product['+i+'].hsn')
-        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+i+'.unitOfMeasure.id').attr('name','product['+i+'].unitOfMeasure.id')
-        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+i+'.quantity').attr('name','product['+i+'].quantity')
-        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+i+'.rate').attr('name','product['+i+'].rate')
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','productDetails'+i+'.hsn').attr('name','productDetails['+i+'].hsn')
+        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','productDetails'+i+'.unitOfMeasure.id').attr('name','productDetails['+i+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','productDetails'+i+'.quantity').attr('name','productDetails['+i+'].quantity')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','productDetails'+i+'.rate').attr('name','productDetails['+i+'].rate')
         try {
             $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+i+')')
         } catch (err) {
