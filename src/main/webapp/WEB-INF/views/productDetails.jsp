@@ -28,10 +28,35 @@
     </c:if>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
         <div class="row mb-1 alert alert-success" style="margin: 1%">
-            Invoice ${invoiceCommand.getInvoiceNo()} Save Successfully!!
+            ${successMessage}
         </div>
     </c:if>
-    <form:form method="POST" action="productDetail" modelAttribute="productDetailsCommand">
+    <hr>
+
+    <div class="row mb-1">
+        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Challans</div>
+    </div>
+    <form:form method="POST" action="productDetail" modelAttribute="productDetailsCommand" onSubmit="return validateForm();">
+        <table class="table table-striped table-bordered">
+        <tr>
+            <td>
+                <form:input path="challanNos" class="numbersOnly form-control" placeholder="Enter Challan Nos"/>
+            </td>
+            <td>
+                <form:hidden path="company.id" />
+                <form:input path="company.name" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event, this, -1)" class="form-control ui-autocomplete-input" autocomplete="off" />
+            </td>
+            <td>
+                <form:hidden path="product.id"/>
+                <form:input path="product.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
+            </td>
+            <td>
+                <input type="submit" value="search" name="searchChallans" class="btn btn-primary"/>
+            </td>
+        </tr>
+        </table>
+
+
         <table id="productDetailsTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
@@ -48,11 +73,11 @@
             </thead>
             <tbody id="productDescTBody">
                 <c:choose>
-                    <c:when test="${empty productDetailsCommand.productDetails}">
+                    <c:when test="${empty productDetailsCommand}">
                         <tr>
                             <td>
                                 <span id="productDetails[0].srNo">1</span>
-                                <!-- <form:hidden path="productDetails[0].id" /> -->
+                                <form:hidden path="productDetails[0].id" />
                             </td>
                             <td>
                                 <form:input path="productDetails[0].chNo" class="numbersOnly form-control" style="width: 100%;"/>
@@ -96,7 +121,7 @@
                                 <tr>
                                     <td>
                                         <span id="productDetails[${index.index}].srNo">${index.index + 1}</span>
-                                        <!-- <form:hidden path="productDetails[${index.index}].id" /> -->
+                                        <form:hidden path="productDetails[${index.index}].id" />
                                     </td>
                                     <td>
                                         <form:input path="productDetails[${index.index}].chNo" class="numbersOnly form-control" />
@@ -145,7 +170,7 @@
                 <tr>
                     <td></td><td></td><td></td><td></td><td></td>
                     <td colspan="2"><button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button></td>
-                    <td colspan="2"><button type="submit" class="btn btn-success">Submit</button></td>
+                    <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success">Submit</button></td>
                 </tr>
             </tfoot>
         </table>
@@ -203,7 +228,7 @@
         var row = '<tr>' +
                     '<td>'+
                         '<span id="productDetails['+i+'].srNo">'+(i+1)+'</span>'+
-                        //'<input id="productDetails'+i+'.id" name="productDetails['+i+'].id" type="hidden" value="">'+
+                        '<input id="productDetails'+i+'.id" name="productDetails['+i+'].id" type="hidden" value="">'+
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly form-control" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
@@ -310,12 +335,19 @@ function updateProdDetailsInputTagsIdAndName() {
                         name : request.term
                     },
                     success : function(data) {
-                        $("#productDetails"+index+"\\.product\\.id").val('')
+                        if (index < 0 ) {
+                            $('#product\\.id').val('')
+                        } else {
+                            $("#productDetails"+index+"\\.product\\.id").val('')
+                        }
                         response(data);
                     },
                     error : function(err) {
-                        //$("#productDetails"+index+"\\.product\\.hsn").val('')
-                        $("#productDetails"+index+"\\.product\\.id").val('')
+                        if (index < 0 ) {
+                            $('#product\\.id').val('')
+                        } else {
+                            $("#productDetails"+index+"\\.product\\.id").val('')
+                        }
                         console.error(err)
                     }
                 });
@@ -324,12 +356,17 @@ function updateProdDetailsInputTagsIdAndName() {
             select : function(event, ui) {
                 this.value = ui.item.name
                 var productId = ui.item.id
-                $("#productDetails"+index+"\\.product\\.id").val(productId)
-                $("#productDetails"+index+"\\.product\\.active").val(ui.item.active)
-                $("#productDetails"+index+"\\.quantity").focus()
-                if (productId != '') {
-                    getProductMaxRateByCompanyId(index,productId)
+                if (index < 0 ) {
+                    $('#product\\.id').val(productId)
+                } else {
+                    $("#productDetails"+index+"\\.product\\.id").val(productId)
+                    $("#productDetails"+index+"\\.product\\.active").val(ui.item.active)
+                    $("#productDetails"+index+"\\.quantity").focus()
+                    if (productId != '') {
+                        getProductMaxRateByCompanyId(index,productId)
+                    }
                 }
+
                 return false;
             }
         }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -368,11 +405,19 @@ function billToPartyAutoComplete(event,thisObj,i) {
                 url : "${pageContext.request.contextPath}/company/searchByName/"+request.term,
                 dataType : 'json',
                 success : function(data) {
-                    $('#productDetails'+i+'\\.party\\.id').val('')
+                    if (i < 0 ) {
+                        $('#company\\.id').val('')
+                    } else {
+                        $('#productDetails'+i+'\\.party\\.id').val('')
+                    }
                     response(data);
                 },
                 error : function(err) {
-                    $('#productDetails'+i+'\\.party\\.id').val('')
+                    if (i < 0 ) {
+                        $('#company\\.id').val('')
+                    } else {
+                        $('#productDetails'+i+'\\.party\\.id').val('')
+                    }
                     console.error(err)
                 }
             });
@@ -380,15 +425,38 @@ function billToPartyAutoComplete(event,thisObj,i) {
         minLength: 4,
         select : function(event, ui) {
             this.value = ui.item.name
-            $('#productDetails'+i+'\\.party\\.id').val(ui.item.id)
-            $('#productDetails'+i+'\\.product\\.name').focus()
+            if (i < 0 ) {
+                $('#company\\.id').val(ui.item.id)
+            } else {
+                $('#productDetails'+i+'\\.party\\.id').val(ui.item.id)
+                $('#productDetails'+i+'\\.product\\.name').focus()
+            }
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
+
+/**  validate form   **/
+
+$('input[name="searchChallans"], input[name="saveChallans"]').on('click',function(event) {
+    var formElements = document.querySelectorAll("form input[type='text'], form textarea");
+
+    if (event.target.name == 'searchChallans') {
+        // Remove the 'required' attribute for the required fields
+        formElements.forEach(function(element) {
+            element.required = false;
+        });
+    } else {
+        // Set the 'required' attribute for the required fields
+        formElements.forEach(function(element) {
+            console.log(element)
+                element.required = true;
+        });
+    }
+    return true;
+})
 
 </script>
 <%@ include file="./common/footer.jspf" %>

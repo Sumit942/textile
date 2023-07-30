@@ -273,7 +273,7 @@ public class InvoiceController extends BaseController {
                 redirectAttr.addFlashAttribute("printInvoice",true);
                 redirectAttr.addFlashAttribute("actionResponse",response);
                 redirectAttr.addFlashAttribute("successMessage",
-                        messageSource.getMessage("ActionResponse.Success.Submit",
+                        messageSource.getMessage("ActionResponse.Success.Submit.Invoice",
                                                     new Object[]{invoice.getInvoiceNo(),invoice.getId()},
                                                     request.getLocale()));
             } else {

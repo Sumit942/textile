@@ -53,41 +53,51 @@ public class ProductDetailController extends BaseController{
 
     @PostMapping
     public String submit(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
-                         BindingResult result, ModelMap model, RedirectAttributes redirectAttr) {
+                         BindingResult result, ModelMap model, RedirectAttributes redirectAttr,
+                         @RequestParam(value = "searchChallans", required = false) String searchChallans,
+                         @RequestParam(value = "saveChallans", required = false) String saveChallans) {
 
         String logPrefix = "submit() |";
         log.info("{} Entry",logPrefix);
-        Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
-        parameterMap.put(TextileConstants.USER,getLoggedInUser());
+        String view = "redirect:/productDetail";
 
-        ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-        ActionResponse response;
+        if (searchChallans != null) {
+            log.info("{} Inside searchChallans",logPrefix);
+            List<ProductDetail> challanList = productDetailService.challanReport(command);
+            command.setProductDetails(challanList);
+        } else if (saveChallans != null) {
+            log.info("{} Inside saveChallans",logPrefix);
+            Map<String, Object> parameterMap = new HashMap<>();
+            parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
+            parameterMap.put(TextileConstants.USER, getLoggedInUser());
 
-        try {
-            response = actExecutor.execute(command, parameterMap, result,model);
-            if (ResponseType.SUCCESS.equals(response.getResponseType())) {
-                log.info("{} saved Successfully!!", logPrefix);
-                redirectAttr.addFlashAttribute("successMessage",
-                        messageSource.getMessage("ActionResponse.Success.Submit",
-                                new Object[]{
-                                        command.getProductDetails().stream().map(ProductDetail::getChNo).collect(Collectors.toList()),
-                                        command.getProductDetails().stream().map(ProductDetail::getId).collect(Collectors.toList())},
-                                        Locale.ENGLISH));
-                return "redirect:/productDetail";
-            } else {
-                redirectAttr.addFlashAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND,command);
-                log.error("result has doValidation Errors");
-                result.getAllErrors().forEach(System.out::println);
-                log.info("{} save Unsuccessfull", logPrefix);
+            ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
+            ActionResponse response;
+            try {
+                response = actExecutor.execute(command, parameterMap, result, model);
+                if (ResponseType.SUCCESS.equals(response.getResponseType())) {
+                    log.info("{} saved Successfully!!", logPrefix);
+                    redirectAttr.addFlashAttribute("successMessage",
+                            messageSource.getMessage("ActionResponse.Success.Submit.Challans",
+                                    new Object[]{
+                                            command.getProductDetails().stream().map(ProductDetail::getChNo).collect(Collectors.toList())/*,
+                                            command.getProductDetails().stream().map(ProductDetail::getId).collect(Collectors.toList())*/},
+                                    Locale.ENGLISH));
+                } else {
+                    log.error("result has doValidation Errors");
+                    result.getAllErrors().forEach(System.out::println);
+                    log.info("{} save Unsuccessfull", logPrefix);
+                    view = "/productDetails";
+                }
+                redirectAttr.addFlashAttribute("actionResponse", response);
+            } catch (Throwable e) {
+                log.error("Error while saving productDetails-" + e.getLocalizedMessage(), e);
+                view = "/productDetails";
             }
-            redirectAttr.addFlashAttribute("actionResponse",response);
-            return "/productDetails";
-        } catch (Throwable e) {
-            log.error("Error while saving productDetails-"+e.getLocalizedMessage(), e);
-            return "/productDetails";
         }
+        redirectAttr.addFlashAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND, command);
 
+        return view;
     }
 
     @GetMapping("/missingChallans")

@@ -1,5 +1,6 @@
 package com.example.textile.service;
 
+import com.example.textile.command.ProductDetailCommand;
 import com.example.textile.entity.ProductDetail;
 import com.example.textile.entity.Unit;
 
@@ -20,4 +21,6 @@ public interface ProductDetailService {
     List<Long> findAllChNoAndInvoice_IsNull();
 
     List<ProductDetail> findAllByInvoice(Long invoice);
+
+    List<ProductDetail> challanReport(ProductDetailCommand command);
 }

@@ -36,7 +36,7 @@ public class ProductDetail implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id")
     public Product getProduct() {
         return product;
@@ -54,7 +54,7 @@ public class ProductDetail implements Serializable {
         this.chNo = chNo;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     public Unit getUnitOfMeasure() {
         return unitOfMeasure;
     }
@@ -102,7 +102,7 @@ public class ProductDetail implements Serializable {
         this.invoice = invoice;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     public Company getParty() {
         return party;
     }
@@ -112,6 +112,7 @@ public class ProductDetail implements Serializable {
     }
 
     @CreationTimestamp
+    @Column(updatable = false)
     public Date getInsertDt() {
         return insertDt;
     }

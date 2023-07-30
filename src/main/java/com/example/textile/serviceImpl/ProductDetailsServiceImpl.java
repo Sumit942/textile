@@ -1,5 +1,6 @@
 package com.example.textile.serviceImpl;
 
+import com.example.textile.command.ProductDetailCommand;
 import com.example.textile.entity.Product;
 import com.example.textile.entity.ProductDetail;
 import com.example.textile.entity.Unit;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.*;
 
 @Slf4j
@@ -89,5 +91,42 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     @Override
     public List<ProductDetail> findAllByInvoice(Long invoice) {
         return productDetailRepo.findAllByInvoice(invoice);
+    }
+
+    @Override
+    public List<ProductDetail> challanReport(ProductDetailCommand command) {
+
+        StringBuilder sb = new StringBuilder("SELECT pd FROM ProductDetail pd WHERE pd.id >0");
+        if (Objects.nonNull(command.getChallanNos()) && !command.getChallanNos().isEmpty()) {
+            sb.append(" AND pd.chNo IN (:chNo)");
+        }
+        if (Objects.nonNull(command.getCompany()) && Objects.nonNull(command.getCompany().getId())) {
+            sb.append(" AND pd.party.id= :partyId");
+        }
+        if (Objects.nonNull(command.getProduct())) {
+            if (Objects.nonNull(command.getProduct().getId())) {
+                sb.append(" AND pd.product.id= :productId");
+            } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
+                sb.append(" AND pd.product.name LIKE :productName");
+            }
+        }
+
+        Query query = entityManager.createQuery(sb.toString());
+
+        if (Objects.nonNull(command.getChallanNos()) && !command.getChallanNos().isEmpty()) {
+            query.setParameter("chNo",command.getChallanNos());
+        }
+        if (Objects.nonNull(command.getCompany()) && Objects.nonNull(command.getCompany().getId())) {
+            query.setParameter("partyId",command.getCompany().getId());
+        }
+        if (Objects.nonNull(command.getProduct())) {
+            if (Objects.nonNull(command.getProduct().getId())) {
+                query.setParameter("productId",command.getProduct().getId());
+            } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
+                query.setParameter("productName",command.getProduct().getName());
+            }
+        }
+
+        return (List<ProductDetail>) query.getResultList();
     }
 }
