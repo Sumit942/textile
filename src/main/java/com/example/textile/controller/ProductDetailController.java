@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,8 @@ public class ProductDetailController extends BaseController{
     public String submit(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
                          BindingResult result, ModelMap model, RedirectAttributes redirectAttr,
                          @RequestParam(value = "searchChallans", required = false) String searchChallans,
-                         @RequestParam(value = "saveChallans", required = false) String saveChallans) {
+                         @RequestParam(value = "saveChallans", required = false) String saveChallans,
+                         HttpServletRequest request) {
 
         String logPrefix = "submit() |";
         log.info("{} Entry",logPrefix);
@@ -79,10 +81,9 @@ public class ProductDetailController extends BaseController{
                     log.info("{} saved Successfully!!", logPrefix);
                     redirectAttr.addFlashAttribute("successMessage",
                             messageSource.getMessage("ActionResponse.Success.Submit.Challans",
-                                    new Object[]{
-                                            command.getProductDetails().stream().map(ProductDetail::getChNo).collect(Collectors.toList())/*,
-                                            command.getProductDetails().stream().map(ProductDetail::getId).collect(Collectors.toList())*/},
-                                    Locale.ENGLISH));
+                                    new Object[]{command.getProductDetails().stream().map(ProductDetail::getChNo).collect(Collectors.toList()).toString()},
+                                    request.getLocale()));
+                    command.setProductDetails(null); //set this null for empty row in jsp
                 } else {
                     log.error("result has doValidation Errors");
                     result.getAllErrors().forEach(System.out::println);

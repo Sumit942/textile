@@ -73,7 +73,7 @@
             </thead>
             <tbody id="productDescTBody">
                 <c:choose>
-                    <c:when test="${empty productDetailsCommand}">
+                    <c:when test="${empty productDetailsCommand.productDetails}">
                         <tr>
                             <td>
                                 <span id="productDetails[0].srNo">1</span>

@@ -1,6 +1,4 @@
-<!DOCTYPE html[
-        <!ENTITY nbsp "&#160;">
-]>
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:v="http://www.w3.org/1999/xhtml">
 
@@ -2537,10 +2535,10 @@ x\:* {behavior:url(#default#VML);}
 
 <body>
 <div style="text-align: center;">
- <a href="#" class="btn btn-primary" id="PrintBtn">Print </a>
- <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=edit" class="btn btn-primary" id="EditBtn">| Edit<a>
+<!-- <a href="#" class="btn btn-primary" id="PrintBtn">Print </a>-->
+ <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=edit" class="btn btn-primary" id="EditBtn">| Edit</a>
  <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=save" class="btn btn-primary" id="SaveBtn">| Save</a>
-</div>0
+</div>
 <div id="SRTI-Invoice-div">
 <div id="SRTI-Invoice" align="center" x:publishsource="Excel">
 
@@ -2894,36 +2892,23 @@ x\:* {behavior:url(#default#VML);}
 
 </body>
 <script>
-var button = document.getElementById("PrintBtn");
-button.onclick = function(){
- var printWindow = window.open()
+window.onload = function(){
+   var invoiceNo = document.getElementById('invoiceNo').innerHTML
+   var saleType = document.getElementById('saleType').innerHTML
+   var saleTypeForPrint = ""
+   //getting the print format text for sale type eg. FJW
+   saleType.split(" ").forEach(function(k){
+     saleTypeForPrint+=k.substr(0,1).toUpperCase()
+   })
 
- var invoiceNo = document.getElementById('invoiceNo').innerHTML
- var saleType = document.getElementById('saleType').innerHTML
- var saleTypeForPrint = ""
- //getting the print format text for sale type eg. FJW
- saleType.split(" ").forEach(function(k){
-  saleTypeForPrint+=k.substr(0,1).toUpperCase()
- })
+   var printTitle = invoiceNo.split("/")[0]+"-"+saleTypeForPrint+"-"+invoiceNo.split("/")[2]
+   document.title = printTitle;
 
- var printTitle = invoiceNo.split("/")[0]+"-"+saleTypeForPrint+"-"+invoiceNo.split("/")[2]
- printWindow.document.write('<html><head><title>'+printTitle+'</title>')
+   window.print()
 
- //print the table CSS
- var table_style = document.getElementById("SRTI-Invoice_Styles").innerHTML;
- printWindow.document.write('<style type = "text/css">');
- printWindow.document.write(table_style);
- printWindow.document.write('</style>');
- printWindow.document.write('</head>');
-
- //Print the contents i.e. the HTML Table.
- var invoiceTable = document.getElementById('SRTI-Invoice-div').innerHTML
- printWindow.document.write('<body>')
- printWindow.document.write(invoiceTable)
- printWindow.document.write('</body>')
- printWindow.document.write('</html>')
- printWindow.document.close()
- printWindow.print()
+   window.addEventListener('afterprint', function() {
+     window.close();
+   });
 }
 </script>
 </html>
