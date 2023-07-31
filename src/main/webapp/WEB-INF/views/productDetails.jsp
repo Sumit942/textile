@@ -1,4 +1,5 @@
 <%@ include file="./common/header.jspf" %>
+<title>Add & View Challan</title>
 <style>
 .error {
     color: #ff0000;
