@@ -1,4 +1,5 @@
 <%@ include file="./common/header.jspf" %>
+<title>Tax Invoice</title>
 <style>
 .error {
     color: #ff0000;

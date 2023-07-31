@@ -1,4 +1,5 @@
 <%@ include file="./common/header.jspf" %>
+<title>Dashboard</title>
 <style>
 </style>
 <body>

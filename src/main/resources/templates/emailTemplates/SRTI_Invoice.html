@@ -2535,8 +2535,8 @@ x\:* {behavior:url(#default#VML);}
 
 <body>
 <div style="text-align: center;">
-<!-- <a href="#" class="btn btn-primary" id="PrintBtn">Print </a>-->
- <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=edit" class="btn btn-primary" id="EditBtn">| Edit</a>
+ <a href="#" class="btn btn-primary" id="PrintBtn">Print </a>
+ <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=edit" class="btn btn-primary" id="EditBtn">| Edit<a>
  <a th:if="${#strings.isEmpty(invoice.id)}" href="./submit?action=save" class="btn btn-primary" id="SaveBtn">| Save</a>
 </div>
 <div id="SRTI-Invoice-div">
@@ -2892,8 +2892,8 @@ x\:* {behavior:url(#default#VML);}
 
 </body>
 <script>
-window.onload = function(){
-   var invoiceNo = document.getElementById('invoiceNo').innerHTML
+window.onload = function () {
+    var invoiceNo = document.getElementById('invoiceNo').innerHTML
    var saleType = document.getElementById('saleType').innerHTML
    var saleTypeForPrint = ""
    //getting the print format text for sale type eg. FJW
@@ -2904,11 +2904,14 @@ window.onload = function(){
    var printTitle = invoiceNo.split("/")[0]+"-"+saleTypeForPrint+"-"+invoiceNo.split("/")[2]
    document.title = printTitle;
 
-   window.print()
-
    window.addEventListener('afterprint', function() {
      window.close();
    });
+}
+var button = document.getElementById("PrintBtn");
+button.onclick = function(){
+   button.style.display = 'none'
+   window.print()
 }
 </script>
 </html>
