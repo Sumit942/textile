@@ -35,7 +35,7 @@ public class UserDetailManagerImpl implements UserDetailsManager {
         User user = userService.findByUserName(username);
         if (user == null)
             throw new UsernameNotFoundException(username);
-        log.info("User: {}",user);
+        log.debug("User: {}",user);
 
         return new org.springframework.security.core.userdetails
                 .User(user.getUserName(),user.getPassword(),getGrantedAuthorities(user));

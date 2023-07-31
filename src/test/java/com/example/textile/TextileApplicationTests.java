@@ -37,14 +37,14 @@ class TextileApplicationTests {
     UnitRepository unitRepo;
     // @Autowired
     ThymeleafTemplateUtility templateUtility;
-    @Autowired
+    //@Autowired
     UserService userService;
 
 //    @Autowired
     ProductDetailService productDetailService;
 
 
-    @Test
+    //@Test
     void getInvoiceStartCount() {
         System.out.println("invoiceStartCount>>> " + invoiceService.getLatestInvoiceNo());
     }

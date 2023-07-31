@@ -307,7 +307,7 @@ public class InvoiceController extends BaseController {
 
     private Invoice getNewInstanceOfInvoice(Invoice invoice) {
         //validating invoice
-        invoice.getProduct().forEach(e-> e.getParty().setId(invoice.getBillToParty().getId()));
+        invoice.getProduct().forEach(e-> e.setParty(invoice.getBillToParty()));
 
         Invoice invoiceBackUp = new Invoice();
         invoiceBackUp.setId(invoice.getId());
@@ -366,7 +366,7 @@ public class InvoiceController extends BaseController {
         log.info("showPrintInvoice() | id-"+id);
         ModelAndView modelAndView = new ModelAndView("emailTemplates/SRTI_Invoice.html");
         Invoice invoice = invoiceService.finById(id);
-        log.info("showPrintInvoice() | {}",invoice);
+        log.debug("showPrintInvoice() | {}",invoice);
         modelAndView.addObject("invoice",invoice);
         return modelAndView;
     }
