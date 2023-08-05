@@ -229,8 +229,19 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                     errMap.put("product.product","NotNull.invoiceCommand.product.product");
                 } else {
 
-                    if (prod.getProduct().getName() == null)
-                        errMap.put("product["+i+"].product.name","NotNull.invoiceCommand.product.product.name");
+                    if (prod.getProduct().getName() == null) {
+                        errMap.put("product[" + i + "].product.name", "NotNull.invoiceCommand.product.product.name");
+                    } else {
+                        if (!prod.getProduct().getName().toUpperCase().endsWith(TextileConstants.YARN_RETURN)) {
+                            if (prod.getRate() == null || prod.getRate() <= 0) {
+                                errMap.put("product[" + i + "].rate", "NotNull.invoiceCommand.product.rate");
+                            }
+                            if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
+                                errMap.put("product[" + i + "].totalPrice", "NotNull.invoiceCommand.product.totalPrice");
+                        } else {
+                            log.info("doValidation() skipping rate amount validation for yarn return");
+                        }
+                    }
                     if (prod.getProduct().getHsn() == null)
                         errMap.put("product["+i+"].product.hsn","NotNull.invoiceCommand.product.hsn");
                 }
@@ -238,10 +249,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                     errMap.put("product["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
                 if (prod.getQuantity() == null || prod.getQuantity() <= 0)
                     errMap.put("product["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
-                if (prod.getRate() == null || prod.getRate() <= 0)
-                    errMap.put("product["+i+"].rate","NotNull.invoiceCommand.product.rate");
-                if (prod.getTotalPrice() == null || prod.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0)
-                    errMap.put("product["+i+"].totalPrice","NotNull.invoiceCommand.product.totalPrice");
+
                 if (prod.getUnitOfMeasure() == null || prod.getUnitOfMeasure().getUnitOfMeasure() == null)
                     errMap.put("product["+i+"].unitOfMeasure","NotNull.invoiceCommand.product.unitOfMeasure.unitOfMeasure");
             }

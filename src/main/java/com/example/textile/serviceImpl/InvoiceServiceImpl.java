@@ -322,13 +322,31 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public int updateInvoiceDetails(Long invoiceId, Date invoiceDt, Date paymentDt, Boolean paymentStatus, BigDecimal paidAmount, BigDecimal amtDr) {
 
-        Query query = entityManager.createQuery("UPDATE Invoice SET invoiceDate= :invoiceDt, paid= :paymentStatus," +
-                "paidAmount= :paidAmount, amtDr= :amtDr, paymentDt= :paymentDt, updateDate= :updateDate WHERE id= :invoiceId");
-        query.setParameter("invoiceDt",invoiceDt);
+        StringBuilder sb = new StringBuilder("UPDATE Invoice SET paid= :paymentStatus");
+        if (invoiceDt != null)
+            sb.append(", invoiceDate= :invoiceDt ");
+        if (paymentDt != null)
+            sb.append(", paymentDt= :paymentDt");
+        if (paidAmount != null)
+            sb.append(", paidAmount= :paidAmount");
+        if (amtDr != null)
+            sb.append(", amtDr= :amtDr");
+
+        sb.append(", updateDate= :updateDate WHERE id= :invoiceId");
+//        Query query = entityManager.createQuery("UPDATE Invoice SET invoiceDate= :invoiceDt, paid= :paymentStatus," +
+//                "paidAmount= :paidAmount, amtDr= :amtDr, paymentDt= :paymentDt, updateDate= :updateDate WHERE id= :invoiceId");
+        Query query = entityManager.createQuery(sb.toString());
+
+        if (invoiceDt != null)
+            query.setParameter("invoiceDt",invoiceDt);
+        if (paymentDt != null)
+            query.setParameter("paymentDt",paymentDt);
+        if (paidAmount != null)
+            query.setParameter("paidAmount",paidAmount);
+        if (amtDr != null)
+            query.setParameter("amtDr",amtDr);
+
         query.setParameter("paymentStatus",paymentStatus);
-        query.setParameter("paidAmount",paidAmount);
-        query.setParameter("amtDr",amtDr);
-        query.setParameter("paymentDt",paymentDt);
         query.setParameter("updateDate",new Date());
         query.setParameter("invoiceId",invoiceId);
 

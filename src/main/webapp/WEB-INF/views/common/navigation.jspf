@@ -8,9 +8,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <sec:authorize access="hasRole('ADMIN')">
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/invoices">SaleSheet</a>
         </li>
+        </sec:authorize>
         <!-- <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
         </li> -->
@@ -19,11 +21,15 @@
             Add
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <sec:authorize access="hasRole('ADMIN')">
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/invoices/submit">Invoice</a></li>
+            </sec:authorize>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/productDetail">Challans</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/productDetail/missingChallans">Missing Challans</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/employees">Employees</a></li>
+            <sec:authorize access="hasRole('ADMIN')">
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/employees">Employees</a></li>
+            </sec:authorize>
             <li><hr class="dropdown-divider"></li>
           </ul>
         </li>

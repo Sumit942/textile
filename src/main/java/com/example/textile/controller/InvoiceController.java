@@ -381,7 +381,7 @@ public class InvoiceController extends BaseController {
         return modelAndView;
     }
 
-    //@GetMapping("/downloadPdf")
+    @GetMapping("/downloadPdf")
     public void downloadToPdf(@RequestParam(name = "invoiceNo") String invoiceNo,
                               HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
 
@@ -405,17 +405,17 @@ public class InvoiceController extends BaseController {
             response.getOutputStream().write(content);
         }
 
-        log.info("{} Exit {}", logPrefix, logSuffix);
+        log.info("{} Exit [{}]", logPrefix, logSuffix);
     }
 
 
     @PatchMapping("/update")
     public ResponseEntity<String> updateInvoiceDetails(@RequestParam("invoiceId") Long invoiceId,
-                                                       @RequestParam("invoiceDt") Date invoiceDt,
-                                                       @RequestParam("paymentDt") Date paymentDt,
-                                                       @RequestParam("paymentStatus") Boolean paymentStatus,
-                                                       @RequestParam("paidAmount") BigDecimal paidAmount,
-                                                       @RequestParam("amtDr") BigDecimal amtDr) {
+                                                       @RequestParam(value = "invoiceDt", required = false) Date invoiceDt,
+                                                       @RequestParam(value = "paymentDt", required = false) Date paymentDt,
+                                                       @RequestParam(value = "paymentStatus") Boolean paymentStatus,
+                                                       @RequestParam(value = "paidAmount", required = false) BigDecimal paidAmount,
+                                                       @RequestParam(value = "amtDr", required = false) BigDecimal amtDr) {
 
         int updatedRowCount = invoiceService
                 .updateInvoiceDetails(invoiceId, invoiceDt, paymentDt, paymentStatus, paidAmount, amtDr);

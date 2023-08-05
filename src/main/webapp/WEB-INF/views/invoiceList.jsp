@@ -16,6 +16,8 @@
         </div>
     </c:if>
     <form:form method="post">
+
+    <sec:authorize access="hasRole('ADMIN')">
     <table class="table">
         <thead>
         <tr>
@@ -48,6 +50,8 @@
 
         </tbody>
     <table>
+    </sec:authorize>
+
     </form:form>
     <div class="row mb-1">
         <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Invoice</div>
@@ -100,9 +104,9 @@
                 <th>S.No</th>
                 <th>Date</th>
                 <th>Invoice No</th>
-                <th>GSTIN</th>
+                <!-- <th>GSTIN</th> -->
                 <th>Company Name</th>
-                <th>Total Amount</th>
+                <!-- <th>Total Amount</th> -->
                 <th>Total</th>
                 <th>Pymt Date/Status</th>
                 <th>Amt Cr</th>
@@ -124,9 +128,9 @@
                         <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}">${invoice.invoiceNo}</a>
                         (<a href="${pageContext.request.contextPath}/invoices/printById/${invoice.invoiceId}" target="_blank">Print</a>)
                     </td>
-                    <td>${invoice.billToPartyGst}</td>
+                    <!-- <td>${invoice.billToPartyGst}</td> -->
                     <td>${invoice.billToPartyName}</td>
-                    <td>${invoice.totalAmount}</td>
+                    <!-- <td>${invoice.totalAmount}</td> -->
                     <td>${invoice.totalAmountAfterTax}</td>
                     <td>
                     <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select paidClass" onchange="autoSetAmtCr(${index.index})">
@@ -141,8 +145,8 @@
                     <td><input id="invoice${index.index}.paidAmount" name="invoice[${index.index}].paidAmount" value="${invoice.paidAmount}" class="form-control" /></td>
                     <td><input id="invoice${index.index}.amtDr" name="invoice[${index.index}].amtDr" value="${invoice.amtDr}" class="form-control" /></td>
                     <td>
-                    <input type="button" value="Delete" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" />
                     <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index},'${invoice.invoiceNo}')" class="btn btn-sm btn-primary" />
+                    <input type="button" value="Delete" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" />
                     </td>
                 </tr>
                 </c:forEach>
@@ -156,7 +160,7 @@
             </c:choose>
         </tbody>
         <tfoot>
-            <td colspan="11"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
+            <td colspan="9"><a href="${pageContext.request.contextPath}/invoices/submit" class="btn btn-primary float-end" target="_blank">Add</a></td>
         </tfoot>
     </table>
     <input type="hidden" id="listSize" value="${invoices.getContent().size()}" />
@@ -223,6 +227,11 @@ function billToPartyAutoComplete(event,thisObj) {
 
 /**  update invoice date and payment details function   **/
 function updateInvoice(invId, index, invNo) {
+    var del = confirm("Do you want to update '"+invNo+"' ?")
+    if (!del) {
+        return;
+    }
+
     var invDt = $('#invoice'+index+'\\.invoiceDate').val();
     var paidDt = $('#invoice'+index+'\\.paymentDt').val();
     var paidStatus = $('#invoice'+index+'\\.paid').val();
@@ -257,7 +266,7 @@ function updateInvoice(invId, index, invNo) {
 
 function autoSetAmtCr(index) {
     if ( $('#invoice'+index+'\\.paid').val() == 'true') {
-        $('#invoice'+index+'\\.paidAmount').val( $('#tr'+index).find('td:eq(6)').text() )
+        $('#invoice'+index+'\\.paidAmount').val( $('#tr'+index).find('td:eq(4)').text() )
     } else {
         $('#invoice'+index+'\\.paidAmount').val('0.00')
     }
