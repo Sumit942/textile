@@ -33,10 +33,6 @@
         </div>
     </c:if>
     <hr>
-
-    <div class="row mb-1">
-        <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Challans</div>
-    </div>
     <form:form method="POST" action="productDetail" modelAttribute="productDetailsCommand" onSubmit="return validateForm();">
         <table class="table table-striped table-bordered">
         <tr>
@@ -58,58 +54,62 @@
         </table>
 
 
+        <div class="row mb-1">
+            <div class="col-md-12 fs-1 fw-bold" style="text-align:center;">List of Challans</div>
+        </div>
+
         <table id="productDetailsTable" class="table table-striped table-bordered">
             <thead>
                 <tr>
-                  <th style="width: 5%;">Sr.No</th>
-                  <th style="width: 10%;">Challan No</th>
-                  <th style="width: 25%;">Party Name</th>
-                  <th style="width: 25%;">Product Description</th>
-                  <th style="width: 7%;">HSN code</th>
-                  <th style="width: 5%;">UOM</th>
-                  <th style="width: 10%;">Qty</th>
-                  <th style="width: 8%;">Rate</th>
-                  <th style="width: 5%;"></th>
+                  <th style="width: 0%">S.No</th>
+                  <th style="width: 0%">Challan No</th>
+                  <th style="width: 30%">Party Name</th>
+                  <th style="width: 30%">Yarn Quality</th>
+                  <th style="width: 0%">HSN</th>
+                  <th style="width: 0%">UOM</th>
+                  <th style="width: 15%">Qty</th>
+                  <th style="width: 5%">Rate</th>
+                  <th style=""></th>
                 </tr>
             </thead>
             <tbody id="productDescTBody">
                 <c:choose>
                     <c:when test="${empty productDetailsCommand.productDetails}">
                         <tr>
-                            <td>
+                            <td style="width: 0%">
                                 <span id="productDetails[0].srNo">1</span>
                                 <form:hidden path="productDetails[0].id" />
                             </td>
-                            <td>
+                            <td style="width: 0%">
                                 <form:input path="productDetails[0].chNo" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].chNo" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 30%">
                                 <form:hidden path="productDetails[0].party.id" />
                                 <form:input path="productDetails[0].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, 0)" class="form-control ui-autocomplete-input" autocomplete="off" />
                                 <form:errors path="productDetails[0].party" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 30%">
                                 <form:hidden path="productDetails[0].product.id"/>
                                 <form:input path="productDetails[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="form-control ui-autocomplete-input" autocomplete="off"/>
                                 <form:hidden path="productDetails[0].product.active" />
                                 <form:errors path="productDetails[0].product.name" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 0%">
                                 <form:input path="productDetails[0].product.hsn" class="numbersOnly form-control" required="true" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].product.hsn" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 0%">
                                 <form:select path="productDetails[0].unitOfMeasure.id" required="true">
                                     <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure" itemValue="id"/>
                                 </form:select>
                                 <form:errors path="productDetails[0].unitOfMeasure" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 15%">
                                 <form:input path="productDetails[0].quantity" required="true" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].quantity" cssClass="error"/>
                             </td>
-                            <td>
+                            <td style="width: 0%">
                                 <form:input path="productDetails[0].rate" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].rate" cssClass="error"/>
                             </td>
@@ -124,7 +124,7 @@
                                         <span id="productDetails[${index.index}].srNo">${index.index + 1}</span>
                                         <form:hidden path="productDetails[${index.index}].id" />
                                     </td>
-                                    <td>
+                                    <td style="width: 0%">
                                         <form:input path="productDetails[${index.index}].chNo" class="numbersOnly form-control" />
                                         <form:errors path="productDetails[${index.index}].chNo" cssClass="error"/>
                                     </td>
@@ -153,7 +153,7 @@
                                         <form:input path="productDetails[${index.index}].quantity" required="true" class="numbersOnly form-control" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].quantity" cssClass="error"/>
                                     </td>
-                                    <td>
+                                    <td style="width: 0%">
                                         <form:input path="productDetails[${index.index}].rate" class="numbersOnly form-control" style="width: 100%;"/>
                                         <form:errors path="productDetails[${index.index}].rate" cssClass="error"/>
                                     </td>
@@ -169,7 +169,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td></td><td></td><td></td><td></td><td></td>
+                    <td style="width: 0%"></td><td style="width: 0%"></td><td></td><td></td><td></td>
                     <td colspan="2"><button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button></td>
                     <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success">Submit</button></td>
                 </tr>
