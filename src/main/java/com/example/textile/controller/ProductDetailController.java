@@ -43,9 +43,16 @@ public class ProductDetailController extends BaseController{
         actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new ProductDetailSubmitAction(productDetailService));
     }
 
-    @GetMapping()
+    @GetMapping
     public String showForm(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
-                           Model model) throws InvalidObjectPopulationException {
+                           Model model,
+                           @RequestParam(value ="searchByCh", required = false) Long chNo) throws InvalidObjectPopulationException {
+        if (chNo != null && chNo.compareTo(0l) > 0) {
+            log.debug("showForm() searchByCh");
+            List<ProductDetail> byChNo = productDetailService.findByChNo(chNo);
+            command.setProductDetails(byChNo);
+        }
+
         ActionExecutor actionExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         actionExecutor.prePopulateOptionsAndFields(command, model);
 

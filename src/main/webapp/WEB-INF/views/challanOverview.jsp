@@ -18,9 +18,9 @@
         <tr>
         <c:forEach items="${missingChallanNos}" var="challanNo" varStatus="index">
             <td>${challanNo}</td>
-            ${(index.index + 1) % 20 == 0 ? '</tr><tr>' : ''}
+            ${(index.index + 1) % 15 == 0 ? '</tr><tr>' : ''}
         </c:forEach>
-        <c:forEach begin="1" end="${20 - missingChallanNos.size() % 20}" >
+        <c:forEach begin="1" end="${15 - missingChallanNos.size() % 15}" >
             <td></td>
         </c:forEach>
         </tr>
@@ -35,12 +35,12 @@
     <tbody>
         <tr>
         <c:forEach items="${unBilledChNo}" var="productDetail" varStatus="index">
-            <td><a data-bs-toggle="tooltip" data-bs-placement="top" title="${productDetail.party.name}">
-                ${productDetail.chNo}</a>
+            <td>
+                <span onclick="searchByChallanNo(${productDetail.chNo})" style="text-decoration: underline; cursor: pointer;">${productDetail.chNo}</span>
             </td>
-            ${(index.index + 1) % 20 == 0 ? '</tr><tr>' : ''}
+            ${(index.index + 1) % 15 == 0 ? '</tr><tr>' : ''}
         </c:forEach>
-        <c:forEach begin="1" end="${20 - unBilledChNo.size() % 20}" >
+        <c:forEach begin="1" end="${15 - unBilledChNo.size() % 15}" >
             <td></td>
         </c:forEach>
         </tr>
@@ -59,5 +59,14 @@ $(document).ready(function(e){
         ]
     })
 })
+
+function searchByChallanNo(chNo) {
+    const openCh = confirm('Do you want to open challan: '+chNo)
+
+    if (!openCh)
+        return;
+
+    window.location.href = '${pageContext.request.contextPath}/productDetail?searchByCh='+chNo;
+}
 </script>
 <%@ include file="./common/footer.jspf" %>
