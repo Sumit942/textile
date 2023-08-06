@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <!-- css -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+
+    <!-- js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+        }
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 491pt
+        }
+    </style>
+</head>
+<body>
+<div class="">
+<table>
+    <tr>
+        <td><img src="/static/images/invoice/SRTI-logo-002.png" alt="Logo"></td>
+        <td>
+            <span>SHREERAM TEXTILE INDUSTRIES</span> <br />
+            <p>202, Royal Building, Bangar Nagar, Bhiwandi Road,Kalher,<br />
+            Bhiwandi, Thane, Maharashtra, 421302<br />
+            Tel: +91 8779572323 / 9820835494<br />
+            Email: shreeramtextileindustries21@gmail.com<br />
+            GSTIN: 27AEHFS4394C1ZU</p>
+        </td>
+        <td>Original for Recipent</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td colspan="2">Tax Invoice</td>
+    </tr>
+    <tr>
+        <td colspan="1">Invoice No: SRTI/23-24/226</td>
+        <td colspan="1">Invoice date: 31/07/2023</td>
+    </tr>
+    <tr>
+        <td colspan="1">State: Maharashtra</td>
+        <td>Code:	27</td>
+    </tr>
+    <tr>
+        <td colspan="2">..</td>
+    </tr>
+    <tr>
+        <td>Bill To Pary</td>
+        <td>Ship To Pary</td>
+    </tr>
+    <tr>
+        <td>Name: INTIME KNITS PVT LTD</td>
+        <td>Name: INTIME KNITS PVT LTD</td>
+    </tr>
+    <tr>
+        <td>
+            <span>Address:</span>
+            <span>PLOT NO.C-3/B, MIDC,TTC INDUSTRIAL AREA, PAWANE VILLAGE, TURBHE, NAVI MUMBAI, Thane, Maharashtra, 400705</span>
+        </td>
+        <td>
+            <span>Address:</span>
+            <span>PLOT NO.C-3/B, MIDC,TTC INDUSTRIAL AREA, PAWANE VILLAGE, TURBHE, NAVI MUMBAI, Thane, Maharashtra, 400705</span>
+        </td>
+    </tr>
+    <tr>
+        <td>GSTIN: 27AAACI1382E1ZV	</td>
+        <td>GSTIN: 27AAACI1382E1ZV	</td>
+    </tr>
+    <tr>
+        <td>State:  Maharashtra Code: 27</td>
+        <td>State:  Maharashtra Code: 27</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>S.No</td>
+        <td>Product Description	</td>
+        <td>HSN code</td>
+        <td>UOM</td>
+        <td>Qty</td>
+        <td>Rate</td>
+        <td>Amount</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>"Fabric Job Work"</td>
+        <td colspan="5"></td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>40 CH -Plain I/L (Ch No.1171)</td>
+        <td>6006</td>
+        <td>KG</td>
+        <td>1252.86</td>
+        <td>15</td>
+        <td>18792.90</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Packaging & Forwarding</td>
+        <td colspan="4"></td>
+        <td>0.0</td>
+    </tr>
+    <tr>
+        <td colspan="3">Total Invoice amount in words</td>
+        <td colspan="3">Total Amount</td>
+        <td>18792.90</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="3">Add: CGST 2.5 %</td>
+        <td>469.83</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="3">Add: SGST 2.5 %</td>
+        <td>469.83</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="3">Total Tax Amount</td>
+        <td>939.65</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="3">Round Off</td>
+        <td>0.45</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="3">Total Amount after Tax:	</td>
+        <td>19733.00</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>Bank Details</td>
+        <td rowspan="5"><img src="/static/images/invoice/SRTI-Stamp-004.png" alt="Logo"></td>
+
+    </tr>
+    <tr>
+        <td>Bank Name: Canara Bank,Worli</td>
+
+        <td rowspan="4">Verified that the particulars given above are true and correct</td>
+    </tr>
+    <tr>
+        <td>Bank A/C: 1250 0133 7061</td>
+
+
+    </tr>
+    <tr>
+        <td>Bank IFSC: CNRB0000113</td>
+
+    </tr>
+    <tr>
+        <td>Terms & conditions</td>
+
+    </tr>
+    <tr>
+        <td></td>
+        <td>Common Seal</td>
+        <td>For SHREERAM TEXTILE INDUSTRIES <br/>
+            Authorised signatory
+        </td>
+    </tr>
+</table>
+</div>
+</body>
+</html>
