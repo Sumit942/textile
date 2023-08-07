@@ -79,7 +79,7 @@ public class ExcelUtility<T> {
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal pnf = list.stream().map(InvoiceView::getPnfCharge)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalAmount = list.stream().map(InvoiceView::getTotalTaxAmount)
+        BigDecimal totalAmount = list.stream().map(InvoiceView::getTotalAmountAfterTax)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal paidAmount = list.stream().map(InvoiceView::getPaidAmount)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
