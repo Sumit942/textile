@@ -25,6 +25,9 @@
         </c:forEach>
         </tr>
     </tbody>
+    <tfoot>
+        <tr><td class="text-center" colspan="15">--------------END------------</td></tr>
+    </tfoot>
 </table>
 <hr>
 <table id="unBilledChallanTable" class="table table-striped table-bordered">
@@ -46,7 +49,30 @@
         </tr>
     </tbody>
     <tfoot>
-        <tr><td class="text-center" colspan="20">--------------END------------</td></tr>
+        <tr><td class="text-center" colspan="15">--------------END------------</td></tr>
+    </tfoot>
+</table>
+<hr>
+<table id="yarnChallanTable" class="table table-striped table-bordered">
+
+    <thead>
+        <tr><th class="text-center" colspan="20">Yarn Return Challan Nos</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+        <c:forEach items="${yarnReturnChNo}" var="productDetail" varStatus="index">
+            <td>
+                <span onclick="searchByChallanNo(${productDetail.chNo})" style="text-decoration: underline; cursor: pointer;">${productDetail.chNo}</span>
+            </td>
+            ${(index.index + 1) % 15 == 0 ? '</tr><tr>' : ''}
+        </c:forEach>
+        <c:forEach begin="1" end="${15 - yarnReturnChNo.size() % 15}" >
+            <td></td>
+        </c:forEach>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr><td class="text-center" colspan="15">--------------END------------</td></tr>
     </tfoot>
 </table>
 </div>

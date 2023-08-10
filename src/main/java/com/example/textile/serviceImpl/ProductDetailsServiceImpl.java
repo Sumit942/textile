@@ -84,6 +84,11 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     }
 
     @Override
+    public List<ProductDetail> findByPartyIdAndProductName_Not_Like(Long partyId, String productName) {
+        return productDetailRepo.findByPartyIdAndProductName_Not_Like(partyId, productName);
+    }
+
+    @Override
     public List<Long> findAllChNoAndInvoice_IsNull() {
         return productDetailRepo.findAllChNoAndInvoice_IsNull();
     }
@@ -91,6 +96,16 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     @Override
     public List<ProductDetail> findAllByInvoice(Long invoice) {
         return productDetailRepo.findAllByInvoice(invoice);
+    }
+
+    @Override
+    public List<ProductDetail> findAllByInvoice_Is_Null_And_productName_EndsWith(String prodName) {
+        return productDetailRepo.findAllByInvoice_Is_Null_And_productName_EndsWith(prodName);
+    }
+
+    @Override
+    public List<ProductDetail> findAllByInvoice_Is_Null_And_productName_Not_EndsWith(String prodName) {
+        return productDetailRepo.findAllByInvoice_Is_Null_And_productName_Not_EndsWith(prodName);
     }
 
     @Override

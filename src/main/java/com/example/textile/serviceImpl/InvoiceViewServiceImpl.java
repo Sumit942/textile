@@ -60,7 +60,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         if (paymentStatus != null) {
             sb.append("and view.paid = :paid ");
         }
-        sb.append("order by view.invoiceId desc");
+        sb.append("order by view.invoiceId ASC");
         Query query = entityManager.createQuery(sb.toString());
 
         if (fromDate != null) {

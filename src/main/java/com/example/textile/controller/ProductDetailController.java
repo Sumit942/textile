@@ -37,6 +37,8 @@ public class ProductDetailController extends BaseController{
 
     Map<String, ActionExecutor> actionExecutorMap;
 
+    private static final String YARN_RETURN = "%YARN RETURN";
+
     @PostConstruct
     public void init() {
         actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(ProductDetailController.class);
@@ -47,7 +49,7 @@ public class ProductDetailController extends BaseController{
     public String showForm(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
                            Model model,
                            @RequestParam(value ="searchByCh", required = false) Long chNo) throws InvalidObjectPopulationException {
-        if (chNo != null && chNo.compareTo(0l) > 0) {
+        if (chNo != null && chNo.compareTo(0L) > 0) {
             log.debug("showForm() searchByCh");
             List<ProductDetail> byChNo = productDetailService.findByChNo(chNo);
             command.setProductDetails(byChNo);
@@ -116,7 +118,8 @@ public class ProductDetailController extends BaseController{
 
         List<Long> allChNo = productDetailService.findAllChNo();
 //        List<Long> unBilledChNo = productDetailService.findAllChNoAndInvoice_IsNull();
-        List<ProductDetail> unBilledChNo = productDetailService.findAllByInvoice(null);
+        List<ProductDetail> unBilledChNo = productDetailService.findAllByInvoice_Is_Null_And_productName_Not_EndsWith(YARN_RETURN);
+        List<ProductDetail> yarnReturnChNo = productDetailService.findAllByInvoice_Is_Null_And_productName_EndsWith(YARN_RETURN);
 
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);
@@ -128,6 +131,7 @@ public class ProductDetailController extends BaseController{
 
             model.addAttribute("missingChallanNos", missingChNos);
             model.addAttribute("unBilledChNo", unBilledChNo);
+            model.addAttribute("yarnReturnChNo", yarnReturnChNo);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
@@ -140,7 +144,9 @@ public class ProductDetailController extends BaseController{
     @ResponseBody
     public List<ProductDetail> getByPartyId(@RequestParam("partyId") Long partyId,
                                             @RequestParam(value = "invoiceId",required = false) Long invoiceId)  {
-        return productDetailService.findByPartyIdAndInvoiceId(partyId, invoiceId);
+        if (invoiceId != null)
+            return productDetailService.findByPartyIdAndInvoiceId(partyId, invoiceId);
+        return productDetailService.findByPartyIdAndProductName_Not_Like(partyId, YARN_RETURN);
     }
 
     @GetMapping("/searchByChallanNo")

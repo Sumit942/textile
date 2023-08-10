@@ -641,6 +641,7 @@ function billToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToParty(ui.item)
+            $('#loadChallan').addClass("disabled")
             getProductDetailsByCompanyId(ui.item.id)
             return false;
         }
