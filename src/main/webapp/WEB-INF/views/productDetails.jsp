@@ -39,14 +39,14 @@
             <td>
                 <form:input path="challanNos" class="numbersOnly form-control" placeholder="Enter Challan Nos"/>
             </td>
-            <td>
+            <!--<td>
                 <form:hidden path="company.id" />
                 <form:input path="company.name" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event, this, -1)" class="form-control ui-autocomplete-input" autocomplete="off" />
             </td>
             <td>
                 <form:hidden path="product.id"/>
                 <form:input path="product.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
-            </td>
+            </td> -->
             <td>
                 <input type="submit" value="search" name="searchChallans" class="btn btn-primary"/>
             </td>
@@ -169,7 +169,8 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td style="width: 0%"></td><td style="width: 0%"></td><td></td><td></td><td></td>
+                    <td style="width: 0%"></td><td style="width: 0%"></td><td></td><td></td>
+                    <td><button type="button" class="btn btn-primary" onclick="resetRow()">Reset</button></td>
                     <td colspan="2"><button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button></td>
                     <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success">Submit</button></td>
                 </tr>
@@ -458,6 +459,48 @@ $('input[name="searchChallans"], input[name="saveChallans"]').on('click',functio
     }
     return true;
 })
+
+function resetRow() {
+var i = 0;
+var row = '<tr>' +
+                    '<td>'+
+                        '<span id="productDetails['+i+'].srNo">'+(i+1)+'</span>'+
+                        '<input id="productDetails'+i+'.id" name="productDetails['+i+'].id" type="hidden" value="">'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly form-control" value="">'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].party.id" type="hidden" value="">'+
+                        '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="" class="form-control">'+
+                    '</td>'+
+                    '<td>'+
+                        '<input type="hidden" id="productDetails'+i+'.product.id" name="productDetails['+i+'].product.id" value="">'+
+                        '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="" class="form-control">'+
+                        '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active" value="true" />'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.product.hsn" name="productDetails['+i+'].product.hsn" required="required" type="text" value="6006" class="form-control">'+
+                    '</td>'+
+                    '<td>'+
+                        '<select id="productDetails'+i+'.unitOfMeasure.id" name="productDetails['+i+'].unitOfMeasure.id" required="required">'+
+                            $("#productDetails0\\.unitOfMeasure\\.id").html()+
+                        '</select>'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.quantity" name="productDetails['+i+'].quantity" required="required" type="text" class="numbersOnly form-control" >'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.rate" name="productDetails['+i+'].rate" type="text" class="numbersOnly form-control" value="">'+
+                    '</td>'+
+                    '<td>'+
+                        '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
+                    '</td>'+
+                  '</tr>';
+
+        $('#productDetailsTable tbody').html(row);
+        $('#productDetails'+i+'\\.chNo').focus()
+}
 
 </script>
 <%@ include file="./common/footer.jspf" %>

@@ -141,6 +141,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                 query.setParameter("productName",command.getProduct().getName());
             }
         }
+        query.setMaxResults(10);
 
         return (List<ProductDetail>) query.getResultList();
     }
