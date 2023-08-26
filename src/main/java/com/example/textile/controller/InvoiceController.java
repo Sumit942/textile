@@ -393,14 +393,14 @@ public class InvoiceController extends BaseController {
             Invoice invoice = invoices.get(0);
             logSuffix += "id="+invoice.getId()+";InvoiceNo="+invoice.getInvoiceNo()+";";
             String process = templateUtility
-                    .getProcessedTemplate("emailTemplates/SRTI_Invoice.html","invoice",invoice);
+                    .getProcessedTemplate("emailTemplates/invoice.html","invoice",invoice);
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             PdfUtility.createPdf(os,process);
 
             byte[] content = os.toByteArray();
 
-            response.setHeader("Content-Disposition","attachment; filename=Invtesting.pdf");
+            response.setHeader("Content-Disposition","attachment; filename=invoice01.pdf");
             response.setContentLength(content.length);
             response.getOutputStream().write(content);
         }
