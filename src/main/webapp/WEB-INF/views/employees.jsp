@@ -54,7 +54,7 @@
     </div>
     <div class="col">
       <form:label path="employee.designation" >Designation</form:label>
-      <form:select path="employee.designation" class="form-control" required="true">
+      <form:select path="employee.designation" class="form-select" required="true">
           <form:option value="" label="--Select--"/>
           <form:options items="${designations}" itemValue="id" itemLabel="designation" />
       </form:select>
@@ -82,7 +82,7 @@
     </div>
     <div class="col-md-4">
       <form:label path="employee.address.state.id" >State</form:label>
-      <form:select path="employee.address.state.id" class="form-control" placeholder="State" required="true">
+      <form:select path="employee.address.state.id" class="form-select" placeholder="State" required="true">
           <form:option value="" label="--Select--"/>
           <form:options items="${states}" itemValue="id" itemLabel="name" />
       </form:select>

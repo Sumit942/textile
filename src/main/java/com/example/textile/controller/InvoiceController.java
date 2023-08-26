@@ -399,8 +399,13 @@ public class InvoiceController extends BaseController {
             PdfUtility.createPdf(os,process);
 
             byte[] content = os.toByteArray();
-
-            response.setHeader("Content-Disposition","attachment; filename=invoice01.pdf");
+            StringBuilder filename = new StringBuilder("SRTI-");
+            for (String word: invoice.getSaleType().getSaleType().split("\\s")) {
+                if (!word.isEmpty())
+                    filename.append(word.charAt(0));
+            }
+            filename.append("-").append(invoiceNo.split("/")[2]).append(".pdf");
+            response.setHeader("Content-Disposition","attachment; filename="+filename);
             response.setContentLength(content.length);
             response.getOutputStream().write(content);
         }

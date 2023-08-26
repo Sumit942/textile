@@ -126,7 +126,8 @@
                     </td>
                     <td>
                         <a href="${pageContext.request.contextPath}/invoices/invoice/${invoice.invoiceId}">${invoice.invoiceNo}</a>
-                        (<a href="${pageContext.request.contextPath}/invoices/printById/${invoice.invoiceId}" target="_blank">Print</a>)
+                        (<a href="${pageContext.request.contextPath}/invoices/downloadPdf?invoiceNo=${invoice.invoiceNo}" target="_blank">Download</a>)
+                        <!-- (<a href="${pageContext.request.contextPath}/invoices/printById/${invoice.invoiceId}" target="_blank">Print</a>) -->
                     </td>
                     <!-- <td>${invoice.billToPartyGst}</td> -->
                     <td>${invoice.billToPartyName}</td>

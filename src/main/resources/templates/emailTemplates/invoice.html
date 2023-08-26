@@ -152,13 +152,13 @@
         </td>
         <td style="width: 40%;border-right: none;border-left: none;" class="text-center">
             <span style="font-size: 25px;"><b>SHREERAM TEXTILE INDUSTRIES</b></span> <br />
-            <p style="font-size: 13px; margin-bottom: 0;">202, Royal Building, Bangar Nagar, Bhiwandi Road,Kalher,
-            Bhiwandi, Thane, Maharashtra, 421302<br />
+            <p style="font-size: 13px; margin-bottom: 0;"><b>202, Royal Building, Bangar Nagar, Bhiwandi Road,Kalher,
+            Bhiwandi, Thane, Maharashtra, 421302</b><br />
             Tel: <b th:text="${invoice.invoiceBy.mobileNo}" /><br />
             Email: <b th:text="${invoice.invoiceBy.emailId}" /><br />
             GSTIN: <b th:text="${invoice.invoiceBy.gst}" /></p>
         </td>
-        <td style="width: 6%;font-size: 13px;border-left: none;text-align: center;">Original for Recipent</td>
+        <td style="width: 6%;font-size: 13px;border-left: none;text-align: center;"><b>Original for<br /> Recipent</b></td>
     </tr>
 </table>
 <table class="xl8121738 tableMid">
@@ -167,15 +167,15 @@
     </tr>
     <tr>
         <td colspan="2">Invoice No: <b id="invoiceNo" th:text="${invoice.invoiceNo}" /></td>
-        <td colspan="2">Invoice Date: <b th:text="${{invoice.invoiceDate}}" /></td>
+        <td colspan="2">Invoice Date: <b th:text="${#dates.format(invoice.invoiceDate, 'dd/MM/yyyy')}" /></td>
     </tr>
     <tr>
         <td colspan="1">State: <b th:text="${invoice.invoiceBy.address.state.name}" /></td>
         <td>Code:	<b th:text="${invoice.invoiceBy.address.state.code}" /></td>
         <td colspan="2"><span th:if="${not #strings.isEmpty(invoice.placeOfSupply)}">Place of Supply : <b th:text="${invoice.placeOfSupply}" /></span></td>
     </tr>
-    <tr style="background: white;color: white;">
-        <td colspan="4">..</td>
+    <tr height="20">
+        <td height="20" colspan="4"></td>
     </tr>
     <tr class="text-center highlight">
         <td colspan="2">Bill To Pary</td>
@@ -203,7 +203,7 @@
         <td>State:  <span th:text="${invoice.billToParty.address.state.name}" /></td><td> Code: <span th:text="${invoice.billToParty.address.state.code}" /></td>
         <td>State:  <span th:text="${invoice.shipToParty.address.state.name}" /></td><td> Code: <span th:text="${invoice.shipToParty.address.state.code}" /></td>
     </tr>
-    <tr style="background: white;color: white;"><td colspan="4">..</td></tr>
+    <tr height="20"><td height="20" colspan="4"></td></tr>
 </table>
 <table class="tableMid">
     <tr class="text-center highlight">
@@ -227,7 +227,7 @@
     <th:block th:each="product, prodStat : ${invoice.product}">
     <tr class="xl11921738 text-center">
         <td><span th:text="${prodStat.count}"/>.</td>
-        <td><span th:text="${product.product.name}"/></td>
+        <td><span th:text="${product.product.name}"/><span th:if="${not #strings.isEmpty(product.chNo)}"> (Ch No.<span th:text="${product.chNo}"/>)</span></td>
         <td><span th:text="${product.product.hsn}"/></td>
         <td><span th:text="${product.unitOfMeasure.unitOfMeasure}"/></td>
         <td><span th:text="${product.quantity}"/></td>
@@ -266,8 +266,8 @@
         <td class="text-center"><span th:text="${invoice.cGst}"/><span th:text="${invoice.iGst}"/></td>
     </tr>
     <tr class="font721738">
-        <td colspan="3">Add: <span th:text="${invoice.invoiceBy.address.state.code == invoice.billToParty.address.state.code} ? 'Add: SGST ' + ${invoice.gstPerc/2} + '%' : ''" /> %</td>
-        <td class="text-center"><span th:text="${invoice.sGst}"/></td>
+        <td colspan="3"><span th:text="${invoice.invoiceBy.address.state.code == invoice.billToParty.address.state.code} ? 'Add: SGST ' + ${invoice.gstPerc/2} + '%' : ''" /></td>
+        <td class="text-center" height="20"><span th:text="${invoice.sGst}"/></td>
     </tr>
     <tr class="font721738">
         <td colspan="3">Total Tax Amount</td>
