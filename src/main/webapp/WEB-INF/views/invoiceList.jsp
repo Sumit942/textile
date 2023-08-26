@@ -44,8 +44,9 @@
                 </select>
             </td>
             <td>
-                <input name="showInvoiceReport" value="search" type="submit" class="btn btn-primary"/>
-                <input name="downloadInvoiceReport" value="Download" type="submit" class="btn btn-primary"/>
+                <input name="showInvoiceReport" value="search" type="submit" class="btn btn-primary btn-sm mb-1"/>
+                <input name="downloadInvoiceReport" value="Download Excel" type="submit" class="btn btn-primary btn-sm mb-1"/>
+                <input name="downloadInvoiceReportPdf" value="Download Pdf" type="submit" class="btn btn-primary btn-sm"/>
             </td>
 
         </tbody>

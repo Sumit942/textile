@@ -13,13 +13,11 @@ import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.InvoiceService;
 import com.example.textile.service.InvoiceViewService;
 import com.example.textile.service.ProductDetailService;
-import com.example.textile.utility.ExcelUtility;
-import com.example.textile.utility.PdfUtility;
-import com.example.textile.utility.ShreeramTextileConstants;
-import com.example.textile.utility.ThymeleafTemplateUtility;
+import com.example.textile.utility.*;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import com.lowagie.text.DocumentException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -106,6 +104,7 @@ public class InvoiceController extends BaseController {
                                        @RequestParam(value = "challanNo", required = false) Long challanNo,
                                        @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
                                        @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport,
+                                       @RequestParam(value = "downloadInvoiceReportPdf", required = false) String downloadInvoiceReportPdf,
                                        @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport,
                                       RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String logPrefix = "invoiceReport() ";
@@ -117,6 +116,12 @@ public class InvoiceController extends BaseController {
         /* downloading excel report  **/
         if (downloadInvoiceReport != null) {
             invoiceReportDownloadExcel(invoiceReport, response);
+            return null;
+        }
+
+        /* downloading pdf report  **/
+        if (downloadInvoiceReportPdf != null) {
+            invoiceReportDownloadPdf(invoiceReport, response);
             return null;
         }
 
@@ -441,7 +446,7 @@ public class InvoiceController extends BaseController {
             headerMap.put("S.No", "srNo");
             headerMap.put("Invoice Date", "invoiceDate");
             headerMap.put("Invoice No", "invoiceNo");
-            headerMap.put("Party Gst", "billToPartyGst");
+//            headerMap.put("Party Gst", "billToPartyGst");
             headerMap.put("Party Name", "billToPartyName");
             headerMap.put("Amount", "totalAmount");
             headerMap.put("Total Tax", "totalTaxAmount");
@@ -477,5 +482,38 @@ public class InvoiceController extends BaseController {
 
         }
 
+    }
+
+    private void invoiceReportDownloadPdf(List<InvoiceView> invoiceReport, HttpServletResponse response) {
+        String logPrefix = "invoiceReportDownloadPdf() ";
+        log.info("{} Entry",logPrefix);
+
+        if (invoiceReport != null) {
+            Map<String, String> headerMap = new LinkedHashMap<>();
+            headerMap.put("S.No", "srNo");
+            headerMap.put("Invoice Date", "invoiceDate");
+            headerMap.put("Invoice No", "invoiceNo");
+//            headerMap.put("Party Gst", "billToPartyGst");
+            headerMap.put("Party Name", "billToPartyName");
+            headerMap.put("Amount", "totalAmount");
+            headerMap.put("Total Tax", "totalTaxAmount");
+            headerMap.put("PnF", "pnfCharge");
+            headerMap.put("Total Amount", "totalAmountAfterTax");
+            headerMap.put("Payment Status", "paid");
+            headerMap.put("Paid", "paidAmount");
+            headerMap.put("Payment Date", "paymentDt");
+            headerMap.put("Debit", "amtDr");
+
+            PdfReportUtil<InvoiceView> pdfUtility = new PdfReportUtil<>(invoiceReport);
+            PDDocument pdf = pdfUtility.getPdf(headerMap);
+            try {
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=report.pdf");
+                pdf.save(response.getOutputStream());
+                pdf.close();
+            } catch (Exception e) {
+                log.error(logPrefix + "Error Generating Pdf invoice report" + e.getLocalizedMessage());
+            }
+        }
     }
 }
