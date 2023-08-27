@@ -1,7 +1,8 @@
 package com.example.textile.utility;
 
-import com.lowagie.text.pdf.PdfDocument;
+import com.example.textile.entity.InvoiceView;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -10,9 +11,13 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.*;
 
+import static com.example.textile.utility.ShreeramTextile.*;
+
+@Slf4j
 public class PdfReportUtil<T> {
     private final List<T> domainList;
 
@@ -22,66 +27,134 @@ public class PdfReportUtil<T> {
 
     @SneakyThrows
     public PDDocument getPdf(Map<String, String> domainMap) {
-        //TODO: pdf report download
+        List<Map<String, Object>> valueMapList = new ArrayList<>();
+        Map<String, Object> valueMap;
 
-        PDDocument document = new PDDocument();
-        PDPage page = new PDPage(PDRectangle.A4);
-        document.addPage(page);
+        int srNo = 0;
+        for (T domain: domainList) {
+            srNo++;
 
-        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            String key,value;
+            Object oValue;
+            Field field;
+            valueMap = new HashMap<>();
+            for (Map.Entry<String, String> entrySet: domainMap.entrySet())   {
+                key = entrySet.getKey();
+                value = entrySet.getValue();
+                try {
+                    if (ShreeramTextileConstants.SRNO.equals(value)) {
+                        oValue = srNo;
+                    } else {
+                        field = domain.getClass().getDeclaredField(value);
+                        field.setAccessible(true);
+                        oValue = field.get(domain);
+                    }
+                    valueMap.put(key, oValue);
 
-        // Set font and font size
-        PDFont pdFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
-        contentStream.setFont(pdFont,12);
 
-        // Define table parameters
-        float margin = 50;
-        float yStart = page.getMediaBox().getHeight() - margin;
-        float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
-        float yPosition = yStart;
-        int rows = 5;
-        int cols = 3;
-        float rowHeight = 20;
-        float tableHeight = rowHeight * rows;
-        float colWidth = tableWidth / (float) cols;
-        float tableXPosition = margin;
+                } catch (NoSuchFieldException e) {
+                    log.error("Field not found getPdf(): "+e);
+                }
+            }
 
-        // Create table header
-        contentStream.beginText();
-        contentStream.newLineAtOffset(tableXPosition, yPosition);
-        contentStream.showText("Header 1");
-        contentStream.newLineAtOffset(colWidth, 0);
-        contentStream.showText("Header 2");
-        contentStream.newLineAtOffset(colWidth, 0);
-        contentStream.showText("Header 3");
-        contentStream.endText();
-
-        yPosition -= rowHeight;
-
-        // Create table rows
-        for (int i = 0; i < rows; i++) {
-            contentStream.setLineWidth(0.5f);
-            contentStream.moveTo(tableXPosition, yPosition);
-            contentStream.lineTo(tableXPosition + tableWidth, yPosition);
-            contentStream.stroke();
-
-            contentStream.beginText();
-            PDType1Font pdType1Font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-            contentStream.setFont(pdType1Font, 12);
-            contentStream.newLineAtOffset(tableXPosition, yPosition - 15);
-            contentStream.showText("Cell " + (i + 1) + ", 1");
-            contentStream.newLineAtOffset(colWidth, 0);
-            contentStream.showText("Cell " + (i + 1) + ", 2");
-            contentStream.newLineAtOffset(colWidth, 0);
-            contentStream.showText("Cell " + (i + 1) + ", 3");
-            contentStream.endText();
-
-            yPosition -= rowHeight;
+            valueMapList.add(valueMap);
         }
 
-        // Close the content stream
-        contentStream.close();
+        if (!domainList.isEmpty() && domainList.get(0) instanceof InvoiceView) {
+            addTotalAmountRow(valueMapList, domainList);
+        }
 
-        return  document;
+        return preparePdfFile(domainMap.keySet(), valueMapList);
+//        return getPdf1(domainMap);
+    }
+
+    @SneakyThrows
+    private PDDocument preparePdfFile(Set<String> headerSet, List<Map<String, Object>> valueMapList) {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A3);
+        document.addPage(page);
+
+
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            float margin = 50;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
+            float yPosition = yStart;
+            int cols = headerSet.size(); // Number of columns in the table
+            int rows = valueMapList.size(); // Number of rows in the table
+            float rowHeight = 20;
+            float tableHeight = rowHeight * rows;
+            float colWidth = tableWidth / (float) cols;
+            float tableXStart = margin;
+
+            PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            PDFont fontBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+
+            // Draw table headers with borders
+            for (String header: headerSet) {
+                contentStream.beginText();
+                contentStream.setFont(fontBold, 12);
+                contentStream.newLineAtOffset(tableXStart, yPosition);
+                contentStream.showText(header);
+                contentStream.endText();
+
+                // Draw cell border
+                contentStream.moveTo(tableXStart, yPosition - rowHeight);
+                contentStream.lineTo(tableXStart + colWidth, yPosition - rowHeight);
+                contentStream.lineTo(tableXStart + colWidth, yPosition);
+                contentStream.lineTo(tableXStart, yPosition);
+                contentStream.closeAndStroke();
+
+                tableXStart += colWidth;
+            }
+            yPosition -= rowHeight;
+
+            // Draw table content with borders
+
+            for (Map<String, Object> valueMap : valueMapList) {
+                tableXStart = margin;
+                for (String header: headerSet) {
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.newLineAtOffset(tableXStart, yPosition);
+                    contentStream.showText(getText(valueMap.get(header), header));
+                    contentStream.endText();
+
+                    // Draw cell border
+                    contentStream.moveTo(tableXStart, yPosition - rowHeight);
+                    contentStream.lineTo(tableXStart + colWidth, yPosition - rowHeight);
+                    contentStream.lineTo(tableXStart + colWidth, yPosition);
+                    contentStream.lineTo(tableXStart, yPosition);
+                    contentStream.closeAndStroke();
+
+                    tableXStart += colWidth;
+                }
+                yPosition -= rowHeight;
+            }
+        }
+
+
+        return document;
+    }
+
+    private String getText(Object value, String header) {
+        log.debug("getText() [value= "+value+", header= "+header+"]");
+        if (value == null)
+            return "";
+        if (value instanceof String) {
+            return (String) value;
+        } else if (value instanceof Double) {
+            return String.format("%.2f", (Double) value);
+        } else if (value instanceof Integer) {
+            return String.valueOf(value);
+        } else if (value instanceof Boolean) {
+            return (getStringCellValueForBool((Boolean) value, header));
+        } else if (value instanceof Date) {
+            return (getDateFormat(ShreeramTextileConstants.DATE_FORMAT_ddMMYYYY).format(value));
+        } else if (value instanceof BigDecimal) {
+            return value.toString();
+        } else {
+            return (value.toString());
+        }
     }
 }

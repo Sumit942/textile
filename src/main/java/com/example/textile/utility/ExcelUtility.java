@@ -9,14 +9,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.example.textile.utility.ShreeramTextile.*;
 
 @Slf4j
 public class ExcelUtility<T> {
     private final List<T> domainList;
-
-    private static final SimpleDateFormat sdf = new SimpleDateFormat(ShreeramTextileConstants.DATE_FORMAT_ddMMYYYY);
 
     public ExcelUtility(List<T> domainList) {
         this.domainList = domainList;
@@ -56,44 +55,11 @@ public class ExcelUtility<T> {
 
         }
 
-        if (domainList != null && !domainList.isEmpty() && domainList.get(0) instanceof InvoiceView) {
-            addTotalAmountRow(valueMapList);
+        if (!domainList.isEmpty() && domainList.get(0) instanceof InvoiceView) {
+            addTotalAmountRow(valueMapList, domainList);
         }
 
         return prepareXlsxFile(domainMap.keySet(), valueMapList);
-    }
-
-    private void addTotalAmountRow(List<Map<String, Object>> valueMapList) {
-        log.info("addTotalAmountRow() Entry");
-        Map<String, Object> valueMapTotal = new HashMap<>();
-
-        //add an empty row before total amount row
-        valueMapList.add(valueMapTotal);
-
-        valueMapTotal = new HashMap<>();
-
-        List<InvoiceView> list = (List<InvoiceView>) domainList;
-        BigDecimal amount = list.stream().map(InvoiceView::getTotalAmount)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal tax = list.stream().map(InvoiceView::getTotalTaxAmount)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal pnf = list.stream().map(InvoiceView::getPnfCharge)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalAmount = list.stream().map(InvoiceView::getTotalAmountAfterTax)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal paidAmount = list.stream().map(InvoiceView::getPaidAmount)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal debit = list.stream().map(InvoiceView::getAmtDr)
-                .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        valueMapTotal.put("Party Name","Total:"); //assuming to add total in party name column
-        valueMapTotal.put("Amount",amount);
-        valueMapTotal.put("Total Tax",tax);
-        valueMapTotal.put("PnF",pnf);
-        valueMapTotal.put("Total Amount",totalAmount);
-        valueMapTotal.put("Paid",paidAmount);
-        valueMapTotal.put("Debit",debit);
-        valueMapList.add(valueMapTotal);
     }
 
     private XSSFWorkbook prepareXlsxFile(Set<String> headerSet, List<Map<String, Object>> valueMapList) {
@@ -153,6 +119,11 @@ public class ExcelUtility<T> {
     private void setCellValue(XSSFWorkbook workbook, Cell cell, Map<String, Object> dataRow, String header) {
         Object value = dataRow.get(header);
 
+        if (value == null) {
+            cell.setCellValue("");
+            return;
+        }
+
         if (value instanceof String) {
             cell.setCellValue((String) value);
         } else if (value instanceof Double) {
@@ -162,7 +133,7 @@ public class ExcelUtility<T> {
         } else if (value instanceof Boolean) {
             cell.setCellValue(getStringCellValueForBool((Boolean) value, header));
         } else if (value instanceof Date) {
-            cell.setCellValue(sdf.format(value));
+            cell.setCellValue(getDateFormat(ShreeramTextileConstants.DATE_FORMAT_ddMMYYYY).format(value));
         } else if (value instanceof BigDecimal) {
             CellStyle cellStyle = createDataStyle(workbook);
             DataFormat dataFormat = workbook.createDataFormat();
@@ -171,16 +142,7 @@ public class ExcelUtility<T> {
             cell.setCellStyle(cellStyle);
             cell.setCellValue(((BigDecimal) value).doubleValue());
         } else {
-            if (value != null)
-                cell.setCellValue(value.toString());
-        }
-    }
-
-    private String getStringCellValueForBool(Boolean value, String header) {
-        if (header.contains("Payment")) {
-            return value ? "Paid" : "UnPaid";
-        } else {
-            return value ? "Yes" : "No";
+            cell.setCellValue(value.toString());
         }
     }
 
