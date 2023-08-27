@@ -39,4 +39,14 @@ public class ProductServiceImpl implements ProductService {
         query.setParameter("name","%"+name+"%");
         return (List<Product>) query.getResultList();
     }
+
+    @Override
+    public Product findById(Long id) {
+        return productRepo.findById(id).orElse(null);
+    }
+
+    @Override
+    public Product save(Product product) {
+        return productRepo.save(product);
+    }
 }

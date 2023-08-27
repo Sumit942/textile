@@ -91,7 +91,7 @@
                             </td>
                             <td style="width: 30%">
                                 <form:hidden path="productDetails[0].product.id"/>
-                                <form:input path="productDetails[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="form-control ui-autocomplete-input" autocomplete="off"/>
+                                <form:input path="productDetails[0].product.name" onblur="preventProductAddManually(0)" required="true" onkeyup="autoSearchProduct(event, this,0)" class="form-control ui-autocomplete-input" autocomplete="off"/>
                                 <form:hidden path="productDetails[0].product.active" />
                                 <form:errors path="productDetails[0].product.name" cssClass="error"/>
                             </td>
@@ -135,7 +135,7 @@
                                     </td>
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].product.id" />
-                                        <form:input path="productDetails[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})" class="form-control"/>
+                                        <form:input path="productDetails[${index.index}].product.name" onblur="preventProductAddManually(${index.index})" required="true" onkeyup="autoSearchProduct(event,this,${index.index})" class="form-control"/>
                                         <form:hidden path="productDetails[${index.index}].product.active" />
                                         <form:errors path="productDetails[${index.index}].product.name" cssClass="error"/>
                                     </td>
@@ -241,7 +241,7 @@
                     '</td>'+
                     '<td>'+
                         '<input type="hidden" id="productDetails'+i+'.product.id" name="productDetails['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
-                        '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'" class="form-control">'+
+                        '<input id="productDetails'+i+'.product.name" onblur="preventProductAddManually('+i+')" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'" class="form-control">'+
                         '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active" value="true" />'+
                     '</td>'+
                     '<td>'+
@@ -296,6 +296,8 @@ function updateProdDetailsInputTagsIdAndName() {
 
         $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','productDetails'+i+'.product.id').attr('name','productDetails['+i+'].product.id')
         $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('name','productDetails['+i+'].product.name')
+        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onblur','preventProductAddManually('+i+')')
+        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onkeyup','autoSearchProduct(event,this,'+i+')')
         $('#'+row).find('td:eq(3)').find('input:eq(2)').attr('id','productDetails'+i+'.product.active').attr('name','productDetails['+i+'].product.active')
 
         $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','productDetails'+i+'.hsn').attr('name','productDetails['+i+'].hsn')
@@ -476,7 +478,7 @@ var row = '<tr>' +
                     '</td>'+
                     '<td>'+
                         '<input type="hidden" id="productDetails'+i+'.product.id" name="productDetails['+i+'].product.id" value="">'+
-                        '<input id="productDetails'+i+'.product.name" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="" class="form-control">'+
+                        '<input id="productDetails'+i+'.product.name" onblur="preventProductAddManually('+i+')" name="productDetails['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="" class="form-control">'+
                         '<input type="hidden" id="productDetails'+i+'.product.active" name="productDetails['+i+'].product.active" value="true" />'+
                     '</td>'+
                     '<td>'+
@@ -500,6 +502,15 @@ var row = '<tr>' +
 
         $('#productDetailsTable tbody').html(row);
         $('#productDetails'+i+'\\.chNo').focus()
+}
+
+//prevent manually adding product
+function preventProductAddManually(index) {
+    const prodId = $("#productDetails"+index+"\\.product\\.id").val();
+    if (prodId == '') {
+        console.log('removing product name from input as user has not selected')
+        $("#productDetails"+index+"\\.product\\.name").val('');
+    }
 }
 
 </script>
