@@ -1,4 +1,5 @@
 <%@ include file="./common/header.jspf" %>
+<title>Tax Invoice</title>
 <style>
 .error {
     color: #ff0000;
@@ -18,6 +19,7 @@
 <body>
 <form:form name="invoice" action="${pageContext.request.contextPath}/invoices/submit" method="POST" modelAttribute="invoiceCommand">
 <div class="container-fluid">
+    <%@ include file="./common/navigation.jspf" %>
     <c:if test="${not empty actionResponse.errors}">
         <div class="row mb-1 alert alert-danger" style="margin: 1%">
             <ul>
@@ -207,14 +209,16 @@
             <td>
                 <span id="product[0].srNo">1</span>
                 <!-- <form:hidden path="product[0].id" /> -->
+                <form:hidden path="product[0].party.id" />
             </td>
             <td>
                 <form:hidden path="product[0].product.id"/>
+                <form:hidden path="product[0].product.active"/>
                 <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
             <td>
-                <form:input path="product[0].chNo" class="numbersOnly" style="width: 100%;"/>
+                <form:input path="product[0].chNo" class="numbersOnly" required="true" style="width: 100%;" onkeyup="autoSearchChallanNo(event,this, 0)"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
             <td>
@@ -249,14 +253,16 @@
                 <td>
                     <span id="product[${index.index}].srNo">${index.index + 1}</span>
                     <!-- <form:hidden path="product[${index.index}].id" /> -->
+                    <form:hidden path="product[${index.index}].party.id" />
                 </td>
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
+                    <form:hidden path="product[${index.index}].product.active" />
                     <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].chNo" class="numbersOnly" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" style="width: 100%;" onkeyup="autoSearchChallanNo(event, this, ${index.index})"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
@@ -282,9 +288,7 @@
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
-                    <c:if test="${index.index == invoiceCommand.product.size()-1}">
-                        <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;"/>
-                    </c:if>
+                    <input  type="button" value="-" id="productDel_${index.index}" class="btn btn-sm btn-danger rounded" onclick="productDelRow(${index.index})" style="margin-left: 18%;width: 60%;"/>
                 </td>
             </tr>
         </c:forEach>
@@ -299,8 +303,9 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
+            <td><input type="button" class="btn btn-primary float-end" value="Load Challan" id="loadChallan"/></td>
             <td>
+                <span class="challanLoader text-primary"></span>
                 <input type="button" class="btn btn-primary float-end" value="Duplicate" id="addDuplicate" onclick="addProductDescRow('duplicate')"/>
             </td>
             <td>
@@ -636,7 +641,8 @@ function billToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToParty(ui.item)
-            autoFocusProductDescField()
+            $('#loadChallan').addClass("disabled")
+            getProductDetailsByCompanyId(ui.item.id)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -669,7 +675,7 @@ function billToPartyStateAutoComplete(event, thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToPartyState(ui.item)
-            autoFocusProductDescField()
+            //autoFocusProductDescField()
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
@@ -739,7 +745,50 @@ function shipToPartyAutoComplete(event,thisObj) {
                 "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
-
+    /**                 productDescription script                  **/
+function autoSearchChallanNo(event,obj,index) {
+    if (event.key == 'Enter') {
+        return;
+    }
+    $(obj).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "${pageContext.request.contextPath}/productDetail/searchByChallanNo",
+                dataType : 'json',
+                data : {
+                    chNo : request.term
+                },
+                success : function(data) {
+                    response(data);
+                },
+                error : function(err) {
+                    console.error(err)
+                }
+            });
+        },
+        minLength: 3,
+        select : function(event, ui) {
+            populateProductDetail(ui, index)
+            return false;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>").append(
+                "<a><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
+    };
+}
+function populateProductDetail(ui,i) {
+    $('#product'+i+'\\.product\\.id').val(ui.item.product.id)
+    $('#product'+i+'\\.product\\.party\\.id').val(ui.item.product.party.id)
+    $('#product'+i+'\\.product\\.active').val(ui.item.product.active)
+    $('#product'+i+'\\.product\\.name').val(ui.item.product.name)
+    $('#product'+i+'\\.chNo').val(ui.item.chNo)
+    $('#product'+i+'\\.hsn').val(ui.item.hsn)
+    $('#product'+i+'\\.unitOfMeasure\\.id').val(ui.item.unitOfMeasure.id)
+    $('#product'+i+'\\.quantity').val(ui.item.quantity)
+    $('#product'+i+'\\.rate').val(ui.item.rate)
+    //$('#product'+i+'\\.totalPrice').val(ui.item.totalPrice)
+    updateRowAmount(i)
+}
     /**                 productDescription script                  **/
 function autoSearchProduct(event,obj,index) {
 if (event.key == 'Enter') {
@@ -758,11 +807,13 @@ $("#product"+index+"\\.product\\.id").val('')
                 success : function(data) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
+                    $("#product"+index+"\\.product\\.party\\.id").val('')
                     response(data);
                 },
                 error : function(err) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
+                    $("#product"+index+"\\.product\\.party\\.id").val('')
                     console.error(err)
                 }
             });
@@ -773,6 +824,13 @@ $("#product"+index+"\\.product\\.id").val('')
             var productId = ui.item.id
             //$("#product"+index+"\\.product\\.hsn").val(ui.item.hsn)
             $("#product"+index+"\\.product\\.id").val(productId)
+            if (ui.item.party != undefined) {
+                $("#product"+index+"\\.product\\.party.id").val(ui.item.party.id)
+            } else {
+                $("#product"+index+"\\.product\\.party.id").val($("#billToParty\\.id"))
+            }
+
+            $("#product"+index+"\\.product\\.active").val(ui.item.active)
             //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
             if (productId != '') {
@@ -861,13 +919,15 @@ function addProductDescRow(addRowType) {
                         '<td>'+
                             '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
+                            '<input id="product'+i+'.party.id" name="product['+i+'].party.id" type="hidden" value="'+$("#billToParty\\.id").val()+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input type="hidden" name="product['+i+'].product.id" value="">'+
+                            '<input type="hidden" name="product['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
+                            '<input type="hidden" name="product['+i+'].product.active" value="true">'+
                             '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+i+'.chNo" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
@@ -887,37 +947,190 @@ function addProductDescRow(addRowType) {
                             '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
                         '</td>'+
                         '<td>'+
-                            '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">'+
+                            '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
                         '</td>'+
                       '</tr>';
 
-    $("#productDescTBody > tr:eq("+i+")").find('td:eq(8)').html('')
+    $("#productDescTBody > tr:eq(0)").find('td:eq(8)').html('')
     $("#productDescTBody").append(prodDescRow)
     autoFocusProductDescField()
     $(document).scrollTop($(document).height())
 }
-function productDelRow() {
-    var del = confirm('Do you want to delete the row?')
+function productDelRow(i) {
+    if (i <= 0 ) return;
+    console.log('delete: ' + i)
+    var del = confirm('Do you want to delete '+(i ? i : "last")+' row?')
     if (!del){
         return;
     }
 
     var rowCount = $("#productDescTBody > tr").length
     if (rowCount > 2) {
-        $("#productDescTBody > tr:last").remove()
-        if (rowCount > 3) {
-            $("#productDescTBody > tr:last > td:eq(8)").html('<input type="button" value="-" id="productDel_'+(rowCount-1)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">')
-        }
+        $("#productDescTBody > tr:eq("+(i ? i+1 : 'last')+")").remove()
+        //if (rowCount > 3) {
+        //    $("#productDescTBody > tr:"+(i ? i+1 : 'last')+" > td:eq(8)").html('<input type="button" value="-" id="productDel_'+(rowCount-1)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow()" style="margin-left: 18%;width: 60%;">')
+        //}
+    }
+    if (i && i > 0) {
+        updateProdDetailsInputTagsIdAndName()
     }
     updateTotalAmount()
-    autoFocusProductDescField()
+    //autoFocusProductDescField()
 }
+/**     remove all the challan row from tr>1 and set tr=1 value to ''    **/
+function resetProdDetailsRow() {
+    var row = 'productDescTBody > tr:eq(1)'
+
+    $('#'+row).find('td:eq(1)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(1)').find('input:eq(1)').val('')
+    $('#'+row).find('td:eq(1)').find('input:eq(2)').val('')
+    $('#'+row).find('td:eq(2)').find('input:eq(0)').val('')
+    //$('#'+row).find('td:eq(3)').find('input:eq(0)')
+    //$('#'+row).find('td:eq(4)').find('select:eq(0)').val('')
+    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(6)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+
+    while ($('#productDescTBody > tr').length > 2) {
+        $('#productDescTBody > tr:last').remove()
+    }
+}
+
+/**             update all the <input> 'id' and 'name'              **/
+function updateProdDetailsInputTagsIdAndName() {
+    var rowIdSelector = 'productDescTBody > tr'
+
+    for (var i = 2; i < $("#"+rowIdSelector).length; i++) {
+        var row = rowIdSelector+':eq('+i+')'
+        console.log('row-->', row)
+        $('#'+row).find('td:eq(0)').html('<span id="product['+(i-1)+'].srNo">'+i+'</span>')
+        $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','product'+(i-1)+'.product.id').attr('name','product['+(i-1)+'].product.id')
+        $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
+        $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name').attr('onkeyup','autoSearchProduct(event,this,'+(i-1)+')')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo').attr('onkeyup','autoSearchChallanNo(event, this, '+(i-1)+')')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
+        $('#'+row).find('td:eq(4)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
+        try {
+            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+        } catch (err) {
+            console.log('error in change id for productDelRow ',err)
+        }
+    }
+}
+
+
 /**             Auto focus to last product name fields              **/
 function autoFocusProductDescField() {
     $(document).scrollTop($(document).height())
+    if ($("#product"+rowCount+"\\.id").val()) {
     var rowCount = $("#productDescTBody > tr").length - 2
-    $("#product"+rowCount+"\\.product\\.name").focus()
+        $("#product"+rowCount+"\\.product\\.name").focus()
+    } else {
+        $('#addDuplicate').focus()
+    }
 }
+
+$('#loadChallan').on('click',function(){
+    $('#loadChallan').addClass("disabled")
+    getProductDetailsByCompanyId()
+})
+
+/**             get Challans by Company/billToParty                    **/
+function getProductDetailsByCompanyId(companyId) {
+    $('.challanLoader').addClass('spinner-border');
+    companyId = companyId ? companyId : $("#billToParty\\.id").val();
+    console.log('inside getProductRate(): compId-'+companyId)
+    if (companyId != '' && companyId != 0) {
+        $.ajax({
+            url : "${pageContext.request.contextPath}/productDetail/getByParty?partyId="+companyId,
+            success : function(data) {
+                if (data != '' && data != null && data.length > 0) {
+                    createProductDetailsRow(data)
+                    $('.challanLoader').removeClass('spinner-border')
+                } else {
+                    //resetProdDetailsRow()
+                    $('.challanLoader').removeClass('spinner-border')
+                    autoFocusProductDescField()
+                }
+            },
+            error : function(err) {
+                //TODO: create Empty Row
+                $('.challanLoader').removeClass('spinner-border')
+                resetProdDetailsRow()
+                console.error(err)
+            }
+        })
+    } else {
+        $('.challanLoader').removeClass('spinner-border');
+        $('#loadChallan').removeClass("disabled")
+        alert('Please Select Bill To party bill')
+    }
+}
+
+function createProductDetailsRow(prodDetails) {
+    //console.log(prodDetails)
+    var unitOfMeasureHtml = $("#product0\\.unitOfMeasure\\.id").html();
+    var prdId = $('#productDescTBody > tr:last').find('td:eq(1)').find('input:eq(0)').val()
+    var prdName = $('#productDescTBody > tr:last').find('td:eq(1)').find('input:eq(2)').val()
+    if (prdId == '' || prdName == '') {
+        $("#productDescTBody > tr:last").remove()
+    }
+    var rowNum = $('#productDescTBody > tr').length -1
+
+    if (prodDetails != '' && prodDetails.length > 0 ) {
+    var prodDescRow = "";
+    for (var i = 0; i < prodDetails.length; i++ ) {
+    prodDescRow = prodDescRow + '<tr>'+
+                        '<td>'+
+                            '<span id="product['+(i+rowNum)+'].srNo">'+(i+1+rowNum)+'</span>'+
+                            //'<input id="product'+(i+rowNum)+'.id" name="product['+(i+rowNum)+'].id" type="hidden" value="'+prodDetails[i].id+'">'+
+                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+'">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input type="hidden" id="product'+(i+rowNum)+'.product.id" name="product['+(i+rowNum)+'].product.id" value="'+prodDetails[i].product.id+'">'+
+                            '<input type="hidden" id="product'+(i+rowNum)+'.product.active" name="product['+(i+rowNum)+'].product.active" value="'+prodDetails[i].product.active+'">'+
+                            '<input id="product'+(i+rowNum)+'.product.name" name="product['+(i+rowNum)+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+(i+rowNum)+')" type="text" value="'+prodDetails[i].product.name+'">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.product.hsn" name="product['+(i+rowNum)+'].product.hsn" required="required" type="text" value="'+prodDetails[i].product.hsn+'" style="width: 100%;">'+
+                        '</td>'+
+                        '<td>'+
+                            '<select id="product'+(i+rowNum)+'.unitOfMeasure.id" name="product['+(i+rowNum)+'].unitOfMeasure.id" required="required">'+
+                                unitOfMeasureHtml+
+                            '</select>'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" >'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" readonly>'+
+                        '</td>'+
+                        '<td>'+
+                            '<input type="button" value="-" id="productDel_'+(i+rowNum)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+(i+rowNum)+')" style="margin-left: 18%;width: 60%;">'+
+                        '</td>'+
+                      '</tr>';
+    }
+    }
+
+    $("#productDescTBody").append(prodDescRow)
+    $("#productDescTBody > tr:eq(1)").find('td:eq(8)').html('')
+    for (var i = rowNum; i < rowNum+prodDetails.length; i++ ) {
+        updateRowAmount(i)
+    }
+    autoFocusProductDescField()
+    $(document).scrollTop($(document).height())
+
+}
+
     /**                 calculation script                  **/
 function updateRowAmount(index) {
 
@@ -976,6 +1189,8 @@ function inWords (num) {
         n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
         if (!n) {
             str = '';
+        } else if ( num == 0 || num == '0') {
+            str = 'Zero '
         } else {
             str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
             str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';

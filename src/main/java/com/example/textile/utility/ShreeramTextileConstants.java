@@ -18,9 +18,12 @@ public class ShreeramTextileConstants {
     public static final String BANK_AC_NO = "125001337061";
     public static final String BANK_IFSC = "CNRB0000113";
 
-    public static final String FORMAT_INVOICE_NO = "SRTI/22-23/";
+    public static final String FORMAT_INVOICE_NO = "SRTI/23-24/";
     public static final String FORMAT_SAVE_INVOICE_NO = "######";
     public static final String ACTION = "action";
 
     public static final Integer PRODUCT_HSN = 6006;
+
+    public static final String DATE_FORMAT_ddMMYYYY = "dd-MM-yyyy";
+    public static final String SRNO = "srNo";
 }

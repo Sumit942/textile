@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +46,26 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private BankDetailRepository bankDetailRepo;
 
+    @Autowired private ProductDetailRepository productDetailRepo;
+
+    @Autowired
+    EntityManager entityManager;
+
     @Value("${invoice.startCount}")
     private Integer invoiceStartCount;
+
+    @Value("${invoice.oldInvoiceLastId}")
+    private Integer oldInvoiceLastId;
+
+    @Override
+    public Integer getOldInvoiceLastId() {
+        return oldInvoiceLastId;
+    }
+
+    @Override
+    public List<ProductDetail> findByChNo(Long chNo) {
+        return productDetailRepo.findByChNo(chNo);
+    }
 
     @Override
     public List<Invoice> findAll() {
@@ -58,16 +80,27 @@ public class InvoiceServiceImpl implements InvoiceService {
         boolean isNew = invoice.isNew();
         log.info("{} saving.... {}",logPrefix,invoice.getInvoiceNo());
         preCheckCompany(invoice);
-        //check if the product name is already added. is yes then use it.
+        //check if the product name is already added. if yes then use it.
         invoice.getProduct().stream()
-                .filter(e -> e.getProduct().getId() == null)
+                .filter(e -> e.getProduct().getId() == null || e.getProduct().getId() <= 0L)
                 .forEach(e -> {
-                    Product savedPrdt = productRepo.findByName(e.getProduct().getName());
+                    Product savedPrdt = productRepo.findByNameIgnoreCase(e.getProduct().getName());
                     if (savedPrdt != null) {
                         e.getProduct().setId(savedPrdt.getId());
                     } else {
                         productRepo.save(e.getProduct());
                         log.info("{} saving product{} ", logPrefix,e.getProduct());
+                    }
+                });
+
+        //setting product status active
+        invoice.getProduct().stream()
+                .filter(e -> e.getProduct().getId() != null && e.getProduct().getId() > 0L)
+                .forEach(e -> {
+                    if (!e.getProduct().getActive()) {
+                        e.getProduct().setActive(true);
+                        productRepo.save(e.getProduct());
+                        log.info("{} updating Product active=[true] {}", logPrefix, e.getProduct().getId());
                     }
                 });
 
@@ -189,6 +222,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setBillToParty(bParty);
             invoice.setShipToParty(sParty);
         }
+        //setting invoice.billToParty.id to productDetail.party.id to avoid transient exception
+        for (ProductDetail pd : invoice.getProduct())
+            pd.setParty(invoice.getBillToParty());
 
         log.info("{} saving-> bParty{}; sParty{}; [{}]", logPrefix, invoice.getBillToParty().getId(), invoice.getShipToParty().getId(), logSuffix);
         log.info("{} Exit {}",logPrefix,logSuffix);
@@ -197,6 +233,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public String getLatestInvoiceNo() {
+        log.info(">>invoiceStartCount " + invoiceStartCount);
         int count = invoiceRepo.getLatestInvoiceNo() + invoiceStartCount;
         String latestInvNo = getFormattedInvoiceNo(count);
 
@@ -269,5 +306,50 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void deleteByInvoiceNo(String invoiceNo) {
         invoiceRepo.deleteByInvoiceNo(invoiceNo);
+    }
+
+    @Override
+    public void deleteProductDetailsByChNoAndInvoice_isNull(List<Long> challanNo) {
+
+        productDetailRepo.deleteAllByChNoAndInvoice_IsNull(challanNo);
+//        Query query = entityManager.createQuery("DELETE FROM ProductDetail pd WHERE pd.id IN (:id) AND pd.invoice IS NULL");
+//        query.setParameter("id",challanId);
+//        int i = query.executeUpdate();
+//        log.info("deleteProductDetailsByIdAndInvoice_isNull() count:[{}]",i);
+    }
+
+    @Transactional
+    @Override
+    public int updateInvoiceDetails(Long invoiceId, Date invoiceDt, Date paymentDt, Boolean paymentStatus, BigDecimal paidAmount, BigDecimal amtDr) {
+
+        StringBuilder sb = new StringBuilder("UPDATE Invoice SET paid= :paymentStatus");
+        if (invoiceDt != null)
+            sb.append(", invoiceDate= :invoiceDt ");
+        if (paymentDt != null)
+            sb.append(", paymentDt= :paymentDt");
+        if (paidAmount != null)
+            sb.append(", paidAmount= :paidAmount");
+        if (amtDr != null)
+            sb.append(", amtDr= :amtDr");
+
+        sb.append(", updateDate= :updateDate WHERE id= :invoiceId");
+//        Query query = entityManager.createQuery("UPDATE Invoice SET invoiceDate= :invoiceDt, paid= :paymentStatus," +
+//                "paidAmount= :paidAmount, amtDr= :amtDr, paymentDt= :paymentDt, updateDate= :updateDate WHERE id= :invoiceId");
+        Query query = entityManager.createQuery(sb.toString());
+
+        if (invoiceDt != null)
+            query.setParameter("invoiceDt",invoiceDt);
+        if (paymentDt != null)
+            query.setParameter("paymentDt",paymentDt);
+        if (paidAmount != null)
+            query.setParameter("paidAmount",paidAmount);
+        if (amtDr != null)
+            query.setParameter("amtDr",amtDr);
+
+        query.setParameter("paymentStatus",paymentStatus);
+        query.setParameter("updateDate",new Date());
+        query.setParameter("invoiceId",invoiceId);
+
+        return query.executeUpdate();
     }
 }

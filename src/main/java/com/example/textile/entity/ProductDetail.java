@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,12 +15,13 @@ import java.util.Objects;
 public class ProductDetail implements Serializable {
     private Long id;
     private Product product;
-    private String chNo;
+    private Long chNo;
     private Unit unitOfMeasure;
     private Double quantity;
     private Double rate;
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private Invoice invoice;
+    private Company party;
 
     private Date insertDt;
     private Date updateDt;
@@ -44,11 +46,11 @@ public class ProductDetail implements Serializable {
         this.product = product;
     }
 
-    public String getChNo() {
+    public Long getChNo() {
         return chNo;
     }
 
-    public void setChNo(String chNo) {
+    public void setChNo(Long chNo) {
         this.chNo = chNo;
     }
 
@@ -71,7 +73,6 @@ public class ProductDetail implements Serializable {
         this.quantity = quantity;
     }
 
-    @NotNull
     @Column(nullable = false)
     public Double getRate() {
         return rate;
@@ -81,7 +82,6 @@ public class ProductDetail implements Serializable {
         this.rate = rate;
     }
 
-    @NotNull
     @Column(nullable = false)
     public BigDecimal getTotalPrice() {
         return totalPrice;
@@ -91,8 +91,9 @@ public class ProductDetail implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
+    @JsonBackReference
     public Invoice getInvoice() {
         return invoice;
     }
@@ -101,7 +102,17 @@ public class ProductDetail implements Serializable {
         this.invoice = invoice;
     }
 
+    @ManyToOne
+    public Company getParty() {
+        return party;
+    }
+
+    public void setParty(Company party) {
+        this.party = party;
+    }
+
     @CreationTimestamp
+    @Column(updatable = false)
     public Date getInsertDt() {
         return insertDt;
     }
@@ -121,7 +132,7 @@ public class ProductDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
+        return "ProductDetail{" + "id=" + id + ", product=" + product + ", chNo='" + chNo + '\'' + ", unitOfMeasure=" + unitOfMeasure + ", party=" + party +", quantity=" + quantity + ", rate=" + rate + ", totalPrice=" + totalPrice + '}';
     }
 
     @Override

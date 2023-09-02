@@ -1,15 +1,15 @@
 package com.example.textile;
 
 import com.example.textile.entity.*;
-import com.example.textile.repo.InvoiceRepository;
-import com.example.textile.repo.InvoiceViewRepository;
-import com.example.textile.repo.ProductRepository;
-import com.example.textile.repo.UnitRepository;
+import com.example.textile.enums.UserProfileType;
+import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
+import com.example.textile.service.ProductDetailService;
 import com.example.textile.service.UserService;
 import com.example.textile.utility.ThymeleafTemplateUtility;
 import com.lowagie.text.DocumentException;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -26,7 +25,7 @@ import java.util.*;
 @SpringBootTest
 class TextileApplicationTests {
 
-    //    @Autowired
+        @Autowired
     InvoiceService invoiceService;
     //@Autowired
     InvoiceViewRepository viewRepository;
@@ -38,8 +37,23 @@ class TextileApplicationTests {
     UnitRepository unitRepo;
     // @Autowired
     ThymeleafTemplateUtility templateUtility;
-    //    @Autowired
+    //@Autowired
     UserService userService;
+
+//    @Autowired
+    ProductDetailService productDetailService;
+
+
+    //@Test
+    void getInvoiceStartCount() {
+        System.out.println("invoiceStartCount>>> " + invoiceService.getLatestInvoiceNo());
+    }
+
+    //@Test
+    void test_findByFieldNameLatest() {
+//        List<BankStatement> byTxnDate = statementService.findAllOrderByAndLimit("insertDt", 0, 10);
+//        byTxnDate.forEach(System.out::println);
+    }
 
     //@Test
     void test_InvoiceView_withPageSize() {
@@ -106,7 +120,7 @@ class TextileApplicationTests {
 
         List<ProductDetail> prodList = new ArrayList<>();
         ProductDetail productDetail = new ProductDetail();
-        productDetail.setChNo("test-16");
+        productDetail.setChNo(16L);
         productDetail.setQuantity(500.0);
         productDetail.setRate(15.0);
         productDetail.setTotalPrice(BigDecimal.ZERO);
@@ -201,7 +215,7 @@ class TextileApplicationTests {
         Product product = productRepo.findById(2L).get();
         productDetail.setProduct(product);
         productDetail.setUnitOfMeasure(uom);
-        productDetail.setChNo("001-test-1-ch");
+        productDetail.setChNo(1L);
         productDetail.setQuantity(100.0);
         productDetail.setRate(10.0);
         productDetail.setTotalPrice(BigDecimal.valueOf(1000));
@@ -248,22 +262,15 @@ class TextileApplicationTests {
 
     //@Test
     void test_creatUser() {
-        UserProfile userProfile = new UserProfile();
-        userProfile.setId(1L);
-        UserProfile userProfile1 = new UserProfile();
-        userProfile1.setId(2L);
-
-        Set<UserProfile> userProfiles = new HashSet<>();
-        userProfiles.add(userProfile);
-        userProfiles.add(userProfile1);
+        UserProfile userProfile = userService.findByType(UserProfileType.USER.getUserProfileType());
 
         User user = new User();
-        user.setFirstName("Sumit");
-        user.setLastName("Paswan");
-        user.setUserName("sumit");
-        user.setPassword("1234");
-        user.setEmail("sumitpaswan942@gmail.com");
-        user.setUserProfiles(userProfiles);
+        user.setFirstName("");
+        user.setLastName("");
+        user.setUserName("");
+        user.setPassword("");
+        user.setEmail("@gmail.com");
+        user.setUserProfiles(new HashSet<>(Arrays.asList(userProfile)));
 
         System.out.println(userService.saveOrUpdate(user));
     }
@@ -291,5 +298,4 @@ class TextileApplicationTests {
             e.printStackTrace();
         }
     }*/
-
 }

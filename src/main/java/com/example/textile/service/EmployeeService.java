@@ -2,6 +2,7 @@ package com.example.textile.service;
 
 import com.example.textile.entity.Designation;
 import com.example.textile.entity.Employee;
+import com.example.textile.entity.State;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface EmployeeService {
     void deleteById(Long id);
 
     List<Designation> findAllDesignations();
+
+    List<State> findAllStates();
 }

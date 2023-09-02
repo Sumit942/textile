@@ -11,4 +11,8 @@ public interface ProductService {
     List<Product> findByNameLike(String name);
 
     List<Product> findByNameAndLimit(String name, int limit);
+
+    Product findById(Long id);
+
+    Product save(Product product);
 }

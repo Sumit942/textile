@@ -1,6 +1,8 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.entity.User;
+import com.example.textile.entity.UserProfile;
+import com.example.textile.repo.UserProfileRepository;
 import com.example.textile.repo.UserRepository;
 import com.example.textile.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepo;
+
+    @Autowired
+    UserProfileRepository userProfileRepo;
 
     @Lazy
     @Autowired
@@ -66,5 +71,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean userExists(String username) {
         return this.userRepo.findByUserName(username) != null;
+    }
+
+    @Override
+    public UserProfile findByType(String type) {
+        return this.userProfileRepo.findByType(type);
     }
 }

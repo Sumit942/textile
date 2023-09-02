@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Slf4j
 @Configuration
@@ -30,9 +31,18 @@ public class SecurityConfiguration {
          http
                  .authorizeHttpRequests(auth -> auth
                          .antMatchers("/login").permitAll()
+                         .antMatchers("/invoices/**").hasRole("ADMIN")
+                         .antMatchers("/productDetail/**").hasAnyRole("ADMIN","DBA","USER")
                          .anyRequest().authenticated())
-                 .formLogin().defaultSuccessUrl("/invoices");
+                 .formLogin()
+                 .successHandler(roleBasedAuthenticationSuccessHandler())
+         ;
          return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler roleBasedAuthenticationSuccessHandler() {
+        return new RoleBasedAuthenticationSuccessHandler();
     }
 
     @Bean

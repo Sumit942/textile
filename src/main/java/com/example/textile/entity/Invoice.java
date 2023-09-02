@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import com.example.textile.utility.ShreeramTextile;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -34,7 +35,7 @@ public class Invoice implements Serializable {
     private BigDecimal cGst;
     private BigDecimal sGst;
     private BigDecimal iGst;
-    private Double gstPerc = 2.5;
+    private Double gstPerc = 5.0;
 
     private BigDecimal totalTaxAmount;
     private Double roundOff = (double) 0;
@@ -44,8 +45,49 @@ public class Invoice implements Serializable {
     private Date updateDate;
     private Integer version;
 
+    private Boolean paid;
+    private BigDecimal paidAmount;
+    private BigDecimal amtDr;
+    private Date paymentDt;
+
     //bank select from dropdown
     private BankDetail selectedBank;
+
+    @Column(columnDefinition = "BIT DEFAULT false")
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
+
+    @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    @Temporal(TemporalType.DATE)
+    public Date getPaymentDt() {
+        return paymentDt;
+    }
+
+    public void setPaymentDt(Date paymentDt) {
+        this.paymentDt = paymentDt;
+    }
+
+    @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    public BigDecimal getAmtDr() {
+        return amtDr;
+    }
+
+    public void setAmtDr(BigDecimal amtDr) {
+        this.amtDr = amtDr;
+    }
 
     @Transient
     public Company getInvoiceBy() {
@@ -176,8 +218,9 @@ public class Invoice implements Serializable {
         this.saleType = saleType;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "invoice_id",referencedColumnName = "id")
+    @JsonManagedReference
     public List<ProductDetail> getProduct() {
         return product;
     }

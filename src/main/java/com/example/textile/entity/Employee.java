@@ -17,11 +17,9 @@ public class Employee implements Serializable {
     private String lastName;
     private Designation designation;
     private BigDecimal salary;
-    private String accountNo;
-    private String ifscCode;
+    private List<BankDetail> bankDetails;
     private String panCardNo;
-
-    private List<Statement> statements;
+    private String status;
 
     private Address address;
     private Date insertDt;
@@ -76,22 +74,14 @@ public class Employee implements Serializable {
         this.salary = salary;
     }
 
-    @Column
-    public String getAccountNo() {
-        return accountNo;
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "employee_id")
+    public List<BankDetail> getBankDetails() {
+        return bankDetails;
     }
 
-    public void setAccountNo(String accountNo) {
-        this.accountNo = accountNo;
-    }
-
-    @Column
-    public String getIfscCode() {
-        return ifscCode;
-    }
-
-    public void setIfscCode(String ifscCode) {
-        this.ifscCode = ifscCode;
+    public void setBankDetails(List<BankDetail> bankDetails) {
+        this.bankDetails = bankDetails;
     }
 
     //TODO: uncomment the below code after employee flow complete
@@ -105,15 +95,14 @@ public class Employee implements Serializable {
         this.panCardNo = panCardNo;
     }
 
-    @OneToMany(mappedBy = "employee")
-    public List<Statement> getStatements() {
-        return statements;
+    @Column
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatements(List<Statement> statements) {
-        this.statements = statements;
+    public void setStatus(String status) {
+        this.status = status;
     }
-
 
     @OneToOne(cascade = CascadeType.ALL)
     public Address getAddress() {
@@ -149,10 +138,10 @@ public class Employee implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", designation=" + designation +
+                ", panCardNo=" + panCardNo +
+                ", status=" + status +
                 ", salary=" + salary +
-                ", accountNo=" + accountNo +
-                ", ifscCode=" + ifscCode +
-                ", statements=" + statements +
+                ", bankDetail=" + bankDetails +
                 ", address=" + address +
                 ", insertDt=" + insertDt +
                 ", updateDt=" + updateDt +
