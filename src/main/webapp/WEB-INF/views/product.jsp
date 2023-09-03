@@ -16,7 +16,7 @@
 }
 </style>
 <body>
-<form:form name="challan" action="${pageContext.request.contextPath}/challan" method="POST" modelAttribute="productCommand">
+<form:form name="product" action="${pageContext.request.contextPath}/product" method="POST" modelAttribute="productCommand">
 <div class="container-fluid">
     <%@ include file="./common/navigation.jspf" %>
     <c:if test="${not empty actionResponse.errors}">
@@ -30,7 +30,7 @@
     </c:if>
     <c:if test="${actionResponse.responseType == 'SUCCESS'}">
         <div class="row mb-1 alert alert-success" style="margin: 1%">
-            challan ${challanCommand.challan.getchallanNo()} Save Successfully!!
+            ${successMessage}
         </div>
     </c:if>
     <div class="row mb-1">
@@ -39,8 +39,8 @@
     <table class="table table-striped table-bordered">
     <tr>
         <td>
-            <form:hidden path="product.id"/>
-            <form:input path="product.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
+            <form:hidden path="searchProduct.id"/>
+            <form:input path="searchProduct.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
         </td>
         <td>
             <input type="submit" value="search" name="searchProduct" class="btn btn-primary"/>
@@ -82,11 +82,73 @@
             <tfoot>
                 <tr>
                     <td><button type="button" class="btn btn-primary" onclick="resetRow()">Reset</button></td>
-                    <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success">Submit</button></td>
+                    <td colspan="2"><button type="submit" name="saveProduct" class="btn btn-success">Submit</button></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 </div>
 </form:form>
+<script>
+$('input[name="searchProduct"], input[name="saveProduct"]').on('click',function(event) {
+    var formElements = document.querySelectorAll("form input[type='text'], form textarea");
+
+    if (event.target.name == 'searchProduct') {
+        // Remove the 'required' attribute for the required fields
+        formElements.forEach(function(element) {
+            element.required = false;
+        });
+    } else {
+        // Set the 'required' attribute for the required fields
+        formElements.forEach(function(element) {
+            console.log(element)
+                element.required = true;
+        });
+    }
+    return true;
+})
+function autoSearchProduct(event,obj,index) {
+        if (event.key == 'Enter') {
+            return;
+        }
+        $("#searchProduct\\.id").val('')
+        $(obj).autocomplete({
+            source : function(request, response) {
+                $.ajax({
+                    url : "${pageContext.request.contextPath}/product/searchByName",
+                    dataType : 'json',
+                    data : {
+                        name : request.term
+                    },
+                    success : function(data) {
+                        $('#searchProduct\\.id').val('')
+                        response(data);
+                    },
+                    error : function(err) {
+                        if (index < 0 ) {
+                            $('#searchProduct\\.id').val('')
+                        } else {
+                            $("#.searchProduct\\.id").val('')
+                        }
+                        console.error(err)
+                    }
+                });
+            },
+            minLength: 3,
+            select : function(event, ui) {
+                this.value = ui.item.name
+                var productId = ui.item.id
+                if (index < 0 ) {
+                    $('#searchProduct\\.id').val(productId)
+                } else {
+                    $("#searchProduct\\.id").val(productId)
+                }
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function(ul, item) {
+            return $("<li>").append(
+                    "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+        };
+    }
+</script>
 <%@ include file="./common/footer.jspf" %>

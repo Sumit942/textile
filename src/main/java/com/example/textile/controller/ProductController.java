@@ -49,8 +49,8 @@ public class ProductController extends BaseController{
 
     @GetMapping("/searchByName")
     @ResponseBody
-    public List<Product> searchByName(@RequestParam("name") String name) {
-        return productService.findByNameAndLimit(name,10);
+    public List<Product> searchByName(@RequestParam("name") String name,@RequestParam( value = "active", required = false) Boolean active) {
+        return productService.findByNameAndLimit(name,10, active);
     }
 
     @GetMapping("/rateByProductAndCompanyId")
@@ -77,16 +77,17 @@ public class ProductController extends BaseController{
         String view = "redirect:/product";
 
         if (searchProduct != null) {
+            log.info("{} Inside searchProduct",logPrefix);
             Product byId = productService.findById(command.getSearchProduct().getId());
             command.setProduct(byId);
         } else {
-            log.info("{} Inside saveChallans",logPrefix);
+            log.info("{} Inside saveProduct",logPrefix);
             Map<String, Object> parameterMap = new HashMap<>();
             parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
             parameterMap.put(TextileConstants.USER, getLoggedInUser());
 
             ActionExecutor actExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
-            ActionResponse response;
+            ActionResponse response = null;
             try {
                 response = actExecutor.execute(command, parameterMap, result, model);
                 if (ResponseType.SUCCESS.equals(response.getResponseType())) {
@@ -100,12 +101,13 @@ public class ProductController extends BaseController{
                     log.error("result has doValidation Errors");
                     result.getAllErrors().forEach(System.out::println);
                     log.info("{} save Unsuccessfull", logPrefix);
-                    view = "/productDetails";
+                    view = "/product";
                 }
             } catch (Throwable e) {
                 log.error("Error while saving product-" + e.getLocalizedMessage(), e);
                 view = "/product";
             }
+            redirectAttr.addFlashAttribute(TextileConstants.ACTION_RESPONSE,response);
         }
         redirectAttr.addFlashAttribute(CommandConstants.PRODUCT_COMMAND, command);
 

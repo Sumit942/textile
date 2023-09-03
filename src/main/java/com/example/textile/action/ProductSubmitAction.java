@@ -8,6 +8,7 @@ import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
@@ -60,7 +61,15 @@ public class ProductSubmitAction extends ActionExecutor<ProductCommand> {
     }
 
     @Override
-    public void prePopulateOptionsAndFields(ProductCommand command, Object model) throws InvalidObjectPopulationException {
-
+    public void prePopulateOptionsAndFields(ProductCommand productCommand, Object model) throws InvalidObjectPopulationException {
+        /*String logPrefix = "populateOptionsAndFields() |";
+        log.info("{} Entry", logPrefix);
+        if(!(model instanceof Model)) {
+            throw new InvalidObjectPopulationException(productCommand,model);
+        }
+        Model models = (Model) model;
+        models.addAttribute("yarns", productService.findAllYarn());
+        models.addAttribute("designs", productService.findAllYarnDesign());
+        log.info("{} Exit", logPrefix);*/
     }
 }

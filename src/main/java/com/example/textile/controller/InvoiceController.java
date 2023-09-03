@@ -481,9 +481,6 @@ public class InvoiceController extends BaseController {
     }
 
     private void addTotalFooter(List<InvoiceView> invoiceReport) {
-        InvoiceView invoiceView = new InvoiceView();
-        invoiceReport.add(invoiceView); //Blank row to differentiate footer
-
         BigDecimal amount = invoiceReport.stream().map(InvoiceView::getTotalAmount)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal tax = invoiceReport.stream().map(InvoiceView::getTotalTaxAmount)
@@ -497,8 +494,8 @@ public class InvoiceController extends BaseController {
         BigDecimal debit = invoiceReport.stream().map(InvoiceView::getAmtDr)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        invoiceView = new InvoiceView();
-        invoiceView.setBillToPartyName("Total: ");
+        InvoiceView invoiceView = new InvoiceView();
+//        invoiceView.setBillToPartyName("Total: ");
         invoiceView.setTotalAmount(amount);
         invoiceView.setTotalTaxAmount(tax);
         invoiceView.setPnfCharge(pnf);

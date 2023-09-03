@@ -40,6 +40,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             for (ProductDetail e : invoice.getProduct()) {
                 savedChallanId.add(e.getChNo());
             }
+            if (Objects.nonNull(invoice.getId()) && invoice.getId() <= 0)
+                invoice.setPaid(false);
             invoiceService.saveOrUpdate(invoice);
             invoiceService.deleteProductDetailsByChNoAndInvoice_isNull(savedChallanId);
         } catch (Exception e) {

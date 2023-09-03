@@ -58,7 +58,7 @@
 
             <form:label path="invoiceDate" class="col-md-3">Invoice date:</form:label>
             <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.invoiceDate}" var="invoiceDateFormatted"/>
-            <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly/>
+            <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly required="true"/>
             <form:errors path="invoiceDate" cssClass="error"/>
         </div>
         <div class="col-md-6 border">
@@ -180,6 +180,7 @@
           <th>Sr.No</th>
           <th>Product Description</th>
           <th>Challan No</th>
+          <th>Date</th>
           <th>HSN code</th>
           <th>UOM</th>
           <th>Quantity</th>
@@ -220,6 +221,10 @@
             <td>
                 <form:input path="product[0].chNo" class="numbersOnly" required="true" style="width: 100%;" onkeyup="autoSearchChallanNo(event,this, 0)"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
+            </td>
+            <td>
+                <form:input path="product[0].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;" />
+                <form:errors path="product[0].challanDt" cssClass="error"/>
             </td>
             <td>
                 <form:input path="product[0].product.hsn" class="numbersOnly" required="true" style="width: 100%;"/>
@@ -264,6 +269,10 @@
                 <td>
                     <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" style="width: 100%;" onkeyup="autoSearchChallanNo(event, this, ${index.index})"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
+                </td>
+                <td>
+                    <form:input path="product[${index.index}].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;" />
+                    <form:errors path="product[${index.index}].challanDt" cssClass="error"/>
                 </td>
                 <td>
                     <form:input path="product[${index.index}].product.hsn" required="true" style="width: 100%;"/>
@@ -457,21 +466,18 @@ function showHideGstTab() {
 $(document).ready(function() {
     showHideGstTab()
 
-    $( "#dateOfSupply" ).datepicker({
+    $( "#dateOfSupply, #invoiceDate,.challanDt" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
-    $( "#invoiceDate" ).datepicker({
-       dateFormat: 'dd/mm/yy'
-    })
-    if ($("#id").val() == '' ) {
-        $("#invoiceDate").focus()
-    }
+    //if ($("#id").val() == '' ) {
+    //    $("#invoiceDate").focus()
+    //}
 
     $(".numbersOnly").on("keypress paste",function(e){
         var charCode = (e.which) ? e.which : event.keyCode
         //console.log('charCode: '+charCode+', event: '+e.type)
-        if (e.type == "paste")
-            e.preventDefault()
+        //if (e.type == "paste")
+        //    e.preventDefault()
 
         if (String.fromCharCode(charCode).match(/[^0-9+?.+0-9$]/g))
             return false
@@ -641,7 +647,7 @@ function billToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToParty(ui.item)
-            $('#loadChallan').addClass("disabled")
+            //$('#loadChallan').addClass("disabled")
             getProductDetailsByCompanyId(ui.item.id)
             return false;
         }
@@ -778,10 +784,11 @@ function autoSearchChallanNo(event,obj,index) {
 }
 function populateProductDetail(ui,i) {
     $('#product'+i+'\\.product\\.id').val(ui.item.product.id)
-    $('#product'+i+'\\.product\\.party\\.id').val(ui.item.product.party.id)
+    $('#product'+i+'\\.party\\.id').val(ui.item.party.id)
     $('#product'+i+'\\.product\\.active').val(ui.item.product.active)
     $('#product'+i+'\\.product\\.name').val(ui.item.product.name)
     $('#product'+i+'\\.chNo').val(ui.item.chNo)
+    $('#product'+i+'\\.challanDt').val(ui.item.formatChallanDt)
     $('#product'+i+'\\.hsn').val(ui.item.hsn)
     $('#product'+i+'\\.unitOfMeasure\\.id').val(ui.item.unitOfMeasure.id)
     $('#product'+i+'\\.quantity').val(ui.item.quantity)
@@ -802,18 +809,19 @@ $("#product"+index+"\\.product\\.id").val('')
                 url : "${pageContext.request.contextPath}/product/searchByName",
                 dataType : 'json',
                 data : {
-                    name : request.term
+                    name : request.term,
+                    active: true
                 },
                 success : function(data) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
-                    $("#product"+index+"\\.product\\.party\\.id").val('')
+                    $("#product"+index+"\\.party\\.id").val('')
                     response(data);
                 },
                 error : function(err) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
-                    $("#product"+index+"\\.product\\.party\\.id").val('')
+                    $("#product"+index+"\\.party\\.id").val('')
                     console.error(err)
                 }
             });
@@ -831,6 +839,7 @@ $("#product"+index+"\\.product\\.id").val('')
             }
 
             $("#product"+index+"\\.product\\.active").val(ui.item.active)
+            //$("#product"+index+"\\.challanDt").val(ui.item.challanDt)
             //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
             if (productId != '') {
@@ -908,9 +917,15 @@ function addProductDescRow(addRowType) {
         alert ("Please enter 'Total Price' in last row")
         return;
     }*/
+    var lastChDt = '#product'+(i-1)+'\\.challanDt'
+    if ( $(lastRate).val() == '' ) {
+        alert ("Please enter 'Challan Date' in last row")
+        $(lastChDt).focus()
+        return;
+    }
     //check duplicate chNos
     if (hasDuplicateChNos()){
-        alert ("Please entry unique 'challan no.' in last row")
+        alert ("Please enter unique 'challan no.' in last row")
         $(lastChNo).focus()
         return;
     }
@@ -928,6 +943,9 @@ function addProductDescRow(addRowType) {
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+i+'.challanDt" required="required" readonly name="product['+i+'].challanDt" type="text" class="challanDt" value="'+($(lastChDt).val() != '' ? $(lastChDt).val() : '')+'">'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
@@ -953,13 +971,14 @@ function addProductDescRow(addRowType) {
 
     $("#productDescTBody > tr:eq(0)").find('td:eq(8)').html('')
     $("#productDescTBody").append(prodDescRow)
+    $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
     autoFocusProductDescField()
     $(document).scrollTop($(document).height())
 }
 function productDelRow(i) {
     if (i <= 0 ) return;
     console.log('delete: ' + i)
-    var del = confirm('Do you want to delete '+(i ? i : "last")+' row?')
+    var del = confirm('Do you want to delete '+(i ? (i+1) : "last")+' row?')
     if (!del){
         return;
     }
@@ -985,11 +1004,11 @@ function resetProdDetailsRow() {
     $('#'+row).find('td:eq(1)').find('input:eq(1)').val('')
     $('#'+row).find('td:eq(1)').find('input:eq(2)').val('')
     $('#'+row).find('td:eq(2)').find('input:eq(0)').val('')
-    //$('#'+row).find('td:eq(3)').find('input:eq(0)')
-    //$('#'+row).find('td:eq(4)').find('select:eq(0)').val('')
-    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(3)').find('input:eq(0)').val('')
+    //$('#'+row).find('td:eq(5)').find('select:eq(0)').val('')
     $('#'+row).find('td:eq(6)').find('input:eq(0)').val('')
-    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(7)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(8)').find('input:eq(0)').val('')
 
     while ($('#productDescTBody > tr').length > 2) {
         $('#productDescTBody > tr:last').remove()
@@ -1008,13 +1027,15 @@ function updateProdDetailsInputTagsIdAndName() {
         $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
         $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name').attr('onkeyup','autoSearchProduct(event,this,'+(i-1)+')')
         $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo').attr('onkeyup','autoSearchChallanNo(event, this, '+(i-1)+')')
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
-        $('#'+row).find('td:eq(4)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
-        $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
-        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
-        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.challanDt').attr('name','product['+(i-1)+'].challanDt')
+
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
+        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
         try {
-            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+            $('#'+row).find('td:eq(9)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
         } catch (err) {
             console.log('error in change id for productDelRow ',err)
         }
@@ -1034,7 +1055,7 @@ function autoFocusProductDescField() {
 }
 
 $('#loadChallan').on('click',function(){
-    $('#loadChallan').addClass("disabled")
+    //$('#loadChallan').addClass("disabled")
     getProductDetailsByCompanyId()
 })
 
@@ -1043,15 +1064,28 @@ function getProductDetailsByCompanyId(companyId) {
     $('.challanLoader').addClass('spinner-border');
     companyId = companyId ? companyId : $("#billToParty\\.id").val();
     console.log('inside getProductRate(): compId-'+companyId)
+
+    //getting all added challan list so that it will not be queried
+    const challanArray = $("input[name$='].chNo']").map(function() {
+        return $(this).val();
+    }).get();
+
+    const challans = challanArray.join(', ');
+
     if (companyId != '' && companyId != 0) {
         $.ajax({
-            url : "${pageContext.request.contextPath}/productDetail/getByParty?partyId="+companyId,
+            url : "${pageContext.request.contextPath}/productDetail/getByParty",
+            data: {
+                partyId: companyId,
+                challans: challans
+            },
             success : function(data) {
                 if (data != '' && data != null && data.length > 0) {
                     createProductDetailsRow(data)
                     $('.challanLoader').removeClass('spinner-border')
-                } else {
+                } else if (data.length == 0) {
                     //resetProdDetailsRow()
+                    alert('Challans are upto date')
                     $('.challanLoader').removeClass('spinner-border')
                     autoFocusProductDescField()
                 }
@@ -1065,7 +1099,7 @@ function getProductDetailsByCompanyId(companyId) {
         })
     } else {
         $('.challanLoader').removeClass('spinner-border');
-        $('#loadChallan').removeClass("disabled")
+        //$('#loadChallan').removeClass("disabled")
         alert('Please Select Bill To party bill')
     }
 }
@@ -1098,6 +1132,9 @@ function createProductDetailsRow(prodDetails) {
                             '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')">'+
                         '</td>'+
                         '<td>'+
+                            '<input id="product'+(i+rowNum)+'.challanDt" name="product['+(i+rowNum)+'].challanDt" required="required" readonly type="text" class="challanDt" value="'+prodDetails[i].formatChallanDt+'" >'+
+                        '</td>'+
+                        '<td>'+
                             '<input id="product'+(i+rowNum)+'.product.hsn" name="product['+(i+rowNum)+'].product.hsn" required="required" type="text" value="'+prodDetails[i].product.hsn+'" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
@@ -1122,11 +1159,12 @@ function createProductDetailsRow(prodDetails) {
     }
 
     $("#productDescTBody").append(prodDescRow)
-    $("#productDescTBody > tr:eq(1)").find('td:eq(8)').html('')
+    //$("#productDescTBody > tr:eq(1)").find('td:eq(8)').html('')
     for (var i = rowNum; i < rowNum+prodDetails.length; i++ ) {
         updateRowAmount(i)
     }
     autoFocusProductDescField()
+    $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
     $(document).scrollTop($(document).height())
 
 }

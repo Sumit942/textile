@@ -13,10 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailCommand> {
@@ -61,6 +58,8 @@ public class ProductDetailSubmitAction extends ActionExecutor<ProductDetailComma
                 }
                 if (prod.getChNo() == null)
                     errMap.put("productDetails["+i+"].chNo","NotNull.invoiceCommand.product.chNo");
+                if (!Objects.nonNull(prod.getChallanDt()))
+                    errMap.put("productDetails["+i+"].challanDt","NotNull.invoiceCommand.product.challanDt");
                 if (prod.getQuantity() == null || prod.getQuantity() <= 0)
                     errMap.put("productDetails["+i+"].quantity","NotNull.invoiceCommand.product.quantity");
                 /*if (prod.getRate() == null || prod.getRate() <= 0)

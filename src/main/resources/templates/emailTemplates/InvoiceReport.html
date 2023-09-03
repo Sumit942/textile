@@ -24,7 +24,7 @@
         }
         .headerRow {
             color: white;
-            background: #607D8B;
+            background: #142854;
         }
         body {
             margin: 5px;
@@ -43,29 +43,44 @@
         <th>Total Tax</th>
         <th>PnF</th>
         <th>Total Amount</th>
-        <th>Payment Status</th>
-        <th>Paid</th>
-        <th>Payment Date</th>
+        <th></th>
+        <th>Paid Amt</th>
+        <th>Paid Date</th>
         <th>Debit</th>
     </tr>
     </thead>
     <tbody>
-    <th:block th:each="invoice, invoiceStat : ${invoiceReport}">
+    <th:block th:each="invoice, invoiceStat : ${invoiceReport}" th:if="${invoiceStat.index < invoiceReport.size()-1}">
     <tr>
-        <td><span th:if="${invoiceStat.count < invoiceReport.size() - 1 }" th:text="${invoiceStat.count}" /></td>
+        <td><span th:text="${invoiceStat.count}" /></td>
         <td><span th:text="${#dates.format(invoice.invoiceDate, 'dd/MM/yyyy')}" /></td>
         <td><span th:text="${invoice.invoiceNo}" /></td>
         <td><span th:text="${invoice.billToPartyName}" /></td>
-        <td><span th:text="${invoice.totalAmount}" /></td>
-        <td><span th:text="${invoice.totalTaxAmount}" /></td>
-        <td><span th:text="${invoice.pnfCharge}" /></td>
-        <td><span th:text="${invoice.totalAmountAfterTax}" /></td>
+        <td><span th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:text="${#numbers.formatDecimal(invoice.totalTaxAmount, 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:if="${invoice.pnfCharge > 0}" th:text="${#numbers.formatDecimal(invoice.pnfCharge, 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:text="${#numbers.formatDecimal(invoice.totalAmountAfterTax, 0, 'COMMA', 2, 'POINT')}" /></td>
         <td><span th:if="${invoice.paid != null}" th:text="${invoice.paid ? 'Paid' : 'UnPaid'}" /></td>
-        <td><span th:text="${invoice.paidAmount}" /></td>
+        <td><span th:if="${invoice.paidAmount > 0}" th:text="${#numbers.formatDecimal(invoice.paidAmount, 0, 'COMMA', 2, 'POINT')}" /></td>
         <td><span th:text="${#dates.format(invoice.paymentDt, 'dd/MM/yyyy')} "/></td>
-        <td><span th:text="${invoice.amtDr}" /></td>
+        <td><span th:if="${invoice.amtDr > 0}" th:text="${#numbers.formatDecimal(invoice.amtDr, 0, 'COMMA', 2, 'POINT')}" /></td>
     </tr>
     </th:block>
+    <tr height="25">
+        <td height="25" colspan="12"></td>
+    </tr>
+    <tr style="font-style: oblique;font-weight: 600;">
+        <td colspan="3"></td>
+        <td style="text-align: right;">Total: </td>
+        <td><span th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getTotalAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getTotalTaxAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:if="${invoiceReport.get(invoiceReport.size()-1).getPnfCharge() > 0}" th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getPnfCharge(), 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td><span th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getTotalAmountAfterTax(), 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td></td>
+        <td><span th:if="${invoiceReport.get(invoiceReport.size()-1).getPaidAmount() > 0}" th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getPaidAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
+        <td></td>
+        <td><span th:if="${invoiceReport.get(invoiceReport.size()-1).getAmtDr() > 0}" th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getAmtDr(), 0, 'COMMA', 2, 'POINT')}" /></td>
+    </tr>
     </tbody>
 </table>
 </body>
