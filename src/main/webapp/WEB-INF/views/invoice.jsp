@@ -177,78 +177,78 @@
     <table class="table" id="productDescTable" width="100%">
     <thead>
         <tr>
-          <th>Sr.No</th>
-          <th>Product Description</th>
-          <th>Challan No</th>
-          <th>Date</th>
-          <th>HSN code</th>
-          <th>UOM</th>
-          <th>Quantity</th>
-          <th>Rate</th>
-          <th>Amount</th>
-          <th></th>
+          <th style="width: 5%" >Sr.No</th>
+          <th style="width: 25%">Product Description</th>
+          <th style="width: 10%">Challan No</th>
+          <th style="width: 15%">Date</th>
+          <th style="width: 5%" >HSN code</th>
+          <th style="width: 5%" >UOM</th>
+          <th style="width: 10%">Quantity</th>
+          <th style="width: 5%" >Rate</th>
+          <th style="width: 15%">Amount</th>
+          <th style="width: 5%" ></th>
         </tr>
     </thead>
     <tbody id="productDescTBody">
     <tr>
-        <td></td>
-        <td colspan="2">
+        <td style="width: 5%"></td>
+        <td style="width: 25%" colspan="2">
             <form:select path="saleType.id" >
                 <form:options items="${saleTypes}" itemValue="id" itemLabel="saleType" />
             </form:select>
         </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td style="width: 10%"></td>
+        <td style="width: 15%"></td>
+        <td style="width: 5%"></td>
+        <td style="width: 5%"></td>
+        <td style="width: 10%"></td>
+        <td style="width: 5%"></td>
     </tr>
     <c:choose>
     <c:when test="${empty invoiceCommand.product}">
         <tr>
-            <td>
+            <td style="width: 5%">
                 <span id="product[0].srNo">1</span>
                 <!-- <form:hidden path="product[0].id" /> -->
                 <form:hidden path="product[0].party.id" />
             </td>
-            <td>
+            <td style="width: 25%">
                 <form:hidden path="product[0].product.id"/>
                 <form:hidden path="product[0].product.active"/>
-                <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off" style="width: 100%;"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 10%">
                 <form:input path="product[0].chNo" class="numbersOnly" required="true" style="width: 100%;" onkeyup="autoSearchChallanNo(event,this, 0)"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
-            <td>
-                <form:input path="product[0].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;" />
+            <td style="width: 15%">
+                <form:input path="product[0].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;background-color: gainsboro;   " />
                 <form:errors path="product[0].challanDt" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
                 <form:input path="product[0].product.hsn" class="numbersOnly" required="true" style="width: 100%;"/>
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
                 <form:select path="product[0].unitOfMeasure.id" required="true">
                     <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure" itemValue="id"/>
                 </form:select>
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 15%">
                 <form:input path="product[0].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
                 <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 15%">
                 <form:input path="product[0].totalPrice" required="true" readonly="true"/>
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
             </td>
         </tr>
     </c:when>
@@ -263,11 +263,11 @@
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
                     <form:hidden path="product[${index.index}].product.active" />
-                    <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
+                    <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"  style="width: 100%;"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" style="width: 100%;" onkeyup="autoSearchChallanNo(event, this, ${index.index})"/>
+                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" onkeyup="autoSearchChallanNo(event, this, ${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
                 </td>
                 <td>
@@ -279,7 +279,7 @@
                     <form:errors path="product[${index.index}].product.hsn" cssClass="error"/>
                 </td>
                 <td>
-                    <form:select path="product[${index.index}].unitOfMeasure.id" required="true">
+                    <form:select path="product[${index.index}].unitOfMeasure.id" required="true" style="width: 100%;">
                         <form:options items="${unitOfMeasures}" itemValue="id" itemLabel="unitOfMeasure"/>
                     </form:select>
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
@@ -293,7 +293,7 @@
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true"/>
+                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
@@ -918,7 +918,7 @@ function addProductDescRow(addRowType) {
         return;
     }*/
     var lastChDt = '#product'+(i-1)+'\\.challanDt'
-    if ( $(lastRate).val() == '' ) {
+    if ( $(lastChDt).val() == '' ) {
         alert ("Please enter 'Challan Date' in last row")
         $(lastChDt).focus()
         return;
@@ -931,40 +931,40 @@ function addProductDescRow(addRowType) {
     }
 
     var prodDescRow = '<tr>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
-                            '<input id="product'+i+'.party.id" name="product['+i+'].party.id" type="hidden" value="'+$("#billToParty\\.id").val()+'">'+
+                            '<input id="product'+i+'.party.id" name="product['+i+'].party.id" type="hidden" value="'+$("#billToParty\\.id").val()+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 25%">'+
                             '<input type="hidden" name="product['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
                             '<input type="hidden" name="product['+i+'].product.active" value="true">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                        '<td style="width: 10%">'+
+                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.challanDt" required="required" readonly name="product['+i+'].challanDt" type="text" class="challanDt" value="'+($(lastChDt).val() != '' ? $(lastChDt).val() : '')+'">'+
+                        '<td style="width: 15%">'+
+                            '<input id="product'+i+'.challanDt" required="required" readonly name="product['+i+'].challanDt" type="text" class="challanDt" value="'+($(lastChDt).val() != '' ? $(lastChDt).val() : '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id" required="required">'+
                                 $("#product0\\.unitOfMeasure\\.id").html()+
                             '</select>'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
+                        '<td style="width: 10%">'+
+                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')"  style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
+                        '<td style="width: 5%">'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
+                        '<td style="width: 15%">'+
+                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" style="width: 100%;" readonly>'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
                         '</td>'+
                       '</tr>';
@@ -1093,7 +1093,8 @@ function getProductDetailsByCompanyId(companyId) {
             error : function(err) {
                 //TODO: create Empty Row
                 $('.challanLoader').removeClass('spinner-border')
-                resetProdDetailsRow()
+                //resetProdDetailsRow()
+                alert('Some error occured please try later.')
                 console.error(err)
             }
         })
@@ -1121,18 +1122,18 @@ function createProductDetailsRow(prodDetails) {
                         '<td>'+
                             '<span id="product['+(i+rowNum)+'].srNo">'+(i+1+rowNum)+'</span>'+
                             //'<input id="product'+(i+rowNum)+'.id" name="product['+(i+rowNum)+'].id" type="hidden" value="'+prodDetails[i].id+'">'+
-                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+'">'+
+                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+' style="width: 100%;"">'+
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" id="product'+(i+rowNum)+'.product.id" name="product['+(i+rowNum)+'].product.id" value="'+prodDetails[i].product.id+'">'+
                             '<input type="hidden" id="product'+(i+rowNum)+'.product.active" name="product['+(i+rowNum)+'].product.active" value="'+prodDetails[i].product.active+'">'+
-                            '<input id="product'+(i+rowNum)+'.product.name" name="product['+(i+rowNum)+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+(i+rowNum)+')" type="text" value="'+prodDetails[i].product.name+'">'+
+                            '<input id="product'+(i+rowNum)+'.product.name" name="product['+(i+rowNum)+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+(i+rowNum)+')" type="text" value="'+prodDetails[i].product.name+'" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')">'+
+                            '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.challanDt" name="product['+(i+rowNum)+'].challanDt" required="required" readonly type="text" class="challanDt" value="'+prodDetails[i].formatChallanDt+'" >'+
+                            '<input id="product'+(i+rowNum)+'.challanDt" name="product['+(i+rowNum)+'].challanDt" required="required" readonly type="text" class="challanDt" value="'+prodDetails[i].formatChallanDt+'" style="width: 100%;" >'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+(i+rowNum)+'.product.hsn" name="product['+(i+rowNum)+'].product.hsn" required="required" type="text" value="'+prodDetails[i].product.hsn+'" style="width: 100%;">'+
@@ -1143,13 +1144,13 @@ function createProductDetailsRow(prodDetails) {
                             '</select>'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" >'+
+                            '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" style="width: 100%;" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'">'+
+                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" readonly>'+
+                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" style="width: 100%;" readonly>'+
                         '</td>'+
                         '<td>'+
                             '<input type="button" value="-" id="productDel_'+(i+rowNum)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+(i+rowNum)+')" style="margin-left: 18%;width: 60%;">'+
