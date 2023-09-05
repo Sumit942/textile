@@ -119,7 +119,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             }
         }
 
-        Query query = entityManager.createQuery(sb.toString());
+        TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
         if (Objects.nonNull(command.getChallanNos()) && !command.getChallanNos().isEmpty()) {
             query.setParameter("chNo",command.getChallanNos());
@@ -136,7 +136,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         }
         query.setMaxResults(10);
 
-        return (List<ProductDetail>) query.getResultList();
+        return query.getResultList();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         if (Objects.nonNull(challans) && !challans.isEmpty())
             sb.append(" AND pd.chNo NOT IN (:challans)");
 
-        if (Objects.nonNull(excludePatterns) && !excludePatterns.isEmpty()) {
+        if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
                 sb.append(" AND upper(pd.product.name) NOT LIKE upper(:exclusion").append(i).append(")");
             }
@@ -171,7 +171,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         if (Objects.nonNull(challans) && !challans.isEmpty())
             query.setParameter("challans",challans);
 
-        if (Objects.nonNull(excludePatterns) && !excludePatterns.isEmpty()) {
+        if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
                 query.setParameter("exclusion"+i,excludePatterns.get(i).getPattern());
             }
@@ -186,15 +186,25 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
 
         StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL");
 
-        if (Objects.nonNull(excludePatterns) && !excludePatterns.isEmpty()) {
+        if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
-                sb.append(" AND upper(pd.product.name) LIKE upper(:exclusion").append(i).append(")");
+                if (i == 0) {
+                    sb.append(" AND");
+                    if (excludePatterns.size() > 1)
+                        sb.append(" (");
+                } else {
+                    sb.append(" OR");
+                }
+
+                sb.append(" upper(pd.product.name) LIKE upper(:exclusion").append(i).append(")");
             }
+            if (excludePatterns.size() > 1)
+                sb.append(" )");
         }
 
         TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
-        if (Objects.nonNull(excludePatterns) && !excludePatterns.isEmpty()) {
+        if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
                 query.setParameter("exclusion"+i,excludePatterns.get(i).getPattern());
             }
