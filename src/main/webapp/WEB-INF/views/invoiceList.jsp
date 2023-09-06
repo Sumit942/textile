@@ -135,7 +135,7 @@
                     <td>${invoice.billToPartyName}</td>
                     <!-- <td>${invoice.totalAmount}</td> -->
                     <td>${invoice.totalAmountAfterTax}</td>
-                    <td>${invoice.paid ? '' : invoice.pendingDays}</td>
+                    <td>${invoice.paid ? '-' : invoice.pendingDays}</td>
                     <td>
                     <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select paidClass" onchange="autoSetAmtCr(${index.index})">
                         <option value="false">UnPaid</option>
