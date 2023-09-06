@@ -109,10 +109,11 @@
                 <th>Company Name</th>
                 <!-- <th>Total Amount</th> -->
                 <th>Total</th>
+                <th>Days</th>
                 <th>Pymt Date/Status</th>
                 <th>Amt Cr</th>
                 <th>Amt Dr</th>
-                <th></th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -134,6 +135,7 @@
                     <td>${invoice.billToPartyName}</td>
                     <!-- <td>${invoice.totalAmount}</td> -->
                     <td>${invoice.totalAmountAfterTax}</td>
+                    <td>${invoice.paid ? '' : invoice.pendingDays}</td>
                     <td>
                     <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select paidClass" onchange="autoSetAmtCr(${index.index})">
                         <option value="false">UnPaid</option>
@@ -171,6 +173,7 @@
 $(document).ready(function(e){
     if ( $('#listSize').val() != '') {
         $("#invoiceTable").DataTable({
+            responsive: true, // Enable responsive mode
             dom: 'Bfrtip',
             buttons: [
                 'excelHtml5', 'csvHtml5', 'pdfHtml5'
@@ -222,8 +225,8 @@ function billToPartyAutoComplete(event,thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+        return $("<li >").append(
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 

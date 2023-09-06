@@ -2,11 +2,12 @@ package com.example.textile.entity;
 
 import org.hibernate.annotations.Immutable;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Entity
@@ -29,6 +30,16 @@ public class InvoiceView {
     private BigDecimal paidAmount;
     private BigDecimal amtDr;
     private Date paymentDt;
+
+    private Long pendingDays;
+
+    @Transient
+    public Long getPendingDays() {
+        if (invoiceDate == null)
+            return null;
+        LocalDate invoiceLocalDate = new Date(invoiceDate.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return ChronoUnit.DAYS.between(invoiceLocalDate, LocalDate.now(ZoneId.systemDefault()));
+    }
 
     @Id
     public Long getId() {

@@ -208,7 +208,7 @@ function billToPartyAutoComplete(event,thisObj) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 

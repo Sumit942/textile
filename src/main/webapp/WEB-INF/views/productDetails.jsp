@@ -194,6 +194,7 @@
     $(document).ready(function () {
         $('#productDetailsTable').DataTable();
         $( ".challanDt" ).datepicker({
+            responsive: true, // Enable responsive mode
             dateFormat: 'dd/mm/yy'
         })
     });
@@ -402,7 +403,7 @@ function updateProdDetailsInputTagsIdAndName() {
             }
         }).data("ui-autocomplete")._renderItem = function(ul, item) {
             return $("<li>").append(
-                    "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+                    "<a class='dropdown-item'><strong>" + item.name + "</strong></a>").appendTo(ul);
         };
     }
 function getProductMaxRateByCompanyId(index,productId) {
@@ -465,7 +466,7 @@ function billToPartyAutoComplete(event,thisObj,i) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 

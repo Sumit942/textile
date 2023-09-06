@@ -147,8 +147,13 @@ function autoSearchProduct(event,obj,index) {
             }
         }).data("ui-autocomplete")._renderItem = function(ul, item) {
             return $("<li>").append(
-                    "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+                    "<a class='dropdown-item'><strong>" + item.name + "</strong></a>").appendTo(ul);
         };
+    }
+    function resetRow() {
+        $('#product\\.id').val('')
+        $('#product\\.name').val('')
+        $('#product\\.active').val('')
     }
 </script>
 <%@ include file="./common/footer.jspf" %>

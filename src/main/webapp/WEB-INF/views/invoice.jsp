@@ -653,7 +653,7 @@ function billToPartyAutoComplete(event,thisObj) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 function billToPartyStateAutoComplete(event, thisObj) {
@@ -685,7 +685,7 @@ function billToPartyStateAutoComplete(event, thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
     };
 }
     /**                 shipToParty autocomplete functions script                  **/
@@ -716,7 +716,7 @@ function shipToPartyStateAutoComplete(event,thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
     };
 }
 
@@ -748,7 +748,7 @@ function shipToPartyAutoComplete(event,thisObj) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
     /**                 productDescription script                  **/
@@ -779,7 +779,7 @@ function autoSearchChallanNo(event,obj,index) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
     };
 }
 function populateProductDetail(ui,i) {
@@ -849,7 +849,7 @@ $("#product"+index+"\\.product\\.id").val('')
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong></a>").appendTo(ul);
     };
 }
 /**             get Product Rate                    **/
