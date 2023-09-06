@@ -115,7 +115,22 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (Objects.nonNull(command.getProduct().getId())) {
                 sb.append(" AND pd.product.id= :productId");
             } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
-                sb.append(" AND pd.product.name LIKE :productName");
+                sb.append(" AND");
+                if (!command.getProduct().getName().contains(",")) {
+                    sb.append(" UPPER(pd.product.name) LIKE UPPER(:productName)");
+                } else {
+                    String[] products = command.getProduct().getName().split(",");
+                    for (int i = 0; i < products.length; i++) {
+                        if (i == 0 && products.length > 1) {
+                            sb.append(" (");
+                        } else {
+                            sb.append(" OR");
+                        }
+                        sb.append(" UPPER(pd.product.name) LIKE UPPER(:productName").append(i).append(")");
+                    }
+                    if (products.length > 1)
+                        sb.append(" )");
+                }
             }
         }
 
@@ -131,7 +146,15 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (Objects.nonNull(command.getProduct().getId())) {
                 query.setParameter("productId",command.getProduct().getId());
             } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
-                query.setParameter("productName",command.getProduct().getName());
+                if (!command.getProduct().getName().contains(",")) {
+                    query.setParameter("productName","%"+command.getProduct().getName()+"%");
+                } else {
+                    String[] products = command.getProduct().getName().split(",");
+                    for (int i = 0; i < products.length; i++) {
+                        query.setParameter("productName"+i,"%"+products[i]+"%");
+                    }
+                }
+
             }
         }
         query.setMaxResults(10);
@@ -211,5 +234,10 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
         }
 
         return query.getResultList();
+    }
+
+    @Override
+    public List<ProductDetail> findByChNos(List<Long> challanNos) {
+        return productDetailRepo.findByChNos(challanNos);
     }
 }

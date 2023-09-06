@@ -25,4 +25,7 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, Lo
     void deleteAllByChNoAndInvoice_IsNull(List<Long> id);
 
     List<ProductDetail> findAllByInvoice(Long invoice);
+
+    @Query("FROM ProductDetail pd WHERE pd.chNo IN (:chNos)")
+    List<ProductDetail> findByChNos(List<Long> chNos);
 }

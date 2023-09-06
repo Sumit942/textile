@@ -33,8 +33,8 @@
         <tbody>
             <td><input id="fromDate" name="fromDate" readonly="readonly" class="form-control" placeholder="Select From date"/></td>
             <td><input id="toDate" name="toDate" readonly="readonly" class="form-control" placeholder="Select To date"/></td>
-            <td><input id="invoiceNo" name="invoiceNo" class="form-control" placeholder="Enter Invoice No"/></td>
-            <td><input id="challanNo" name="challanNo" class="form-control" placeholder="Enter Challan No"/></td>
+            <td><input id="invoiceNos" name="invoiceNos" class="form-control" placeholder="Enter Invoice No"/></td>
+            <td><input id="challanNos" name="challanNos" class="form-control" placeholder="Enter Challan No"/></td>
             <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
             <td>
                 <select id="paymentStatus" name="paymentStatus" class="form-select">
@@ -73,14 +73,14 @@
                         <span><b>To Date:</b> <fmt:formatDate value="${toDate}" type="date" pattern="dd-MMM-yyyy"/></span>
                     </div>
                 </c:if>
-                <c:if test="${not empty invoiceNo}">
+                <c:if test="${not empty invoiceNos}">
                     <div class="col-md-2">
-                        <span><b>Invoice No:</b> ${invoiceNo}</span>
+                        <span><b>Invoice No:</b> ${invoiceNos}</span>
                     </div>
                 </c:if>
-                <c:if test="${not empty challanNo}">
+                <c:if test="${not empty challanNos}">
                     <div class="col-md-2">
-                        <span><b>Challan No:</b> ${challanNo}</span>
+                        <span><b>Challan No:</b> ${challanNos}</span>
                     </div>
                 </c:if>
                 <c:if test="${not empty companyName}">

@@ -184,8 +184,8 @@
           <th style="width: 5%" >HSN code</th>
           <th style="width: 5%" >UOM</th>
           <th style="width: 10%">Quantity</th>
-          <th style="width: 5%" >Rate</th>
-          <th style="width: 15%">Amount</th>
+          <th style="width: 1%" >Rate</th>
+          <th style="width: 25%">Amount</th>
           <th style="width: 5%" ></th>
         </tr>
     </thead>
@@ -241,11 +241,11 @@
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
             <td style="width: 5%">
-                <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+                <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 50%;"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
             <td style="width: 15%">
-                <form:input path="product[0].totalPrice" required="true" readonly="true"/>
+                <form:input path="product[0].totalPrice" required="true" readonly="true" style="width: 6rem;margin-left: -2rem;"/>
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
             <td style="width: 5%">
@@ -289,11 +289,11 @@
                     <form:errors path="product[${index.index}].quantity" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 50%;"/>
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true" style="width: 6rem;margin-left: -2rem;"/>
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
@@ -959,10 +959,10 @@ function addProductDescRow(addRowType) {
                             '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')"  style="width: 100%;">'+
                         '</td>'+
                         '<td style="width: 5%">'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'" style="width: 100%;">'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'" style="width: 50%;">'+
                         '</td>'+
                         '<td style="width: 15%">'+
-                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" style="width: 100%;" readonly>'+
+                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" style="width: 6rem;margin-left: -2rem;" readonly>'+
                         '</td>'+
                         '<td style="width: 5%">'+
                             '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
@@ -1122,7 +1122,7 @@ function createProductDetailsRow(prodDetails) {
                         '<td>'+
                             '<span id="product['+(i+rowNum)+'].srNo">'+(i+1+rowNum)+'</span>'+
                             //'<input id="product'+(i+rowNum)+'.id" name="product['+(i+rowNum)+'].id" type="hidden" value="'+prodDetails[i].id+'">'+
-                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+' style="width: 100%;"">'+
+                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+'" style="width: 100%;"">'+
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" id="product'+(i+rowNum)+'.product.id" name="product['+(i+rowNum)+'].product.id" value="'+prodDetails[i].product.id+'">'+
@@ -1147,10 +1147,10 @@ function createProductDetailsRow(prodDetails) {
                             '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" style="width: 100%;" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'" style="width: 100%;">'+
+                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'" style="width: 50%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" style="width: 100%;" readonly>'+
+                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" style="width: 6rem;margin-left: -2rem;" readonly>'+
                         '</td>'+
                         '<td>'+
                             '<input type="button" value="-" id="productDel_'+(i+rowNum)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+(i+rowNum)+')" style="margin-left: 18%;width: 60%;">'+

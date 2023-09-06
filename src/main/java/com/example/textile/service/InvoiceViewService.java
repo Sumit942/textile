@@ -14,7 +14,7 @@ public interface InvoiceViewService {
 
     Page<InvoiceView> findAllByPageNumberAndPageSizeOrderByField(int pageNumber, int pageSize, String fieldName);
 
-    List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, String invoiceNo, Long companyId, Boolean paymentStatus);
+    List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, List<String> invoiceNos, Long companyId, Boolean paymentStatus);
 
     List<InvoiceView> findByInvoiceId(List<Long> invoiceId);
 }

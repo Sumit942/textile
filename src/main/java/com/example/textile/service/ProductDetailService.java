@@ -25,4 +25,6 @@ public interface ProductDetailService {
     List<ProductDetail> findAllUnbilledByPartyId(Long id, List<Long> challans);
 
     List<ProductDetail> findAllExcluded();
+
+    List<ProductDetail> findByChNos(List<Long> challanNos);
 }
