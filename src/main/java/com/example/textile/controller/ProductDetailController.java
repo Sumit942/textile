@@ -128,11 +128,11 @@ public class ProductDetailController extends BaseController{
 
         List<Long> allChNo = productDetailService.findAllChNo();
         List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
-        List<ProductDetail> yarnReturnChNo = productDetailService.findAllExcluded();
+        List<ProductDetail> allExcludedCh = productDetailService.findAllExcluded();
 
         if (!allChNo.isEmpty()){
-            long min = allChNo.stream().min(Long::compareTo).orElse(0L);
-            long max = allChNo.stream().max(Long::compareTo).orElse(-1L);
+            long min = allChNo.get(0);
+            long max = allChNo.get(allChNo.size()-1);
 
             for (long i = min; i <= max; i++)
                 if (!allChNo.contains(i))
@@ -140,7 +140,7 @@ public class ProductDetailController extends BaseController{
 
             model.addAttribute("missingChallanNos", missingChNos);
             model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("yarnReturnChNo", yarnReturnChNo);
+            model.addAttribute("allExcluded", allExcludedCh);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
