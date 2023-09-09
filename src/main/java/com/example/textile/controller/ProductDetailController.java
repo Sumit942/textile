@@ -140,7 +140,7 @@ public class ProductDetailController extends BaseController{
 
             model.addAttribute("missingChallanNos", missingChNos);
             model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("allExcluded", allExcludedCh);
+            model.addAttribute("allExcludedChNo", allExcludedCh);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());

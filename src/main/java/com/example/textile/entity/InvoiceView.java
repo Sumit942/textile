@@ -35,10 +35,7 @@ public class InvoiceView {
 
     @Transient
     public Long getPendingDays() {
-        if (invoiceDate == null)
-            return null;
-        LocalDate invoiceLocalDate = new Date(invoiceDate.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return ChronoUnit.DAYS.between(invoiceLocalDate, LocalDate.now(ZoneId.systemDefault()));
+        return pendingDays;
     }
 
     @Id
@@ -97,6 +94,10 @@ public class InvoiceView {
 
     public void setInvoiceDate(Date invoiceDate) {
         this.invoiceDate = invoiceDate;
+        if (invoiceDate != null) {
+            LocalDate invoiceLocalDate = new Date(this.invoiceDate.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            this.pendingDays = ChronoUnit.DAYS.between(invoiceLocalDate, LocalDate.now(ZoneId.systemDefault()));
+        }
     }
 
     public void setInvoiceNo(String invoiceNo) {

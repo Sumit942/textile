@@ -8,7 +8,7 @@
 <table id="missingChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">Missing Challan Nos (${missingChallanNos.size()})</th></tr>
+        <tr><th class="text-center" colspan="15">Missing Challan Nos (${missingChallanNos.size()})</th></tr>
     </thead>
     <tbody>
         <tr>
@@ -33,7 +33,7 @@
 <table id="unBilledChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">UnBilled Challan Nos (${unBilledChNo.size()})</th></tr>
+        <tr><th class="text-center" colspan="15">UnBilled Challan Nos (${unBilledChNo.size()})</th></tr>
     </thead>
     <tbody>
         <tr>
@@ -56,17 +56,17 @@
 <table id="yarnChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">Yarn Return Challan Nos (${yarnReturnChNo.size()})</th></tr>
+        <tr><th class="text-center" colspan="15">Yarn Return Challan Nos (${allExcludedChNo.size()})</th></tr>
     </thead>
     <tbody>
         <tr>
-        <c:forEach items="${yarnReturnChNo}" var="productDetail" varStatus="index">
+        <c:forEach items="${allExcludedChNo}" var="productDetail" varStatus="index">
             <td>
                 <span onclick="searchByChallanNo(${productDetail.chNo})" style="text-decoration: underline; cursor: pointer;">${productDetail.chNo}</span>
             </td>
             ${(index.index + 1) % 15 == 0 ? '</tr><tr>' : ''}
         </c:forEach>
-        <c:forEach begin="1" end="${15 - yarnReturnChNo.size() % 15}" >
+        <c:forEach begin="1" end="${15 - allExcludedChNo.size() % 15}" >
             <td></td>
         </c:forEach>
         </tr>
@@ -78,12 +78,7 @@
 </div>
 <script>
 $(document).ready(function(e){
-    $("#missingChallanTable").DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'excelHtml5', 'csvHtml5', 'pdfHtml5'
-        ]
-    })
+    
 })
 
 function searchByChallanNo(chNo) {

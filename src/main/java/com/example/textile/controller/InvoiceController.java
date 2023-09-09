@@ -78,7 +78,7 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping
-    public ModelAndView findAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber, @RequestParam(required = false, defaultValue = "20") Integer pageSize, @RequestParam(required = false, defaultValue = "invoiceNo") String fieldName, ModelMap model) {
+    public ModelAndView findAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber, @RequestParam(required = false, defaultValue = "10") Integer pageSize, @RequestParam(required = false, defaultValue = "invoiceNo") String fieldName, ModelMap model) {
         ModelAndView modelAndView = new ModelAndView("/invoiceList");
 //        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit(fieldName,pageNumber,pageSize);
         String isRedirect = (String) model.getAttribute("isRedirect");
