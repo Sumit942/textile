@@ -40,6 +40,8 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
             for (ProductDetail e : invoice.getProduct()) {
                 savedChallanId.add(e.getChNo());
             }
+            if (Objects.nonNull(invoice.getId()) && invoice.getId() <= 0)
+                invoice.setPaid(false);
             invoiceService.saveOrUpdate(invoice);
             invoiceService.deleteProductDetailsByChNoAndInvoice_isNull(savedChallanId);
         } catch (Exception e) {
@@ -271,7 +273,7 @@ public class InvoiceSubmitAction extends ActionExecutor<Invoice> {
                     for (int i = 0; i < uniqChNo.size(); i++) {
                         List<ProductDetail> byChNo = invoiceService.findByChNo(uniqChNo.get(i));
                         if (!byChNo.isEmpty()) {
-                            log.info("doValidation() checking challanNos: {}",byChNo.get(0));
+                            log.debug("doValidation() checking challanNos: {}",byChNo.get(0));
                             if (byChNo.get(0).getInvoice() == null && byChNo.get(0).getParty().getId().compareTo(invoice.getBillToParty().getId()) != 0) {
                                 result.rejectValue("product[" + i + "].chNo", "alreadyAdded.diffParty.invoiceCommand.product.chNo",
                                         new Object[]{byChNo.get(0).getParty().getName()}, "Challan No Already Added");

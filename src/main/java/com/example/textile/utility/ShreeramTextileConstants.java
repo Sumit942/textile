@@ -1,6 +1,6 @@
 package com.example.textile.utility;
 
-import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 
 public class ShreeramTextileConstants {
     public static final String NAME = "SHREERAM TEXTILE INDUSTRIES";
@@ -25,5 +25,7 @@ public class ShreeramTextileConstants {
     public static final Integer PRODUCT_HSN = 6006;
 
     public static final String DATE_FORMAT_ddMMYYYY = "dd-MM-yyyy";
+    public static final String DATE_FORMAT_ddMMYYYY_SLASH = "dd/MM/yyyy";
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_ddMMYYYY_SLASH = new SimpleDateFormat(DATE_FORMAT_ddMMYYYY_SLASH);
     public static final String SRNO = "srNo";
 }

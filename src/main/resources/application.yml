@@ -2,6 +2,7 @@ spring:
   info:
     name: "Textile Company - Project"
     Description: "One Solution for a Textile Manufacturing Company"
+    companyName: "SHREERAM TEXTILE INDUSTRIES"
   datasource:
     url: jdbc:mysql://localhost:3306/textile_crm
     username: root
@@ -31,6 +32,7 @@ spring:
 server:
   servlet:
     context-path: "/textile"
+  port: 8081
 invoice:
   startCount: 1
   oldInvoiceLastId: 207

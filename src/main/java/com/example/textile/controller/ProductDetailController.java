@@ -10,16 +10,18 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.repo.ProductDetailRepository;
 import com.example.textile.service.ProductDetailService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,6 +45,14 @@ public class ProductDetailController extends BaseController{
     public void init() {
         actionExecutorMap = ActionExecutorFactory.getFactory().getActionExecutors(ProductDetailController.class);
         actionExecutorMap.put(ActionType.SUBMIT.getActionType(), new ProductDetailSubmitAction(productDetailService));
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+        CustomDateEditor dateEditor = new CustomDateEditor(ShreeramTextileConstants.SIMPLE_DATE_FORMAT_ddMMYYYY_SLASH, true);
+        dataBinder.registerCustomEditor(Date.class, dateEditor);
     }
 
     @GetMapping
@@ -117,9 +127,8 @@ public class ProductDetailController extends BaseController{
         List<Long> missingChNos = new ArrayList<>();
 
         List<Long> allChNo = productDetailService.findAllChNo();
-//        List<Long> unBilledChNo = productDetailService.findAllChNoAndInvoice_IsNull();
-        List<ProductDetail> unBilledChNo = productDetailService.findAllByInvoice_Is_Null_And_productName_Not_EndsWith(YARN_RETURN);
-        List<ProductDetail> yarnReturnChNo = productDetailService.findAllByInvoice_Is_Null_And_productName_EndsWith(YARN_RETURN);
+        List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
+        List<ProductDetail> yarnReturnChNo = productDetailService.findAllExcluded();
 
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);
@@ -143,10 +152,11 @@ public class ProductDetailController extends BaseController{
     @GetMapping("/getByParty")
     @ResponseBody
     public List<ProductDetail> getByPartyId(@RequestParam("partyId") Long partyId,
-                                            @RequestParam(value = "invoiceId",required = false) Long invoiceId)  {
+                                            @RequestParam(value = "invoiceId",required = false) Long invoiceId,
+                                            @RequestParam(value = "challans") List<Long> challans)  {
         if (invoiceId != null)
             return productDetailService.findByPartyIdAndInvoiceId(partyId, invoiceId);
-        return productDetailService.findByPartyIdAndProductName_Not_Like(partyId, YARN_RETURN);
+        return productDetailService.findAllUnbilledByPartyId(partyId, challans);
     }
 
     @GetMapping("/searchByChallanNo")

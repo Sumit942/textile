@@ -18,15 +18,13 @@ public interface ProductDetailService {
 
     List<ProductDetail> findByPartyIdAndInvoiceId(Long partyId, Long invoiceId);
 
-    List<ProductDetail> findByPartyIdAndProductName_Not_Like(Long partyId, String productName);
-
-    List<Long> findAllChNoAndInvoice_IsNull();
-
     List<ProductDetail> findAllByInvoice(Long invoice);
 
-    List<ProductDetail> findAllByInvoice_Is_Null_And_productName_EndsWith(String prodName);
-
-    List<ProductDetail> findAllByInvoice_Is_Null_And_productName_Not_EndsWith(String prodName);
-
     List<ProductDetail> challanReport(ProductDetailCommand command);
+
+    List<ProductDetail> findAllUnbilledByPartyId(Long id, List<Long> challans);
+
+    List<ProductDetail> findAllExcluded();
+
+    List<ProductDetail> findByChNos(List<Long> challanNos);
 }

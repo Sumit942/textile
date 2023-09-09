@@ -1,19 +1,18 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.command.ProductDetailCommand;
-import com.example.textile.entity.Product;
-import com.example.textile.entity.ProductDetail;
-import com.example.textile.entity.Unit;
-import com.example.textile.repo.ProductDetailRepository;
-import com.example.textile.repo.ProductRepository;
-import com.example.textile.repo.UnitRepository;
+import com.example.textile.entity.*;
+import com.example.textile.repo.*;
 import com.example.textile.service.ProductDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Slf4j
@@ -26,8 +25,22 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
 
     @Autowired private ProductRepository productRepo;
 
+    @Autowired private ProductExcludeRepository productExcludeRepos;
+
+    @Autowired private CompanyRepository companyRepo;
+
+    @Value("${spring.info.companyName}") private String companyName;
+
     @Autowired
     EntityManager entityManager;
+
+    public static Company companyToExclude = null;
+
+    @PostConstruct
+    public void init() {
+        log.debug("companyName: ["+companyName+"]");
+        companyToExclude = companyRepo.findByName(companyName);
+    }
 
     @Override
     public List<Unit> findAllUnit() {
@@ -84,28 +97,8 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public List<ProductDetail> findByPartyIdAndProductName_Not_Like(Long partyId, String productName) {
-        return productDetailRepo.findByPartyIdAndProductName_Not_Like(partyId, productName);
-    }
-
-    @Override
-    public List<Long> findAllChNoAndInvoice_IsNull() {
-        return productDetailRepo.findAllChNoAndInvoice_IsNull();
-    }
-
-    @Override
     public List<ProductDetail> findAllByInvoice(Long invoice) {
         return productDetailRepo.findAllByInvoice(invoice);
-    }
-
-    @Override
-    public List<ProductDetail> findAllByInvoice_Is_Null_And_productName_EndsWith(String prodName) {
-        return productDetailRepo.findAllByInvoice_Is_Null_And_productName_EndsWith(prodName);
-    }
-
-    @Override
-    public List<ProductDetail> findAllByInvoice_Is_Null_And_productName_Not_EndsWith(String prodName) {
-        return productDetailRepo.findAllByInvoice_Is_Null_And_productName_Not_EndsWith(prodName);
     }
 
     @Override
@@ -122,11 +115,26 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (Objects.nonNull(command.getProduct().getId())) {
                 sb.append(" AND pd.product.id= :productId");
             } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
-                sb.append(" AND pd.product.name LIKE :productName");
+                sb.append(" AND");
+                if (!command.getProduct().getName().contains(",")) {
+                    sb.append(" UPPER(pd.product.name) LIKE UPPER(:productName)");
+                } else {
+                    String[] products = command.getProduct().getName().split(",");
+                    for (int i = 0; i < products.length; i++) {
+                        if (i == 0 && products.length > 1) {
+                            sb.append(" (");
+                        } else {
+                            sb.append(" OR");
+                        }
+                        sb.append(" UPPER(pd.product.name) LIKE UPPER(:productName").append(i).append(")");
+                    }
+                    if (products.length > 1)
+                        sb.append(" )");
+                }
             }
         }
 
-        Query query = entityManager.createQuery(sb.toString());
+        TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
         if (Objects.nonNull(command.getChallanNos()) && !command.getChallanNos().isEmpty()) {
             query.setParameter("chNo",command.getChallanNos());
@@ -138,11 +146,98 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (Objects.nonNull(command.getProduct().getId())) {
                 query.setParameter("productId",command.getProduct().getId());
             } else if (Objects.nonNull(command.getProduct().getName()) && !command.getProduct().getName().isEmpty()) {
-                query.setParameter("productName",command.getProduct().getName());
+                if (!command.getProduct().getName().contains(",")) {
+                    query.setParameter("productName","%"+command.getProduct().getName()+"%");
+                } else {
+                    String[] products = command.getProduct().getName().split(",");
+                    for (int i = 0; i < products.length; i++) {
+                        query.setParameter("productName"+i,"%"+products[i]+"%");
+                    }
+                }
+
             }
         }
         query.setMaxResults(10);
 
-        return (List<ProductDetail>) query.getResultList();
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ProductDetail> findAllUnbilledByPartyId(Long id, List<Long> challans) {
+        List<ProductExclude> excludePatterns = productExcludeRepos.findAll();
+
+        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL");
+
+        if (Objects.nonNull(id) && id >= 0) {
+            sb.append(" AND pd.party.id = :companyToInclude");
+        } else {
+            sb.append(" AND pd.party.id <> :companyToExclude");
+        }
+
+        if (Objects.nonNull(challans) && !challans.isEmpty())
+            sb.append(" AND pd.chNo NOT IN (:challans)");
+
+        if (!excludePatterns.isEmpty()) {
+            for (int i = 0; i < excludePatterns.size(); i++) {
+                sb.append(" AND upper(pd.product.name) NOT LIKE upper(:exclusion").append(i).append(")");
+            }
+        }
+
+        TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
+
+        if (Objects.nonNull(id) && id >= 0) {
+            query.setParameter("companyToInclude",id);
+        } else {
+            query.setParameter("companyToExclude", companyToExclude.getId());
+        }
+
+        if (Objects.nonNull(challans) && !challans.isEmpty())
+            query.setParameter("challans",challans);
+
+        if (!excludePatterns.isEmpty()) {
+            for (int i = 0; i < excludePatterns.size(); i++) {
+                query.setParameter("exclusion"+i,excludePatterns.get(i).getPattern());
+            }
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ProductDetail> findAllExcluded() {
+        List<ProductExclude> excludePatterns = productExcludeRepos.findAll();
+
+        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL");
+
+        if (!excludePatterns.isEmpty()) {
+            for (int i = 0; i < excludePatterns.size(); i++) {
+                if (i == 0) {
+                    sb.append(" AND");
+                    if (excludePatterns.size() > 1)
+                        sb.append(" (");
+                } else {
+                    sb.append(" OR");
+                }
+
+                sb.append(" upper(pd.product.name) LIKE upper(:exclusion").append(i).append(")");
+            }
+            if (excludePatterns.size() > 1)
+                sb.append(" )");
+        }
+
+        TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
+
+        if (!excludePatterns.isEmpty()) {
+            for (int i = 0; i < excludePatterns.size(); i++) {
+                query.setParameter("exclusion"+i,excludePatterns.get(i).getPattern());
+            }
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ProductDetail> findByChNos(List<Long> challanNos) {
+        return productDetailRepo.findByChNos(challanNos);
     }
 }

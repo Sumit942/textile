@@ -94,12 +94,12 @@ public class InvoiceController extends BaseController {
     }
 
     @PostMapping
-    public ModelAndView invoiceReport(@RequestParam(value = "fromDate", required = false) Date fromDate, @RequestParam(value = "toDate", required = false) Date toDate, @RequestParam(value = "invoiceNo", required = false) String invoiceNo, @RequestParam(value = "companyId", required = false) Long companyId, @RequestParam(value = "challanNo", required = false) Long challanNo, @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus, @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport, @RequestParam(value = "downloadInvoiceReportPdf", required = false) String downloadInvoiceReportPdf, @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport, RedirectAttributes redirectAttributes, HttpServletResponse response) {
+    public ModelAndView invoiceReport(@RequestParam(value = "fromDate", required = false) Date fromDate, @RequestParam(value = "toDate", required = false) Date toDate, @RequestParam(value = "invoiceNos", required = false) List<String> invoiceNos, @RequestParam(value = "companyId", required = false) Long companyId, @RequestParam(value = "challanNos", required = false) List<Long> challanNos, @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus, @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport, @RequestParam(value = "downloadInvoiceReportPdf", required = false) String downloadInvoiceReportPdf, @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport, RedirectAttributes redirectAttributes, HttpServletResponse response) {
         String logPrefix = "invoiceReport() ";
         String companyName = null;
         log.info("{} Entry", logPrefix);
 
-        List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNo, companyId, challanNo, paymentStatus);
+        List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNos, companyId, challanNos, paymentStatus);
 
         /* downloading excel report  **/
         if (downloadInvoiceReport != null) {
@@ -126,9 +126,9 @@ public class InvoiceController extends BaseController {
         redirectAttributes.addFlashAttribute("isRedirect", "YES");
         redirectAttributes.addFlashAttribute("fromDate", fromDate);
         redirectAttributes.addFlashAttribute("toDate", toDate);
-        redirectAttributes.addFlashAttribute("invoiceNo", invoiceNo);
+        redirectAttributes.addFlashAttribute("invoiceNos", invoiceNos);
         redirectAttributes.addFlashAttribute("companyName", companyName);
-        redirectAttributes.addFlashAttribute("challanNo", challanNo);
+        redirectAttributes.addFlashAttribute("challanNos", challanNos);
         redirectAttributes.addFlashAttribute("paymentStatus", paymentStatus);
 
         log.info("{} Exit", logPrefix);
@@ -136,20 +136,20 @@ public class InvoiceController extends BaseController {
         return modelAndView;
     }
 
-    private List<InvoiceView> getInvoiceViews(Date fromDate, Date toDate, String invoiceNo, Long companyId, Long challanNo, Boolean paymentStatus) {
+    private List<InvoiceView> getInvoiceViews(Date fromDate, Date toDate, List<String> invoiceNos, Long companyId, List<Long> challanNos, Boolean paymentStatus) {
         String logPrefix = "getInvoiceViews() ";
         List<InvoiceView> invoiceReport = null;
-        if (null != challanNo && challanNo.compareTo(0L) > 0) {
+        if (null != challanNos && !challanNos.isEmpty()) {
             log.info("{} findByChNo", logPrefix);
             List<Long> invoiceId = new ArrayList<>();
-            List<ProductDetail> productDetails = productDetailService.findByChNo(challanNo);
+            List<ProductDetail> productDetails = productDetailService.findByChNos(challanNos);
             if (productDetails != null) productDetails.forEach(e -> {
                 if (e.getInvoice() != null) invoiceId.add(e.getInvoice().getId());
             });
             if (!invoiceId.isEmpty()) invoiceReport = viewService.findByInvoiceId(invoiceId);
 
         } else {
-            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNo, companyId, paymentStatus);
+            invoiceReport = viewService.getInvoiceReport(fromDate, toDate, invoiceNos, companyId, paymentStatus);
         }
 
         log.info("{} Exit[count={}]", logPrefix, (invoiceReport != null ? invoiceReport.size() : 0));
@@ -239,7 +239,8 @@ public class InvoiceController extends BaseController {
     public ModelAndView saveInvoice(@Valid @ModelAttribute(CommandConstants.INVOICE_COMMAND) Invoice invoice, BindingResult result, HttpServletRequest request, ModelMap model, RedirectAttributes redirectAttr) throws ServiceActionException {
         ModelAndView modelAndView = new ModelAndView("invoice");
         String logPrefix = "saveInvoice() |";
-        log.info("{} Entry -> {}", logPrefix, invoice);
+        log.info("{} Entry ", logPrefix);
+        log.debug("{} -> {}", logPrefix, invoice);
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
         parameterMap.put(TextileConstants.USER, getLoggedInUser());
@@ -481,9 +482,6 @@ public class InvoiceController extends BaseController {
     }
 
     private void addTotalFooter(List<InvoiceView> invoiceReport) {
-        InvoiceView invoiceView = new InvoiceView();
-        invoiceReport.add(invoiceView); //Blank row to differentiate footer
-
         BigDecimal amount = invoiceReport.stream().map(InvoiceView::getTotalAmount)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal tax = invoiceReport.stream().map(InvoiceView::getTotalTaxAmount)
@@ -497,8 +495,8 @@ public class InvoiceController extends BaseController {
         BigDecimal debit = invoiceReport.stream().map(InvoiceView::getAmtDr)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        invoiceView = new InvoiceView();
-        invoiceView.setBillToPartyName("Total: ");
+        InvoiceView invoiceView = new InvoiceView();
+//        invoiceView.setBillToPartyName("Total: ");
         invoiceView.setTotalAmount(amount);
         invoiceView.setTotalTaxAmount(tax);
         invoiceView.setPnfCharge(pnf);

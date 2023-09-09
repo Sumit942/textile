@@ -58,7 +58,7 @@
 
             <form:label path="invoiceDate" class="col-md-3">Invoice date:</form:label>
             <fmt:formatDate pattern="dd/MM/yyyy" value="${invoiceCommand.invoiceDate}" var="invoiceDateFormatted"/>
-            <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly/>
+            <input name="invoiceDate" id="invoiceDate" value="${invoiceDateFormatted}" class="col-md-3" readonly required="true"/>
             <form:errors path="invoiceDate" cssClass="error"/>
         </div>
         <div class="col-md-6 border">
@@ -177,73 +177,78 @@
     <table class="table" id="productDescTable" width="100%">
     <thead>
         <tr>
-          <th>Sr.No</th>
-          <th>Product Description</th>
-          <th>Challan No</th>
-          <th>HSN code</th>
-          <th>UOM</th>
-          <th>Quantity</th>
-          <th>Rate</th>
-          <th>Amount</th>
-          <th></th>
+          <th style="width: 5%" >Sr.No</th>
+          <th style="width: 25%">Product Description</th>
+          <th style="width: 10%">Challan No</th>
+          <th style="width: 15%">Date</th>
+          <th style="width: 5%" >HSN code</th>
+          <th style="width: 5%" >UOM</th>
+          <th style="width: 10%">Quantity</th>
+          <th style="width: 1%" >Rate</th>
+          <th style="width: 25%">Amount</th>
+          <th style="width: 5%" ></th>
         </tr>
     </thead>
     <tbody id="productDescTBody">
     <tr>
-        <td></td>
-        <td colspan="2">
+        <td style="width: 5%"></td>
+        <td style="width: 25%" colspan="2">
             <form:select path="saleType.id" >
                 <form:options items="${saleTypes}" itemValue="id" itemLabel="saleType" />
             </form:select>
         </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td style="width: 10%"></td>
+        <td style="width: 15%"></td>
+        <td style="width: 5%"></td>
+        <td style="width: 5%"></td>
+        <td style="width: 10%"></td>
+        <td style="width: 5%"></td>
     </tr>
     <c:choose>
     <c:when test="${empty invoiceCommand.product}">
         <tr>
-            <td>
+            <td style="width: 5%">
                 <span id="product[0].srNo">1</span>
                 <!-- <form:hidden path="product[0].id" /> -->
                 <form:hidden path="product[0].party.id" />
             </td>
-            <td>
+            <td style="width: 25%">
                 <form:hidden path="product[0].product.id"/>
                 <form:hidden path="product[0].product.active"/>
-                <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off"/>
+                <form:input path="product[0].product.name" required="true" onkeyup="autoSearchProduct(event, this,0)" class="ui-autocomplete-input" autocomplete="off" style="width: 100%;"/>
                 <form:errors path="product[0].product.name" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 10%">
                 <form:input path="product[0].chNo" class="numbersOnly" required="true" style="width: 100%;" onkeyup="autoSearchChallanNo(event,this, 0)"/>
                 <form:errors path="product[0].chNo" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 15%">
+                <form:input path="product[0].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;background-color: gainsboro;   " />
+                <form:errors path="product[0].challanDt" cssClass="error"/>
+            </td>
+            <td style="width: 5%">
                 <form:input path="product[0].product.hsn" class="numbersOnly" required="true" style="width: 100%;"/>
                 <form:errors path="product[0].product.hsn" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
                 <form:select path="product[0].unitOfMeasure.id" required="true">
                     <form:options items="${unitOfMeasures}" itemLabel="unitOfMeasure" itemValue="id"/>
                 </form:select>
                 <form:errors path="product[0].unitOfMeasure" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 15%">
                 <form:input path="product[0].quantity" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
                 <form:errors path="product[0].quantity" cssClass="error"/>
             </td>
-            <td>
-                <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 100%;"/>
+            <td style="width: 5%">
+                <form:input path="product[0].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(0)" style="width: 50%;"/>
                 <form:errors path="product[0].rate" cssClass="error"/>
             </td>
-            <td>
-                <form:input path="product[0].totalPrice" required="true" readonly="true"/>
+            <td style="width: 15%">
+                <form:input path="product[0].totalPrice" required="true" readonly="true" style="width: 6rem;margin-left: -2rem;"/>
                 <form:errors path="product[0].totalPrice" cssClass="error"/>
             </td>
-            <td>
+            <td style="width: 5%">
             </td>
         </tr>
     </c:when>
@@ -258,19 +263,23 @@
                 <td>
                     <form:hidden path="product[${index.index}].product.id" />
                     <form:hidden path="product[${index.index}].product.active" />
-                    <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"/>
+                    <form:input path="product[${index.index}].product.name" required="true" onkeyup="autoSearchProduct(event,this,${index.index})"  style="width: 100%;"/>
                     <form:errors path="product[${index.index}].product.name" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" style="width: 100%;" onkeyup="autoSearchChallanNo(event, this, ${index.index})"/>
+                    <form:input path="product[${index.index}].chNo" required="true" class="numbersOnly" onkeyup="autoSearchChallanNo(event, this, ${index.index})" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].chNo" cssClass="error"/>
+                </td>
+                <td>
+                    <form:input path="product[${index.index}].challanDt" class="challanDt" required="true" readonly="true" style="width: 100%;" />
+                    <form:errors path="product[${index.index}].challanDt" cssClass="error"/>
                 </td>
                 <td>
                     <form:input path="product[${index.index}].product.hsn" required="true" style="width: 100%;"/>
                     <form:errors path="product[${index.index}].product.hsn" cssClass="error"/>
                 </td>
                 <td>
-                    <form:select path="product[${index.index}].unitOfMeasure.id" required="true">
+                    <form:select path="product[${index.index}].unitOfMeasure.id" required="true" style="width: 100%;">
                         <form:options items="${unitOfMeasures}" itemValue="id" itemLabel="unitOfMeasure"/>
                     </form:select>
                     <form:errors path="product[${index.index}].unitOfMeasure" cssClass="error"/>
@@ -280,11 +289,11 @@
                     <form:errors path="product[${index.index}].quantity" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 100%;"/>
+                    <form:input path="product[${index.index}].rate" required="true" class="numbersOnly" onkeyup="updateRowAmount(${index.index})" style="width: 50%;"/>
                     <form:errors path="product[${index.index}].rate" cssClass="error"/>
                 </td>
                 <td>
-                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true"/>
+                    <form:input path="product[${index.index}].totalPrice" readonly="true" required="true" style="width: 6rem;margin-left: -2rem;"/>
                     <form:errors path="product[${index.index}].totalPrice" cssClass="error"/>
                 </td>
                 <td>
@@ -457,21 +466,18 @@ function showHideGstTab() {
 $(document).ready(function() {
     showHideGstTab()
 
-    $( "#dateOfSupply" ).datepicker({
+    $( "#dateOfSupply, #invoiceDate,.challanDt" ).datepicker({
         dateFormat: 'dd/mm/yy'
     })
-    $( "#invoiceDate" ).datepicker({
-       dateFormat: 'dd/mm/yy'
-    })
-    if ($("#id").val() == '' ) {
-        $("#invoiceDate").focus()
-    }
+    //if ($("#id").val() == '' ) {
+    //    $("#invoiceDate").focus()
+    //}
 
     $(".numbersOnly").on("keypress paste",function(e){
         var charCode = (e.which) ? e.which : event.keyCode
         //console.log('charCode: '+charCode+', event: '+e.type)
-        if (e.type == "paste")
-            e.preventDefault()
+        //if (e.type == "paste")
+        //    e.preventDefault()
 
         if (String.fromCharCode(charCode).match(/[^0-9+?.+0-9$]/g))
             return false
@@ -641,13 +647,13 @@ function billToPartyAutoComplete(event,thisObj) {
         select : function(event, ui) {
             this.value = ui.item.name
             setBillToParty(ui.item)
-            $('#loadChallan').addClass("disabled")
+            //$('#loadChallan').addClass("disabled")
             getProductDetailsByCompanyId(ui.item.id)
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 function billToPartyStateAutoComplete(event, thisObj) {
@@ -679,7 +685,7 @@ function billToPartyStateAutoComplete(event, thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
     };
 }
     /**                 shipToParty autocomplete functions script                  **/
@@ -710,7 +716,7 @@ function shipToPartyStateAutoComplete(event,thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.code + "</a>").appendTo(ul);
     };
 }
 
@@ -742,7 +748,7 @@ function shipToPartyAutoComplete(event,thisObj) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
     /**                 productDescription script                  **/
@@ -773,15 +779,16 @@ function autoSearchChallanNo(event,obj,index) {
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.chNo + "</strong>"+(item.invoiceNo ? ' - '+item.invoiceNo : '')+"</a>").appendTo(ul);
     };
 }
 function populateProductDetail(ui,i) {
     $('#product'+i+'\\.product\\.id').val(ui.item.product.id)
-    $('#product'+i+'\\.product\\.party\\.id').val(ui.item.product.party.id)
+    $('#product'+i+'\\.party\\.id').val(ui.item.party.id)
     $('#product'+i+'\\.product\\.active').val(ui.item.product.active)
     $('#product'+i+'\\.product\\.name').val(ui.item.product.name)
     $('#product'+i+'\\.chNo').val(ui.item.chNo)
+    $('#product'+i+'\\.challanDt').val(ui.item.formatChallanDt)
     $('#product'+i+'\\.hsn').val(ui.item.hsn)
     $('#product'+i+'\\.unitOfMeasure\\.id').val(ui.item.unitOfMeasure.id)
     $('#product'+i+'\\.quantity').val(ui.item.quantity)
@@ -802,18 +809,19 @@ $("#product"+index+"\\.product\\.id").val('')
                 url : "${pageContext.request.contextPath}/product/searchByName",
                 dataType : 'json',
                 data : {
-                    name : request.term
+                    name : request.term,
+                    active: true
                 },
                 success : function(data) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
-                    $("#product"+index+"\\.product\\.party\\.id").val('')
+                    $("#product"+index+"\\.party\\.id").val('')
                     response(data);
                 },
                 error : function(err) {
                     //$("#product"+index+"\\.product\\.hsn").val('')
                     $("#product"+index+"\\.product\\.id").val('')
-                    $("#product"+index+"\\.product\\.party\\.id").val('')
+                    $("#product"+index+"\\.party\\.id").val('')
                     console.error(err)
                 }
             });
@@ -831,6 +839,7 @@ $("#product"+index+"\\.product\\.id").val('')
             }
 
             $("#product"+index+"\\.product\\.active").val(ui.item.active)
+            //$("#product"+index+"\\.challanDt").val(ui.item.challanDt)
             //get the max rate for company
             $("#product"+index+"\\.chNo").focus()
             if (productId != '') {
@@ -840,7 +849,7 @@ $("#product"+index+"\\.product\\.id").val('')
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
         return $("<li>").append(
-                "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+                "<a class='dropdown-item'><strong>" + item.name + "</strong></a>").appendTo(ul);
     };
 }
 /**             get Product Rate                    **/
@@ -908,58 +917,68 @@ function addProductDescRow(addRowType) {
         alert ("Please enter 'Total Price' in last row")
         return;
     }*/
+    var lastChDt = '#product'+(i-1)+'\\.challanDt'
+    if ( $(lastChDt).val() == '' ) {
+        alert ("Please enter 'Challan Date' in last row")
+        $(lastChDt).focus()
+        return;
+    }
     //check duplicate chNos
     if (hasDuplicateChNos()){
-        alert ("Please entry unique 'challan no.' in last row")
+        alert ("Please enter unique 'challan no.' in last row")
         $(lastChNo).focus()
         return;
     }
 
     var prodDescRow = '<tr>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<span id="product['+i+'].srNo">'+(i+1)+'</span>'+
                             //'<input id="product'+i+'.id" name="product['+i+'].id" type="hidden" value="">'+
-                            '<input id="product'+i+'.party.id" name="product['+i+'].party.id" type="hidden" value="'+$("#billToParty\\.id").val()+'">'+
+                            '<input id="product'+i+'.party.id" name="product['+i+'].party.id" type="hidden" value="'+$("#billToParty\\.id").val()+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 25%">'+
                             '<input type="hidden" name="product['+i+'].product.id" value="'+(addRowType == 'duplicate' ? $(lastPrdId).val() : '')+'">'+
                             '<input type="hidden" name="product['+i+'].product.active" value="true">'+
-                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'">'+
+                            '<input id="product'+i+'.product.name" name="product['+i+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+i+')" type="text" value="'+(addRowType == 'duplicate' ? $(lastPrdName).val() : '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                        '<td style="width: 10%">'+
+                            '<input id="product'+i+'.chNo" onkeyup="autoSearchChallanNo(event, this, '+i+')" required="required" name="product['+i+'].chNo" type="text" class="numbersOnly" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 15%">'+
+                            '<input id="product'+i+'.challanDt" required="required" readonly name="product['+i+'].challanDt" type="text" class="challanDt" value="'+($(lastChDt).val() != '' ? $(lastChDt).val() : '')+'" style="width: 100%;">'+
+                        '</td>'+
+                        '<td style="width: 5%">'+
                             '<input id="product'+i+'.product.hsn" name="product['+i+'].product.hsn" required="required" type="text" value="6006" style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<select id="product'+i+'.unitOfMeasure.id" name="product['+i+'].unitOfMeasure.id" required="required">'+
                                 $("#product0\\.unitOfMeasure\\.id").html()+
                             '</select>'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" >'+
+                        '<td style="width: 10%">'+
+                            '<input id="product'+i+'.quantity" name="product['+i+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')"  style="width: 100%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'">'+
+                        '<td style="width: 5%">'+
+                            '<input id="product'+i+'.rate" name="product['+i+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+i+')" value="'+(addRowType == 'duplicate' ? $(lastRate).val(): '')+'" style="width: 50%;">'+
                         '</td>'+
-                        '<td>'+
-                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" readonly>'+
+                        '<td style="width: 15%">'+
+                            '<input id="product'+i+'.totalPrice" name="product['+i+'].totalPrice" required="required" type="text" value="0" style="width: 6rem;margin-left: -2rem;" readonly>'+
                         '</td>'+
-                        '<td>'+
+                        '<td style="width: 5%">'+
                             '<input type="button" value="-" id="productDel_'+i+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+i+')" style="margin-left: 18%;width: 60%;">'+
                         '</td>'+
                       '</tr>';
 
     $("#productDescTBody > tr:eq(0)").find('td:eq(8)').html('')
     $("#productDescTBody").append(prodDescRow)
+    $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
     autoFocusProductDescField()
     $(document).scrollTop($(document).height())
 }
 function productDelRow(i) {
     if (i <= 0 ) return;
     console.log('delete: ' + i)
-    var del = confirm('Do you want to delete '+(i ? i : "last")+' row?')
+    var del = confirm('Do you want to delete '+(i ? (i+1) : "last")+' row?')
     if (!del){
         return;
     }
@@ -985,11 +1004,11 @@ function resetProdDetailsRow() {
     $('#'+row).find('td:eq(1)').find('input:eq(1)').val('')
     $('#'+row).find('td:eq(1)').find('input:eq(2)').val('')
     $('#'+row).find('td:eq(2)').find('input:eq(0)').val('')
-    //$('#'+row).find('td:eq(3)').find('input:eq(0)')
-    //$('#'+row).find('td:eq(4)').find('select:eq(0)').val('')
-    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(3)').find('input:eq(0)').val('')
+    //$('#'+row).find('td:eq(5)').find('select:eq(0)').val('')
     $('#'+row).find('td:eq(6)').find('input:eq(0)').val('')
-    $('#'+row).find('td:eq(5)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(7)').find('input:eq(0)').val('')
+    $('#'+row).find('td:eq(8)').find('input:eq(0)').val('')
 
     while ($('#productDescTBody > tr').length > 2) {
         $('#productDescTBody > tr:last').remove()
@@ -1008,13 +1027,15 @@ function updateProdDetailsInputTagsIdAndName() {
         $('#'+row).find('td:eq(1)').find('input:eq(1)').attr('id','product'+(i-1)+'.product.active').attr('name','product['+(i-1)+'].product.active')
         $('#'+row).find('td:eq(1)').find('input:eq(2)').attr('id','product'+(i-1)+'.product.name').attr('name','product['+(i-1)+'].product.name').attr('onkeyup','autoSearchProduct(event,this,'+(i-1)+')')
         $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','product'+(i-1)+'.chNo').attr('name','product['+(i-1)+'].chNo').attr('onkeyup','autoSearchChallanNo(event, this, '+(i-1)+')')
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
-        $('#'+row).find('td:eq(4)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
-        $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
-        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
-        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','product'+(i-1)+'.challanDt').attr('name','product['+(i-1)+'].challanDt')
+
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','product'+(i-1)+'.hsn').attr('name','product['+(i-1)+'].hsn')
+        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','product'+(i-1)+'.unitOfMeasure.id').attr('name','product['+(i-1)+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','product'+(i-1)+'.quantity').attr('name','product['+(i-1)+'].quantity')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','product'+(i-1)+'.rate').attr('name','product['+(i-1)+'].rate')
+        $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','product'+(i-1)+'.totalPrice').attr('name','product['+(i-1)+'].totalPrice')
         try {
-            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
+            $('#'+row).find('td:eq(9)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+(i-1)+')')
         } catch (err) {
             console.log('error in change id for productDelRow ',err)
         }
@@ -1034,7 +1055,7 @@ function autoFocusProductDescField() {
 }
 
 $('#loadChallan').on('click',function(){
-    $('#loadChallan').addClass("disabled")
+    //$('#loadChallan').addClass("disabled")
     getProductDetailsByCompanyId()
 })
 
@@ -1043,15 +1064,28 @@ function getProductDetailsByCompanyId(companyId) {
     $('.challanLoader').addClass('spinner-border');
     companyId = companyId ? companyId : $("#billToParty\\.id").val();
     console.log('inside getProductRate(): compId-'+companyId)
+
+    //getting all added challan list so that it will not be queried
+    const challanArray = $("input[name$='].chNo']").map(function() {
+        return $(this).val();
+    }).get();
+
+    const challans = challanArray.join(', ');
+
     if (companyId != '' && companyId != 0) {
         $.ajax({
-            url : "${pageContext.request.contextPath}/productDetail/getByParty?partyId="+companyId,
+            url : "${pageContext.request.contextPath}/productDetail/getByParty",
+            data: {
+                partyId: companyId,
+                challans: challans
+            },
             success : function(data) {
                 if (data != '' && data != null && data.length > 0) {
                     createProductDetailsRow(data)
                     $('.challanLoader').removeClass('spinner-border')
-                } else {
+                } else if (data.length == 0) {
                     //resetProdDetailsRow()
+                    alert('Challans are upto date')
                     $('.challanLoader').removeClass('spinner-border')
                     autoFocusProductDescField()
                 }
@@ -1059,13 +1093,14 @@ function getProductDetailsByCompanyId(companyId) {
             error : function(err) {
                 //TODO: create Empty Row
                 $('.challanLoader').removeClass('spinner-border')
-                resetProdDetailsRow()
+                //resetProdDetailsRow()
+                alert('Some error occured please try later.')
                 console.error(err)
             }
         })
     } else {
         $('.challanLoader').removeClass('spinner-border');
-        $('#loadChallan').removeClass("disabled")
+        //$('#loadChallan').removeClass("disabled")
         alert('Please Select Bill To party bill')
     }
 }
@@ -1087,15 +1122,18 @@ function createProductDetailsRow(prodDetails) {
                         '<td>'+
                             '<span id="product['+(i+rowNum)+'].srNo">'+(i+1+rowNum)+'</span>'+
                             //'<input id="product'+(i+rowNum)+'.id" name="product['+(i+rowNum)+'].id" type="hidden" value="'+prodDetails[i].id+'">'+
-                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+'">'+
+                            '<input id="product'+(i+rowNum)+'.party.id" name="product['+(i+rowNum)+'].party.id" type="hidden" value="'+prodDetails[i].party.id+'" style="width: 100%;"">'+
                         '</td>'+
                         '<td>'+
                             '<input type="hidden" id="product'+(i+rowNum)+'.product.id" name="product['+(i+rowNum)+'].product.id" value="'+prodDetails[i].product.id+'">'+
                             '<input type="hidden" id="product'+(i+rowNum)+'.product.active" name="product['+(i+rowNum)+'].product.active" value="'+prodDetails[i].product.active+'">'+
-                            '<input id="product'+(i+rowNum)+'.product.name" name="product['+(i+rowNum)+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+(i+rowNum)+')" type="text" value="'+prodDetails[i].product.name+'">'+
+                            '<input id="product'+(i+rowNum)+'.product.name" name="product['+(i+rowNum)+'].product.name" required="required" onkeyup="autoSearchProduct(event,this,'+(i+rowNum)+')" type="text" value="'+prodDetails[i].product.name+'" style="width: 100%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')">'+
+                            '<input id="product'+(i+rowNum)+'.chNo" name="product['+(i+rowNum)+'].chNo" required="required" type="text" class="numbersOnly" value="'+prodDetails[i].chNo+'" onkeyup="autoSearchChallanNo(event, this, '+(i+rowNum)+')" style="width: 100%;">'+
+                        '</td>'+
+                        '<td>'+
+                            '<input id="product'+(i+rowNum)+'.challanDt" name="product['+(i+rowNum)+'].challanDt" required="required" readonly type="text" class="challanDt" value="'+prodDetails[i].formatChallanDt+'" style="width: 100%;" >'+
                         '</td>'+
                         '<td>'+
                             '<input id="product'+(i+rowNum)+'.product.hsn" name="product['+(i+rowNum)+'].product.hsn" required="required" type="text" value="'+prodDetails[i].product.hsn+'" style="width: 100%;">'+
@@ -1106,13 +1144,13 @@ function createProductDetailsRow(prodDetails) {
                             '</select>'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" >'+
+                            '<input id="product'+(i+rowNum)+'.quantity" name="product['+(i+rowNum)+'].quantity" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+prodDetails[i].quantity+'" style="width: 100%;" >'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'">'+
+                            '<input id="product'+(i+rowNum)+'.rate" name="product['+(i+rowNum)+'].rate" required="required" type="text" class="numbersOnly" onkeyup="updateRowAmount('+(i+rowNum)+')" value="'+(prodDetails[i].rate ? prodDetails[i].rate : "0")+'" style="width: 50%;">'+
                         '</td>'+
                         '<td>'+
-                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" readonly>'+
+                            '<input id="product'+(i+rowNum)+'.totalPrice" name="product['+(i+rowNum)+'].totalPrice" required="required" type="text" value="'+(prodDetails[i].totalPrice ? prodDetails[i].totalPrice : "0")+'" style="width: 6rem;margin-left: -2rem;" readonly>'+
                         '</td>'+
                         '<td>'+
                             '<input type="button" value="-" id="productDel_'+(i+rowNum)+'" class="btn btn-sm btn-danger rounded" onclick="productDelRow('+(i+rowNum)+')" style="margin-left: 18%;width: 60%;">'+
@@ -1122,11 +1160,12 @@ function createProductDetailsRow(prodDetails) {
     }
 
     $("#productDescTBody").append(prodDescRow)
-    $("#productDescTBody > tr:eq(1)").find('td:eq(8)').html('')
+    //$("#productDescTBody > tr:eq(1)").find('td:eq(8)').html('')
     for (var i = rowNum; i < rowNum+prodDetails.length; i++ ) {
         updateRowAmount(i)
     }
     autoFocusProductDescField()
+    $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
     $(document).scrollTop($(document).height())
 
 }

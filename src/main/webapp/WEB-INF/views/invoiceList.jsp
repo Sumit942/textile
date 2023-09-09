@@ -33,8 +33,8 @@
         <tbody>
             <td><input id="fromDate" name="fromDate" readonly="readonly" class="form-control" placeholder="Select From date"/></td>
             <td><input id="toDate" name="toDate" readonly="readonly" class="form-control" placeholder="Select To date"/></td>
-            <td><input id="invoiceNo" name="invoiceNo" class="form-control" placeholder="Enter Invoice No"/></td>
-            <td><input id="challanNo" name="challanNo" class="form-control" placeholder="Enter Challan No"/></td>
+            <td><input id="invoiceNos" name="invoiceNos" class="form-control" placeholder="Enter Invoice No"/></td>
+            <td><input id="challanNos" name="challanNos" class="form-control" placeholder="Enter Challan No"/></td>
             <td><input id="companyId" name="companyId" type="hidden"/><input name="companyName" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event,this);" class="form-control"/></td>
             <td>
                 <select id="paymentStatus" name="paymentStatus" class="form-select">
@@ -73,14 +73,14 @@
                         <span><b>To Date:</b> <fmt:formatDate value="${toDate}" type="date" pattern="dd-MMM-yyyy"/></span>
                     </div>
                 </c:if>
-                <c:if test="${not empty invoiceNo}">
+                <c:if test="${not empty invoiceNos}">
                     <div class="col-md-2">
-                        <span><b>Invoice No:</b> ${invoiceNo}</span>
+                        <span><b>Invoice No:</b> ${invoiceNos}</span>
                     </div>
                 </c:if>
-                <c:if test="${not empty challanNo}">
+                <c:if test="${not empty challanNos}">
                     <div class="col-md-2">
-                        <span><b>Challan No:</b> ${challanNo}</span>
+                        <span><b>Challan No:</b> ${challanNos}</span>
                     </div>
                 </c:if>
                 <c:if test="${not empty companyName}">
@@ -109,10 +109,11 @@
                 <th>Company Name</th>
                 <!-- <th>Total Amount</th> -->
                 <th>Total</th>
+                <th>Days</th>
                 <th>Pymt Date/Status</th>
                 <th>Amt Cr</th>
                 <th>Amt Dr</th>
-                <th></th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -134,6 +135,7 @@
                     <td>${invoice.billToPartyName}</td>
                     <!-- <td>${invoice.totalAmount}</td> -->
                     <td>${invoice.totalAmountAfterTax}</td>
+                    <td>${invoice.paid ? '-' : invoice.pendingDays}</td>
                     <td>
                     <select id="invoice${index.index}.paid" name="invoice[${index.index}].paid" class="form-select paidClass" onchange="autoSetAmtCr(${index.index})">
                         <option value="false">UnPaid</option>
@@ -171,6 +173,7 @@
 $(document).ready(function(e){
     if ( $('#listSize').val() != '') {
         $("#invoiceTable").DataTable({
+            responsive: true, // Enable responsive mode
             dom: 'Bfrtip',
             buttons: [
                 'excelHtml5', 'csvHtml5', 'pdfHtml5'
@@ -222,8 +225,8 @@ function billToPartyAutoComplete(event,thisObj) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append(
-                "<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+        return $("<li >").append(
+                "<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 

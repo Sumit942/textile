@@ -12,4 +12,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("select c from Company c where lower(c.name) like concat('%',lower(:name),'%')")
     List<Company> findByNameLike(String name);
+
+    Company findByName(String name);
 }

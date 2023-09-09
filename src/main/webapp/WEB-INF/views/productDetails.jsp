@@ -39,14 +39,16 @@
             <td>
                 <form:input path="challanNos" class="numbersOnly form-control" placeholder="Enter Challan Nos"/>
             </td>
-            <!--<td>
-                <form:hidden path="company.id" />
-                <form:input path="company.name" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event, this, -1)" class="form-control ui-autocomplete-input" autocomplete="off" />
-            </td>
-            <td>
-                <form:hidden path="product.id"/>
-                <form:input path="product.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
-            </td> -->
+            <sec:authorize access="hasRole('ADMIN')">
+                <td>
+                    <form:hidden path="company.id" />
+                    <form:input path="company.name" placeholder="Enter Company Name" onkeyup="billToPartyAutoComplete(event, this, -1)" class="form-control ui-autocomplete-input" autocomplete="off" />
+                </td>
+                <td>
+                    <form:hidden path="product.id"/>
+                    <form:input path="product.name" placeholder="Enter Product Name" onkeyup="autoSearchProduct(event, this,-1)" class="form-control ui-autocomplete-input" autocomplete="off"/>
+                </td>
+            </sec:authorize>
             <td>
                 <input type="submit" value="search" name="searchChallans" class="btn btn-primary"/>
             </td>
@@ -63,6 +65,7 @@
                 <tr>
                   <th style="width: 0%">S.No</th>
                   <th style="width: 0%">Challan No</th>
+                  <th style="width: 0%">Date</th>
                   <th style="width: 30%">Party Name</th>
                   <th style="width: 30%">Yarn Quality</th>
                   <th style="width: 0%">HSN</th>
@@ -83,6 +86,10 @@
                             <td style="width: 0%">
                                 <form:input path="productDetails[0].chNo" class="numbersOnly form-control" style="width: 100%;"/>
                                 <form:errors path="productDetails[0].chNo" cssClass="error"/>
+                            </td>
+                            <td style="width: 0%">
+                                <form:input path="productDetails[0].challanDt" class="challanDt form-control" readonly="true" required="true"/>
+                                <form:errors path="productDetails[0].challanDt" cssClass="error"/>
                             </td>
                             <td style="width: 30%">
                                 <form:hidden path="productDetails[0].party.id" />
@@ -128,6 +135,10 @@
                                         <form:input path="productDetails[${index.index}].chNo" class="numbersOnly form-control" />
                                         <form:errors path="productDetails[${index.index}].chNo" cssClass="error"/>
                                     </td>
+                                    <td style="width: 0%">
+                                        <form:input path="productDetails[${index.index}].challanDt" class="challanDt form-control" readonly="true"/>
+                                        <form:errors path="productDetails[${index.index}].challanDt" cssClass="error"/>
+                                    </td>
                                     <td>
                                         <form:hidden path="productDetails[${index.index}].party.id" />
                                         <form:input path="productDetails[${index.index}].party.name" required="true" onkeyup="billToPartyAutoComplete(event, this, ${index.index})" class="form-control"/>
@@ -172,7 +183,7 @@
                     <td style="width: 0%"></td><td style="width: 0%"></td><td></td><td></td>
                     <td><button type="button" class="btn btn-primary" onclick="resetRow()">Reset</button></td>
                     <td colspan="2"><button type="button" class="btn btn-primary" onclick="addRow('new')">Add Row</button></td>
-                    <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success">Submit</button></td>
+                    <td colspan="2"><button type="submit" name="saveChallans" class="btn btn-success" value="saveChallans">Submit</button></td>
                 </tr>
             </tfoot>
         </table>
@@ -182,6 +193,10 @@
 <script>
     $(document).ready(function () {
         $('#productDetailsTable').DataTable();
+        $( ".challanDt" ).datepicker({
+            responsive: true, // Enable responsive mode
+            dateFormat: 'dd/mm/yy'
+        })
     });
 
     function addRow(addRowType) {
@@ -220,6 +235,12 @@
                 $(lastQty).focus()
                 return;
             }
+            var lastChallanDt = '#productDetails'+(i-1)+'\\.challanDt'
+            if ( $(lastChallanDt).val() == '' ) {
+                alert ("Please select 'Date' in last row")
+                $(lastChallanDt).focus()
+                return;
+            }
             //check duplicate chNos
             if (hasDuplicateChNos()){
                 alert ("Please entry unique 'challan no.' in last row")
@@ -234,6 +255,9 @@
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly form-control" value="'+($(lastChNo).val() != '' ? (parseInt($(lastChNo).val())+1) : '')+'">'+
+                    '</td>'+
+                    '<td>'+
+                        '<input id="productDetails'+i+'.challanDt" name="productDetails['+i+'].challanDt" type="text" class="challanDt form-control" readonly="readonly" value="'+($(lastChallanDt).val() != '' ? $(lastChallanDt).val() : '')+'">'+
                     '</td>'+
                     '<td>'+
                         '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].party.id" type="hidden" value="'+(addRowType == 'duplicate' ? $(lastPartyId).val() : '')+'">'+
@@ -265,6 +289,7 @@
 
         $('#productDetailsTable tbody').append(row);
         $('#productDetails'+i+'\\.chNo').focus()
+        $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
     }
 
 function productDelRow(i) {
@@ -291,21 +316,23 @@ function updateProdDetailsInputTagsIdAndName() {
 
         $('#'+row).find('td:eq(1)').find('input:eq(0)').attr('id','productDetails'+i+'.chNo').attr('name','productDetails['+i+'].chNo')
 
-        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','productDetails'+i+'.party.id').attr('name','productDetails['+i+'].party.id')
-        $('#'+row).find('td:eq(2)').find('input:eq(1)').attr('id','productDetails'+i+'.party.name').attr('name','productDetails['+i+'].party.name')
+        $('#'+row).find('td:eq(2)').find('input:eq(0)').attr('id','productDetails'+i+'.challanDt').attr('name','productDetails['+i+'].challanDt')
 
-        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','productDetails'+i+'.product.id').attr('name','productDetails['+i+'].product.id')
-        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('name','productDetails['+i+'].product.name')
-        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onblur','preventProductAddManually('+i+')')
-        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onkeyup','autoSearchProduct(event,this,'+i+')')
-        $('#'+row).find('td:eq(3)').find('input:eq(2)').attr('id','productDetails'+i+'.product.active').attr('name','productDetails['+i+'].product.active')
+        $('#'+row).find('td:eq(3)').find('input:eq(0)').attr('id','productDetails'+i+'.party.id').attr('name','productDetails['+i+'].party.id')
+        $('#'+row).find('td:eq(3)').find('input:eq(1)').attr('id','productDetails'+i+'.party.name').attr('name','productDetails['+i+'].party.name')
 
-        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','productDetails'+i+'.hsn').attr('name','productDetails['+i+'].hsn')
-        $('#'+row).find('td:eq(5)').find('select:eq(0)').attr('id','productDetails'+i+'.unitOfMeasure.id').attr('name','productDetails['+i+'].unitOfMeasure.id')
-        $('#'+row).find('td:eq(6)').find('input:eq(0)').attr('id','productDetails'+i+'.quantity').attr('name','productDetails['+i+'].quantity')
-        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','productDetails'+i+'.rate').attr('name','productDetails['+i+'].rate')
+        $('#'+row).find('td:eq(4)').find('input:eq(0)').attr('id','productDetails'+i+'.product.id').attr('name','productDetails['+i+'].product.id')
+        $('#'+row).find('td:eq(4)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('name','productDetails['+i+'].product.name')
+        $('#'+row).find('td:eq(4)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onblur','preventProductAddManually('+i+')')
+        $('#'+row).find('td:eq(4)').find('input:eq(1)').attr('id','productDetails'+i+'.product.name').attr('onkeyup','autoSearchProduct(event,this,'+i+')')
+        $('#'+row).find('td:eq(4)').find('input:eq(2)').attr('id','productDetails'+i+'.product.active').attr('name','productDetails['+i+'].product.active')
+
+        $('#'+row).find('td:eq(5)').find('input:eq(0)').attr('id','productDetails'+i+'.hsn').attr('name','productDetails['+i+'].hsn')
+        $('#'+row).find('td:eq(6)').find('select:eq(0)').attr('id','productDetails'+i+'.unitOfMeasure.id').attr('name','productDetails['+i+'].unitOfMeasure.id')
+        $('#'+row).find('td:eq(7)').find('input:eq(0)').attr('id','productDetails'+i+'.quantity').attr('name','productDetails['+i+'].quantity')
+        $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDetails'+i+'.rate').attr('name','productDetails['+i+'].rate')
         try {
-            $('#'+row).find('td:eq(8)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+i+')')
+            $('#'+row).find('td:eq(9)').find('input:eq(0)').attr('id','productDel_'+(i-1)).attr('onclick','productDelRow('+i+')')
         } catch (err) {
             console.log('error in change id for productDelRow ',err)
         }
@@ -336,7 +363,8 @@ function updateProdDetailsInputTagsIdAndName() {
                     url : "${pageContext.request.contextPath}/product/searchByName",
                     dataType : 'json',
                     data : {
-                        name : request.term
+                        name : request.term,
+                        active: true
                     },
                     success : function(data) {
                         if (index < 0 ) {
@@ -375,7 +403,7 @@ function updateProdDetailsInputTagsIdAndName() {
             }
         }).data("ui-autocomplete")._renderItem = function(ul, item) {
             return $("<li>").append(
-                    "<a><strong>" + item.name + "</strong></a>").appendTo(ul);
+                    "<a class='dropdown-item'><strong>" + item.name + "</strong></a>").appendTo(ul);
         };
     }
 function getProductMaxRateByCompanyId(index,productId) {
@@ -438,7 +466,7 @@ function billToPartyAutoComplete(event,thisObj,i) {
             return false;
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-        return $("<li>").append("<a><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
+        return $("<li>").append("<a class='dropdown-item'><strong>" + item.name + "</strong> - " + item.gst + "</a>").appendTo(ul);
     };
 }
 
@@ -473,6 +501,9 @@ var row = '<tr>' +
                         '<input id="productDetails'+i+'.chNo" name="productDetails['+i+'].chNo" type="text" class="numbersOnly form-control" value="">'+
                     '</td>'+
                     '<td>'+
+                        '<input id="productDetails'+i+'.challanDt" name="productDetails['+i+'].challanDt" type="text" class="challanDt form-control" value="">'+
+                    '</td>'+
+                    '<td>'+
                         '<input id="productDetails'+i+'.party.id" name="productDetails['+i+'].party.id" type="hidden" value="">'+
                         '<input id="productDetails'+i+'.party.name" name="productDetails['+i+'].party.name" required="required" onkeyup="billToPartyAutoComplete(event,this,'+i+')" type="text" value="" class="form-control">'+
                     '</td>'+
@@ -502,6 +533,7 @@ var row = '<tr>' +
 
         $('#productDetailsTable tbody').html(row);
         $('#productDetails'+i+'\\.chNo').focus()
+        $('.challanDt').datepicker({dateFormat: 'dd/mm/yy'});
 }
 
 //prevent manually adding product

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
     EntityManager entityManager;
 
     @Override
-    public List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, String invoiceNo, Long companyId, Boolean paymentStatus) {
+    public List<InvoiceView> getInvoiceReport(Date fromDate, Date toDate, List<String> invoiceNos, Long companyId, Boolean paymentStatus) {
 
         StringBuilder sb = new StringBuilder("select view from InvoiceView view where view.invoiceId > 0 ");
         if (fromDate != null) {
@@ -51,8 +52,19 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         if (toDate != null) {
             sb.append("and view.invoiceDate <= :toDate ");
         }
-        if (invoiceNo != null && !invoiceNo.isEmpty()) {
-            sb.append("and view.invoiceNo like concat('%',lower(:invoiceNo)) ");
+        if (invoiceNos != null && !invoiceNos.isEmpty()) {
+            for (int i = 0; i < invoiceNos.size(); i++) {
+                if (i == 0) {
+                    sb.append(" AND");
+                    if (invoiceNos.size() > 1)
+                        sb.append(" (");
+                } else {
+                    sb.append(" OR");
+                }
+                sb.append(" lower(view.invoiceNo) like lower(:invoiceNo").append(i).append(") ");
+            }
+            if (invoiceNos.size() > 1)
+                sb.append(") ");
         }
         if (companyId != null) {
             sb.append("and view.billToPartyId = :companyId ");
@@ -61,7 +73,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
             sb.append("and view.paid = :paid ");
         }
         sb.append("order by view.invoiceId ASC");
-        Query query = entityManager.createQuery(sb.toString());
+        TypedQuery<InvoiceView> query = entityManager.createQuery(sb.toString(), InvoiceView.class);
 
         if (fromDate != null) {
             query.setParameter("fromDate", fromDate, TemporalType.DATE);
@@ -69,8 +81,10 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
         if (toDate != null) {
             query.setParameter("toDate", toDate, TemporalType.DATE);
         }
-        if (invoiceNo != null && !invoiceNo.isEmpty()) {
-            query.setParameter("invoiceNo", invoiceNo);
+        if (invoiceNos != null && !invoiceNos.isEmpty()) {
+            for (int i = 0; i < invoiceNos.size(); i++) {
+                query.setParameter("invoiceNo"+i,"%"+invoiceNos.get(i));
+            }
         }
         if (companyId != null) {
             query.setParameter("companyId", companyId);
@@ -79,7 +93,7 @@ public class InvoiceViewServiceImpl implements InvoiceViewService {
             query.setParameter("paid", paymentStatus);
         }
 
-        return (List<InvoiceView>) query.getResultList();
+        return query.getResultList();
     }
 
     @Override

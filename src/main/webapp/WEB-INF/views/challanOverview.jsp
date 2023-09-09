@@ -8,12 +8,12 @@
 <table id="missingChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">Missing Challan Nos</th></tr>
+        <tr><th class="text-center" colspan="20">Missing Challan Nos (${missingChallanNos.size()})</th></tr>
     </thead>
     <tbody>
         <tr>
-            <td colspan="10">min: ${minChallanNo}</td>
-            <td colspan="10">max: ${maxChallanNo}</td>
+            <td colspan="7"><b>min:</b> ${minChallanNo}</td>
+            <td colspan="8"><b>max:</b> ${maxChallanNo}</td>
         </tr>
         <tr>
         <c:forEach items="${missingChallanNos}" var="challanNo" varStatus="index">
@@ -33,7 +33,7 @@
 <table id="unBilledChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">UnBilled Challan Nos</th></tr>
+        <tr><th class="text-center" colspan="20">UnBilled Challan Nos (${unBilledChNo.size()})</th></tr>
     </thead>
     <tbody>
         <tr>
@@ -56,7 +56,7 @@
 <table id="yarnChallanTable" class="table table-striped table-bordered">
 
     <thead>
-        <tr><th class="text-center" colspan="20">Yarn Return Challan Nos</th></tr>
+        <tr><th class="text-center" colspan="20">Yarn Return Challan Nos (${yarnReturnChNo.size()})</th></tr>
     </thead>
     <tbody>
         <tr>

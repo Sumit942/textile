@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.example.textile.utility.ShreeramTextileConstants;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,6 +26,9 @@ public class ProductDetail implements Serializable {
 
     private Date insertDt;
     private Date updateDt;
+    private Date challanDt;
+
+    private String formatChallanDt;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -128,6 +132,22 @@ public class ProductDetail implements Serializable {
 
     public void setUpdateDt(Date updateDt) {
         this.updateDt = updateDt;
+    }
+
+    @Temporal(TemporalType.DATE)
+    public Date getChallanDt() {
+        return challanDt;
+    }
+
+    public void setChallanDt(Date challanDt) {
+        this.challanDt = challanDt;
+    }
+
+    @Transient
+    public String getFormatChallanDt() {
+        if (Objects.nonNull(challanDt))
+            return ShreeramTextileConstants.SIMPLE_DATE_FORMAT_ddMMYYYY_SLASH.format(challanDt);
+        return "";
     }
 
     @Override

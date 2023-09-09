@@ -26,8 +26,10 @@
             </sec:authorize>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/productDetail">Challans</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/productDetail/missingChallans">Missing Challans</a></li>
+
             <sec:authorize access="hasRole('ADMIN')">
                 <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/product">Quality</a></li>
                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/employees">Employees</a></li>
             </sec:authorize>
             <li><hr class="dropdown-divider"></li>
