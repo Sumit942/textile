@@ -58,7 +58,10 @@ public class ProductDetailController extends BaseController{
     @GetMapping
     public String showForm(@ModelAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND) ProductDetailCommand command,
                            Model model,
-                           @RequestParam(value ="searchByCh", required = false) Long chNo) throws InvalidObjectPopulationException {
+                           @RequestParam(value ="searchByCh", required = false) Long chNo,
+                           HttpServletRequest request) throws InvalidObjectPopulationException {
+        String userAgent = request.getHeader("User-Agent");
+        String showChallanForm = userAgent.contains("Mobile") ? "/productDetails_mobile" : "/productDetails";
         if (chNo != null && chNo.compareTo(0L) > 0) {
             log.debug("showForm() searchByCh");
             List<ProductDetail> byChNo = productDetailService.findByChNo(chNo);
@@ -68,7 +71,7 @@ public class ProductDetailController extends BaseController{
         ActionExecutor actionExecutor = actionExecutorMap.get(ActionType.SUBMIT.getActionType());
         actionExecutor.prePopulateOptionsAndFields(command, model);
 
-        return "/productDetails";
+        return showChallanForm;
     }
 
     @PostMapping
