@@ -28,4 +28,5 @@ public class ShreeramTextileConstants {
     public static final String DATE_FORMAT_ddMMYYYY_SLASH = "dd/MM/yyyy";
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT_ddMMYYYY_SLASH = new SimpleDateFormat(DATE_FORMAT_ddMMYYYY_SLASH);
     public static final String SRNO = "srNo";
+    public static final String USER_AGENT = "User-Agent";
 }
