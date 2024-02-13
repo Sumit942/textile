@@ -15,6 +15,7 @@ import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,7 @@ public class ProductDetailController extends BaseController{
 
     Map<String, ActionExecutor> actionExecutorMap;
 
-    private static final String YARN_RETURN = "%YARN RETURN";
+    @Value("${challan.showGroupByParty}") private Boolean showGroupByParty;
 
     @PostConstruct
     public void init() {
@@ -60,7 +61,7 @@ public class ProductDetailController extends BaseController{
                            Model model,
                            @RequestParam(value ="searchByCh", required = false) Long chNo,
                            HttpServletRequest request) throws InvalidObjectPopulationException {
-        String userAgent = request.getHeader("User-Agent");
+        String userAgent = request.getHeader(ShreeramTextileConstants.USER_AGENT);
         String showChallanForm = userAgent.contains("Mobile") ? "/productDetails_mobile" : "/productDetails";
         if (chNo != null && chNo.compareTo(0L) > 0) {
             log.debug("showForm() searchByCh");
@@ -90,6 +91,7 @@ public class ProductDetailController extends BaseController{
             List<ProductDetail> challanList = productDetailService.challanReport(command);
             command.setProductDetails(challanList);
         } else if (saveChallans != null) {
+            String userAgent = request.getHeader(ShreeramTextileConstants.USER_AGENT);
             log.info("{} Inside saveChallans",logPrefix);
             Map<String, Object> parameterMap = new HashMap<>();
             parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
@@ -110,12 +112,12 @@ public class ProductDetailController extends BaseController{
                     log.error("result has doValidation Errors");
                     result.getAllErrors().forEach(System.out::println);
                     log.info("{} save Unsuccessfull", logPrefix);
-                    view = "/productDetails";
+                    view = userAgent.contains("Mobile") ? "/productDetails_mobile" : "/productDetails";
                 }
                 redirectAttr.addFlashAttribute("actionResponse", response);
             } catch (Throwable e) {
                 log.error("Error while saving productDetails-" + e.getLocalizedMessage(), e);
-                view = "/productDetails";
+                view = userAgent.contains("Mobile") ? "/productDetails_mobile" : "/productDetails";
             }
         }
         redirectAttr.addFlashAttribute(CommandConstants.PRODUCT_DETAILS_COMMAND, command);
@@ -133,6 +135,18 @@ public class ProductDetailController extends BaseController{
         List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
         List<ProductDetail> yarnReturnChNo = productDetailService.findAllExcluded();
 
+        if (showGroupByParty) {
+            Map<String, List<ProductDetail>> unBilledChNoByPartyName = unBilledChNo.stream()
+                    .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
+            Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = yarnReturnChNo.stream()
+                    .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
+            model.addAttribute("unBilledChNoByPartyName", unBilledChNoByPartyName);
+            model.addAttribute("yarnReturnChNoByPartyName", yarnReturnChNoByPartyName);
+            model.addAttribute("showGroupByParty", showGroupByParty);
+        }   else {
+            model.addAttribute("unBilledChNo", unBilledChNo);
+            model.addAttribute("yarnReturnChNo", yarnReturnChNo);
+        }
         if (!allChNo.isEmpty()){
             long min = allChNo.stream().min(Long::compareTo).orElse(0L);
             long max = allChNo.stream().max(Long::compareTo).orElse(-1L);
@@ -142,8 +156,6 @@ public class ProductDetailController extends BaseController{
                     missingChNos.add(i);
 
             model.addAttribute("missingChallanNos", missingChNos);
-            model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("yarnReturnChNo", yarnReturnChNo);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
