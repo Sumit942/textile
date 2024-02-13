@@ -182,6 +182,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                 sb.append(" AND upper(pd.product.name) NOT LIKE upper(:exclusion").append(i).append(")");
             }
         }
+        sb.append(" ORDER BY pd.chNo ASC");
 
         TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
@@ -224,6 +225,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (excludePatterns.size() > 1)
                 sb.append(" )");
         }
+        sb.append(" ORDER BY pd.chNo ASC");
 
         TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 

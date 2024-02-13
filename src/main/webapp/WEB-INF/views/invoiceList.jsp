@@ -1,6 +1,23 @@
 <%@ include file="./common/header.jspf" %>
 <title>Dashboard</title>
 <style>
+
+.loader,.loader:hover,.loader:focus {
+    border: 4px solid #3498db;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    background: transparent;
+    color: transparent;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 </style>
 <body>
 <div class="container-fluid">
@@ -149,7 +166,7 @@
                     <td><input id="invoice${index.index}.paidAmount" name="invoice[${index.index}].paidAmount" value="${invoice.paidAmount}" class="form-control" /></td>
                     <td><input id="invoice${index.index}.amtDr" name="invoice[${index.index}].amtDr" value="${invoice.amtDr}" class="form-control" /></td>
                     <td>
-                    <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index},'${invoice.invoiceNo}')" class="btn btn-sm btn-primary" />
+                    <input type="button" value="Update" onclick="updateInvoice(${invoice.invoiceId},${index.index},'${invoice.invoiceNo}', this)" class="btn btn-sm btn-primary" />
                     <input type="button" value="Delete" onclick="deleteByInvoiceNo('${invoice.invoiceNo}')" class="btn btn-sm btn-danger" />
                     </td>
                 </tr>
@@ -231,11 +248,17 @@ function billToPartyAutoComplete(event,thisObj) {
 }
 
 /**  update invoice date and payment details function   **/
-function updateInvoice(invId, index, invNo) {
+function updateInvoice(invId, index, invNo, element) {
+    if ($(element).hasClass('loader')){
+        return;
+    }
+
     var del = confirm("Do you want to update '"+invNo+"' ?")
     if (!del) {
         return;
     }
+
+    $(element).addClass('loader')
 
     var invDt = $('#invoice'+index+'\\.invoiceDate').val();
     var paidDt = $('#invoice'+index+'\\.paymentDt').val();
@@ -260,11 +283,13 @@ function updateInvoice(invId, index, invNo) {
             } else {
                 $('#tr'+index).css("background-color","rgba(0, 0, 0, 0)")
             }
+            $(element).removeClass('loader')
             alert('Invoice: '+invNo+' details updated successfully!!')
         },
         error : function(err) {
             alert('Failed to Update Invoice: '+invNo+' Details')
             console.error(err)
+            $(element).removeClass('loader')
         }
     });
 }

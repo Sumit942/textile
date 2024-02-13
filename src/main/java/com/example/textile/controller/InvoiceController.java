@@ -78,7 +78,7 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping
-    public ModelAndView findAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber, @RequestParam(required = false, defaultValue = "20") Integer pageSize, @RequestParam(required = false, defaultValue = "invoiceNo") String fieldName, ModelMap model) {
+    public ModelAndView findAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber, @RequestParam(required = false, defaultValue = "10") Integer pageSize, @RequestParam(required = false, defaultValue = "invoiceNo") String fieldName, ModelMap model) {
         ModelAndView modelAndView = new ModelAndView("/invoiceList");
 //        List<InvoiceView> invoices = viewService.findAllOrderByAndLimit(fieldName,pageNumber,pageSize);
         String isRedirect = (String) model.getAttribute("isRedirect");
@@ -94,22 +94,51 @@ public class InvoiceController extends BaseController {
     }
 
     @PostMapping
-    public ModelAndView invoiceReport(@RequestParam(value = "fromDate", required = false) Date fromDate, @RequestParam(value = "toDate", required = false) Date toDate, @RequestParam(value = "invoiceNos", required = false) List<String> invoiceNos, @RequestParam(value = "companyId", required = false) Long companyId, @RequestParam(value = "challanNos", required = false) List<Long> challanNos, @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus, @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport, @RequestParam(value = "downloadInvoiceReportPdf", required = false) String downloadInvoiceReportPdf, @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport, RedirectAttributes redirectAttributes, HttpServletResponse response) {
+    public ModelAndView invoiceReport(@RequestParam(value = "fromDate", required = false) Date fromDate,
+                                      @RequestParam(value = "toDate", required = false) Date toDate,
+                                      @RequestParam(value = "invoiceNos", required = false) List<String> invoiceNos,
+                                      @RequestParam(value = "companyId", required = false) Long companyId,
+                                      @RequestParam(value = "challanNos", required = false) List<Long> challanNos,
+                                      @RequestParam(value = "paymentStatus", required = false) Boolean paymentStatus,
+                                      @RequestParam(value = "downloadInvoiceReport", required = false) String downloadInvoiceReport,
+                                      @RequestParam(value = "downloadInvoiceReportPdf", required = false) String downloadInvoiceReportPdf,
+                                      @RequestParam(value = "showInvoiceReport", required = false) String showInvoiceReport,
+                                      RedirectAttributes redirectAttributes,
+                                      @RequestParam(value = "companyName", required = false) String companyName,
+                                      HttpServletResponse response) {
         String logPrefix = "invoiceReport() ";
-        String companyName = null;
         log.info("{} Entry", logPrefix);
 
         List<InvoiceView> invoiceReport = getInvoiceViews(fromDate, toDate, invoiceNos, companyId, challanNos, paymentStatus);
 
+        StringBuilder fileName = new StringBuilder();
+        if (companyName != null && !companyName.isEmpty())
+            fileName.append(companyName).append("_");
+
+        if (fromDate != null) {
+            Calendar fd = Calendar.getInstance();
+            fd.setTime(fromDate);
+            fileName.append(fd.get(Calendar.DATE)).append("_").append(fd.get(Calendar.MONTH)+1).append("_").append(fd.get(Calendar.YEAR)).append("_");
+        }
+        if (toDate != null) {
+            Calendar td = Calendar.getInstance();
+            td.setTime(toDate);
+            fileName.append("to_").append(td.get(Calendar.DATE)).append("_").append(td.get(Calendar.MONTH)+1).append("_").append(td.get(Calendar.YEAR)).append("_");
+        }
+        if (paymentStatus != null) {
+            fileName.append(paymentStatus ? "Paid" : "Unpaid").append("_");
+        }
+        fileName.append("Report");
+
         /* downloading excel report  **/
         if (downloadInvoiceReport != null) {
-            invoiceReportDownloadExcel(invoiceReport, response);
+            invoiceReportDownloadExcel(invoiceReport, response, fileName.toString());
             return null;
         }
 
         /* downloading pdf report  **/
         if (downloadInvoiceReportPdf != null) {
-            invoiceReportDownloadPdf(invoiceReport, response);
+            invoiceReportDownloadPdf(invoiceReport, response, fileName.toString());
             return null;
         }
 
@@ -119,9 +148,7 @@ public class InvoiceController extends BaseController {
         if (invoiceReport != null && !invoiceReport.isEmpty()) {
             Page<InvoiceView> invoiceViewsReportPage = new PageImpl<>(invoiceReport);
             redirectAttributes.addFlashAttribute("invoices", invoiceViewsReportPage);
-            if (companyId != null) {
-                companyName = invoiceReport.get(0).getBillToPartyName();
-            }
+
         }
         redirectAttributes.addFlashAttribute("isRedirect", "YES");
         redirectAttributes.addFlashAttribute("fromDate", fromDate);
@@ -412,7 +439,7 @@ public class InvoiceController extends BaseController {
         return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public void invoiceReportDownloadExcel(List<InvoiceView> invoiceReport, HttpServletResponse response) {
+    public void invoiceReportDownloadExcel(List<InvoiceView> invoiceReport, HttpServletResponse response, String fileName) {
         String logPrefix = "invoiceReportDownloadExcel() ";
         log.info("{} Entry", logPrefix);
 
@@ -444,7 +471,7 @@ public class InvoiceController extends BaseController {
 
                 response.setContentType("application/vnd.ms-excel");
                 response.setContentLength(content.length);
-                response.setHeader("Content-Disposition", "attachment; filename=Invoice_Report.xlsx");
+                response.setHeader("Content-Disposition", "attachment; filename="+fileName+".xlsx");
 
                 OutputStream os = response.getOutputStream();
                 os.write(content, 0, content.length);
@@ -459,7 +486,7 @@ public class InvoiceController extends BaseController {
 
     }
 
-    private void invoiceReportDownloadPdf(List<InvoiceView> invoiceReport, HttpServletResponse response) {
+    private void invoiceReportDownloadPdf(List<InvoiceView> invoiceReport, HttpServletResponse response, String fileName) {
         String logPrefix = "invoiceReportDownloadPdf() ";
         log.info("{} Entry", logPrefix);
 
@@ -472,7 +499,7 @@ public class InvoiceController extends BaseController {
                 PdfUtility.createPdf(os, process);
 
                 byte[] content = os.toByteArray();
-                response.setHeader("Content-Disposition", "attachment; filename=Invoice_Report.pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
                 response.setContentLength(content.length);
                 response.getOutputStream().write(content);
             } catch (Exception e) {
@@ -494,6 +521,7 @@ public class InvoiceController extends BaseController {
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal debit = invoiceReport.stream().map(InvoiceView::getAmtDr)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
+        double pendingAmount = totalAmount.doubleValue() - (paidAmount.doubleValue() + debit.doubleValue());
 
         InvoiceView invoiceView = new InvoiceView();
 //        invoiceView.setBillToPartyName("Total: ");
@@ -503,6 +531,7 @@ public class InvoiceController extends BaseController {
         invoiceView.setTotalAmountAfterTax(totalAmount);
         invoiceView.setPaidAmount(paidAmount);
         invoiceView.setAmtDr(debit);
+        invoiceView.setBillToPartyName(String.valueOf(ShreeramTextile.df.format(pendingAmount)));
 
         invoiceReport.add(invoiceView);
     }

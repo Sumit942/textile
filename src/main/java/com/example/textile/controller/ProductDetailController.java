@@ -133,23 +133,23 @@ public class ProductDetailController extends BaseController{
 
         List<Long> allChNo = productDetailService.findAllChNo();
         List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
-        List<ProductDetail> yarnReturnChNo = productDetailService.findAllExcluded();
+        List<ProductDetail> allExcludedCh = productDetailService.findAllExcluded();
 
         if (showGroupByParty) {
             Map<String, List<ProductDetail>> unBilledChNoByPartyName = unBilledChNo.stream()
                     .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
-            Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = yarnReturnChNo.stream()
+            Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = allExcludedCh.stream()
                     .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
             model.addAttribute("unBilledChNoByPartyName", unBilledChNoByPartyName);
             model.addAttribute("yarnReturnChNoByPartyName", yarnReturnChNoByPartyName);
             model.addAttribute("showGroupByParty", showGroupByParty);
         }   else {
             model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("yarnReturnChNo", yarnReturnChNo);
+            model.addAttribute("yarnReturnChNo", allExcludedCh);
         }
         if (!allChNo.isEmpty()){
-            long min = allChNo.stream().min(Long::compareTo).orElse(0L);
-            long max = allChNo.stream().max(Long::compareTo).orElse(-1L);
+            long min = allChNo.get(0);
+            long max = allChNo.get(allChNo.size()-1);
 
             for (long i = min; i <= max; i++)
                 if (!allChNo.contains(i))

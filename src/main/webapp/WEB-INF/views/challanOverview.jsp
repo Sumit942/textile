@@ -55,13 +55,14 @@
 </table>
 <hr>
 
+<table id="yarnChallanTable" class="table table-striped table-bordered">
     <table id="yarnChallanTable" class="table table-striped table-bordered">
         <thead>
-            <tr><th class="text-center" colspan="20">Yarn Return Challan Nos (${yarnReturnChNo.size()})</th></tr>
+        <tr><th class="text-center" colspan="15">Yarn Return Challan Nos (${allExcludedChNo.size()})</th></tr>
         </thead>
         <tbody>
             <tr>
-                <c:forEach items="${yarnReturnChNo}" var="productDetail" varStatus="index">
+        <c:forEach items="${allExcludedChNo}" var="productDetail" varStatus="index">
                     <td>
                         <span onclick="searchByChallanNo(${productDetail.chNo})"
                             style="text-decoration: underline; cursor: pointer;">${productDetail.chNo}</span>
@@ -70,7 +71,7 @@
             </tr>
             <tr>' : ''}
                 </c:forEach>
-                <c:forEach begin="1" end="${15 - yarnReturnChNo.size() % 15}">
+        <c:forEach begin="1" end="${15 - allExcludedChNo.size() % 15}" >
                     <td></td>
                 </c:forEach>
             </tr>
