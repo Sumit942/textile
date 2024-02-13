@@ -85,7 +85,7 @@
 </c:if>
 <c:if test="${showGroupByParty}">
     <div class="unBilledChallanDiv">
-        <h5 class="text-center">------------UnBilled Challan Nos (${unBilledChNo.size()})------------</h5>
+        <h5 class="text-center" onclick="toggleChallans('accordionExample1')" style="cursor: pointer;">------------UnBilled Challan Nos (${unBilledChNo.size()})------------</h5>
         <div class="accordion" id="accordionExample1">
             <c:forEach items="${unBilledChNoByPartyName}" var="unBilledPartyName" varStatus="unBilledPartyNameIndex">
                 <div class="accordion-item">
@@ -124,7 +124,7 @@
     </div>
 </br></br>
     <div class="yarnReturnDiv">
-        <h5 class="text-center">------------Yarn Return Challan Nos (${yarnReturnChNo.size()})------------</h5>
+        <h5 class="text-center" onclick="toggleChallans('accordionExample2')" style="cursor: pointer;">------------Yarn Return Challan Nos (${allExcludedChNo.size()})------------</h5>
         <div class="accordion" id="accordionExample2">
             <c:forEach items="${yarnReturnChNoByPartyName}" var="yarnReturnPartyName" varStatus="yarnReturnPartyNameIndex">
                 <div class="accordion-item">

@@ -6,3 +6,7 @@ function searchByChallanNo(chNo) {
 
     window.location.href = '/textile/productDetail?searchByCh='+chNo;
 }
+
+function toggleChallans(divId) {
+    $('#'+divId).toggle('fade')
+}

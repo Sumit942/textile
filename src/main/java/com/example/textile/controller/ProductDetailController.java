@@ -135,18 +135,7 @@ public class ProductDetailController extends BaseController{
         List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
         List<ProductDetail> allExcludedCh = productDetailService.findAllExcluded();
 
-        if (showGroupByParty) {
-            Map<String, List<ProductDetail>> unBilledChNoByPartyName = unBilledChNo.stream()
-                    .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
-            Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = allExcludedCh.stream()
-                    .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
-            model.addAttribute("unBilledChNoByPartyName", unBilledChNoByPartyName);
-            model.addAttribute("yarnReturnChNoByPartyName", yarnReturnChNoByPartyName);
-            model.addAttribute("showGroupByParty", showGroupByParty);
-        }   else {
-            model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("allExcludedChNo", allExcludedCh);
-        }
+        model.addAttribute("showGroupByParty", showGroupByParty);
         if (!allChNo.isEmpty()){
             long min = allChNo.get(0);
             long max = allChNo.get(allChNo.size()-1);
@@ -158,6 +147,17 @@ public class ProductDetailController extends BaseController{
             model.addAttribute("missingChallanNos", missingChNos);
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
+            if (showGroupByParty) {
+                Map<String, List<ProductDetail>> unBilledChNoByPartyName = unBilledChNo.stream()
+                        .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
+                Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = allExcludedCh.stream()
+                        .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
+                model.addAttribute("unBilledChNoByPartyName", unBilledChNoByPartyName);
+                model.addAttribute("yarnReturnChNoByPartyName", yarnReturnChNoByPartyName);
+            }
+            model.addAttribute("unBilledChNo", unBilledChNo);
+            model.addAttribute("allExcludedChNo", allExcludedCh);
+
             log.info("{} Exit [min:{}, max:{}, missingCount:{}]", logPrefix, min, max, missingChNos.size());
         }
 
