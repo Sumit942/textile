@@ -37,4 +37,4 @@ invoice:
   startCount: 1
   oldInvoiceLastId: 207
 challan:
-  showGroupByParty: false
+  showGroupByParty: true

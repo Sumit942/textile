@@ -145,7 +145,7 @@ public class ProductDetailController extends BaseController{
             model.addAttribute("showGroupByParty", showGroupByParty);
         }   else {
             model.addAttribute("unBilledChNo", unBilledChNo);
-            model.addAttribute("yarnReturnChNo", allExcludedCh);
+            model.addAttribute("allExcludedChNo", allExcludedCh);
         }
         if (!allChNo.isEmpty()){
             long min = allChNo.get(0);
