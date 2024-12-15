@@ -208,7 +208,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     public List<ProductDetail> findAllExcluded() {
         List<ProductExclude> excludePatterns = productExcludeRepos.findAll();
 
-        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL");
+        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL AND pd.party IS NOT NULL");
 
         if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
