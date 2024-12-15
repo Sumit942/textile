@@ -7,10 +7,10 @@ spring:
     url: jdbc:mysql://localhost:3306/textile_crm
     username: root
     password: 12345678
-  jpa:
-    hibernate:
-#      ddl-auto: update
-    properties:
+#  jpa:
+#    hibernate:
+##      ddl-auto: update
+#    properties:
 #      hibernate.format_sql: true
 #    show-sql: true
   mvc:
@@ -36,5 +36,6 @@ server:
 invoice:
   startCount: 1
   oldInvoiceLastId: 207
+  invoiceFormatNo: "SRTI/24-25/"
 challan:
-  showGroupByParty: true
+  showGroupByParty: false

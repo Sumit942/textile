@@ -4,6 +4,7 @@ import com.example.textile.action.ProductDetailSubmitAction;
 import com.example.textile.command.ProductDetailCommand;
 import com.example.textile.constants.CommandConstants;
 import com.example.textile.constants.TextileConstants;
+import com.example.textile.entity.Product;
 import com.example.textile.entity.ProductDetail;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
@@ -11,6 +12,7 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.service.ProductDetailService;
+import com.example.textile.service.ProductService;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
 public class ProductDetailController extends BaseController{
 
     @Autowired private ProductDetailService productDetailService;
-
+    @Autowired private ProductService productService;
     Map<String, ActionExecutor> actionExecutorMap;
 
     @Value("${challan.showGroupByParty}") private Boolean showGroupByParty;
@@ -125,6 +127,27 @@ public class ProductDetailController extends BaseController{
         return view;
     }
 
+    @PostMapping("save")
+    @ResponseBody
+    public ProductDetail saveChallan(@RequestBody ProductDetail productDetail) {
+
+        String logPrefix = "saveChallan() ";
+        log.info("{} Entry",logPrefix);
+        prePopulateProductDetail(productDetail);
+        ProductDetail saved = productDetailService.save(productDetail);
+        log.info("{} Exit [chId: {}]",logPrefix,saved.getId());
+        return saved;
+    }
+
+    private void prePopulateProductDetail(ProductDetail productDetail) {
+
+        if (productDetail != null) {
+            if (productDetail.getQuantity() == null) {
+                productDetail.setQuantity(0.0);
+            }
+        }
+    }
+
     @GetMapping("/missingChallans")
     public String challanOverview(ModelMap model) {
         String logPrefix = "challanOverview() ";
@@ -132,9 +155,11 @@ public class ProductDetailController extends BaseController{
         List<Long> missingChNos = new ArrayList<>();
 
         List<Long> allChNo = productDetailService.findAllChNo();
-        List<ProductDetail> unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
-        List<ProductDetail> allExcludedCh = productDetailService.findAllExcluded();
+        List<ProductDetail> unBilledChNo = null;
+        List<ProductDetail> allExcludedCh = null;
+        Product chCancelled = productService.findByName(TextileConstants.CANCELLED);
 
+        model.addAttribute("chCancelled", chCancelled);
         model.addAttribute("showGroupByParty", showGroupByParty);
         if (!allChNo.isEmpty()){
             long min = allChNo.get(0);
@@ -148,9 +173,12 @@ public class ProductDetailController extends BaseController{
             model.addAttribute("minChallanNo", min);
             model.addAttribute("maxChallanNo", max);
             if (showGroupByParty) {
+                unBilledChNo = productDetailService.findAllUnbilledByPartyId(null,null);
+                allExcludedCh = productDetailService.findAllExcluded();
                 Map<String, List<ProductDetail>> unBilledChNoByPartyName = unBilledChNo.stream()
                         .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
                 Map<String, List<ProductDetail>> yarnReturnChNoByPartyName = allExcludedCh.stream()
+                        .filter(productDetail -> productDetail.getParty() != null)
                         .collect(Collectors.groupingBy(productDetail -> productDetail.getParty().getName()));
                 model.addAttribute("unBilledChNoByPartyName", unBilledChNoByPartyName);
                 model.addAttribute("yarnReturnChNoByPartyName", yarnReturnChNoByPartyName);

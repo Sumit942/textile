@@ -57,6 +57,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Value("${invoice.oldInvoiceLastId}")
     private Integer oldInvoiceLastId;
 
+    @Value("${invoice.invoiceFormatNo}")
+    private String invoiceFormatNo;
+
     @Override
     public Integer getOldInvoiceLastId() {
         return oldInvoiceLastId;
@@ -170,6 +173,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         persisted.getProduct().addAll(invoice.getProduct());
 
         persisted.setSelectedBank(invoice.getSelectedBank());
+        persisted.setPaid(invoice.getPaid());
 
         return persisted;
     }
@@ -248,11 +252,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     public String getFormattedInvoiceNo(int count) {
         String latestInvNo;
         if (count < 10) {
-            latestInvNo = ShreeramTextileConstants.FORMAT_INVOICE_NO + "00" + count;
+            latestInvNo = invoiceFormatNo + "00" + count;
         } else if (count < 100) {
-            latestInvNo = ShreeramTextileConstants.FORMAT_INVOICE_NO + "0" + count;
+            latestInvNo = invoiceFormatNo + "0" + count;
         } else {
-            latestInvNo = ShreeramTextileConstants.FORMAT_INVOICE_NO + count;
+            latestInvNo = invoiceFormatNo + count;
         }
         return latestInvNo;
     }

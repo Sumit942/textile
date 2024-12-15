@@ -346,6 +346,7 @@ public class InvoiceController extends BaseController {
         // sorting to show ProductList in UI with ascending order
         invoiceBackUp.getProduct().sort(Comparator.comparing(ProductDetail::getChNo));
         invoiceBackUp.setSelectedBank(invoice.getSelectedBank());
+        invoiceBackUp.setPaid(invoice.getPaid());
 
         return invoiceBackUp;
     }

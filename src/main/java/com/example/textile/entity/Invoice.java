@@ -45,7 +45,7 @@ public class Invoice implements Serializable {
     private Date updateDate;
     private Integer version;
 
-    private Boolean paid;
+    private Boolean paid = Boolean.FALSE;
     private BigDecimal paidAmount;
     private BigDecimal amtDr;
     private Date paymentDt;

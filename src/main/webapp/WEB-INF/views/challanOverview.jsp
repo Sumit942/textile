@@ -1,6 +1,17 @@
 <%@ include file="./common/header.jspf" %>
 <title>Missing/UnBilled Challan</title>
 <style>
+.challanCancelBtn{
+    padding: 0.5em 0.75em; 
+    font-size: 1.2em; 
+    margin-left: 0.5em;
+    background: white;
+    color: red;
+}
+.challanCancelBtn:hover{
+    background: red;
+    color: white;
+}
 </style>
 <body>
 <%@ include file="./common/navigation.jspf" %>
@@ -17,7 +28,14 @@
         </tr>
         <tr>
         <c:forEach items="${missingChallanNos}" var="challanNo" varStatus="index">
-            <td>${challanNo}</td>
+            <td>
+                <span class="badge text-dark border border-info">
+                    ${challanNo} 
+                    <button class="rounded-circle border border-danger challanCancelBtn" value="${challanNo}">
+                      <i class="bi bi-x-circle-fill">X</i>
+                    </button>
+                  </span>
+            </td>
             ${(index.index + 1) % 15 == 0 ? '</tr><tr>' : ''}
         </c:forEach>
         <c:forEach begin="1" end="${15 - missingChallanNos.size() % 15}" >
@@ -30,7 +48,7 @@
     </tfoot>
 </table>
 <hr>
-<c:if test="${!showGroupByParty}">
+<c:if test="${showGroupByParty}">
 <table id="unBilledChallanTable" class="table table-striped table-bordered">
 
     <thead>
@@ -162,7 +180,9 @@
         </div>
     </div>
 </c:if>
-
+<input type="hidden" name="chCancelled" value="${chCancelled.id}">
+<input type="hidden" name="_csrf" value="${_csrf.token}">
+<input type="hidden" name="_csrf_header" value="${_csrf.headerName}">
 </div>
 <script src="${pageContext.request.contextPath}/js/challanOverview.js"></script>
 <%@ include file="./common/footer.jspf" %>

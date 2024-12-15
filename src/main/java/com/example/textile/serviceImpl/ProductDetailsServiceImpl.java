@@ -242,4 +242,9 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     public List<ProductDetail> findByChNos(List<Long> challanNos) {
         return productDetailRepo.findByChNos(challanNos);
     }
+
+    @Override
+    public ProductDetail save(ProductDetail productDetail) {
+        return productDetailRepo.save(productDetail);
+    }
 }

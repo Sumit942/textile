@@ -27,4 +27,6 @@ public interface ProductDetailService {
     List<ProductDetail> findAllExcluded();
 
     List<ProductDetail> findByChNos(List<Long> challanNos);
+
+    ProductDetail save(ProductDetail productDetail);
 }
