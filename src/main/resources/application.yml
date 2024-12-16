@@ -1,4 +1,11 @@
 spring:
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - classpath:/public/
+        - classpath:/META-INF/resources/
+        - file:src/main/resources/static/
   info:
     name: "Textile Company - Project"
     Description: "One Solution for a Textile Manufacturing Company"
@@ -14,6 +21,7 @@ spring:
 #      hibernate.format_sql: true
 #    show-sql: true
   mvc:
+    static-path-pattern: /static/**
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp

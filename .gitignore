@@ -1,3 +1,5 @@
+frontend/node
+src/main/resources/static/react/**
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
