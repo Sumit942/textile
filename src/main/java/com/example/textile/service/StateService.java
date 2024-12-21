@@ -9,4 +9,10 @@ public interface StateService {
     List<State> findByNameLike(String name);
 
     State findByCode(Integer code);
+
+    List<State> findAll();
+
+    State save(State state);
+
+    void deleteById(Long id);
 }

@@ -29,6 +29,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
          http
+                 .csrf(csrf -> csrf
+                         .csrfTokenRepository(new CookieCsrfTokenRepository()))
                  .authorizeHttpRequests(auth -> auth
                          .antMatchers("/login").permitAll()
                          .antMatchers("/invoices/**").hasRole("ADMIN")
@@ -38,6 +40,19 @@ public class SecurityConfiguration {
                  .successHandler(roleBasedAuthenticationSuccessHandler())
          ;
          return http.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET", "POST", "DELETE")
+                        .allowCredentials(true);
+            }
+        };
     }
 
     @Bean

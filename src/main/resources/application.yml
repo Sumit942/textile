@@ -1,3 +1,8 @@
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: metrics,info,health
 spring:
   info:
     name: "Textile Company - Project"
@@ -40,3 +45,6 @@ invoice:
   invoiceFormatNo: "SRTI/24-25/"
 challan:
   showGroupByParty: false
+logging:
+  level:
+    org.springframework.web: "debug"

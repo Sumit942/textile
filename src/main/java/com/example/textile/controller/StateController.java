@@ -5,10 +5,7 @@ import com.example.textile.repo.StateRepository;
 import com.example.textile.service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +16,24 @@ public class StateController {
 
     @Autowired
     private StateService stateService;
+
+    @GetMapping
+    @ResponseBody
+    private List<State> findAll() {
+        return stateService.findAll();
+    }
+
+    @PostMapping
+    @ResponseBody
+    private State saveState(@RequestBody State state) {
+        return stateService.save(state);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    private void delete(@PathVariable Long id) {
+        stateService.deleteById(id);
+    }
 
     @GetMapping("/searchByName/{name}")
     @ResponseBody

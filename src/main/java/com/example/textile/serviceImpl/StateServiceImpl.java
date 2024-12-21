@@ -23,4 +23,19 @@ public class StateServiceImpl implements StateService {
     public State findByCode(Integer code) {
         return this.stateRepo.findByCode(code);
     }
+
+    @Override
+    public List<State> findAll() {
+        return stateRepo.findAll();
+    }
+
+    @Override
+    public State save(State state) {
+        return stateRepo.save(state);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        stateRepo.deleteById(id);
+    }
 }
