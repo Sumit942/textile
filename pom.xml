@@ -150,16 +150,59 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.3.2</version>
+				<executions>
+					<execution>
+						<id>clean-react-files-from-src</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>src/main/resources/static/react</directory>
+								<excludes>
+									<exclude>.gitkeep</exclude>
+								</excludes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
 				<executions>
 					<execution>
+						<id>copy-to-classes-directory</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/classes/static/react</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/frontend/build</directory>
+									<includes>
+										<include>**/**</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-to-static-react</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/src/main/resources/static/react</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${project.basedir}/frontend/build</directory>

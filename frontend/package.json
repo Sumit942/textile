@@ -1,5 +1,5 @@
 {
-  "proxy": "http://localhost:8081",
+  "homepage": "textile/static/react",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
