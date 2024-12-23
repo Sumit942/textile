@@ -1,11 +1,11 @@
-import axios from "axios";
+
 import API from "./api";
 
-const API_URL = 'states'
+const API_URL = '/states'
 
 export const getStates = async () => {
     console.log('getStates() Entry')
-    const response = await axios.get(API_URL);
+    const response = await API.get(API_URL);
     console.log('getState() Exit[', response.data, ']')
     return response.data;
 }
