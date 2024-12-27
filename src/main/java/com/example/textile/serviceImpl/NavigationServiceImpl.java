@@ -3,9 +3,6 @@ package com.example.textile.serviceImpl;
 import com.example.textile.entity.NavigationItem;
 import com.example.textile.repo.NavigationItemRepo;
 import com.example.textile.service.NavigationService;
-import com.example.textile.utility.Constants;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +16,7 @@ public class NavigationServiceImpl implements NavigationService {
         this.navigationItemRepo = navigationItemRepo;
     }
     @Override
-    @Cacheable(value = Constants.NAVIGATION_CACHE)
+//    @Cacheable(value = Constants.NAVIGATION_CACHE)
     public List<NavigationItem> getNavigationStructure() {
         // Fetch root items (those with no parent)
         List<NavigationItem> rootItems = navigationItemRepo.findRootItems();
@@ -37,7 +34,7 @@ public class NavigationServiceImpl implements NavigationService {
     }
 
     @Override
-    @CacheEvict(value = Constants.NAVIGATION_CACHE, allEntries = true)
+//    @CacheEvict(value = Constants.NAVIGATION_CACHE, allEntries = true)
 //    @CacheEvict(value = Constants.NAVIGATION_CACHE, key = "#navigationItems.parentId") //TODO: optimization - if high traffic partial cache evict
 //    @CacheEvict(value = "navigationCache", allEntries = true) //TODO: evict cache on update only
     public List<NavigationItem> saveNavigations(List<NavigationItem> navigationItems) {

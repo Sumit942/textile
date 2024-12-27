@@ -35,10 +35,13 @@ public class SecurityConfiguration {
                  .csrf(csrf -> csrf
                          .csrfTokenRepository(new CookieCsrfTokenRepository()))
                  .authorizeHttpRequests(auth -> auth
-                         .antMatchers("/login").permitAll()
-                         .antMatchers("/invoices/**").hasRole("ADMIN")
-                         .antMatchers("/productDetail/**").hasAnyRole("ADMIN","DBA","USER")
-                         .anyRequest().authenticated())
+                                 .anyRequest().permitAll()
+//                         .antMatchers("/login").permitAll()
+//                         .antMatchers("/invoices/**").hasRole("ADMIN")
+//                         .antMatchers("/productDetail/**")
+//                         .hasAnyRole("ADMIN","DBA","USER")
+//                         .anyRequest().authenticated()
+                 )
                  .formLogin()
                  .successHandler(roleBasedAuthenticationSuccessHandler())
          ;
