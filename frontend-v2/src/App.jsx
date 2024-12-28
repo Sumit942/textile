@@ -1,13 +1,27 @@
+import './assets/styles/main.css'
 import { useEffect, useState } from 'react'
-import { setupCSRF } from './service/api'
-import { getStates } from './service/stateApi'
-import Navbar from './service/navbar'
+import { getNavigation } from './service/navigation'
+import NavTest from './component/NavTest'
+import Navbar from './component/navbar'
 
 function App() {
+  const [navItems, setNavItems] = useState([])
+
+  useEffect(() => {
+    loadNavigationPanel()
+  }, [])
+  
+  const loadNavigationPanel = async () => {
+    const navResponse = await getNavigation();
+    console.log('navResponse: ' , navResponse)
+    setNavItems(navResponse)
+  }
+  
   return (
-    <>
-      <Navbar />
-    </>
+    <div className='body'>
+      <Navbar items={navItems} />
+      {/* <NavTest items={navItems}/> */}
+    </div>
   )
 }
 

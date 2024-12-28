@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 768px) {
+    .sd\:hidden {
+        display: none;
+    }    
+}
+.hide {
+    display: none;
+}
+.show {
+    display: block;
+}
