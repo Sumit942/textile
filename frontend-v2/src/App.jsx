@@ -1,13 +1,20 @@
 import './assets/styles/main.css'
 import { useEffect, useState } from 'react'
 import { getNavigation } from './service/navigation'
-import NavTest from './component/NavTest'
-import Navbar from './component/navbar'
+import Navbar from './component/Navbar'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Home } from './component/Home'
+import { Yarn } from './component/Yarn'
+import { NoPage } from './component/NoPage'
+import { Contact } from './component/Contact'
+import { setupCSRF } from './service/api'
+// import Navbar from './component/NavTest'
 
 function App() {
   const [navItems, setNavItems] = useState([])
 
   useEffect(() => {
+    setupCSRF()
     loadNavigationPanel()
   }, [])
   
@@ -19,8 +26,16 @@ function App() {
   
   return (
     <div className='body'>
-      <Navbar items={navItems} />
       {/* <NavTest items={navItems}/> */}
+      <BrowserRouter >
+        <Navbar items={navItems} />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/contact' element={<Contact />} />
+          <Route path='/material/yarn' element={<Yarn />} />
+          <Route path='/*' element={<NoPage />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }
