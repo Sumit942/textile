@@ -6,7 +6,6 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;

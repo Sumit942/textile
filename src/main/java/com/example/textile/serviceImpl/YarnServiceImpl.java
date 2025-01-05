@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -33,7 +34,8 @@ public class YarnServiceImpl implements YarnService {
     }
 
     @Override
-    public YarnDto save(Yarn yarn) {
+    public YarnDto save(YarnDto yarnDto) {
+        Yarn yarn = modelMapper.map(yarnDto, Yarn.class);
         Yarn saved = yarnRepo.save(yarn);
         return modelMapper.map(saved, YarnDto.class);
     }
@@ -51,5 +53,14 @@ public class YarnServiceImpl implements YarnService {
     @Override
     public void deleteYarn(Long id) {
         yarnRepo.deleteById(id);
+    }
+
+    @Override
+    public YarnDto findByType(String type) {
+        Yarn byType = yarnRepo.findByType(type);
+        if (!Objects.nonNull(byType)) {
+            return null;
+        }
+        return modelMapper.map(byType, YarnDto.class);
     }
 }

@@ -11,7 +11,7 @@ public class Yarn {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Yarn type must not be empty")
+    @NotBlank
     @Column(nullable = false)
     private String type;
     private String companyName;

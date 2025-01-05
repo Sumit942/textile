@@ -11,10 +11,18 @@ export const Yarn = () => {
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState(null);
   const [failureMsg, setFailureMsg] = useState(null);
-  const [msgColor, setMsgColor] = useState('green')
+  const [errors, setErrors] = useState({})
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (Object.keys(errors).length > 0) {
+      setFailureMsg('Please check below errors')
+      setTimeout(() =>{
+        setFailureMsg(null)
+      }, 5000)
+      return;
+    }
 
     setLoading(true)
     const trimmedInput = {
@@ -26,8 +34,7 @@ export const Yarn = () => {
 
     const response = await addYarn(trimmedInput)
     if (response && response.status === 201) {
-        setSuccessMsg(`Yarn Saved Successfully: ${response.data.id}-${response.data.type}`)
-        setMsgColor('green')
+        setSuccessMsg(`Yarn Saved Successfully: ${response.data.type} [${response.data.id}]`)
 
         setYarn({
             id: null,
@@ -40,8 +47,14 @@ export const Yarn = () => {
             setSuccessMsg(null)
         }, 10000);
     } else {
-        setFailureMsg(`System error in saving yarn: ${response.code}`)
-        setMsgColor('red')
+        if (response && response.status === 400) {
+          setFailureMsg('Please check below errors')
+          setErrors(response.response.data.errorMessages)
+          console.log('errors: ' , errors)
+//           TODO: preSave key to be handled
+        } else {
+          setFailureMsg(`System error in saving yarn: ${response.code}`)
+        }
 
         setTimeout(() => {
             setFailureMsg(null)
@@ -59,6 +72,11 @@ export const Yarn = () => {
       ...yarn,
       [name]: value.trimStart(),
     });
+    setErrors((previousErrors) => {
+      const updatedErrors = {...previousErrors};
+      delete updatedErrors[name];
+      return updatedErrors;
+    })
   };
 
   const handleClickResponse = (e) => {
@@ -79,35 +97,25 @@ export const Yarn = () => {
       <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           {successMsg || failureMsg ? (
-            <div className='sm:col-span-2' >
-            <div className={`grid p-4 justify-items-stretch h-auto bg-${msgColor}-200 h-16 rounded-md outline outline-1 -outline-offset-1 outline-${msgColor}-800`}>
+            <div 
+              className={`sm:col-span-2 top-full left-0 ${successMsg ? 'bg-green-100' : 'bg-red-100'} ${successMsg ? 'text-green-500' : 'text-red-500'} mt-1 rounded-md px-3 py-1`}
+            >
+              <span>{successMsg}{failureMsg}</span>
               <button
                 type="button"
-                className={`justify-self-end rounded-md text-${msgColor}-800 hover:text-${msgColor}-600`}
+                className={`float-right ml-2 ${successMsg ? 'text-green-500' : 'text-red-500'} ${successMsg ? 'hover:text-green-700' : 'hover:text-red-700'}`}
                 onClick={handleClickResponse}
               >
-                <svg
-                  className='h-6 w-6'
+                <svg 
+                  className="w-4 h-4" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 6l12 11"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              <span className={`justify-self-center text-${msgColor}-800`}>{successMsg}{failureMsg}</span>
-            </div>
             </div>
           ) : (
             ""
@@ -126,10 +134,11 @@ export const Yarn = () => {
                 id="type"
                 autoComplete="yarnType"
                 className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                // required
+                required
                 value={yarn.type}
                 onChange={handleChange}
               />
+              {errors.type ? <span className="text-red-500 text-sm mt-1 ml-1">{errors.type}</span> : ''}
             </div>
           </div>
           <div className="sm:col-span-2">
@@ -150,6 +159,7 @@ export const Yarn = () => {
                 value={yarn.companyName}
                 onChange={handleChange}
               />
+              {errors.companyName ? <span className="text-red-500 text-sm mt-1 ml-1">{errors.companyName}</span> : ''}
             </div>
           </div>
           <div className="sm:col-span-2">
