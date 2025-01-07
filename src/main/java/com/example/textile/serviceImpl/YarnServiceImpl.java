@@ -8,7 +8,14 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -19,6 +26,7 @@ public class YarnServiceImpl implements YarnService {
 
     private YarnRepository yarnRepo;
     private ModelMapper modelMapper;
+    private EntityManager entityManager;
 
     @Override
     public List<YarnDto> findAll() {
@@ -56,11 +64,45 @@ public class YarnServiceImpl implements YarnService {
     }
 
     @Override
-    public YarnDto findByType(String type) {
-        Yarn byType = yarnRepo.findByType(type);
-        if (!Objects.nonNull(byType)) {
-            return null;
+    public List<YarnDto> findByType(String type) {
+        List<Yarn> byType = yarnRepo.findByType(type);
+        if (Objects.nonNull(byType) && !byType.isEmpty()) {
+            return byType.stream()
+                    .map(yarn -> modelMapper.map(yarn, YarnDto.class))
+                    .collect(Collectors.toList());
         }
-        return modelMapper.map(byType, YarnDto.class);
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<YarnDto> findByTypeAndCompanyName(String type, String companyName) {
+        List<Yarn> byType = yarnRepo.findByTypeAndCompanyName(type, companyName);
+        if (Objects.nonNull(byType) && !byType.isEmpty()) {
+            return byType.stream()
+                    .map(yarn -> modelMapper.map(yarn, YarnDto.class))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean existByYarnTypeAndCompanyNameIgnoreCase(@NotNull String type, String companyName) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<Yarn> yarn = cq.from(Yarn.class);
+
+        Predicate yarnTypePredicate = cb.equal(cb.lower(yarn.get("type")), type.toLowerCase());
+
+        Predicate companyNamePredicate;
+        if (Objects.nonNull(companyName) && !companyName.isBlank()) {
+            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), companyName.trim().toLowerCase());
+        } else {
+            companyNamePredicate = cb.or(cb.isNull(yarn.get("companyName")), cb.equal(yarn.get("companyName"),""));
+        }
+
+        cq.select(cb.count(yarn)).where(cb.and(yarnTypePredicate, companyNamePredicate));
+
+        return entityManager.createQuery(cq).getSingleResult() > 0;
+
     }
 }

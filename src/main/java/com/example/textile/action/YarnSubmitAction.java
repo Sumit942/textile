@@ -5,10 +5,8 @@ import com.example.textile.enums.ResponseType;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.service.YarnService;
-import com.example.textile.utility.Constants;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,14 +33,19 @@ public class YarnSubmitAction extends RestActionExecutor<YarnDto> {
 
     @Override
     protected void doValidationRest(YarnDto yarnDto, Map<String, Object> parameterMap, Map<String, String> errorMap) {
+        log.info("doValidationRest() Entry");
         if (yarnDto.getType().isBlank()) {
             errorMap.put("type","NotBlank.yarnDto.type");
         } else {
-            YarnDto yarnByType = yarnService.findByType(yarnDto.getType());
-            if (Objects.nonNull(yarnByType) && yarnByType.getType().concat(yarnByType.getCompanyName()).equalsIgnoreCase(yarnDto.getType().concat(yarnByType.getCompanyName()))) {
-                errorMap.put("type", "isDuplicate.yarnDto.type");
+            if (yarnService.existByYarnTypeAndCompanyNameIgnoreCase(yarnDto.getType(), yarnDto.getCompanyName())) {
+                if (Objects.nonNull(yarnDto.getCompanyName()) && !yarnDto.getCompanyName().isBlank()) {
+                    errorMap.put("companyName", "isDuplicate.yarnDto.typeAndCompanyName");
+                } else {
+                    errorMap.put("type", "isDuplicate.yarnDto.type");
+                }
             }
         }
+        log.info("doValidationRest() Exit [error count={}]", errorMap.size());
     }
 
     @Override

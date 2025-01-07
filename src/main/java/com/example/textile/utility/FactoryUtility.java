@@ -4,6 +4,7 @@ import org.springframework.context.MessageSource;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class FactoryUtility {
@@ -12,7 +13,7 @@ public class FactoryUtility {
         Map<String, String> errorMessages = new HashMap<>();
         if (!errorMap.isEmpty()) {
             errorMap.forEach((field, errCode) -> {
-                String errMsg = messageSource.getMessage(errCode, null, request.getLocale());
+                String errMsg = messageSource.getMessage(errCode, null, request == null ? Locale.ENGLISH : request.getLocale());
                 errorMessages.put(field, errMsg);
             });
         }
