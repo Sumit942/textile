@@ -95,7 +95,7 @@ public class YarnServiceImpl implements YarnService {
 
         Predicate companyNamePredicate;
         if (Objects.nonNull(companyName) && !companyName.isBlank()) {
-            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), companyName.trim().toLowerCase());
+            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), companyName.toLowerCase());
         } else {
             companyNamePredicate = cb.or(cb.isNull(yarn.get("companyName")), cb.equal(yarn.get("companyName"),""));
         }
