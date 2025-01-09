@@ -14,7 +14,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -86,21 +86,29 @@ public class YarnServiceImpl implements YarnService {
     }
 
     @Override
-    public boolean existByYarnTypeAndCompanyNameIgnoreCase(@NotNull String type, String companyName) {
+    public boolean existByYarnTypeAndCompanyNameIgnoreCase(YarnDto yarnDto) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<Yarn> yarn = cq.from(Yarn.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-        Predicate yarnTypePredicate = cb.equal(cb.lower(yarn.get("type")), type.toLowerCase());
+        Predicate yarnTypePredicate = cb.equal(cb.lower(yarn.get("type")), yarnDto.getType().toLowerCase());
+        predicates.add(yarnTypePredicate);
 
         Predicate companyNamePredicate;
-        if (Objects.nonNull(companyName) && !companyName.isBlank()) {
-            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), companyName.toLowerCase());
+        if (Objects.nonNull(yarnDto.getCompanyName()) && !yarnDto.getCompanyName().isBlank()) {
+            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), yarnDto.getCompanyName().toLowerCase());
         } else {
             companyNamePredicate = cb.or(cb.isNull(yarn.get("companyName")), cb.equal(yarn.get("companyName"),""));
         }
+        predicates.add(companyNamePredicate);
 
-        cq.select(cb.count(yarn)).where(cb.and(yarnTypePredicate, companyNamePredicate));
+        if (Objects.nonNull(yarnDto.getId()) && yarnDto.getId().compareTo(0L) > 0) {
+            Predicate idPredicate = cb.notEqual(yarn.get("id"), yarnDto.getId());
+            predicates.add(idPredicate);
+        }
+
+        cq.select(cb.count(yarn)).where(cb.and(predicates.toArray(new Predicate[0])));
 
         return entityManager.createQuery(cq).getSingleResult() > 0;
 

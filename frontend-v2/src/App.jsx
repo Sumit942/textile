@@ -4,10 +4,11 @@ import { getNavigation } from './service/navigation'
 import Navbar from './component/Navbar'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Home } from './component/Home'
-import { Yarn } from './component/Yarn'
+import { YarnForm } from './component/Yarn'
 import { NoPage } from './component/NoPage'
 import { Contact } from './component/Contact'
 import { setupCSRF } from './service/api'
+import { YarnList } from './component/YarnList'
 // import Navbar from './component/NavTest'
 
 function App() {
@@ -32,7 +33,8 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/contact' element={<Contact />} />
-          <Route path='/material/yarn' element={<Yarn />} />
+          <Route path='/material/yarn' element={<YarnForm />} />
+          <Route path='/material/yarn/view' element={<YarnList />} />
           <Route path='/*' element={<NoPage />} />
         </Routes>
       </BrowserRouter>

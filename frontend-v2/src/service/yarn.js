@@ -16,10 +16,10 @@ export const addYarn = async (yarn) => {
     }
 };
 
-export const getYarn = async (yarn) => {
+export const getYarn = async ( id ) => {
     console.log('getYarn() Entry')
     try {
-        const response = await API.get(API_URL)
+        const response = await API.get(`${API_URL}${id ? '/'+id : ''}`)
         console.log('getYarn() Exit ', response)
         return response;
     } catch (err) {

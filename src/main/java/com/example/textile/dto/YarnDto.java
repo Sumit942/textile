@@ -8,4 +8,5 @@ public class YarnDto {
     private String type;
     private String companyName;
     private String description;
+    private String rate;
 }

@@ -37,7 +37,7 @@ public class YarnSubmitAction extends RestActionExecutor<YarnDto> {
         if (yarnDto.getType().isBlank()) {
             errorMap.put("type","NotBlank.yarnDto.type");
         } else {
-            if (yarnService.existByYarnTypeAndCompanyNameIgnoreCase(yarnDto.getType(), yarnDto.getCompanyName())) {
+            if (yarnService.existByYarnTypeAndCompanyNameIgnoreCase(yarnDto)) {
                 if (Objects.nonNull(yarnDto.getCompanyName()) && !yarnDto.getCompanyName().isBlank()) {
                     errorMap.put("companyName", "isDuplicate.yarnDto.typeAndCompanyName");
                 } else {

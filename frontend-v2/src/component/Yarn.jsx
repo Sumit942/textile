@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { addYarn, getYarn } from "../service/yarn";
+import { useLocation } from "react-router-dom";
 
-export const Yarn = () => {
+export const YarnForm = () => {
   const [yarn, setYarn] = useState({
-    id: null,
+    id: "",
     type: "",
+    rate: "",
     companyName: "",
     description: "",
   });
-  const [yarnList, setYarnList] = useState([])
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState(null);
   const [failureMsg, setFailureMsg] = useState(null);
   const [errors, setErrors] = useState({})
+  const location = useLocation()
+  const { yarnId } = location.state || {};
 
   useEffect(() => {
-    fetchYarn()
+    console.log('yarnId: ', yarnId)
+    if (yarnId) {
+      fetchYarn(yarnId)
+    }
   }, [])
   
-  const fetchYarn = async () => {
-    const yarnListResponse = await getYarn();
-    console.log('yarnListResponse: ', yarnListResponse.data)
-    setYarnList(yarnListResponse.data)
+  const fetchYarn = async (id) => {
+    const yarnListResponse = await getYarn(id);
+    console.log('yarnList: id: ', yarnId, yarnListResponse.data)
+    setYarn(yarnListResponse.data)
   }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +48,7 @@ export const Yarn = () => {
         type: yarn.type.trim(),
         companyName: yarn.companyName.trim(),
         description: yarn.description.trim(),
+        rate: yarn.rate
     }
 
     const response = await addYarn(trimmedInput)
@@ -52,6 +60,7 @@ export const Yarn = () => {
             type: "",
             companyName: "",
             description: "",
+            rate: ""
         });
 
         setTimeout(() => {
@@ -95,8 +104,25 @@ export const Yarn = () => {
     setFailureMsg(null)
   }
 
+  const handlePriceChange = (e) => {
+    const { name, value } = e.target;
+
+    const regex = /^\d*\.?\d*$/;
+
+    if (value === '' || regex.test(value)) {
+      setYarn({
+        ...yarn,
+        [name]: value,
+      });
+      setErrors((previousErrors) => {
+        const updatedErrors = {...previousErrors};
+        delete updatedErrors[name];
+        return updatedErrors;
+      })
+    }
+};
+
   return (
-    <div className="md:flex">
       <div className="isolate bg-white px-6 py-5 sm:py-10 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
@@ -176,6 +202,44 @@ export const Yarn = () => {
             </div>
             <div className="sm:col-span-2">
               <label
+                  htmlFor="price"
+                  className="block text-sm/6 font-semibold text-gray-900"
+                >
+                  Price
+                </label>
+                <div className="mt-2.5">
+                  <div className="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-indigo-600">
+                  <div className="shrink-0 select-none text-base text-gray-500 sm:text-sm/6">$</div>
+                  <input
+                    type="text"
+                    name="rate"
+                    id="rate"
+                    placeholder="0.00"
+                    className={`block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6" ${
+                      errors.rate ? "outline-red-300" : "outline-gray-300"}`}
+                    value={yarn.rate}
+                    onChange={handlePriceChange}
+                  />
+                  <div className="grid shrink-0 grid-cols-1 focus-within:relative">
+                    <select id="currency" name="currency" aria-label="Currency" className="col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pl-3 pr-7 text-base text-gray-500 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <option value={1}>USD</option>
+                    </select>
+                    <svg className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+                      <path fillRule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  </div>
+                  {errors.rate ? (
+                    <span className="text-red-500 text-sm mt-1 ml-1">
+                      {errors.rate}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+            </div>
+            <div className="sm:col-span-2">
+              <label
                 htmlFor="description"
                 className="block text-sm/6 font-semibold text-gray-900"
               >
@@ -204,30 +268,5 @@ export const Yarn = () => {
           </div>
         </form>
       </div>
-      <div className="">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-              <tr>
-                <th key='yarnSrNoTh' className="py-3 px-6 text-left">Sr.No</th>
-                <th key='yarnTypeTh' className="py-3 px-6 text-left">Type</th>
-                <th key='yarnCompanyTh' className="py-3 px-6 text-left">Company Name</th>
-                <th key='yarnDescTh' className="py-3 px-6 text-left">Description</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-600 text-sm font-light">
-              {
-                yarnList.map((yarnrow, index) => (
-                  <tr key={index} className={`border-b border-gray-200 hover:bg-gray-100 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
-                      <td key={yarnrow.id} className="py-3 px-6">{index}</td>
-                      <td key={yarnrow.type} className="py-3 px-6">{yarnrow.type}</td>
-                      <td key={yarnrow.companyName} className="py-3 px-6">{yarnrow.companyName}</td>
-                      <td key={yarnrow.description} className="py-3 px-6">{yarnrow.description}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-      </div>
-    </div>
   );
 };

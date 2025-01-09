@@ -20,5 +20,5 @@ public interface YarnService {
 
     List<YarnDto> findByTypeAndCompanyName(String type, String companyName);
 
-    boolean existByYarnTypeAndCompanyNameIgnoreCase(String type, String companyName);
+    boolean existByYarnTypeAndCompanyNameIgnoreCase(YarnDto yarn);
 }
