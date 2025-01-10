@@ -1,11 +1,12 @@
 package com.example.textile.serviceImpl;
 
+import com.example.textile.dto.CompanyDto;
 import com.example.textile.entity.Company;
 import com.example.textile.exception.CompanyNotFoundException;
 import com.example.textile.repo.CompanyRepository;
 import com.example.textile.service.CompanyService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +15,13 @@ import java.util.List;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepo;
+    private final CompanyRepository companyRepo;
+    private final ModelMapper modelMapper;
+
+    public CompanyServiceImpl(CompanyRepository companyRepo, ModelMapper modelMapper) {
+        this.companyRepo = companyRepo;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public List<Company> findByNameLike(String name) {
@@ -36,5 +42,14 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Company findById(Long id) {
         return this.companyRepo.findById(id).orElseThrow(() -> new CompanyNotFoundException(id));
+    }
+
+    @Override
+    public CompanyDto save(CompanyDto companyDto) {
+        log.info("save() dto: " + companyDto);
+        Company company = modelMapper.map(companyDto, Company.class);
+        company = this.companyRepo.save(company);
+
+        return modelMapper.map(company, CompanyDto.class);
     }
 }

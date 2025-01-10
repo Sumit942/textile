@@ -22,6 +22,16 @@ public class Company implements Serializable {
     private List<BankDetail> bankDetails;
     private Date insert_dt;
     private Date update_dt;
+    private CompanyType companyType;
+
+    @OneToOne
+    public CompanyType getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(CompanyType companyType) {
+        this.companyType = companyType;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

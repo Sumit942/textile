@@ -1,13 +1,13 @@
 package com.example.textile.controller;
 
+import com.example.textile.dto.CompanyDto;
 import com.example.textile.entity.Company;
 import com.example.textile.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +22,12 @@ public class CompanyController {
     @ResponseBody
     public List<Company> searchByName(@PathVariable("name") String name) {
         return companyService.findByNameLike(name);
+    }
+
+    @ResponseBody
+    @PostMapping("/save")
+    public ResponseEntity<CompanyDto> save(@RequestBody CompanyDto companyDto) {
+        CompanyDto saved = companyService.save(companyDto);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 }
