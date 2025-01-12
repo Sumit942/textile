@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { saveCompany } from "../service/company";
+import { getStates } from "../service/stateApi";
 
 const CompanyForm = () => {
   const [company, setCompany] = useState({
@@ -8,15 +9,15 @@ const CompanyForm = () => {
       state: {
         id: 1, // Assuming a default state ID // Assuming a default state code
         name: '',
+        code: '',
         country: {
           id: 1, // Assuming a default country ID // Assuming a default country name
         },
       },
       address: "",
       pinCode: "",
-      fullAddress: "",
     },
-    ofcAddress: '',
+    ofcAddress: null,
     gst: "",
     emailId: '',
     mobileNo: '',
@@ -25,17 +26,31 @@ const CompanyForm = () => {
       id: 1, // Assuming a default company type ID
     },
   });
+  const [states, setStates] = useState([])
 
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState(null);
   const [failureMsg, setFailureMsg] = useState(null);
   const [loading, setLoading] = useState(false)
 
+
+  useEffect(() => {
+    fetchStates()
+  
+  }, [])
+
+  const fetchStates = async () => {
+    const response = await getStates();
+    setStates(response)
+  }
+  
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCompany({
       ...company,
-      [name]: value,
+      [name]: value.trimStart(),
     });
     setErrors({ ...errors, [name]: "" }); // Clear error for the field being edited
   };
@@ -46,10 +61,25 @@ const CompanyForm = () => {
       ...company,
       address: {
         ...company.address,
-        [name]: value,
+        [name]: value.trimStart(),
       },
     });
   };
+
+  const handleStateChange = (e) => {
+    const value = e.target.value;
+    
+    setCompany({
+      ...company,
+      address: {
+        ...company.address,
+        state: {
+          ...company.address.state,
+          id: value
+        }
+      }
+    })
+  }
 
   const handleBankDetailChange = (index, e) => {
     const { name, value } = e.target;
@@ -58,12 +88,27 @@ const CompanyForm = () => {
     setCompany({ ...company, bankDetails: newBankDetails });
   };
 
+  const handleCompanyTypeChange = (e) => {
+    const value = e.target.value;
+    setCompany({
+      ...company,
+      companyType: {
+        id: value
+      }
+    })
+  }
+
+  const handleClickResponse = (e) => {
+    setSuccessMsg(null)
+    setFailureMsg(null)
+  }
+
   const addBankDetail = () => {
     setCompany({
       ...company,
       bankDetails: [
         ...company.bankDetails,
-        { accountNumber: "", bankName: "" , ifsc: ""},
+        { accountNo: "", bankName: "" , ifsc: "", branch: ""},
       ],
     });
   };
@@ -77,6 +122,7 @@ const CompanyForm = () => {
     const newErrors = {};
     if (!company.name) newErrors.name = "Company name is required";
     if (!company.address.address) newErrors.address = "Address is required";
+    if (!company.address.state) newErrors.state = "State is required";
     if (!company.gst) newErrors.gst = "GST is required";
     // if (!/^[0-9]{2}[A-Z]{4}[0-9]{4}[A-Z]{1}[Z]{1}[0-9A-Z]{1}$/.test(company.gst)) {
     //     newErrors.gst = 'GST must be a valid 15 character GST number';
@@ -87,8 +133,8 @@ const CompanyForm = () => {
 
     // Validate bank details
     company.bankDetails.forEach((bankDetail, index) => {
-      if (!bankDetail.accountNumber) {
-        newErrors[`bankAccountNumber${index}`] = "Account number is required";
+      if (!bankDetail.accountNo || bankDetail.accountNo.length < 10) {
+        newErrors[`bankAccountNo${index}`] = "Account number is required";
       }
       if (!bankDetail.bankName) {
         newErrors[`bankName${index}`] = "Bank name is required";
@@ -115,8 +161,25 @@ const CompanyForm = () => {
       },
     };
 
-    const response = saveCompany(dataToSend);
+    console.log('submitting: ', dataToSend)
+    // return;
+
+    const response = await saveCompany(dataToSend);
     if (response && response.status === 201) {
+      setSuccessMsg(`Company Saved ${response.data.name}:${response.data.id}`)
+      setTimeout(() => {
+        setSuccessMsg(null)
+      }, 5000)
+    } else {
+      if (response && response.status === 400) {
+        setFailureMsg(`Please check below validations`)
+        //TODO: valication message
+      } else {
+        setFailureMsg(`System error in saving company: ${response.code}`)
+      }
+      setTimeout(() => {
+        setFailureMsg(null)
+      }, 10000)
     }
   };
 
@@ -183,13 +246,9 @@ const CompanyForm = () => {
                 value={company.name}
                 onChange={handleChange}
                 required
-                className={`mt-1 block w-full border ${
-                  errors.name ? "border-red-500" : "border-gray-300"
-                } rounded-md p-2`}
+                className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.name ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
               />
-              {errors.name && (
-                <p className="text-red-500 text-xs">{errors.name}</p>
-              )}
+              {errors.name && (<p className="text-red-500 text-xs">{errors.name}</p>)}
             </div>
           </div>
           <div className="sm:col-span-1">
@@ -206,9 +265,7 @@ const CompanyForm = () => {
                 value={company.gst}
                 onChange={handleChange}
                 required
-                className={`mt-1 block w-full border ${
-                  errors.gst ? "border-red-500" : "border-gray-300"
-                } rounded-md p-2`}
+                className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.gst ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
               />
               {errors.gst && (
                 <p className="text-red-500 text-xs">{errors.gst}</p>
@@ -223,16 +280,19 @@ const CompanyForm = () => {
               State
             </label>
             <div className="mt-2.5">
-              <input
-                type="text"
-                name="state"
-                value={company.address.state.name}
-                onChange={handleAddressChange}
-                required
-                className={`mt-1 block w-full border ${
-                  errors.gst ? "border-red-500" : "border-gray-300"
-                } rounded-md p-2`}
-              />
+              <select
+                  id="state"
+                  name="state"
+                  defaultValue={company.address.state.id}
+                  onChange={handleStateChange}
+                  autoComplete="state"
+                  className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                >
+                  <option key={0} value={0}>Select</option>
+                  {
+                    states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)
+                  }
+                </select>
               {errors.gst && (
                 <p className="text-red-500 text-xs">{errors.gst}</p>
               )}
@@ -272,9 +332,7 @@ const CompanyForm = () => {
                 value={company.address.pinCode}
                 onChange={handleAddressChange}
                 required
-                className={`mt-1 block w-full border ${
-                  errors.pinCode ? "border-red-500" : "border-gray-300"
-                } rounded-md p-2`}
+                className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.pinCode ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
               />
               {errors.pinCode && (
                 <p className="text-red-500 text-xs">{errors.pinCode}</p>
@@ -326,11 +384,9 @@ const CompanyForm = () => {
               value={company.mobileNo}
               onChange={handleChange}
               required
-              className={`mt-1 block w-full border ${ errors.mobileNo ? "border-red-500" : "border-gray-300" } rounded-md p-2`}
+              className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.mobileNo ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
             />
-            {errors.mobileNo && (
-              <p className="text-red-500 text-xs">{errors.mobileNo}</p>
-            )}
+            {errors.mobileNo && (<p className="text-red-500 text-xs">{errors.mobileNo}</p>)}
           </div>
           <div className="sm:col-span-1">
             <label
@@ -344,6 +400,7 @@ const CompanyForm = () => {
                 id="companyType"
                 name="companyType"
                 defaultValue={1}
+                onChange={handleCompanyTypeChange}
                 autoComplete="companyType"
                 className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               >
@@ -373,13 +430,13 @@ const CompanyForm = () => {
                     company.bankDetails && company.bankDetails.length > 0
                     ? company.bankDetails.map((bankDetail, index) => (
                         <BankDetail
-                        key={index}
-                        bankDetail={bankDetail}
-                        index={index}
-                        errors={errors}
-                        handleBankDetailChange={handleBankDetailChange}
-                        removeBankDetail={removeBankDetail}
-                        />
+                          key={index}
+                          bankDetail={bankDetail}
+                          index={index}
+                          errors={errors}
+                          handleBankDetailChange={handleBankDetailChange}
+                          removeBankDetail={removeBankDetail}
+                          />
                     ))
                     : ""
                 }
@@ -412,13 +469,13 @@ const BankDetail = ({bankDetail, index, errors, handleBankDetailChange, removeBa
                 <label className="block text-sm/6 font-semibold text-gray-700">Account Number</label>
                 <input
                     type="text"
-                    name="accountNumber"
-                    value={bankDetail.accountNumber}
+                    name="accountNo"
+                    value={bankDetail.accountNo}
                     onChange={(e) => handleBankDetailChange(index, e)}
                     required
-                    className={`mt-1 block w-full border ${errors[`bankAccountNumber${index}`] ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                    className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors[`bankAccountNo${index}`] ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
                 />
-                {errors[`bankAccountNumber${index}`] && <p className="text-red-500 text-xs">{errors[`bankAccountNumber${index}`]}</p>}
+                {errors[`bankAccountNo${index}`] && <p className="text-red-500 text-xs">{errors[`bankAccountNo${index}`]}</p>}
             </div>
             <div className="mb-2">
                 <label className="block text-sm/6 font-semibold text-gray-700">Bank Name</label>
@@ -428,9 +485,33 @@ const BankDetail = ({bankDetail, index, errors, handleBankDetailChange, removeBa
                     value={bankDetail.bankName}
                     onChange={(e) => handleBankDetailChange(index, e)}
                     required
-                    className={`mt-1 block w-full border ${errors[`bankName${index}`] ? 'border-red-500' : 'border-gray-300'} rounded-md p-2`}
+                    className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors[`bankName${index}`] ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
                 />
                 {errors[`bankName${index}`] && <p className="text-red-500 text-xs">{errors[`bankName${index}`]}</p>}
+            </div>
+            <div className="mb-2">
+                <label className="block text-sm/6 font-semibold text-gray-700">IFSC</label>
+                <input
+                    type="text"
+                    name="ifsc"
+                    value={bankDetail.ifsc}
+                    onChange={(e) => handleBankDetailChange(index, e)}
+                    required
+                    className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors[`ifsc${index}`] ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+                />
+                {errors[`ifsc${index}`] && <p className="text-red-500 text-xs">{errors[`ifsc${index}`]}</p>}
+            </div>
+            <div className="mb-2">
+                <label className="block text-sm/6 font-semibold text-gray-700">Branch</label>
+                <input
+                    type="text"
+                    name="branch"
+                    value={bankDetail.branch}
+                    onChange={(e) => handleBankDetailChange(index, e)}
+                    required
+                    className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors[`branch${index}`] ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+                />
+                {errors[`branch${index}`] && <p className="text-red-500 text-xs">{errors[`branch${index}`]}</p>}
             </div>
             <button type="button" onClick={() => removeBankDetail(index)} className="text-red-500 hover:underline">Remove Bank Detail</button>
         </div>

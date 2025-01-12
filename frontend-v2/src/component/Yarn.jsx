@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { addYarn, getYarn } from "../service/yarn";
 import { useLocation } from "react-router-dom";
+import { getCompanyList } from "../service/company";
 
 export const YarnForm = () => {
   const [yarn, setYarn] = useState({
@@ -16,18 +17,86 @@ export const YarnForm = () => {
   const [errors, setErrors] = useState({})
   const location = useLocation()
   const { yarnId } = location.state || {};
+  const [companies, setCompanies] = useState([])
+  const [filteredCompanies, setFilteredCompanies] = useState([])
+  const [companiesLoading, setCompaniesLoading] = useState(false)
+  const cache = useRef({})
+  const [selectedCompany, setSelectedCompany] = useState(null)
+  const debounceTimeout = useRef(null)
 
   useEffect(() => {
     console.log('yarnId: ', yarnId)
     if (yarnId) {
       fetchYarn(yarnId)
     }
-  }, [])
+    if (yarn.companyName.trim() === "") {
+      setFilteredCompanies([])
+    } else {
+      if (yarn.companyName.length > 2) {
+        console.log("filtering companies..")
+        setFilteredCompanies(
+          companies.filter((company) => company.name.toLowerCase().includes(yarn.companyName.toLowerCase()))
+        )
+      }
+    }
+    console.log('Filtered Companies: ', filteredCompanies)
+
+  }, [yarn.companyName, companies])
   
   const fetchYarn = async (id) => {
     const yarnListResponse = await getYarn(id);
     console.log('yarnList: id: ', yarnId, yarnListResponse.data)
     setYarn(yarnListResponse.data)
+  }
+
+  const fetchCompany = async ( searchQuery ) => {
+    setCompaniesLoading(true)
+    console.log('Fetching companies for query: ', searchQuery)
+    console.log("Cache: ", cache.current)
+    if (cache.current[searchQuery]) {
+      setCompanies(cache.current[searchQuery])
+      setCompaniesLoading(false)
+      return;
+    }
+
+    const response = await getCompanyList( searchQuery );
+    const data = response.data;
+    console.log('API response: ', data)
+
+    cache.current[searchQuery] = data;
+    setCompanies(data)
+    setCompaniesLoading(false)
+
+  }
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    console.log('User Input: ', value)
+    setYarn({
+      ...yarn,
+      companyName : value.trimStart(),
+    });
+    if (value.trim().length < 3) {
+      return;
+    }
+
+    // setSelectedCompany({
+    //   ...selectedCompany,
+    //   value,
+    // })
+
+    console.log("Debouncing: ", debounceTimeout.current)
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current)
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      if (value.trim() !== '') {
+        fetchCompany(value)
+      } else {
+        setCompanies([])
+      }
+    }, 300)
   }
   
 
@@ -191,12 +260,30 @@ export const YarnForm = () => {
                   type="text"
                   name="companyName"
                   id="companyName"
-                  autoComplete="organization"
+                  placeholder="Search for a company..."
                   className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyName ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
                   required
                   value={yarn.companyName}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
+                {companiesLoading && <p className="absolute top-12 text-gray-500 text-sm">Loading...</p>}
+                {filteredCompanies.length > 0 && console.log('redering filtered companies: ', filteredCompanies)}
+                {filteredCompanies.length > 0 && (
+                  <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1">
+                    {filteredCompanies.map((company, index) => (
+                      <li
+                        key={index}
+                        className="p-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                        onClick={() => {
+                          setSelectedCompany(company);
+                          setFilteredCompanies([]);
+                        }}
+                      >
+                        {company.name} - <b>{company.gst}</b>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {errors.companyName ? <span className="text-red-500 text-sm mt-1 ml-1">{errors.companyName}</span> : ''}
               </div>
             </div>

@@ -1,5 +1,6 @@
 package com.example.textile.serviceImpl;
 
+import com.example.textile.dto.CompanyDropdownDto;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.entity.Company;
 import com.example.textile.exception.CompanyNotFoundException;
@@ -9,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Slf4j
@@ -17,10 +22,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepo;
     private final ModelMapper modelMapper;
+    private final EntityManager entityManager;
 
-    public CompanyServiceImpl(CompanyRepository companyRepo, ModelMapper modelMapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepo, ModelMapper modelMapper, EntityManager entityManager) {
         this.companyRepo = companyRepo;
         this.modelMapper = modelMapper;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -51,5 +58,19 @@ public class CompanyServiceImpl implements CompanyService {
         company = this.companyRepo.save(company);
 
         return modelMapper.map(company, CompanyDto.class);
+    }
+
+    @Override
+    public List<CompanyDropdownDto> getIdNameAndGstByName(String name) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CompanyDropdownDto> query = cb.createQuery(CompanyDropdownDto.class);
+        Root<Company> companyRoot = query.from(Company.class);
+
+        query.select(cb.construct(CompanyDropdownDto.class,
+                companyRoot.get("id"),
+                companyRoot.get("name"),
+                companyRoot.get("gst")))
+                .where(cb.like(cb.lower(companyRoot.get("name")), "%"+name.toLowerCase()+"%"));
+        return entityManager.createQuery(query).getResultList();
     }
 }
