@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { addYarn, getYarn } from "../service/yarn";
 import { useLocation } from "react-router-dom";
 import { getCompanyList } from "../service/company";
+import AsyncCreatableSelect from "react-select/async-creatable";
+
 
 export const YarnForm = () => {
   const [yarn, setYarn] = useState({
     id: "",
     type: "",
     rate: "",
-    companyName: "",
+    company: "",
     description: "",
   });
   const [loading, setLoading] = useState(false)
@@ -17,31 +19,16 @@ export const YarnForm = () => {
   const [errors, setErrors] = useState({})
   const location = useLocation()
   const { yarnId } = location.state || {};
-  const [companies, setCompanies] = useState([])
-  const [filteredCompanies, setFilteredCompanies] = useState([])
-  const [companiesLoading, setCompaniesLoading] = useState(false)
-  const cache = useRef({})
   const [selectedCompany, setSelectedCompany] = useState(null)
-  const debounceTimeout = useRef(null)
+  const [isLoadingCompany, setIsLoadingCompany] = useState(false)
+  const [companies, setCompanies] = useState([])
 
   useEffect(() => {
     console.log('yarnId: ', yarnId)
     if (yarnId) {
       fetchYarn(yarnId)
     }
-    if (yarn.companyName.trim() === "") {
-      setFilteredCompanies([])
-    } else {
-      if (yarn.companyName.length > 2) {
-        console.log("filtering companies..")
-        setFilteredCompanies(
-          companies.filter((company) => company.name.toLowerCase().includes(yarn.companyName.toLowerCase()))
-        )
-      }
-    }
-    console.log('Filtered Companies: ', filteredCompanies)
-
-  }, [yarn.companyName, companies])
+  })
   
   const fetchYarn = async (id) => {
     const yarnListResponse = await getYarn(id);
@@ -49,56 +36,18 @@ export const YarnForm = () => {
     setYarn(yarnListResponse.data)
   }
 
-  const fetchCompany = async ( searchQuery ) => {
-    setCompaniesLoading(true)
-    console.log('Fetching companies for query: ', searchQuery)
-    console.log("Cache: ", cache.current)
-    if (cache.current[searchQuery]) {
-      setCompanies(cache.current[searchQuery])
-      setCompaniesLoading(false)
-      return;
+  const loadCompanyOptions = async (inputValue) => {
+    if (inputValue.trimStart().length < 3) {
+      return []
     }
-
-    const response = await getCompanyList( searchQuery );
-    const data = response.data;
-    console.log('API response: ', data)
-
-    cache.current[searchQuery] = data;
-    setCompanies(data)
-    setCompaniesLoading(false)
-
+    setIsLoadingCompany(true)
+    const response = await getCompanyList(inputValue);
+    setIsLoadingCompany(false)
+    return response.data.map((company) => ({
+      label: `${company.name} - ${company.gst}`,
+      value: company.id,
+    }))
   }
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    console.log('User Input: ', value)
-    setYarn({
-      ...yarn,
-      companyName : value.trimStart(),
-    });
-    if (value.trim().length < 3) {
-      return;
-    }
-
-    // setSelectedCompany({
-    //   ...selectedCompany,
-    //   value,
-    // })
-
-    console.log("Debouncing: ", debounceTimeout.current)
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current)
-    }
-
-    debounceTimeout.current = setTimeout(() => {
-      if (value.trim() !== '') {
-        fetchCompany(value)
-      } else {
-        setCompanies([])
-      }
-    }, 300)
-  }
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,7 +64,7 @@ export const YarnForm = () => {
     const trimmedInput = {
         ...yarn,
         type: yarn.type.trim(),
-        companyName: yarn.companyName.trim(),
+        company: selectedCompany?.name ? selectedCompany : null,
         description: yarn.description.trim(),
         rate: yarn.rate
     }
@@ -127,10 +76,17 @@ export const YarnForm = () => {
         setYarn({
             id: null,
             type: "",
-            companyName: "",
+            company: "",
             description: "",
             rate: ""
         });
+        const savedCompanyId = response.data.company?.id
+        if (savedCompanyId) {
+          setSelectedCompany({
+            ...selectedCompany,
+            id: savedCompanyId,
+          })
+        }
 
         setTimeout(() => {
             setSuccessMsg(null)
@@ -151,8 +107,6 @@ export const YarnForm = () => {
     }
     
     setLoading(false)
-    
-
   };
 
   const handleChange = (e) => {
@@ -189,7 +143,35 @@ export const YarnForm = () => {
         return updatedErrors;
       })
     }
-};
+  };
+
+  const handleCompanyCreate = ( inputValue ) => {
+    console.log('handleCompanyCreate: ', inputValue)
+    const createdInput = inputValue.split('-');
+    if (createdInput.length === 2) {
+      setSelectedCompany({
+        name: inputValue.split('-')[0].trim(),
+        gst: inputValue.split('-')[1].trim(),
+        label: `${inputValue.split('-')[0]} - ${inputValue.split('-')[1]}`
+      })
+      console.log('selectedCompany: ', selectedCompany)
+    } else {
+      setErrors({
+        ...errors,
+        company: 'Please create a valid company (eg. Company Name - GST )'
+      })
+    }
+  }
+
+  const setSelectedCompanyOption = (option) => {
+    console.log('onChange: ', option)
+    setSelectedCompany(option)
+    setErrors((prevErrors) => {
+      const updatedErrors = {...prevErrors};
+      delete updatedErrors['company'];
+      return updatedErrors;
+    })
+  }
 
   return (
       <div className="isolate bg-white px-6 py-5 sm:py-10 lg:px-8">
@@ -250,46 +232,29 @@ export const YarnForm = () => {
             </div>
             <div className="sm:col-span-2">
               <label
-                htmlFor="companyName"
+                htmlFor="company"
                 className="block text-sm/6 font-semibold text-gray-900"
               >
                 Company
               </label>
               <div className="mt-2.5">
-                <input
-                  type="text"
-                  name="companyName"
-                  id="companyName"
-                  placeholder="Search for a company..."
-                  className={`block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyName ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
-                  required
-                  value={yarn.companyName}
-                  onChange={handleInputChange}
+                <AsyncCreatableSelect
+                  cacheOptions
+                  options={companies}
+                  loadOptions={loadCompanyOptions}
+                  isLoading={isLoadingCompany}
+                  isClearable={companies ? true : false }
+                  onChange={setSelectedCompanyOption}
+                  onCreateOption={handleCompanyCreate}
+                  value={selectedCompany}
+                  placeholder="Please Select a company..."
                 />
-                {companiesLoading && <p className="absolute top-12 text-gray-500 text-sm">Loading...</p>}
-                {filteredCompanies.length > 0 && console.log('redering filtered companies: ', filteredCompanies)}
-                {filteredCompanies.length > 0 && (
-                  <ul className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1">
-                    {filteredCompanies.map((company, index) => (
-                      <li
-                        key={index}
-                        className="p-2 hover:bg-blue-500 hover:text-white cursor-pointer"
-                        onClick={() => {
-                          setSelectedCompany(company);
-                          setFilteredCompanies([]);
-                        }}
-                      >
-                        {company.name} - <b>{company.gst}</b>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {errors.companyName ? <span className="text-red-500 text-sm mt-1 ml-1">{errors.companyName}</span> : ''}
+                {errors.company ? <span className="text-red-500 text-sm mt-1 ml-1">{errors.company}</span> : ''}
               </div>
             </div>
             <div className="sm:col-span-2">
               <label
-                  htmlFor="price"
+                  htmlFor="rate"
                   className="block text-sm/6 font-semibold text-gray-900"
                 >
                   Price

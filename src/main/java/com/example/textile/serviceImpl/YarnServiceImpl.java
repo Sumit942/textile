@@ -1,7 +1,9 @@
 package com.example.textile.serviceImpl;
 
 import com.example.textile.dto.YarnDto;
+import com.example.textile.entity.Company;
 import com.example.textile.entity.Yarn;
+import com.example.textile.repo.CompanyRepository;
 import com.example.textile.repo.YarnRepository;
 import com.example.textile.service.YarnService;
 import lombok.AllArgsConstructor;
@@ -15,7 +17,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class YarnServiceImpl implements YarnService {
 
     private YarnRepository yarnRepo;
+    private CompanyRepository companyRepository;
     private ModelMapper modelMapper;
     private EntityManager entityManager;
 
@@ -44,6 +46,11 @@ public class YarnServiceImpl implements YarnService {
     @Override
     public YarnDto save(YarnDto yarnDto) {
         Yarn yarn = modelMapper.map(yarnDto, Yarn.class);
+        if (Objects.nonNull(yarnDto.getCompany()) && Objects.isNull(yarnDto.getCompany().getId())) {
+            Company company = companyRepository.save(modelMapper.map(yarnDto.getCompany(), Company.class));
+            yarn.setCompany(company);
+        }
+
         Yarn saved = yarnRepo.save(yarn);
         return modelMapper.map(saved, YarnDto.class);
     }
@@ -64,28 +71,6 @@ public class YarnServiceImpl implements YarnService {
     }
 
     @Override
-    public List<YarnDto> findByType(String type) {
-        List<Yarn> byType = yarnRepo.findByType(type);
-        if (Objects.nonNull(byType) && !byType.isEmpty()) {
-            return byType.stream()
-                    .map(yarn -> modelMapper.map(yarn, YarnDto.class))
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<YarnDto> findByTypeAndCompanyName(String type, String companyName) {
-        List<Yarn> byType = yarnRepo.findByTypeAndCompanyName(type, companyName);
-        if (Objects.nonNull(byType) && !byType.isEmpty()) {
-            return byType.stream()
-                    .map(yarn -> modelMapper.map(yarn, YarnDto.class))
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
     public boolean existByYarnTypeAndCompanyNameIgnoreCase(YarnDto yarnDto) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -95,13 +80,19 @@ public class YarnServiceImpl implements YarnService {
         Predicate yarnTypePredicate = cb.equal(cb.lower(yarn.get("type")), yarnDto.getType().toLowerCase());
         predicates.add(yarnTypePredicate);
 
-        Predicate companyNamePredicate;
-        if (Objects.nonNull(yarnDto.getCompanyName()) && !yarnDto.getCompanyName().isBlank()) {
-            companyNamePredicate = cb.equal(cb.lower(yarn.get("companyName")), yarnDto.getCompanyName().toLowerCase());
+        Predicate namePredicate;
+        if (Objects.nonNull(yarnDto.getCompany())) {
+            if (Objects.nonNull(yarnDto.getCompany().getId()) && yarnDto.getCompany().getId().compareTo(0L) > 0) {
+                namePredicate = cb.equal(yarn.get("company").get("id"), yarnDto.getCompany().getId());
+            } else if (Objects.nonNull(yarnDto.getCompany().getGst()) && !yarnDto.getCompany().getGst().isBlank()) {
+                namePredicate = cb.equal(yarn.get("company").get("gst"), yarnDto.getCompany().getGst());
+            } else {
+                namePredicate = cb.isNull(yarn.get("company"));
+            }
         } else {
-            companyNamePredicate = cb.or(cb.isNull(yarn.get("companyName")), cb.equal(yarn.get("companyName"),""));
+            namePredicate = cb.isNull(yarn.get("company"));
         }
-        predicates.add(companyNamePredicate);
+        predicates.add(namePredicate);
 
         if (Objects.nonNull(yarnDto.getId()) && yarnDto.getId().compareTo(0L) > 0) {
             Predicate idPredicate = cb.notEqual(yarn.get("id"), yarnDto.getId());

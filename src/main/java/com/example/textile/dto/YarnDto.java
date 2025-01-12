@@ -6,7 +6,7 @@ import lombok.Data;
 public class YarnDto {
     private Long id;
     private String type;
-    private String companyName;
+    private CompanyDto company;
     private String description;
     private String rate;
 }
