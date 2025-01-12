@@ -155,6 +155,11 @@ export const YarnForm = () => {
         label: `${inputValue.split('-')[0]} - ${inputValue.split('-')[1]}`
       })
       console.log('selectedCompany: ', selectedCompany)
+      setErrors((prevErrors) => {
+        const updatedErrors = {...prevErrors};
+        delete updatedErrors['company'];
+        return updatedErrors;
+      })
     } else {
       setErrors({
         ...errors,
