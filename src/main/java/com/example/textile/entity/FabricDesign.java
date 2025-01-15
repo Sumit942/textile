@@ -1,18 +1,17 @@
 package com.example.textile.entity;
 
-
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
-public class YarnOrderProduct {
+public class FabricDesign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private FabricDesign fabric;
-    private String gsm;
-    private Double quantity;
+    @NotNull
+    @Column(unique = true)
+    private String design;
 }

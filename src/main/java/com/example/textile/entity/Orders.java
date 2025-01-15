@@ -14,7 +14,7 @@ public class Orders extends Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "orders")
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.PERSIST)
     private List<YarnOrder> yarnOrders;
     @ManyToOne
     private Company company;
