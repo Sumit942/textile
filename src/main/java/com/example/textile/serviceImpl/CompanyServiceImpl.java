@@ -1,11 +1,11 @@
 package com.example.textile.serviceImpl;
 
-import com.example.textile.dto.CompanyDropdownDto;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.entity.Company;
 import com.example.textile.exception.CompanyNotFoundException;
 import com.example.textile.repo.CompanyRepository;
 import com.example.textile.service.CompanyService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@AllArgsConstructor
 @Slf4j
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -23,12 +24,6 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepo;
     private final ModelMapper modelMapper;
     private final EntityManager entityManager;
-
-    public CompanyServiceImpl(CompanyRepository companyRepo, ModelMapper modelMapper, EntityManager entityManager) {
-        this.companyRepo = companyRepo;
-        this.modelMapper = modelMapper;
-        this.entityManager = entityManager;
-    }
 
     @Override
     public List<Company> findByNameLike(String name) {
@@ -61,12 +56,12 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<CompanyDropdownDto> getIdNameAndGstByName(String name) {
+    public List<CompanyDto> getIdNameAndGstByName(String name) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<CompanyDropdownDto> query = cb.createQuery(CompanyDropdownDto.class);
+        CriteriaQuery<CompanyDto> query = cb.createQuery(CompanyDto.class);
         Root<Company> companyRoot = query.from(Company.class);
 
-        query.select(cb.construct(CompanyDropdownDto.class,
+        query.select(cb.construct(CompanyDto.class,
                 companyRoot.get("id"),
                 companyRoot.get("name"),
                 companyRoot.get("gst")))

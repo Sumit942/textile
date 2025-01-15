@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
+@MappedSuperclass
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

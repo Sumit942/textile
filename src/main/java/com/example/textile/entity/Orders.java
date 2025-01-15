@@ -19,9 +19,7 @@ public class Orders extends Document {
     @ManyToOne
     private Company company;
     @Enumerated(EnumType.STRING)
-    private OrderStatusType orderStatusType;
-    @ManyToOne
-    private Product endProduct;
+    private OrderStatusType orderStatusType = OrderStatusType.RECEIVED;
     private String remarks;
 
 }

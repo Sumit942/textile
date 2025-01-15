@@ -1,6 +1,5 @@
 package com.example.textile.service;
 
-import com.example.textile.dto.CompanyDropdownDto;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.entity.Company;
 
@@ -18,5 +17,5 @@ public interface CompanyService {
 
     CompanyDto save(CompanyDto companyDto);
 
-    List<CompanyDropdownDto> getIdNameAndGstByName(String name);
+    List<CompanyDto> getIdNameAndGstByName(String name);
 }

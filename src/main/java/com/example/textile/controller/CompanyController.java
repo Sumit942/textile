@@ -1,6 +1,5 @@
 package com.example.textile.controller;
 
-import com.example.textile.dto.CompanyDropdownDto;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.dto.ErrorResponseDto;
 import com.example.textile.entity.Company;
@@ -50,8 +49,8 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @GetMapping("search/{name}")
-    public ResponseEntity<List<CompanyDropdownDto>> search(@PathVariable String name) {
-        List<CompanyDropdownDto> byNameLike = companyService.getIdNameAndGstByName(name);
+    public ResponseEntity<List<CompanyDto>> search(@PathVariable String name) {
+        List<CompanyDto> byNameLike = companyService.getIdNameAndGstByName(name);
         return new ResponseEntity<>(byNameLike, HttpStatus.OK);
     }
 }
