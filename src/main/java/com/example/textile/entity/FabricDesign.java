@@ -13,5 +13,5 @@ public class FabricDesign {
     private Long id;
     @NotNull
     @Column(unique = true)
-    private String design;
+    private String name;
 }

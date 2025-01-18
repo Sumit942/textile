@@ -1,21 +1,22 @@
 package com.example.textile.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity
-public class YarnOrderItem {
+public class YarnOrderItemProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private Yarn yarn;
+    private YarnOrderItem yarnOrderItem;
     @ManyToOne
-    private CompanyYarnOrder companyYarnOrder;
-    @Column(nullable = false)
+    private YarnFabricDesign yarnFabricDesign;
     private Double quantity;
-    private Integer boxes;
-    private Double rate;
+    @ManyToOne
+    private Machine machine;
+    private String remarks;
 }

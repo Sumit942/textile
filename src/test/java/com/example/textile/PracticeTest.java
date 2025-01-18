@@ -1,8 +1,8 @@
 package com.example.textile;
 
 import com.example.textile.entity.Product;
-import com.example.textile.entity.YarnOrderProduct;
-import com.example.textile.repo.YarnOrderProductRepository;
+import com.example.textile.entity.YarnOrderItemProduct;
+import com.example.textile.repo.YarnOrderItemProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +23,28 @@ public class PracticeTest {
     }
 
     @Autowired
-    YarnOrderProductRepository yarnOrderProductRepo;
+    YarnOrderItemProductRepository yarnOrderProductRepo;
 
     @Test
-    public void testSaveYarnOrderProduct() {
+    public void testSaveYarnOrderItemProduct() {
         Product product = new Product();
         product.setName("1x1 PKk");
         product.setActive(true);
         product.setId(279L);
 
 
-        YarnOrderProduct yarnOrderProduct = new YarnOrderProduct();
+        YarnOrderItemProduct yarnOrderProduct = new YarnOrderItemProduct();
         yarnOrderProduct.setId(4L);
 //        yarnOrderProduct.setProduct(product);
-        yarnOrderProduct.setGsm("234");
+//        yarnOrderProduct.setGsm("234");
         yarnOrderProduct.setQuantity(142.32);
         System.out.println("saving: " + yarnOrderProduct);
-        YarnOrderProduct savedYarnOrderProduct = yarnOrderProductRepo.save(yarnOrderProduct);
+        YarnOrderItemProduct savedYarnOrderItemProduct = yarnOrderProductRepo.save(yarnOrderProduct);
 
-        System.out.println("saved: " + savedYarnOrderProduct);
+        System.out.println("saved: " + savedYarnOrderItemProduct);
 
-        Assertions.assertSame(yarnOrderProduct.getGsm(), savedYarnOrderProduct.getGsm());
-        Assertions.assertTrue(savedYarnOrderProduct.getId() > 0);
+//        Assertions.assertSame(yarnOrderProduct.getGsm(), savedYarnOrderItemProduct.getGsm());
+        Assertions.assertTrue(savedYarnOrderItemProduct.getId() > 0);
 
     }
 }
