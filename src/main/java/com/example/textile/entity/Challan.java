@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
@@ -20,7 +20,7 @@ public class Challan extends Document {
     private Double quantity;
     private String vehicleNo;
     @Temporal(TemporalType.DATE)
-    private LocalDate date;
+    private Date date;
     @ManyToOne
     private Company company;
     @OneToMany(mappedBy = "challan",

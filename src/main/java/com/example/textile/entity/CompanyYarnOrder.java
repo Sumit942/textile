@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
@@ -18,12 +20,14 @@ public class CompanyYarnOrder extends Document {
     private List<YarnOrderItem> yarnOrderItems;
     @OneToMany(mappedBy = "companyYarnOrder")
     private List<YarnBuilty> yarnBuilties;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     private Orders orders;
     @Temporal(TemporalType.DATE)
-    private LocalDate orderDt;
+    private Date orderDt;
     private String yarnInvoiceNo;
     private String remark;
+    @NotNull
+    private Double totalQuantity;
 
 
     /*public String getYarnFabricDesign() {

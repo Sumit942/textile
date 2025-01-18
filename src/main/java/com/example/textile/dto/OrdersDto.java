@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class OrdersDto {
     private Long id;
-    private List<YarnOrderDto> yarnOrders;
+    private List<CompanyYarnOrderDto> yarnOrders;
     private CompanyDto company;
     private OrderStatusType orderStatusType = OrderStatusType.RECEIVED;
     private String remarks;
