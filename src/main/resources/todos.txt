@@ -1,2 +1,1 @@
-- CompanyYarnOrder (fields)
-- Create table for YarnBuilty of transport
+- Orders submit action logic creation

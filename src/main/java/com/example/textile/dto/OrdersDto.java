@@ -10,10 +10,11 @@ import java.util.List;
 @Data
 public class OrdersDto {
     private Long id;
-    private List<CompanyYarnOrderDto> yarnOrders;
+    private List<CompanyYarnOrderDto> companyYarnOrders;
     private CompanyDto company;
     private OrderStatusType orderStatusType = OrderStatusType.RECEIVED;
     private String remarks;
     @ManyToOne  //TODO: nullable false
     private User user;
+    private Long version;
 }

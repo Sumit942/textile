@@ -1,13 +1,16 @@
 package com.example.textile.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
+@ToString(exclude = {"companyYarnOrder", "yarnOrderItemProducts"})
 public class YarnOrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +28,18 @@ public class YarnOrderItem {
     private BigDecimal amount;
     @OneToMany(mappedBy = "yarnOrderItem")
     private List<YarnOrderItemProduct> yarnOrderItemProducts;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        YarnOrderItem that = (YarnOrderItem) o;
+        return Objects.equals(id, that.id) && Objects.equals(quantity, that.quantity) && Objects.equals(boxes, that.boxes) && Objects.equals(rate, that.rate) && Objects.equals(hsn, that.hsn) && Objects.equals(lotNo, that.lotNo) && Objects.equals(amount, that.amount) &&
+                (Objects.nonNull(that.getYarn()) && Objects.equals(yarn.getId(), that.yarn.getId())) &&
+                (Objects.nonNull(that.getCompanyYarnOrder()) && Objects.equals(companyYarnOrder.getId(), that.companyYarnOrder.getId()));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, Objects.nonNull(yarn) ? yarn.getId() : null, Objects.nonNull(companyYarnOrder) ? companyYarnOrder.getId() : null, quantity, boxes, rate, hsn, lotNo, amount);
+    }
 }

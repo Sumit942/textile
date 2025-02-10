@@ -9,7 +9,7 @@ spring:
     Description: "One Solution for a Textile Manufacturing Company"
     companyName: "SHREERAM TEXTILE INDUSTRIES"
   datasource:
-    url: jdbc:mysql://localhost:3306/textile_crm
+    url: jdbc:mysql://localhost:3306/textile_crm_local
     username: root
     password: 12345678
   jpa:
@@ -38,7 +38,7 @@ spring:
 server:
   servlet:
     context-path: "/textile"
-  port: 8081
+  port: 8082
 invoice:
   startCount: 1
   oldInvoiceLastId: 207

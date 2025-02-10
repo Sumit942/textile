@@ -18,7 +18,5 @@ public class CompanyDto {
     private String emailId;
     private String mobileNo;
     private List<BankDetail> bankDetails;
-    private Date insert_dt;
-    private Date update_dt;
     private CompanyType companyType;
 }

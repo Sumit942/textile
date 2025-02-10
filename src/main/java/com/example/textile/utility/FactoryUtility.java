@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class FactoryUtility {
 
-    public static Map<String, String> convertToErrorMsg(Map<String, String> errorMap, MessageSource messageSource, HttpServletRequest request) {
+    public static Map<String, String> convertToErrorMsg(Map<String, String[]> errorMap, MessageSource messageSource, HttpServletRequest request) {
         Map<String, String> errorMessages = new HashMap<>();
         if (!errorMap.isEmpty()) {
             errorMap.forEach((field, errCode) -> {
-                String errMsg = messageSource.getMessage(errCode, null, request == null ? Locale.ENGLISH : request.getLocale());
+                String errMsg = messageSource.getMessage(errCode[0], errCode, request == null ? Locale.ENGLISH : request.getLocale());
                 errorMessages.put(field, errMsg);
             });
         }

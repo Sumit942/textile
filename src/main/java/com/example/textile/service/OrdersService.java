@@ -8,7 +8,9 @@ public interface OrdersService {
 
     List<OrdersDto> findAll();
 
-    OrdersDto saveOrUpdate(OrdersDto ordersDto);
+    OrdersDto save(OrdersDto ordersDto);
 
     OrdersDto findById(Long id);
+
+    Boolean existById(Long id);
 }

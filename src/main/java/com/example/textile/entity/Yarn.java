@@ -1,6 +1,8 @@
 package com.example.textile.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,7 +20,9 @@ public class Yarn {
     @NotBlank
     @Column(nullable = false)
     private String type;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Company company;
     @Column(name = "rate", precision = 10, scale = 2)
     private BigDecimal rate;

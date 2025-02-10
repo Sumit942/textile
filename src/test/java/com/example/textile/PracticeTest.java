@@ -1,21 +1,37 @@
 package com.example.textile;
 
+import com.example.textile.action.OrderSubmitAction;
+import com.example.textile.controller.OrderController;
+import com.example.textile.dto.CompanyYarnOrderDto;
+import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.*;
+import com.example.textile.enums.ActionType;
 import com.example.textile.enums.OrderStatusType;
+import com.example.textile.executors.ActionResponse;
+import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.repo.CompanyYarnOrderRepository;
 import com.example.textile.repo.OrdersRepo;
 import com.example.textile.repo.YarnOrderItemProductRepository;
+import com.example.textile.service.CompanyYarnOrderService;
+import com.example.textile.service.OrdersService;
+import com.example.textile.utility.ShreeramTextileConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest
+@Service
 public class PracticeTest {
 
     public static void main(String[] args) {
@@ -37,6 +53,70 @@ public class PracticeTest {
 
     @Autowired
     OrdersRepo ordersRepo;
+
+    @Autowired
+    OrdersService ordersService;
+
+    @Autowired
+    CompanyYarnOrderService yarnOrderService;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Test
+    void testCascadePersist_Orders() {
+        Orders orders = ordersRepo.findById(2L).orElseThrow();
+
+        CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
+        companyYarnOrder.setRemark("yarn order bill received 5");
+        companyYarnOrder.setTotalQuantity(103.00);
+
+        CompanyYarnOrder companyYarnOrder1 = new CompanyYarnOrder();
+        companyYarnOrder1.setRemark("yarn order2 bill received 6");
+        companyYarnOrder1.setTotalQuantity(154.40);
+
+        orders.setCompanyYarnOrders(List.of(companyYarnOrder, companyYarnOrder1));
+
+        ordersRepo.save(orders);
+    }
+
+    @Test
+    void testCascadeRemove_Orders() {
+//        Orders orders = ordersRepo.findById(4L).orElseThrow();
+        ordersRepo.deleteById(4L);
+    }
+
+    @Test
+    void testCascadeMerge_Orders() {
+        System.out.println("fetching...");
+        Orders orders = ordersRepo.findById(4L).orElseThrow();
+        orders.setOrderStatusType(OrderStatusType.HOLD);
+        for (CompanyYarnOrder companyYarnOrder : orders.getCompanyYarnOrders()) {
+            companyYarnOrder.setTotalQuantity(companyYarnOrder.getTotalQuantity() + 1);
+        }
+
+        System.out.println("saving...");
+        ordersRepo.save(orders);
+    }
+
+    @Test
+    void testCascadeDetach_Orders() {
+//        Orders orders = ordersRepo.findById(4L).orElseThrow();
+        ordersRepo.deleteById(4L);
+    }
+
+    @Test
+    public void testSaveCompanyYarnOrders() {
+        System.out.println("testSaveOrders()");
+//        Company company = new Company();
+//        company.setId(11L);
+        Orders orders = ordersRepo.findById(2L).orElseThrow();
+        System.out.println("now printing");
+        System.out.println(orders.getId());
+        CompanyYarnOrder companyYarnOrder = getCompanyYarnOrder(orders);
+        CompanyYarnOrder save = companyYarnOrderRepo.save(companyYarnOrder);
+        System.out.println("saved: " + save);
+    }
 
     @Test
     public void testSaveYarnOrderItemProduct() {
@@ -62,22 +142,140 @@ public class PracticeTest {
     }
 
     @Test
-    public void testSaveCompanyYarnOrders() {
-        System.out.println("testSaveOrders()");
-        Company company = new Company();
-        company.setId(11L);
-        Orders orders = getOrderData(company);
-        orders.setId(1L);
-        CompanyYarnOrder companyYarnOrder = getCompanyYarnOrder(orders);
-        CompanyYarnOrder save = companyYarnOrderRepo.save(companyYarnOrder);
-        System.out.println("saved: " + save);
+    public void saveOrderEntity() {
+        Orders orders = new Orders();
+        orders.setId(2L);
+        orders.setRemarks("dfd gayasdf");
+        orders.setOrderStatusType(OrderStatusType.HALF_DELIVERED);
+//        orders.setVersion(0L);
+
+        /*CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
+        companyYarnOrder.setTotalAmount(BigDecimal.TEN);
+        companyYarnOrder.setOrderDt(new Date());
+        companyYarnOrder.setRemark("ni aya");
+        companyYarnOrder.setYarnInvoiceNo("ABC/1234");
+        companyYarnOrder.setTotalQuantity(100.00);
+
+        YarnBuilty yarnBuilty = new YarnBuilty();
+        yarnBuilty.setBoxes(25);
+        yarnBuilty.setReceivedDt(new Date());
+        yarnBuilty.setQuantity(100.00);
+        yarnBuilty.setLoadUnloadCharges(200.00);
+        yarnBuilty.setVehicleNo("MH 46 KK 1234");
+        companyYarnOrder.setYarnBuilties(List.of(yarnBuilty));
+
+        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
+        companyYarnOrder.setYarnOrderItems(List.of(yarnOrderItem));
+
+        orders.addCompanyYarnOrders(companyYarnOrder);*/
+
+        ordersRepo.save(orders);
+    }
+
+    @Test
+    public void submitOrder_new() {
+        OrderSubmitAction action = new OrderSubmitAction(ordersService, yarnOrderService);
+
+        CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
+//        yarnOrderDto.setId(10L);
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.MONTH, -1);
+        instance.add(Calendar.DATE, -8);
+        yarnOrderDto.setOrderDt(instance.getTime());
+        yarnOrderDto.setRemark("Screenshot shared on whatsapp");
+        yarnOrderDto.setYarnInvoiceNo("KE/2624");
+        yarnOrderDto.setTotalQuantity(549.530);
+        yarnOrderDto.setTotalAmount(BigDecimal.valueOf(68884.00));
+        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
+        yarnOrderDto.setYarnOrderItems(List.of(yarnOrderItem));
+
+        CompanyYarnOrderDto yarnOrderDto1 = new CompanyYarnOrderDto();
+//        yarnOrderDto1.setId(9L);
+        instance.add(Calendar.DATE, -1);
+        yarnOrderDto1.setOrderDt(instance.getTime());
+        yarnOrderDto1.setRemark("Screenshot shared on whatsapp2");
+        yarnOrderDto1.setYarnInvoiceNo("KE/2622");
+        yarnOrderDto1.setTotalQuantity(549.530);
+        yarnOrderDto1.setTotalAmount(BigDecimal.valueOf(68884.00));
+        YarnOrderItem yarnOrderItem1 = getYarnOrderItem(getYarn(1L), null);
+        yarnOrderDto1.setYarnOrderItems(List.of(yarnOrderItem1));
+
+
+        OrdersDto ordersDto = new OrdersDto();
+//        ordersDto.setId(5L);
+        ordersDto.setRemarks("Order has been recei");
+        ordersDto.setOrderStatusType(OrderStatusType.CREATED);
+        ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1));
+
+
+        Map<String, Object> parameterMap = new HashMap<>();
+        Map<String, String[]> errorMap = new HashMap<>();
+
+        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
+        ActionResponse actionResponse = action.executeRest(ordersDto, parameterMap, errorMap);
+
+        System.out.println("status : " + actionResponse.getResponseType());
+        errorMap.forEach((key ,value) -> {
+            System.out.println("key: " + key);
+            System.out.println("value: " + Arrays.toString(value));
+        });
+
+        Object dbObj = actionResponse.getDbObj();
+
+        System.out.println("responseObj: " + dbObj);
+    }
+
+    @Test
+    public void submitOrder_existing() {
+        OrdersDto ordersDto = ordersService.findById(5L);
+
+        System.out.println("updating existing yarnOrder for company");
+        ordersDto.getCompanyYarnOrders().get(0).setRemark("updating...");
+
+        System.out.println("adding new yarnOrder for company");
+        CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
+        ordersDto.getCompanyYarnOrders().add(yarnOrderDto);
+//        yarnOrderDto.setId(13L);
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.MONTH, -1);
+        instance.add(Calendar.DATE, -8);
+        yarnOrderDto.setOrderDt(instance.getTime());
+        yarnOrderDto.setRemark("Screenshot shared on whatsapp");
+        yarnOrderDto.setYarnInvoiceNo("RSMW/0628");
+        yarnOrderDto.setTotalQuantity(549.530);
+        yarnOrderDto.setTotalAmount(BigDecimal.valueOf(68884.00));
+        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
+        yarnOrderItem.setLotNo("MD234");
+        yarnOrderDto.setYarnOrderItems(List.of(yarnOrderItem));
+
+        OrderSubmitAction action = new OrderSubmitAction(ordersService, yarnOrderService);
+        Map<String, Object> parameterMap = new HashMap<>();
+        Map<String, String[]> errorMap = new HashMap<>();
+
+        parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
+        ActionResponse actionResponse = action.executeRest(ordersDto, parameterMap, errorMap);
+
+        System.out.println("status : " + actionResponse.getResponseType());
+        errorMap.forEach((key ,value) -> {
+            System.out.println("key: " + key);
+            System.out.println("value: " + Arrays.toString(value));
+        });
+
+        Object dbObj = actionResponse.getDbObj();
+
+        System.out.println("responseObj: " + dbObj);
+    }
+
+    @Test
+    public void deleteOrder() {
+        ordersRepo.deleteById(4L);
     }
 
     Orders getOrderData(Company company) {
         Orders orders = new Orders();
 
         orders.setCompany(company);
-        orders.setRemarks("Order not yet Received");
+        orders.setRemarks("Order Created");
         orders.setOrderStatusType(OrderStatusType.RECEIVED);
         return orders;
     }
@@ -85,24 +283,24 @@ public class PracticeTest {
     CompanyYarnOrder getCompanyYarnOrder(Orders orders) {
         CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
 
-        companyYarnOrder.setOrders(orders);
+        companyYarnOrder.setOrder(orders);
         companyYarnOrder.setOrderDt(new Date());
-        companyYarnOrder.setYarnInvoiceNo("KHDWL/24-25/046");
-        companyYarnOrder.setRemark("Order Recieved");
-        companyYarnOrder.setTotalQuantity(1340.00);
+        companyYarnOrder.setYarnInvoiceNo("KHDWL/24-25/052");
+        companyYarnOrder.setRemark("Yarn bill send");
+        companyYarnOrder.setTotalQuantity(1130.00);
         return companyYarnOrder;
     }
 
     YarnOrderItem getYarnOrderItem(Yarn yarn, List<YarnOrderItemProduct> itemProducts) {
         YarnOrderItem yarnOrderItem = new YarnOrderItem();
 
-        yarnOrderItem.setHsn("6001");
-        yarnOrderItem.setLotNo("109236");
-        yarnOrderItem.setBoxes(45);
-        yarnOrderItem.setQuantity(1350.34);
-        yarnOrderItem.setRate(130.00);
+        yarnOrderItem.setHsn("54023300");
+        yarnOrderItem.setLotNo("K27092");
+        yarnOrderItem.setBoxes(16);
+        yarnOrderItem.setQuantity(549.530);
+        yarnOrderItem.setRate(113.00);
         yarnOrderItem.setYarn(yarn);
-        yarnOrderItem.setAmount(BigDecimal.valueOf(175000));
+        yarnOrderItem.setAmount(BigDecimal.valueOf(62096.89));
         yarnOrderItem.setYarnOrderItemProducts(itemProducts);
         return yarnOrderItem;
     }
@@ -140,5 +338,9 @@ public class PracticeTest {
         return yarnFabricDesign;
     }
 
-
+    Yarn getYarn(Long id) {
+        Yarn yarn = new Yarn();
+        yarn.setId(id);
+        return yarn;
+    }
 }

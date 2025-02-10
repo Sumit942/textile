@@ -32,16 +32,16 @@ public class YarnSubmitAction extends RestActionExecutor<YarnDto> {
     }
 
     @Override
-    protected void doValidationRest(YarnDto yarnDto, Map<String, Object> parameterMap, Map<String, String> errorMap) {
+    protected void doValidationRest(YarnDto yarnDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
         log.info("doValidationRest() Entry");
         if (yarnDto.getType().isBlank()) {
-            errorMap.put("type","NotBlank.yarnDto.type");
+            errorMap.put("type",new String[]{"NotBlank.yarnDto.type"});
         } else {
             if (yarnService.existByYarnTypeAndCompanyNameIgnoreCase(yarnDto)) {
                 if (Objects.nonNull(yarnDto.getCompany()) && yarnDto.getCompany().getId().compareTo(0L) > 0) {
-                    errorMap.put("company", "isDuplicate.yarnDto.typeAndCompanyName");
+                    errorMap.put("company", new String[]{"isDuplicate.yarnDto.typeAndCompanyName"});
                 } else {
-                    errorMap.put("type", "isDuplicate.yarnDto.type");
+                    errorMap.put("type", new String[]{"isDuplicate.yarnDto.type"});
                 }
             }
         }
@@ -49,7 +49,7 @@ public class YarnSubmitAction extends RestActionExecutor<YarnDto> {
     }
 
     @Override
-    protected void doPreSaveOperationRest(YarnDto yarnDto, Map<String, Object> parameterMap, Map<String, String> errorMap) {
+    protected void doPreSaveOperationRest(YarnDto yarnDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
 
     }
 }

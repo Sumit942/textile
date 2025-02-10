@@ -21,7 +21,7 @@ public class YarnBuilty extends Document {
     private Date receivedDt;
     private Double loadUnloadCharges;
     private Integer boxes;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Company tranportCompany;
     private String vehicleNo;
     private Double quantity;

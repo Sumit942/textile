@@ -2,12 +2,14 @@ package com.example.textile.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -16,19 +18,38 @@ public class CompanyYarnOrder extends Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.ALL})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "companyYarnOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YarnOrderItem> yarnOrderItems;
-    @OneToMany(mappedBy = "companyYarnOrder")
+    @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST})
     private List<YarnBuilty> yarnBuilties;
-    @ManyToOne(cascade = {CascadeType.PERSIST})
-    private Orders orders;
+    @ManyToOne
+    private Orders order;
     @Temporal(TemporalType.DATE)
     private Date orderDt;
     private String yarnInvoiceNo;
     private String remark;
     @NotNull
     private Double totalQuantity;
+    @NotNull
+    private BigDecimal totalAmount;
 
+    public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {
+        if (Objects.nonNull(yarnOrderItems)) {
+            for (YarnOrderItem yarnOrderItem : yarnOrderItems) {
+                yarnOrderItem.setCompanyYarnOrder(this);
+            }
+        }
+        this.yarnOrderItems = yarnOrderItems;
+    }
+
+    public void setYarnBuilties(List<YarnBuilty> yarnBuilties) {
+        if (!CollectionUtils.isEmpty(yarnBuilties)) {
+            for (YarnBuilty yarnBuilty : yarnBuilties) {
+                yarnBuilty.setCompanyYarnOrder(this);
+            }
+        }
+        this.yarnBuilties = yarnBuilties;
+    }
 
     /*public String getYarnFabricDesign() {
         String yarns = "NA";

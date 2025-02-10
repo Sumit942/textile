@@ -79,7 +79,7 @@ public class YarnController extends BaseController {
 
 
         try {
-            Map<String, String> errorMap = new HashMap<>();
+            Map<String, String[]> errorMap = new HashMap<>();
             ActionResponse actionResponse = actionExecutor.executeRest(yarnDto, parameterMap, errorMap);
             if (ResponseType.SUCCESS.equals(actionResponse.getResponseType())) {
 
