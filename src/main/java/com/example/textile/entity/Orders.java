@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +15,11 @@ import java.util.Objects;
 @Data
 @Entity
 @ToString(exclude = {"companyYarnOrders"})
-public class Orders extends Document {
+public class Orders extends Document implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST})
     @EqualsAndHashCode.Exclude
     private List<CompanyYarnOrder> companyYarnOrders;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +27,7 @@ public class Orders extends Document {
     @Enumerated(EnumType.STRING)
     private OrderStatusType orderStatusType = OrderStatusType.RECEIVED;
     private String remarks;
+    //TODO: add User column (PrePersist)
 
     public void addCompanyYarnOrders(CompanyYarnOrder newYarnOrders) {
         if (Objects.isNull(this.companyYarnOrders)) {

@@ -18,7 +18,7 @@ public class CompanyYarnOrder extends Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "companyYarnOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YarnOrderItem> yarnOrderItems;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST})
     private List<YarnBuilty> yarnBuilties;
@@ -28,9 +28,9 @@ public class CompanyYarnOrder extends Document {
     private Date orderDt;
     private String yarnInvoiceNo;
     private String remark;
-    @NotNull
+//    @NotNull
     private Double totalQuantity;
-    @NotNull
+//    @NotNull
     private BigDecimal totalAmount;
 
     public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {

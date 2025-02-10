@@ -32,7 +32,7 @@ import java.util.*;
 
 @SpringBootTest
 @Service
-public class PracticeTest {
+public class OrdersSaveTest {
 
     public static void main(String[] args) {
         Long value = Long.valueOf("0");
@@ -174,20 +174,17 @@ public class PracticeTest {
 
     @Test
     public void submitOrder_new() {
-        OrderSubmitAction action = new OrderSubmitAction(ordersService, yarnOrderService);
-
         CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
 //        yarnOrderDto.setId(10L);
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.MONTH, -1);
-        instance.add(Calendar.DATE, -8);
         yarnOrderDto.setOrderDt(instance.getTime());
         yarnOrderDto.setRemark("Screenshot shared on whatsapp");
         yarnOrderDto.setYarnInvoiceNo("KE/2624");
         yarnOrderDto.setTotalQuantity(549.530);
         yarnOrderDto.setTotalAmount(BigDecimal.valueOf(68884.00));
-        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
-        yarnOrderDto.setYarnOrderItems(List.of(yarnOrderItem));
+//        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
+//        yarnOrderDto.setYarnOrderItems(List.of(yarnOrderItem));
 
         CompanyYarnOrderDto yarnOrderDto1 = new CompanyYarnOrderDto();
 //        yarnOrderDto1.setId(9L);
@@ -197,22 +194,24 @@ public class PracticeTest {
         yarnOrderDto1.setYarnInvoiceNo("KE/2622");
         yarnOrderDto1.setTotalQuantity(549.530);
         yarnOrderDto1.setTotalAmount(BigDecimal.valueOf(68884.00));
-        YarnOrderItem yarnOrderItem1 = getYarnOrderItem(getYarn(1L), null);
-        yarnOrderDto1.setYarnOrderItems(List.of(yarnOrderItem1));
+//        YarnOrderItem yarnOrderItem1 = getYarnOrderItem(getYarn(1L), null);
+//        yarnOrderDto1.setYarnOrderItems(List.of(yarnOrderItem1));
 
 
         OrdersDto ordersDto = new OrdersDto();
-//        ordersDto.setId(5L);
-        ordersDto.setRemarks("Order has been recei");
+//        ordersDto.setId(4L);
+//        ordersDto.setVersion(1L);
+        ordersDto.setRemarks("Order has been created");
         ordersDto.setOrderStatusType(OrderStatusType.CREATED);
         ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1));
 
 
+        OrderSubmitAction action = new OrderSubmitAction(ordersService, yarnOrderService);
         Map<String, Object> parameterMap = new HashMap<>();
         Map<String, String[]> errorMap = new HashMap<>();
 
         parameterMap.put(ShreeramTextileConstants.ACTION, ActionType.SUBMIT);
-        ActionResponse actionResponse = action.executeRest(ordersDto, parameterMap, errorMap);
+        ActionResponse<OrdersDto> actionResponse = action.executeRest(ordersDto, parameterMap, errorMap);
 
         System.out.println("status : " + actionResponse.getResponseType());
         errorMap.forEach((key ,value) -> {
@@ -220,7 +219,7 @@ public class PracticeTest {
             System.out.println("value: " + Arrays.toString(value));
         });
 
-        Object dbObj = actionResponse.getDbObj();
+        OrdersDto dbObj = actionResponse.getDbObj();
 
         System.out.println("responseObj: " + dbObj);
     }

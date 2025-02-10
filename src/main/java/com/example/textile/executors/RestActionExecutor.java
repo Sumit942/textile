@@ -6,32 +6,34 @@ import com.example.textile.exception.InvalidObjectPopulationException;
 import com.example.textile.exception.ServiceActionException;
 import com.example.textile.utility.Constants;
 import com.example.textile.utility.ShreeramTextileConstants;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import java.util.Map;
 
-@Slf4j
 public abstract class RestActionExecutor<T> extends ActionExecutor<T> {
 
-    protected abstract ActionResponse onSuccessRest(T t, Map<String, Object> parameterMap);
+    private static final Logger log = LoggerFactory.getLogger(RestActionExecutor.class);
+
+    protected abstract ActionResponse<T> onSuccessRest(T t, Map<String, Object> parameterMap);
 
     protected abstract void doValidationRest(T t, Map<String, Object> parameterMap, Map<String, String[]> errorMap);
 
     protected abstract void doPreSaveOperationRest(T t, Map<String, Object> parameterMap, Map<String, String[]> errorMap);
 
-    private ActionResponse onErrorRest(T t, ActionResponse actionResponse, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
+    private ActionResponse<T> onErrorRest(T t, ActionResponse<T> actionResponse, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
         if (actionResponse == null) {
-            actionResponse = new ActionResponse(ResponseType.FAILURE);
+            actionResponse = new ActionResponse<>(ResponseType.FAILURE);
         }
         return actionResponse;
     }
 
-    public ActionResponse executeRest(T t, Map<String, Object> parameters, Map<String, String[]> errorMap) {
+    public ActionResponse<T> executeRest(T t, Map<String, Object> parameters, Map<String, String[]> errorMap) {
         log.debug("executeRest() Entry [{}]", t);
         ActionType actionType = (ActionType) parameters.get(ShreeramTextileConstants.ACTION);
-        ActionResponse actionResponse = null;
+        ActionResponse<T> actionResponse = null;
 
         if (ActionType.SUBMIT.equals(actionType)) {
             doValidationRest(t, parameters, errorMap);
@@ -56,12 +58,12 @@ public abstract class RestActionExecutor<T> extends ActionExecutor<T> {
     }
 
     @Override
-    public ActionResponse execute(T t, Map<String, Object> parameterMap, BindingResult result, ModelMap model) throws ServiceActionException {
+    public ActionResponse<T> execute(T t, Map<String, Object> parameterMap, BindingResult result, ModelMap model) throws ServiceActionException {
         throw new UnsupportedOperationException(Constants.notSupportedRest);
     }
 
     @Override
-    protected ActionResponse onSuccess(T t, Map<String, Object> parameterMap, ModelMap model) {
+    protected ActionResponse<T> onSuccess(T t, Map<String, Object> parameterMap, ModelMap model) {
         throw new UnsupportedOperationException(Constants.notSupportedRest);
     }
 

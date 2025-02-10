@@ -7,13 +7,19 @@ import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class TransformationDTOToEntity {
 
+    private static final Logger log = LoggerFactory.getLogger(TransformationDTOToEntity.class);
+
     public static Orders transformOrdersDto(@NotNull ModelMapper modelMapper, OrdersDto ordersDto) {
+        String logPrefix = "transformOrdersEntity() ";
+        log.debug("{}Entry {}", logPrefix, ordersDto.getId());
         Orders orders = new Orders();
         orders.setVersion(ordersDto.getVersion());
         orders.setId(ordersDto.getId());

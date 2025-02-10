@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.example.textile.transform.TransformationDTOToEntity.transformOrdersDto;
+import static com.example.textile.transform.TransformationEntityToDTO.transformOrdersEntity;
 
 @Slf4j
 @AllArgsConstructor
@@ -30,17 +31,18 @@ public class OrderServiceImpl implements OrdersService {
         return modelMapper.map(orders, new TypeToken<List<OrdersDto>>(){}.getType());
     }
 
-    @Transactional
     @Override
-    public OrdersDto save(OrdersDto ordersDto) {
+    public Orders save(OrdersDto ordersDto) {
         String logPrefix = " save() orderId=" + ordersDto.getId();
         log.info("Entry{}", logPrefix);
         Orders orders = transformOrdersDto(modelMapper, ordersDto);
+        ordersDto.getCompanyYarnOrders().forEach(orderItems -> {
+            System.out.println("orderItem id: " + orderItems.getId());
+            System.out.println("quantity: " + orderItems.getTotalQuantity());
+        });
+        log.info("{} [companyYarnOrderSize={}]",logPrefix, Objects.nonNull(ordersDto.getCompanyYarnOrders()) ? ordersDto.getCompanyYarnOrders().size() : "null");
 
-        log.info("{} saving [companyYarnOrder={}]",logPrefix, Objects.nonNull(ordersDto.getCompanyYarnOrders()) ? ordersDto.getCompanyYarnOrders().size() : "null");
-        log.info("{} Saving ..", logPrefix);
-        Orders savedOrder = ordersRepo.save(orders);
-        return modelMapper.map(savedOrder, OrdersDto.class);
+        return ordersRepo.save(orders);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class OrderServiceImpl implements OrdersService {
             }
 
             order.getCompany();
-            return TransformationEntityToDTO.transformOrdersEntity(modelMapper, order);
+            return transformOrdersEntity(modelMapper, order);
         }
         return null;
     }

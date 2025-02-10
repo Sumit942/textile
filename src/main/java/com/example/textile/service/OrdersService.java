@@ -1,6 +1,7 @@
 package com.example.textile.service;
 
 import com.example.textile.dto.OrdersDto;
+import com.example.textile.entity.Orders;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ public interface OrdersService {
 
     List<OrdersDto> findAll();
 
-    OrdersDto save(OrdersDto ordersDto);
+    Orders save(OrdersDto ordersDto);
 
     OrdersDto findById(Long id);
 
