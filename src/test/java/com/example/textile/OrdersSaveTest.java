@@ -175,23 +175,25 @@ public class OrdersSaveTest {
     @Test
     public void submitOrder_new() {
         CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
-//        yarnOrderDto.setId(10L);
+        yarnOrderDto.setId(32L);
+        yarnOrderDto.setVersion(0L);
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.MONTH, -1);
         yarnOrderDto.setOrderDt(instance.getTime());
         yarnOrderDto.setRemark("Screenshot shared on whatsapp");
-        yarnOrderDto.setYarnInvoiceNo("KE/2624");
+        yarnOrderDto.setYarnInvoiceNo("KE/002");
         yarnOrderDto.setTotalQuantity(549.530);
         yarnOrderDto.setTotalAmount(BigDecimal.valueOf(68884.00));
 //        YarnOrderItem yarnOrderItem = getYarnOrderItem(getYarn(1L), null);
 //        yarnOrderDto.setYarnOrderItems(List.of(yarnOrderItem));
 
         CompanyYarnOrderDto yarnOrderDto1 = new CompanyYarnOrderDto();
-//        yarnOrderDto1.setId(9L);
+        yarnOrderDto1.setId(33L);
+        yarnOrderDto1.setVersion(0L);
         instance.add(Calendar.DATE, -1);
         yarnOrderDto1.setOrderDt(instance.getTime());
         yarnOrderDto1.setRemark("Screenshot shared on whatsapp2");
-        yarnOrderDto1.setYarnInvoiceNo("KE/2622");
+        yarnOrderDto1.setYarnInvoiceNo("KE/001");
         yarnOrderDto1.setTotalQuantity(549.530);
         yarnOrderDto1.setTotalAmount(BigDecimal.valueOf(68884.00));
 //        YarnOrderItem yarnOrderItem1 = getYarnOrderItem(getYarn(1L), null);
@@ -199,10 +201,10 @@ public class OrdersSaveTest {
 
 
         OrdersDto ordersDto = new OrdersDto();
-//        ordersDto.setId(4L);
-//        ordersDto.setVersion(1L);
-        ordersDto.setRemarks("Order has been created");
-        ordersDto.setOrderStatusType(OrderStatusType.CREATED);
+        ordersDto.setId(8L);
+        ordersDto.setVersion(0L);
+        ordersDto.setRemarks("Order has been recievd");
+        ordersDto.setOrderStatusType(OrderStatusType.RECEIVED);
         ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1));
 
 

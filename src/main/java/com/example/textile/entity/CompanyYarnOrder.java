@@ -18,7 +18,7 @@ public class CompanyYarnOrder extends Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL)
     private List<YarnOrderItem> yarnOrderItems;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST})
     private List<YarnBuilty> yarnBuilties;

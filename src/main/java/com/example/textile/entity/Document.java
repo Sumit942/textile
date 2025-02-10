@@ -14,6 +14,7 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime insertDt;
     @UpdateTimestamp
     private LocalDateTime updateDt;
