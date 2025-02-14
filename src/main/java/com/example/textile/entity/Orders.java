@@ -19,7 +19,7 @@ public class Orders extends Document implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private List<CompanyYarnOrder> companyYarnOrders;
     @ManyToOne(fetch = FetchType.LAZY)

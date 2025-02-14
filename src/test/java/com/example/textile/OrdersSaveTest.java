@@ -176,7 +176,7 @@ public class OrdersSaveTest {
     public void submitOrder_new() {
         CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
         yarnOrderDto.setId(32L);
-        yarnOrderDto.setVersion(0L);
+        yarnOrderDto.setVersion(1L);
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.MONTH, -1);
         yarnOrderDto.setOrderDt(instance.getTime());
@@ -189,7 +189,7 @@ public class OrdersSaveTest {
 
         CompanyYarnOrderDto yarnOrderDto1 = new CompanyYarnOrderDto();
         yarnOrderDto1.setId(33L);
-        yarnOrderDto1.setVersion(0L);
+        yarnOrderDto1.setVersion(1L);
         instance.add(Calendar.DATE, -1);
         yarnOrderDto1.setOrderDt(instance.getTime());
         yarnOrderDto1.setRemark("Screenshot shared on whatsapp2");
@@ -202,9 +202,9 @@ public class OrdersSaveTest {
 
         OrdersDto ordersDto = new OrdersDto();
         ordersDto.setId(8L);
-        ordersDto.setVersion(0L);
-        ordersDto.setRemarks("Order has been recievd");
-        ordersDto.setOrderStatusType(OrderStatusType.RECEIVED);
+        ordersDto.setVersion(1L);
+        ordersDto.setRemarks("Order is in process");
+        ordersDto.setOrderStatusType(OrderStatusType.IN_PROCESS);
         ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1));
 
 
