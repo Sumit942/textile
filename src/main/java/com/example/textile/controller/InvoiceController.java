@@ -17,7 +17,6 @@ import com.example.textile.utility.*;
 import com.example.textile.utility.factory.ActionExecutorFactory;
 import com.lowagie.text.DocumentException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -445,24 +444,7 @@ public class InvoiceController extends BaseController {
         log.info("{} Entry", logPrefix);
 
         if (invoiceReport != null) {
-            Map<String, String> headerMap = new LinkedHashMap<>();
-            headerMap.put("S.No", "srNo");
-            headerMap.put("Invoice Date", "invoiceDate");
-            headerMap.put("Invoice No", "invoiceNo");
-//            headerMap.put("Party Gst", "billToPartyGst");
-            headerMap.put("Party Name", "billToPartyName");
-            headerMap.put("Amount", "totalAmount");
-            headerMap.put("Total Tax", "totalTaxAmount");
-            headerMap.put("PnF", "pnfCharge");
-            headerMap.put("Total Amount", "totalAmountAfterTax");
-            headerMap.put("Payment Status", "paid");
-            headerMap.put("Paid", "paidAmount");
-            headerMap.put("Payment Date", "paymentDt");
-            headerMap.put("Debit", "amtDr");
-
-
-            ExcelUtility<InvoiceView> excelUtility = new ExcelUtility<>(invoiceReport);
-            XSSFWorkbook workBook = excelUtility.getWorkBook(headerMap);
+            XSSFWorkbook workBook = getWorkbook(invoiceReport);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             try {
@@ -485,6 +467,27 @@ public class InvoiceController extends BaseController {
 
         }
 
+    }
+
+    private static XSSFWorkbook getWorkbook(List<InvoiceView> invoiceReport) {
+        Map<String, String> headerMap = new LinkedHashMap<>();
+        headerMap.put("S.No", "srNo");
+        headerMap.put("Invoice Date", "invoiceDate");
+        headerMap.put("Invoice No", "invoiceNo");
+//            headerMap.put("Party Gst", "billToPartyGst");
+        headerMap.put("Party Name", "billToPartyName");
+        headerMap.put("Amount", "totalAmount");
+        headerMap.put("Total Tax", "totalTaxAmount");
+        headerMap.put("PnF", "pnfCharge");
+        headerMap.put("Total Amount", "totalAmountAfterTax");
+        headerMap.put("Payment Status", "paid");
+        headerMap.put("Paid", "paidAmount");
+        headerMap.put("Payment Date", "paymentDt");
+        headerMap.put("Debit", "amtDr");
+
+
+        ExcelUtility<InvoiceView> excelUtility = new ExcelUtility<>(invoiceReport);
+        return excelUtility.getWorkBook(headerMap);
     }
 
     private void invoiceReportDownloadPdf(List<InvoiceView> invoiceReport, HttpServletResponse response, String fileName) {
@@ -532,7 +535,7 @@ public class InvoiceController extends BaseController {
         invoiceView.setTotalAmountAfterTax(totalAmount);
         invoiceView.setPaidAmount(paidAmount);
         invoiceView.setAmtDr(debit);
-        invoiceView.setBillToPartyName(String.valueOf(ShreeramTextile.df.format(pendingAmount)));
+        invoiceView.setBillToPartyName(String.valueOf(ShreeramTextile.DECIMAL_FORMAT.format(pendingAmount)));
 
         invoiceReport.add(invoiceView);
     }

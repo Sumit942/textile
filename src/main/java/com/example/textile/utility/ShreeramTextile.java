@@ -124,8 +124,8 @@ public class ShreeramTextile implements Factory {
         if (ShreeramTextileConstants.DATE_FORMAT_ddMMYYYY.equals(dateFormat))
             return DATE_FORMAT_ddMMYYYY;
 
-        return DATE_FORMAT_ddMMYYYY;
+        throw new UnsupportedOperationException("Date Format not Supported [format=" + dateFormat+"]");
     }
 
-    public static DecimalFormat df = new DecimalFormat("#,###.##");
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
 }

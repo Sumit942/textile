@@ -79,38 +79,7 @@ class TextileApplicationTests {
     }
 
     Invoice getInvoice() {
-        Country country = new Country();
-        country.setId(1L);
-        country.setName("INDIA");
-        State state = new State();
-        state.setId(1L);
-        state.setName("Maharashtra");
-        state.setCode(27);
-        state.setCountry(country);
-        Address address = new Address();
-        address.setId(1L);
-        address.setAddress("full test");
-        address.setPinCode(400013);
-        address.setState(state);
-        BankDetail bankDetail = new BankDetail();
-        bankDetail.setBankName("IDFC Bank");
-        bankDetail.setBranch("New Thane");
-        bankDetail.setAccountNo("***1239");
-        bankDetail.setIfsc("IDFC000005");
-        BankDetail bankDetail2 = new BankDetail();
-        bankDetail.setBankName("HDFC Bank");
-        bankDetail.setBranch("New Thane");
-        bankDetail.setAccountNo("***7239");
-        bankDetail.setIfsc("HDFC000005");
-        List<BankDetail> bankDetails = new ArrayList<>();
-        bankDetails.add(bankDetail);
-        bankDetails.add(bankDetail2);
-        Company company = new Company();
-        company.setAddress(address);
-        //company.setBankDetails(bankDetails);
-        company.setId(11L);
-        company.setName("SIMPANI");
-        company.setGst("27ACBPS6136N1Z4");
+        Company company = getCompany();
         SaleType saleType = new SaleType();
         saleType.setId(1L);
         saleType.setSaleType("Fabric Job Work");
@@ -157,6 +126,42 @@ class TextileApplicationTests {
         invoice.setTransportMode(transportMode);
         invoice.setProduct(prodList);
         return invoice;
+    }
+
+    private static Company getCompany() {
+        Country country = new Country();
+        country.setId(1L);
+        country.setName("INDIA");
+        State state = new State();
+        state.setId(1L);
+        state.setName("Maharashtra");
+        state.setCode(27);
+        state.setCountry(country);
+        Address address = new Address();
+        address.setId(1L);
+        address.setAddress("full test");
+        address.setPinCode(400013);
+        address.setState(state);
+        BankDetail bankDetail = new BankDetail();
+        bankDetail.setBankName("IDFC Bank");
+        bankDetail.setBranch("New Thane");
+        bankDetail.setAccountNo("***1239");
+        bankDetail.setIfsc("IDFC000005");
+        BankDetail bankDetail2 = new BankDetail();
+        bankDetail.setBankName("HDFC Bank");
+        bankDetail.setBranch("New Thane");
+        bankDetail.setAccountNo("***7239");
+        bankDetail.setIfsc("HDFC000005");
+        List<BankDetail> bankDetails = new ArrayList<>();
+        bankDetails.add(bankDetail);
+        bankDetails.add(bankDetail2);
+        Company company = new Company();
+        company.setAddress(address);
+        //company.setBankDetails(bankDetails);
+        company.setId(11L);
+        company.setName("SIMPANI");
+        company.setGst("27ACBPS6136N1Z4");
+        return company;
     }
 
     //    @Test

@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class NavigationController {
 
-    NavigationService navigationService;
+    private final NavigationService navigationService;
     public NavigationController(NavigationService navigationService) {
         this.navigationService = navigationService;
     }

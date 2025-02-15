@@ -2,6 +2,7 @@ package com.example.textile;
 
 import com.example.textile.entity.*;
 import com.example.textile.repo.InvoiceRepository;
+import lombok.Getter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,7 @@ import java.util.*;
 @SpringBootTest
 public class InvoiceGenerator {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String fileName = "invoice1.pdf";
 
         try {
@@ -127,10 +128,11 @@ public class InvoiceGenerator {
         return invoice;
     }
 
+    @Getter
     static class Item {
-        private String name;
-        private int quantity;
-        private BigDecimal price;
+        private final String name;
+        private final int quantity;
+        private final BigDecimal price;
 
         public Item(String name, int quantity, BigDecimal price) {
             this.name = name;
@@ -138,17 +140,6 @@ public class InvoiceGenerator {
             this.price = price;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public BigDecimal getPrice() {
-            return price;
-        }
     }
     private static SpringTemplateEngine createTemplateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();

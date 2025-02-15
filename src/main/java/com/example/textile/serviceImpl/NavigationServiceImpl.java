@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class NavigationServiceImpl implements NavigationService {
 
-    NavigationItemRepo navigationItemRepo;
+    private final NavigationItemRepo navigationItemRepo;
 
     public NavigationServiceImpl(NavigationItemRepo navigationItemRepo) {
         this.navigationItemRepo = navigationItemRepo;

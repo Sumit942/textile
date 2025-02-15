@@ -97,6 +97,7 @@ public class OrderServiceImpl implements OrdersService {
         log.info("updatedPersistedOrderObject() Exit");
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     @Transactional
     public OrdersDto findById(Long id) {

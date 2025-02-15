@@ -24,9 +24,7 @@ public class ActionExecutorFactory {
 
     public Map<String, ActionExecutor> getActionExecutors(Class<?> cls) {
 
-        Map<String, ActionExecutor> actExecutorMap = actionExecutorsMap
+        return actionExecutorsMap
                 .computeIfAbsent(cls, k -> new HashMap<>());
-
-        return actExecutorMap;
     }
 }
