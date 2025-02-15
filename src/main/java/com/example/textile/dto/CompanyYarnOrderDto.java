@@ -1,8 +1,8 @@
 package com.example.textile.dto;
 
-import com.example.textile.entity.Orders;
 import com.example.textile.entity.YarnBuilty;
 import com.example.textile.entity.YarnOrderItem;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-@ToString(exclude = {"yarnOrderItems","yarnBuilties"})
+@ToString(exclude = {"yarnOrderItems","yarnBuilties","order"})
 public class CompanyYarnOrderDto {
     public CompanyYarnOrderDto(Long id) {
         this.id = id;
@@ -21,7 +21,8 @@ public class CompanyYarnOrderDto {
     private Long id;
     private List<YarnOrderItem> yarnOrderItems;
     private List<YarnBuilty> yarnBuilties;
-    private Orders order;
+    @JsonBackReference
+    private OrdersDto order;
     private Date orderDt;
     private String yarnInvoiceNo;
     private String remark;

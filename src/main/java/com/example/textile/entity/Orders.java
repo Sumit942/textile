@@ -3,7 +3,6 @@ package com.example.textile.entity;
 import com.example.textile.enums.OrderStatusType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +13,6 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = false)
 @Data
 @Entity
-@ToString(exclude = {"companyYarnOrders"})
 public class Orders extends Document implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,4 +57,13 @@ public class Orders extends Document implements Serializable {
             this.companyYarnOrders.addAll(newYarnOrders);
         }
     }*/
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "id=" + id +
+                ", orderStatusType=" + orderStatusType +
+                ", remarks='" + remarks + '\'' +
+                '}';
+    }
 }

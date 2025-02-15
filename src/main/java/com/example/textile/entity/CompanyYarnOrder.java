@@ -1,11 +1,11 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +21,7 @@ public class CompanyYarnOrder extends Document {
     @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL)
     private List<YarnOrderItem> yarnOrderItems;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST})
+    @JsonBackReference
     private List<YarnBuilty> yarnBuilties;
     @ManyToOne
     private Orders order;
@@ -61,4 +62,12 @@ public class CompanyYarnOrder extends Document {
                 .concat(Objects.nonNull(fabricDesign) ? fabricDesign.getName() : "NA")
                 .concat(Objects.nonNull(gsm) ? " | ".concat(gsm).concat(" GSM") : "");
     }*/
+
+    @Override
+    public String toString() {
+        return "CompanyYarnOrder{" +
+                "id=" + id +
+                ", orderId=" + (order !=null ? order.getId() : null) +
+                '}';
+    }
 }

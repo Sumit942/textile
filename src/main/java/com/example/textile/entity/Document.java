@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +16,7 @@ public class Document {
     private Long id;
     @CreationTimestamp
     @Column(updatable = false)
+    @JsonIgnore
     private LocalDateTime insertDt;
     @UpdateTimestamp
     private LocalDateTime updateDt;

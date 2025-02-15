@@ -50,7 +50,14 @@ public class OrderServiceImpl implements OrdersService {
             if (optionalOrders.isPresent()) {
                 Orders persisted = optionalOrders.get();
                 updatePersistedOrders(orders, persisted);
-                return ordersRepo.save(persisted);
+                Orders saved = ordersRepo.save(persisted);
+                //removing dissociated yarnOrder to prevent rendering it to FrontEnd
+                saved.getCompanyYarnOrders().removeAll(
+                        saved.getCompanyYarnOrders().stream()
+                                .filter(yarnOrder -> Objects.isNull(yarnOrder.getOrder()))
+                                .collect(Collectors.toList())
+                );
+                return saved;
             }
         }
 
@@ -68,12 +75,18 @@ public class OrderServiceImpl implements OrdersService {
         persisted.setCompany(orders.getCompany());
         if (!isEmpty(orders.getCompanyYarnOrders())) {
             Map<Long, CompanyYarnOrder> companyYarnOrderMap = orders.getCompanyYarnOrders().stream()
+                    .filter(yarnOrder -> Objects.nonNull(yarnOrder.getId()) && yarnOrder.getId().compareTo(0L) > 0)
                     .collect(Collectors.toMap(CompanyYarnOrder::getId, Function.identity()));
+
+            //Add new companyYarnOrders id=null
+            orders.getCompanyYarnOrders().stream()
+                    .filter(yarnOrder -> Objects.isNull(yarnOrder.getId()) || yarnOrder.getId().compareTo(0L) <= 0)
+                    .forEach(persisted::addCompanyYarnOrders);
 
             for (CompanyYarnOrder companyYarnOrder : persisted.getCompanyYarnOrders()) {
                 var companyYarnOrderUpdate = companyYarnOrderMap.get(companyYarnOrder.getId());
                 if (Objects.isNull(companyYarnOrderUpdate)) {
-                    companyYarnOrder.setId(null);
+                    companyYarnOrder.setOrder(null);
                 } else {
                     if (!isEqualCompanyYarnOrder(companyYarnOrder, companyYarnOrderUpdate)) {
                         log.info("{} updating companyYarnOrderId={}",logPrefix ,companyYarnOrder.getId());

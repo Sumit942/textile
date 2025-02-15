@@ -1,11 +1,11 @@
 package com.example.textile.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = false)
@@ -16,6 +16,7 @@ public class YarnBuilty extends Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @JsonBackReference
     private CompanyYarnOrder companyYarnOrder;
     @Temporal(TemporalType.DATE)
     private Date receivedDt;

@@ -4,6 +4,7 @@ public enum OrderStatusType {
     CREATED("Order Confirmed"),
     RECEIVED("Yarn Received"),
     IN_PROCESS("Yarn Loaded to Machine"),
+    HALF_PROCESSED("Yarn Loaded to Machine"),
     PROCESSED("Yarn-Fabric Rolls Created"),
     HALF_DELIVERED("Some Order/Yarn-Fabric Dispatched"),
     DELIVERED("Total Order/Yarn-Fabric Dispatched"),
