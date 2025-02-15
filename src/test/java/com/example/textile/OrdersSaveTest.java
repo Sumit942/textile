@@ -176,7 +176,7 @@ public class OrdersSaveTest {
     public void submitOrder_new() {
         CompanyYarnOrderDto yarnOrderDto = new CompanyYarnOrderDto();
         yarnOrderDto.setId(32L);
-        yarnOrderDto.setVersion(1L);
+        yarnOrderDto.setVersion(4L);
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.MONTH, -1);
         yarnOrderDto.setOrderDt(instance.getTime());
@@ -189,7 +189,7 @@ public class OrdersSaveTest {
 
         CompanyYarnOrderDto yarnOrderDto1 = new CompanyYarnOrderDto();
         yarnOrderDto1.setId(33L);
-        yarnOrderDto1.setVersion(1L);
+        yarnOrderDto1.setVersion(4L);
         instance.add(Calendar.DATE, -1);
         yarnOrderDto1.setOrderDt(instance.getTime());
         yarnOrderDto1.setRemark("Screenshot shared on whatsapp2");
@@ -199,13 +199,23 @@ public class OrdersSaveTest {
 //        YarnOrderItem yarnOrderItem1 = getYarnOrderItem(getYarn(1L), null);
 //        yarnOrderDto1.setYarnOrderItems(List.of(yarnOrderItem1));
 
+        CompanyYarnOrderDto yarnOrderDto2 = new CompanyYarnOrderDto();
+//        yarnOrderDto2.setId(33L);
+//        yarnOrderDto2.setVersion(4L);
+        instance.add(Calendar.DATE, -1);
+        yarnOrderDto2.setOrderDt(instance.getTime());
+        yarnOrderDto2.setRemark("Screenshot shared on whatsapp2");
+        yarnOrderDto2.setYarnInvoiceNo("KE/003");
+        yarnOrderDto2.setTotalQuantity(600.530);
+        yarnOrderDto2.setTotalAmount(BigDecimal.valueOf(73884.00));
+
 
         OrdersDto ordersDto = new OrdersDto();
         ordersDto.setId(8L);
-        ordersDto.setVersion(1L);
+        ordersDto.setVersion(5L);
         ordersDto.setRemarks("Order is in process");
         ordersDto.setOrderStatusType(OrderStatusType.IN_PROCESS);
-        ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1));
+        ordersDto.setCompanyYarnOrders(List.of(yarnOrderDto, yarnOrderDto1, yarnOrderDto2));
 
 
         OrderSubmitAction action = new OrderSubmitAction(ordersService, yarnOrderService);

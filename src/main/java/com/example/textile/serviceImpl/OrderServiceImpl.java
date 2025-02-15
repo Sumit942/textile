@@ -61,9 +61,11 @@ public class OrderServiceImpl implements OrdersService {
         String logPrefix = "updatedPersistedOrderObject() orderId="+orders.getId();
         log.info("{} Entry", logPrefix);
         if (persisted.getVersion().compareTo(orders.getVersion()) != 0) {
-            throw new OptimisticLockException("Order has been already updated id="+ orders.getId() + " | Version received="+orders.getVersion()+", persisted="+ persisted.getVersion());
+            throw new OptimisticLockException("Order has been already updated orderId="+ orders.getId() + " [ Version received="+orders.getVersion()+", persisted="+ persisted.getVersion() +"]");
         }
         persisted.setRemarks(orders.getRemarks());
+        persisted.setOrderStatusType(orders.getOrderStatusType());
+        persisted.setCompany(orders.getCompany());
         if (!isEmpty(orders.getCompanyYarnOrders())) {
             Map<Long, CompanyYarnOrder> companyYarnOrderMap = orders.getCompanyYarnOrders().stream()
                     .collect(Collectors.toMap(CompanyYarnOrder::getId, Function.identity()));
@@ -76,7 +78,7 @@ public class OrderServiceImpl implements OrdersService {
                     if (!isEqualCompanyYarnOrder(companyYarnOrder, companyYarnOrderUpdate)) {
                         log.info("{} updating companyYarnOrderId={}",logPrefix ,companyYarnOrder.getId());
                         if (companyYarnOrder.getVersion().compareTo(companyYarnOrderUpdate.getVersion()) != 0) {
-                            throw new OptimisticLockException("CompanyYarnOrder has been already updated id="+ companyYarnOrder.getId() + " | Version received="+companyYarnOrderUpdate.getVersion()+", persisted="+ companyYarnOrder.getVersion());
+                            throw new OptimisticLockException("CompanyYarnOrder has been already updated id="+ companyYarnOrder.getId() + " [Version received="+companyYarnOrderUpdate.getVersion()+", persisted="+ companyYarnOrder.getVersion()+"]");
                         }
                         companyYarnOrder.setOrderDt(companyYarnOrderUpdate.getOrderDt());
                         companyYarnOrder.setYarnInvoiceNo(companyYarnOrderUpdate.getYarnInvoiceNo());
