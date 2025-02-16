@@ -1,0 +1,43 @@
+{
+  "id": 8,
+  "companyYarnOrders": [
+    {
+      "id": 32,
+      "yarnOrderItems": [],
+      "yarnBuilties": [],
+      "orderDt": "2025-01-15",
+      "yarnInvoiceNo": "KE/012",
+      "remark": "Screenshot shared on whatsapp",
+      "totalQuantity": 549.53,
+      "totalAmount": 68884.0,
+      "version": 5
+    },
+    {
+      "id": 33,
+      "yarnOrderItems": [],
+      "yarnBuilties": [
+        {
+          "id": 1,
+          "updateDt": null,
+          "version": 0,
+          "receivedDt": "2025-02-16",
+          "loadUnloadCharges": 3500.0,
+          "boxes": 50,
+          "tranportCompany": null,
+          "vehicleNo": "MG 12 123",
+          "quantity": 1350.0
+        }
+      ],
+      "orderDt": "2025-01-14",
+      "yarnInvoiceNo": "KE/001",
+      "remark": "Screenshot shared on whatsapp2",
+      "totalQuantity": 549.53,
+      "totalAmount": 68884.0,
+      "version": 4
+    }
+  ],
+  "company": null,
+  "orderStatusType": "RECEIVED",
+  "remarks": "Order is in process",
+  "version": 5
+}
