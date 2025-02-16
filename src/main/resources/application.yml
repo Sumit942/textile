@@ -47,4 +47,4 @@ challan:
   showGroupByParty: false
 logging:
   level:
-    org.springframework.web: "debug"
+    org.springframework.web: "trace"

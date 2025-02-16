@@ -10,6 +10,7 @@ import { Contact } from './component/Contact'
 import { setupCSRF } from './service/api'
 import { YarnList } from './component/YarnList'
 import CompanyForm from './component/Company'
+import OrderForm from './component/OrderForm'
 // import Navbar from './component/NavTest'
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path='/material/yarn/view' element={<YarnList />} />
           <Route path='/company/save' element={<CompanyForm />} />
           <Route path='/*' element={<NoPage />} />
+          <Route path='/orders/save' element={<OrderForm />} />
         </Routes>
       </BrowserRouter>
     </div>
