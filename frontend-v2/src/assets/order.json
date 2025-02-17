@@ -36,7 +36,9 @@
       "version": 4
     }
   ],
-  "company": null,
+  "company": {
+    "id": 1
+  },
   "orderStatusType": "RECEIVED",
   "remarks": "Order is in process",
   "version": 5
