@@ -9,7 +9,10 @@ const OrderFormVal = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      company: "",
+      company: {
+        id: 0,
+        name: ""
+      },
       orderStatusType: "",
       remarks: "",
       version: 0,
@@ -19,7 +22,6 @@ const OrderFormVal = () => {
           yarnBuilties: [
             {
               id: 0,
-              updateDt: "",
               version: 0,
               receivedDt: "",
               loadUnloadCharges: 0,
@@ -57,8 +59,8 @@ const OrderFormVal = () => {
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto mt-16 max-w-xl sm:mt-20'>
       <div>
         <input
-          {...register("company", { required: "Company is required" })}
-          placeholder="Company"
+          {...register("company.id", { required: "Company is required" })}
+          placeholder="Enter Company Name"
           className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.company ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
         />
         {errors.company && <p className="text-red-500 text-sm mt-1">{errors.company.message}</p>}
@@ -88,9 +90,54 @@ const OrderFormVal = () => {
       </div>
 
       {orderFields.map((order, orderIndex) => (
-        <div key={order.id}>
-          <h3>Order {orderIndex + 1}</h3>
+        <OrderFormCompanyYarnOrder  key={order.id} orderIndex={orderIndex} order={order} register={register} removeOrder={removeOrder} errors={errors} control={control}/>
+      ))}
 
+      <button
+        type="button"
+        onClick={() =>
+          appendOrder({
+            yarnOrderItems: [],
+            yarnBuilties: [
+              {
+                id: 0,
+                version: 0,
+                receivedDt: "",
+                loadUnloadCharges: 0,
+                boxes: 0,
+                tranportCompany: "",
+                vehicleNo: "",
+                quantity: 0,
+              },
+            ],
+            orderDt: "",
+            yarnInvoiceNo: "",
+            remark: "",
+            totalQuantity: 0,
+            totalAmount: 0,
+            version: 0,
+          })
+        }
+        className="mb-3 w-full rounded-md bg-gray-50 px-3.5 py-3.5 text-center text-sm font-semibold text-indigo-500 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+      >
+        Add Order
+      </button>
+      <button type="submit"
+        className='mt-5 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+      >Submit</button>
+    </form>
+  );
+};
+export default OrderFormVal;
+
+const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, control }) => {
+  const { fields: builtieFields, append: appendBuiltie, remove: removeBuiltie } = useFieldArray({
+    control,
+    name: `companyYarnOrders.${orderIndex}.yarnBuilties`,
+  });
+  return (
+    <div>
+          <h3>Order {orderIndex + 1}</h3>
           <input
             {...register(`companyYarnOrders.${orderIndex}.orderDt`, {
               required: "Order date is required",
@@ -147,7 +194,7 @@ const OrderFormVal = () => {
             Remove Order
           </button>
           <h4>Yarn Builties</h4>
-          {order.yarnBuilties.map((builtie, builtieIndex) => (
+          {builtieFields.map((builtie, builtieIndex) => (
             <div key={builtie.id}>
               <input
                 {...register(
@@ -267,20 +314,21 @@ const OrderFormVal = () => {
                   }
                 </p>
               )}
+
+          <button
+            type="button"
+            onClick={() => removeBuiltie(builtieIndex)}
+            className="mb-3 w-full rounded-md bg-gray-50 px-3.5 py-3.5 text-center text-sm font-semibold text-red-500 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            Remove Yarn Builtie
+          </button>
             </div>
           ))}
-        </div>
-      ))}
-
-      <button
-        type="button"
-        onClick={() =>
-          appendOrder({
-            yarnOrderItems: [],
-            yarnBuilties: [
-              {
+          <button
+            type="button"
+            onClick={() =>
+              appendBuiltie({
                 id: 0,
-                updateDt: "",
                 version: 0,
                 receivedDt: "",
                 loadUnloadCharges: 0,
@@ -288,24 +336,12 @@ const OrderFormVal = () => {
                 tranportCompany: "",
                 vehicleNo: "",
                 quantity: 0,
-              },
-            ],
-            orderDt: "",
-            yarnInvoiceNo: "",
-            remark: "",
-            totalQuantity: 0,
-            totalAmount: 0,
-            version: 0,
-          })
-        }
-        className="mb-3 w-full rounded-md bg-gray-50 px-3.5 py-3.5 text-center text-sm font-semibold text-indigo-500 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-      >
-        Add Order
-      </button>
-      <button type="submit"
-        className='mt-5 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-      >Submit</button>
-    </form>
-  );
-};
-export default OrderFormVal;
+              })
+            }
+            className="mb-3 w-full rounded-md bg-gray-50 px-3.5 py-3.5 text-center text-sm font-semibold text-indigo-500 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            Add Yarn Builtie
+          </button>
+        </div>
+  )
+}
