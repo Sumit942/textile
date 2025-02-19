@@ -1,6 +1,4 @@
-import React from "react";
 import API from "./api";
-import axios from "axios";
 
 const API_URL = "/api/yarn";
 

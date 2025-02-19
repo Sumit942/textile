@@ -1,5 +1,7 @@
-import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { getCompanyList } from "../service/company";
+import { saveOrder } from "../service/orderApi";
 
 const OrderFormVal = () => {
   const {
@@ -7,10 +9,13 @@ const OrderFormVal = () => {
     handleSubmit,
     register,
     formState: { errors },
+    setValue,
+    watch,
+    clearErrors,
   } = useForm({
     defaultValues: {
       company: {
-        id: 0,
+        id: null,
         name: ""
       },
       orderStatusType: "",
@@ -21,12 +26,15 @@ const OrderFormVal = () => {
           yarnOrderItems: [],
           yarnBuilties: [
             {
-              id: 0,
+              id: null,
               version: 0,
               receivedDt: "",
               loadUnloadCharges: 0,
               boxes: 0,
-              tranportCompany: "",
+              tranportCompany: {
+                id: 0,
+                name: "",
+              },
               vehicleNo: "",
               quantity: 0,
             },
@@ -51,34 +59,136 @@ const OrderFormVal = () => {
     name: "companyYarnOrders",
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const response = await saveOrder(data);
+    if (response && response.status === 201) {
+      alert("Order saved successfully");
+    } else {
+      if (response && response.status === 400) {
+        alert("Error saving order: " + response.data.message);
+      } else {
+        alert("Error saving order", response);
+      }
+    }
   };
+
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  const fetchCompanies = async (query) => {
+    try {
+      const response = await getCompanyList(query);
+      setCompanyOptions(response.data);
+      setShowDropdown(true);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+  
+  const handleCompanyChange = (event) => {
+    const query = event.target.value;
+    setSelectedCompany(null);
+    setValue("company.name", query);
+    if (query.length >= 3) {
+      fetchCompanies(query);
+    } else {
+      setCompanyOptions([]);
+      setShowDropdown(false);
+    }
+  };
+
+  const handleCompanySelect = (company) => {
+    setSelectedCompany(company);
+    setValue("company.name", company.name);
+    setValue("company.id", company.id);
+    clearErrors("company.name");
+    clearErrors("company.id");
+    setShowDropdown(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "ArrowDown") {
+      setHighlightedIndex((prevIndex) => Math.min(prevIndex + 1, companyOptions.length - 1));
+    } else if (event.key === "ArrowUp") {
+      setHighlightedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    } else if (event.key === "Enter" && highlightedIndex >= 0) {
+      event.preventDefault();
+      handleCompanySelect(companyOptions[highlightedIndex]);
+    }
+  };
+
+  useEffect(() => {
+    if (highlightedIndex >= 0 && highlightedIndex < companyOptions.length) {
+      const selectedOption = document.getElementById(`company-option-${highlightedIndex}`);
+      if (selectedOption) {
+        selectedOption.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [highlightedIndex]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto mt-16 max-w-xl sm:mt-20'>
       <div>
         <input
-          {...register("company.id", { required: "Company is required" })}
-          placeholder="Enter Company Name"
-          className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.company ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+          type="hidden"
+          {...register("company.id", { required: "Please search and select company" })}
+          value={selectedCompany ? selectedCompany.id : ""}
         />
-        {errors.company && <p className="text-red-500 text-sm mt-1">{errors.company.message}</p>}
-
         <input
+          {...register("company.name", { required: "Company name is required" })}
+          placeholder="Enter Company Name"
+          className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${errors.company?.name || errors.company?.id ? 'outline-red-300' : 'outline-gray-300'} placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+          onChange={handleCompanyChange}
+          onKeyDown={handleKeyDown}
+          onBlur={() => setShowDropdown(false)}
+          value={selectedCompany ? selectedCompany.name : watch("company.name")}
+          autoComplete="off"
+        />
+        {showDropdown && companyOptions.length > 0 && (
+          <ul className="border border-gray-300 rounded-md mt-2 max-h-60 overflow-y-auto">
+            {companyOptions.map((company, index) => (
+              <li
+                key={company.id}
+                id={`company-option-${index}`}
+                className={`px-3 py-2 cursor-pointer hover:bg-gray-200 ${highlightedIndex === index ? 'bg-gray-200' : ''}`}
+                onClick={() => handleCompanySelect(company)}
+              >
+                {company.name} - <b><i>{company.gst}</i></b>
+              </li>
+            ))}
+          </ul>
+        )}
+        {errors.company?.id && <p className="text-red-500 text-sm mt-1">{errors.company.id.message}</p>}
+        {errors.company?.name && <p className="text-red-500 text-sm mt-1">{errors.company.name.message}</p>}
+
+        <select
           {...register("orderStatusType", {
             required: "Order status type is required",
           })}
           placeholder="Order Status Type"
-          className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.orderStatusType ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
-        />
-
+          className={`col-start-1 row-start-1 w-full rounded-md px-3.5 py-2 text-base text-gray-500 placeholder:text-gray-400 outline outline-1 -outline-offset-1 ${ errors.orderStatusType ? 'outline-red-300' : 'outline-gray-300' } focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6`}
+          // className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${errors.orderStatusType ? 'outline-red-300' : 'outline-gray-300'} placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+        >
+          <option value="" disabled>Select Order Status</option>
+          <option value="CREATED">Created</option>
+          <option value="RECEIVED">Received</option>
+          <option value="IN_PROCESS">In Process</option>
+          <option value="HALF_PROCESSED">Half Processed</option>
+          <option value="PROCESSED">Processed</option>
+          <option value="HALF_DELIVERED">Half Delivered</option>
+          <option value="PENDING">Pending</option>
+          <option value="DELIVERED">Delivered</option>
+          <option value="HOLD">Hold</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
         {errors.orderStatusType && <p className="text-red-500 text-sm mt-1">{errors.orderStatusType.message}</p>}
 
         <input
           {...register("remarks", { required: "Remarks are required" })}
           placeholder="Remarks"
-          className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.remarks ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
+          className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${errors.remarks ? 'outline-red-300' : 'outline-gray-300'} placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
         />
         {errors.remarks && <p className="text-red-500 text-sm mt-1">{errors.remarks.message}</p>}
 
@@ -90,7 +200,7 @@ const OrderFormVal = () => {
       </div>
 
       {orderFields.map((order, orderIndex) => (
-        <OrderFormCompanyYarnOrder  key={order.id} orderIndex={orderIndex} order={order} register={register} removeOrder={removeOrder} errors={errors} control={control}/>
+        <OrderFormCompanyYarnOrder key={order.id} orderIndex={orderIndex} order={order} register={register} removeOrder={removeOrder} errors={errors} control={control} />
       ))}
 
       <button
@@ -263,7 +373,7 @@ const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, 
 
               <input
                 {...register(
-                  `companyYarnOrders.${orderIndex}.yarnBuilties.${builtieIndex}.tranportCompany`
+                  `companyYarnOrders.${orderIndex}.yarnBuilties.${builtieIndex}.tranportCompany.name`
                 )}
                 placeholder="Transport Company"
                 className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyYarnOrders?.[orderIndex]?.yarnBuilties?.[builtieIndex]?.tranportCompany ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
