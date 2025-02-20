@@ -3,6 +3,7 @@ package com.example.textile.serviceImpl;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
+import com.example.textile.entity.YarnBuilty;
 import com.example.textile.repo.OrdersRepository;
 import com.example.textile.service.OrdersService;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
 
 import static com.example.textile.transform.TransformationDTOToEntity.transformOrdersDto;
 import static com.example.textile.transform.TransformationEntityToDTO.transformOrdersEntity;
-import static com.example.textile.utility.CompareDtoAndEntityObjects.isEqualCompanyYarnOrder;
+import static com.example.textile.utility.DtoAndEntityComparator.isEqualCompanyYarnOrder;
+import static com.example.textile.utility.DtoAndEntityComparator.isEqualYarnBuilty;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 @Slf4j
@@ -78,7 +80,7 @@ public class OrderServiceImpl implements OrdersService {
                     .filter(yarnOrder -> Objects.nonNull(yarnOrder.getId()) && yarnOrder.getId().compareTo(0L) > 0)
                     .collect(Collectors.toMap(CompanyYarnOrder::getId, Function.identity()));
 
-            //Add new companyYarnOrders id=null
+            //Add new companyYarnOrders where orderId=null
             orders.getCompanyYarnOrders().stream()
                     .filter(yarnOrder -> Objects.isNull(yarnOrder.getId()) || yarnOrder.getId().compareTo(0L) <= 0)
                     .forEach(persisted::addCompanyYarnOrders);
@@ -98,6 +100,7 @@ public class OrderServiceImpl implements OrdersService {
                         companyYarnOrder.setTotalQuantity(companyYarnOrderUpdate.getTotalQuantity());
                         companyYarnOrder.setTotalAmount(companyYarnOrderUpdate.getTotalAmount());
                         companyYarnOrder.setRemark(companyYarnOrderUpdate.getRemark());
+                        updateYarnBuilties(companyYarnOrder, companyYarnOrderUpdate);
                     }
                     //removing the updated companyYarnOrder from Map
                     companyYarnOrderMap.remove(companyYarnOrder.getId());
@@ -110,6 +113,39 @@ public class OrderServiceImpl implements OrdersService {
             persisted.setCompanyYarnOrders(null);
         }
         log.info("updatedPersistedOrderObject() Exit");
+    }
+
+    private static void updateYarnBuilties(CompanyYarnOrder companyYarnOrder, CompanyYarnOrder companyYarnOrderUpdate) {
+        //checking yarnBuilties
+        if (!isEmpty(companyYarnOrderUpdate.getYarnOrderItems())) {
+            Map<Long, YarnBuilty> yarnBuiltyMap = companyYarnOrderUpdate.getYarnBuilties().stream()
+                    .filter(yarnBuilty -> Objects.nonNull(yarnBuilty.getId()) && yarnBuilty.getId().compareTo(0L) > 0)
+                    .collect(Collectors.toMap(YarnBuilty::getId, Function.identity()));
+
+            for (YarnBuilty yarnBuilty : companyYarnOrder.getYarnBuilties()) {
+                YarnBuilty yarnBuiltyRecd = yarnBuiltyMap.get(yarnBuilty.getId());
+                if (Objects.isNull(yarnBuiltyRecd)) {
+                    yarnBuilty.setCompanyYarnOrder(null);
+                } else {
+                    if (yarnBuilty.getVersion().compareTo(yarnBuiltyRecd.getVersion()) != 0) {
+                        throw new OptimisticLockException("YarnBuilty has been already updated id="+ yarnBuilty.getId() + " [Version received="+yarnBuiltyRecd.getVersion()+", persisted="+ yarnBuilty.getVersion()+"]");
+                    }
+                    if (!isEqualYarnBuilty(yarnBuilty, yarnBuiltyRecd)) {
+                        yarnBuilty.setBoxes(yarnBuiltyRecd.getBoxes());
+                        yarnBuilty.setQuantity(yarnBuiltyRecd.getQuantity());
+                        yarnBuilty.setReceivedDt(yarnBuiltyRecd.getReceivedDt());
+                        yarnBuilty.setVehicleNo(yarnBuiltyRecd.getVehicleNo());
+                        yarnBuilty.setLoadUnloadCharges(yarnBuiltyRecd.getLoadUnloadCharges());
+                        yarnBuilty.setTranportCompany(yarnBuiltyRecd.getTranportCompany());
+                    }
+                    yarnBuiltyMap.remove(yarnBuilty.getId());
+                }
+            }
+            //Adding the extra added yarnBuilties
+            yarnBuiltyMap.values().forEach(companyYarnOrder::addYarnBuilty);
+        } else {
+            companyYarnOrder.setYarnBuilties(null);
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

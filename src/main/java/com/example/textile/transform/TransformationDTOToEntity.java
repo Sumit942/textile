@@ -5,6 +5,7 @@ import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.Company;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
+import com.example.textile.entity.YarnBuilty;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class TransformationDTOToEntity {
         orders.setId(ordersDto.getId());
         orders.setRemarks(ordersDto.getRemarks());
         orders.setOrderStatusType(ordersDto.getOrderStatusType());
-        if (Objects.nonNull(ordersDto.getCompany())) {
+        if (Objects.nonNull(ordersDto.getCompany()) && Objects.nonNull(ordersDto.getCompany().getId())) {
             orders.setCompany(modelMapper.map(ordersDto.getCompany(), Company.class));
         }
 
@@ -48,8 +49,18 @@ public class TransformationDTOToEntity {
         companyYarnOrder.setTotalQuantity(companyYarnOrderDto.getTotalQuantity());
         companyYarnOrder.setTotalAmount(companyYarnOrderDto.getTotalAmount());
         companyYarnOrder.setYarnOrderItems(companyYarnOrderDto.getYarnOrderItems());
+
         companyYarnOrder.setYarnBuilties(companyYarnOrderDto.getYarnBuilties());
+        companyYarnOrder.getYarnBuilties()
+                .forEach(TransformationDTOToEntity::validateYarnBuilty);
 
         return companyYarnOrder;
+    }
+
+    public static void validateYarnBuilty(YarnBuilty yarnBuilty) {
+        Company tranportCompany = yarnBuilty.getTranportCompany();
+        if (Objects.isNull(tranportCompany) || Objects.isNull(tranportCompany.getId())) {
+            yarnBuilty.setTranportCompany(null);
+        }
     }
 }

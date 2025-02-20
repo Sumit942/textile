@@ -32,7 +32,7 @@ const OrderFormVal = () => {
               loadUnloadCharges: 0,
               boxes: 0,
               tranportCompany: {
-                id: 0,
+                id: null,
                 name: "",
               },
               vehicleNo: "",
@@ -210,12 +210,15 @@ const OrderFormVal = () => {
             yarnOrderItems: [],
             yarnBuilties: [
               {
-                id: 0,
+                id: null,
                 version: 0,
                 receivedDt: "",
                 loadUnloadCharges: 0,
                 boxes: 0,
-                tranportCompany: "",
+                tranportCompany: {
+                  id: null,
+                  name: "",
+                },
                 vehicleNo: "",
                 quantity: 0,
               },

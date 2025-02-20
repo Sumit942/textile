@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class CompanyYarnOrder extends Document {
     private Long id;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL)
     private List<YarnOrderItem> yarnOrderItems;
-    @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST})
+    @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonBackReference
     private List<YarnBuilty> yarnBuilties;
     @ManyToOne
@@ -50,6 +51,14 @@ public class CompanyYarnOrder extends Document {
             }
         }
         this.yarnBuilties = yarnBuilties;
+    }
+
+    public void addYarnBuilty(YarnBuilty yarnBuilty) {
+        if (Objects.isNull(this.yarnBuilties)) {
+            this.yarnBuilties = new ArrayList<>();
+        }
+        yarnBuilty.setCompanyYarnOrder(this);
+        this.yarnBuilties.add(yarnBuilty);
     }
 
     /*public String getYarnFabricDesign() {
