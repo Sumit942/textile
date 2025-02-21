@@ -427,7 +427,7 @@ const CompanyForm = () => {
             <div className="sm:col-span-2">
                 {company.bankDetails && company.bankDetails.length ? <h3 className="text-lg font-semibold mb-2">Bank Details</h3> : ''}
                 {
-                    company.bankDetails && company.bankDetails.length > 0
+                    company.bankDetails?.length > 0
                     ? company.bankDetails.map((bankDetail, index) => (
                         <BankDetail
                           key={index}
