@@ -25,6 +25,7 @@ public class NavigationItem {
     private NavigationItem parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("orderIndex")
     @JsonManagedReference
     private List<NavigationItem> children;
 

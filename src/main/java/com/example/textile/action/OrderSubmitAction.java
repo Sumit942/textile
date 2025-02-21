@@ -55,7 +55,7 @@ public class OrderSubmitAction extends RestActionExecutor<OrdersDto> {
                 if (Objects.isNull(yarnOrders.get(i).getYarnInvoiceNo()) || yarnOrders.get(i).getYarnInvoiceNo().isBlank())
                     continue;
                 if (yarnInvoiceNos.contains(yarnOrders.get(i).getYarnInvoiceNo())) {
-                    errorMap.put("yarnOrders["+i+"].yarnInvoiceNo", new String[]{"Duplicate.ordersDto.yarnOrders.yarnInvoiceNo"});
+                    errorMap.put("companyYarnOrders["+i+"].yarnInvoiceNo", new String[]{"Duplicate.ordersDto.yarnOrders.yarnInvoiceNo"});
                 } else {
                     yarnInvoiceNos.add(yarnOrders.get(i).getYarnInvoiceNo());
                 }
@@ -65,7 +65,7 @@ public class OrderSubmitAction extends RestActionExecutor<OrdersDto> {
                 for (int i = 0; i < yarnOrders.size(); i++) {
                     List<Long> orderIds = yarnOrderService.getOrderIdByYarnInvoiceNoAndIdNot(yarnOrders.get(i).getYarnInvoiceNo(), ordersDto.getId());
                     if (!orderIds.isEmpty()) {
-                        errorMap.put("yarnOrders["+i+"].yarnInvoiceNo", new String[]{"DBDuplicate.ordersDto.yarnOrders.yarnInvoiceNo",
+                        errorMap.put("companyYarnOrders["+i+"].yarnInvoiceNo", new String[]{"DBDuplicate.ordersDto.yarnOrders.yarnInvoiceNo",
                                 orderIds.toString()});
                     }
                 }

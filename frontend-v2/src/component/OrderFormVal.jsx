@@ -8,24 +8,12 @@ const OrderFormVal = () => {
     control,
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
     setValue,
     watch,
     clearErrors,
-  } = useForm({
-    defaultValues: {
-      id: null,
-      company: {
-        id: null,
-        name: null
-      },
-      orderStatusType: null,
-      remarks: null,
-      version: null,
-      companyYarnOrders: [
-      ],
-    },
-  });
+    setError,
+  } = useForm();
 
   const {
     fields: orderFields,
@@ -37,15 +25,25 @@ const OrderFormVal = () => {
   });
 
   const onSubmit = async (data) => {
-    const response = await saveOrder(data);
-    if (response && response.status === 201) {
-      alert("Order saved successfully");
-    } else {
-      if (response && response.status === 400) {
-        alert("Error saving order: " + response.data.message);
+
+    if (!isValid) {
+      return;
+    }
+    try {
+      const response = await saveOrder(data);
+      if (response && response.status === 201) {
+        alert("Order saved successfully");
+      } else if (response && response.status === 400) {
+        const apiErrors = response.response.data.errorMessages;
+        for (const key in apiErrors) {
+          setError(key, { type: "manual", message: apiErrors[key] });
+        }
       } else {
         alert("Error saving order", response);
       }
+    } catch (error) {
+      console.error("Error saving order:", error);
+      alert("Error saving order");
     }
   };
 
@@ -233,7 +231,7 @@ const OrderFormVal = () => {
       </button>
       <button type="submit"
         className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-      >Submit</button>
+      >{isSubmitting ? 'Saving Order...' : 'Save Order'}</button>
       </div>
     </form>
     </div>
