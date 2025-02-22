@@ -5,6 +5,7 @@ import com.example.textile.constants.ParameterKey;
 import com.example.textile.dto.ErrorResponseDto;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.Orders;
+import com.example.textile.entity.OrdersView;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.executors.ActionExecutor;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.textile.transform.TransformationEntityToDTO.transformOrdersEntity;
+import static com.example.textile.utility.LogUtils.*;
 
 @Slf4j
 @RestController
@@ -57,6 +59,15 @@ public class OrderController extends BaseController{
         log.info("Entry fetching all orders");
         List<OrdersDto> ordersDtos = ordersService.findAll();
         return new ResponseEntity<>(ordersDtos, HttpStatus.OK);
+    }
+
+    @GetMapping("view")
+    public ResponseEntity<List<OrdersView>> fetchOrderView() {
+        log.info(createEntryLog("fetchOrderView()"));
+        List<OrdersView> invoiceViews = ordersService.fetchView();
+        String logSuffix = createLogSuffix("invoiceViewCount",invoiceViews.size());
+        log.info(createExitLog("fetchOrderView()", logSuffix));
+        return ResponseEntity.ok(invoiceViews);
     }
 
     @PostMapping

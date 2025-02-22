@@ -37,7 +37,11 @@ const OrderLists = () => {
     };
 
     if (loading) {
-        return <CircularProgress />;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </div>
+        );
     }
 
     return (
@@ -48,6 +52,7 @@ const OrderLists = () => {
                         <TableCell>Sr. No</TableCell>
                         <TableCell>Order Name</TableCell>
                         <TableCell>Order Status</TableCell>
+                        <TableCell>Details</TableCell>
                         <TableCell>Action</TableCell>
                     </TableRow>
                 </TableHead>
@@ -55,14 +60,15 @@ const OrderLists = () => {
                     {orders.map((order, index) => (
                         <TableRow key={order.id}>
                             <TableCell>
-                                <Button onClick={() => navigate(`/edit-order/${order.id}`)}>
+                                <Button onClick={() => navigate(`/edit-order/${order.orderId}`)}>
                                     {index + 1}
                                 </Button>
                             </TableCell>
-                            <TableCell>{order.order_name}</TableCell>
-                            <TableCell>{order.order_status}</TableCell>
+                            <TableCell>{order.companyName}</TableCell>
+                            <TableCell>{order.orderStatusType}</TableCell>
+                            <TableCell>{order.itemsWithQuantities}</TableCell>
                             <TableCell>
-                                <Button className="delete-button" data-id={order.id} color="secondary">
+                                <Button className="delete-button" data-id={order.orderId} color="secondary">
                                     Delete
                                 </Button>
                             </TableCell>

@@ -1,16 +1,17 @@
 package com.example.textile.entity;
 
-import lombok.Data;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-@Data
 @Entity
-@ToString(exclude = {"companyYarnOrder", "yarnOrderItemProducts"})
+@Setter
+@Getter
 public class YarnOrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,7 @@ public class YarnOrderItem {
     @ManyToOne
     private Yarn yarn;
     @ManyToOne
+    @JsonIgnore
     private CompanyYarnOrder companyYarnOrder;
     @Column(nullable = false)
     private Double quantity;

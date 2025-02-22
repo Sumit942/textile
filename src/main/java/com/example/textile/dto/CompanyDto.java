@@ -3,13 +3,15 @@ package com.example.textile.dto;
 import com.example.textile.entity.Address;
 import com.example.textile.entity.BankDetail;
 import com.example.textile.entity.CompanyType;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class CompanyDto {
     public CompanyDto(Long id, String name, String gst) {
         this.id = id;

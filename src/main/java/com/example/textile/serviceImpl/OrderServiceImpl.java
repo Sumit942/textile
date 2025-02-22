@@ -3,8 +3,10 @@ package com.example.textile.serviceImpl;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
+import com.example.textile.entity.OrdersView;
 import com.example.textile.entity.YarnBuilty;
 import com.example.textile.repo.OrdersRepository;
+import com.example.textile.repo.OrdersViewRepo;
 import com.example.textile.service.OrdersService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 public class OrderServiceImpl implements OrdersService {
     private OrdersRepository ordersRepo;
     private ModelMapper modelMapper;
+    private OrdersViewRepo ordersViewRepo;
 
     @Override
     public List<OrdersDto> findAll() {
@@ -168,5 +171,12 @@ public class OrderServiceImpl implements OrdersService {
     @Override
     public Boolean existById(Long id) {
         return ordersRepo.existsById(id);
+    }
+
+    //TODO: only show client specific order
+    @Override
+    public List<OrdersView> fetchView() {
+
+        return ordersViewRepo.findAll();
     }
 }

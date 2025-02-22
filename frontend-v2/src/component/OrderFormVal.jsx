@@ -115,6 +115,7 @@ const OrderFormVal = () => {
         <input
           type="hidden"
           {...register("version", { required: false })}
+          defaultValue={0}
         />
         <input
           type="hidden"
@@ -133,7 +134,7 @@ const OrderFormVal = () => {
           onChange={handleCompanyChange}
           onKeyDown={handleKeyDown}
           onBlur={() => setShowDropdown(false)}
-          value={selectedCompany ? selectedCompany.name : watch("company.name")}
+          value={selectedCompany ? selectedCompany.name : watch("company.name") ? watch("company.name") : ""}
           autoComplete="off"
         />
         {showDropdown && companyOptions.length > 0 && (

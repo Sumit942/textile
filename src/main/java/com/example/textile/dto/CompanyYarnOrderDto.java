@@ -3,16 +3,15 @@ package com.example.textile.dto;
 import com.example.textile.entity.YarnBuilty;
 import com.example.textile.entity.YarnOrderItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
-@Data
+@Setter
+@Getter
 @ToString(exclude = {"yarnOrderItems","yarnBuilties","order"})
 public class CompanyYarnOrderDto {
     public CompanyYarnOrderDto(Long id) {

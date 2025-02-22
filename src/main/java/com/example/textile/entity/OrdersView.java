@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @ToString
-public class OrderView {
+public class OrdersView {
     @Id
     private Long id;
     private Long orderId;

@@ -1,6 +1,6 @@
 import API from "./api";
 
-const API_URL = '/order/';
+const API_URL = '/order';
 
 export const saveOrder = async (order) => {
     console.log('saveOrder() Entry: ', order);
@@ -17,7 +17,7 @@ export const saveOrder = async (order) => {
 export const fetchOrderList = async () => {
     console.log('fetchOrderList() Entry');
     try {
-        const response = await API.get(`${API_URL}`);
+        const response = await API.get(`${API_URL}/view`);
         console.log('fetchOrderList() Exit: ', response);
         return response;
     } catch (error) {

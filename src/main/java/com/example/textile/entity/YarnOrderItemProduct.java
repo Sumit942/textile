@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ public class YarnOrderItemProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @JsonBackReference
     private YarnOrderItem yarnOrderItem;
     @ManyToOne
     private YarnFabricDesign yarnFabricDesign;
