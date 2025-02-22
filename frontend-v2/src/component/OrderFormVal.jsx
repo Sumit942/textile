@@ -238,7 +238,7 @@ const OrderFormVal = () => {
   );
 };
 export default OrderFormVal;
-
+//TODO: add remark field in OrderFormCompanyYarnOrder
 const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, control }) => {
   const { fields: builtieFields, append: appendBuiltie, remove: removeBuiltie } = useFieldArray({
     control,

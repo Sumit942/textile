@@ -12,6 +12,7 @@ import { YarnList } from './component/YarnList'
 import CompanyForm from './component/Company'
 import OrderForm from './component/OrderForm'
 import OrderFormVal from './component/OrderFormVal'
+import OrderLists from './component/OrderLists'
 // import Navbar from './component/NavTest'
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path='/company/save' element={<CompanyForm />} />
           <Route path='/*' element={<NoPage />} />
           <Route path='/orders/save' element={<OrderFormVal />} />
+          <Route path='/orders' element={<OrderLists />} />
         </Routes>
       </BrowserRouter>
     </div>
