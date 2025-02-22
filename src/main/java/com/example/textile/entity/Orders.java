@@ -1,8 +1,9 @@
 package com.example.textile.entity;
 
 import com.example.textile.enums.OrderStatusType;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,14 +12,14 @@ import java.util.List;
 import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = false)
-@Data
+@Setter
+@Getter
 @Entity
 public class Orders extends Document implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
     private List<CompanyYarnOrder> companyYarnOrders;
     @ManyToOne(fetch = FetchType.LAZY)
     private Company company;

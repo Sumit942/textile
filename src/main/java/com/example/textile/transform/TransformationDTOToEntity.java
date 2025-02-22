@@ -51,9 +51,10 @@ public class TransformationDTOToEntity {
         companyYarnOrder.setYarnOrderItems(companyYarnOrderDto.getYarnOrderItems());
 
         companyYarnOrder.setYarnBuilties(companyYarnOrderDto.getYarnBuilties());
-        companyYarnOrder.getYarnBuilties()
-                .forEach(TransformationDTOToEntity::validateYarnBuilty);
-
+        if (companyYarnOrder.getYarnBuilties() != null) {
+            companyYarnOrder.getYarnBuilties()
+                    .forEach(TransformationDTOToEntity::validateYarnBuilty);
+        }
         return companyYarnOrder;
     }
 

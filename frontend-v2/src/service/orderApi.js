@@ -25,3 +25,15 @@ export const fetchOrderList = async () => {
         return error;
     }
 };
+
+export const fetchOrderByID = async (orderId) => {
+    console.log('fetchOrderByID() Entry: ', orderId);
+    try {
+        const response = await API.get(`${API_URL}/${orderId}`);
+        console.log('fetchOrderByID() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchOrderByID() Error fetching order:', error);
+        return error;
+    }
+}

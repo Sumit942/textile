@@ -3,6 +3,7 @@ package com.example.textile.transform;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.dto.OrdersDto;
+import com.example.textile.entity.Company;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,7 +30,7 @@ public class TransformationEntityToDTO {
             ordersDto.setRemarks(orders.getRemarks());
             ordersDto.setOrderStatusType(orders.getOrderStatusType());
             if (Objects.nonNull(orders.getCompany())) {
-                ordersDto.setCompany(modelMapper.map(orders.getCompany(), CompanyDto.class));
+                ordersDto.setCompany(transformCompanyEntity(orders.getCompany()));
             }
 
             if (!CollectionUtils.isEmpty(orders.getCompanyYarnOrders())) {
@@ -44,6 +45,13 @@ public class TransformationEntityToDTO {
             log.error(logPrefix + "Exception while tranforming[Order->dto]:{}", orders.getId(), t);
             return ordersDto;
         }
+    }
+
+    private static CompanyDto transformCompanyEntity(Company company) {
+        CompanyDto companyDto = new CompanyDto();
+        companyDto.setId(company.getId());
+        companyDto.setName(company.getName());
+        return companyDto;
     }
 
     public static CompanyYarnOrderDto transformCompanyYarnOrderDto(CompanyYarnOrder yarnOrder) {

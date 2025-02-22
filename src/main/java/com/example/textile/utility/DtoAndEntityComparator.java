@@ -10,7 +10,7 @@ import static com.example.textile.utility.AppUtility.YYYY_MM_DD;
 
 public class DtoAndEntityComparator {
 
-    public static boolean   isEqualCompanyYarnOrder(CompanyYarnOrder source, CompanyYarnOrder that) {
+    public static boolean isEqualCompanyYarnOrder(CompanyYarnOrder source, CompanyYarnOrder that) {
         if (source == that) {
             return true;
         }

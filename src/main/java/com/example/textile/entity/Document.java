@@ -19,6 +19,7 @@ public class Document {
     @JsonIgnore
     private LocalDateTime insertDt;
     @UpdateTimestamp
+    @JsonIgnore
     private LocalDateTime updateDt;
     @Version
     private Long version;

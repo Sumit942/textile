@@ -1,8 +1,9 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
@@ -13,7 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = false)
-@Data
+@Setter
+@Getter
 @Entity
 public class CompanyYarnOrder extends Document {
     @Id
@@ -34,6 +36,9 @@ public class CompanyYarnOrder extends Document {
     private Double totalQuantity;
 //    @NotNull
     private BigDecimal totalAmount;
+    private Double cGst;
+    private Double sGst;
+    private Double iGst;
 
     public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {
         if (Objects.nonNull(yarnOrderItems)) {

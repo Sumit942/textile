@@ -61,6 +61,14 @@ public class OrderController extends BaseController{
         return new ResponseEntity<>(ordersDtos, HttpStatus.OK);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<OrdersDto> findById(@PathVariable Long id) {
+        log.info(createEntryLog("findById()"));
+        OrdersDto byId = ordersService.findById(id);
+        log.info(createExitLog("findById()", "OrderId="+byId.getId()));
+        return ResponseEntity.ok(byId);
+    }
+
     @GetMapping("view")
     public ResponseEntity<List<OrdersView>> fetchOrderView() {
         log.info(createEntryLog("fetchOrderView()"));

@@ -1,9 +1,44 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { getCompanyList } from "../service/company";
-import { saveOrder } from "../service/orderApi";
+import { fetchOrderByID, saveOrder } from "../service/orderApi";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderFormVal = () => {
+  const location = useLocation();
+  const data = location.state;
+  const orderId = data?.id;
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [isFetchingOrder, setIsFetchingOrder] = useState(false);
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    console.log('data', data)
+    if (orderId) {
+      fetchOrder(data.id);
+      setIsUpdate(true);
+    }
+  },[orderId]);
+  
+  const fetchOrder = async (orderId) => {
+    setIsFetchingOrder(true);
+    const response = await fetchOrderByID(orderId);
+    console.log('response', response)
+    if (response && response.status === 200) {
+      setValue("id", response.data.id);
+      setValue("version", response.data.version);
+      setValue("company.id", response.data.company.id);
+      setValue("company.name", response.data.company.name);
+      setValue("orderStatusType", response.data.orderStatusType);
+      setValue("remarks", response.data.remarks);
+      setValue("companyYarnOrders", response.data.companyYarnOrders);
+      setIsFetchingOrder(false);
+    } else {
+      alert('Error fetching order by id', orderId);
+    }
+  }
+
+
   const {
     control,
     handleSubmit,
@@ -13,6 +48,7 @@ const OrderFormVal = () => {
     watch,
     clearErrors,
     setError,
+    reset,
   } = useForm();
 
   const {
@@ -24,6 +60,12 @@ const OrderFormVal = () => {
     name: "companyYarnOrders",
   });
 
+  const resetForm = () => {
+    setIsUpdate(false);
+    setSelectedCompany(null);
+    reset();
+  }
+
   const onSubmit = async (data) => {
 
     if (!isValid) {
@@ -32,7 +74,12 @@ const OrderFormVal = () => {
     try {
       const response = await saveOrder(data);
       if (response && response.status === 201) {
-        alert("Order saved successfully");
+        navigation('/orders/view', {
+          state: {
+            id: response.data.id,
+            message: `Order ${isUpdate ? 'Updated' : 'Saved'} successfully`,
+          },
+        });
       } else if (response && response.status === 400) {
         const apiErrors = response.response.data.errorMessages;
         for (const key in apiErrors) {
@@ -103,29 +150,34 @@ const OrderFormVal = () => {
     }
   }, [highlightedIndex]);
 
+  if (isFetchingOrder) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="isolate bg-white px-6 py-5 sm:py-10 lg:px-8">
      <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-          Save Order
+          {isUpdate ? 'Update Order' : 'Save Order'}
         </h2>
      </div> 
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto mt-16 max-w-xl sm:mt-20'>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <input
           type="hidden"
+          defaultValue={""}
           {...register("version", { required: false })}
-          defaultValue={0}
         />
         <input
           type="hidden"
           {...register("id", { required: false })}
+          defaultValue={""}
         />
         <div className="sm:col-span-1">
         <input
           type="hidden"
           {...register("company.id", { required: "Please search and select company" })}
-          value={selectedCompany ? selectedCompany.id : ""}
+          value={selectedCompany ? selectedCompany.id : watch("company.id") ? watch("company.id") : ""}
         />
         <input
           {...register("company.name", { required: "Company name is required" })}
@@ -232,7 +284,14 @@ const OrderFormVal = () => {
       </button>
       <button type="submit"
         className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-      >{isSubmitting ? 'Saving Order...' : 'Save Order'}</button>
+      >{isSubmitting ? (isUpdate ? 'Updating Order...' : 'Saving Order...') : (isUpdate ? 'Update Order' : 'Save Order')}</button>
+      <button
+        type="button"
+        onClick={resetForm}
+        className="mt-3 w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+      >
+        Reset
+      </button>
       </div>
     </form>
     </div>
@@ -249,9 +308,20 @@ const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, 
     <div className="mb-2 border p-4 rounded-md grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       <div>
       <input
+        type="hidden"
+        {...register(`companyYarnOrders.${orderIndex}.id`, { required: false })}
+        defaultValue={""}
+      />
+      <input 
+        type="hidden"
+        {...register(`companyYarnOrders.${orderIndex}.version`, { required: false })}
+        defaultValue={""}
+      />
+      <input
         {...register(`companyYarnOrders.${orderIndex}.orderDt`, {
           required: "Order date is required",
         })}
+        type="date"
         placeholder="Order Date"
         className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyYarnOrders?.[orderIndex]?.orderDt ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
       />
@@ -279,6 +349,7 @@ const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, 
           required: "Total quantity is required",
         })}
         placeholder="Total Quantity"
+        step="0.01"
         className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyYarnOrders?.[orderIndex]?.totalQuantity ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
       />
       {errors.companyYarnOrders?.[orderIndex]?.totalQuantity && (
@@ -306,10 +377,27 @@ const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, 
           <div key={builtie.id} className="border p-4 rounded-md grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 mb-2">
             <div>
             <input
+              type="hidden"
+              {...register(
+                `companyYarnOrders.${orderIndex}.yarnBuilties.${builtieIndex}.id`,
+                { required: false }
+              )}
+              defaultValue={""}
+            />
+            <input
+              type="hidden"
+              {...register(
+                `companyYarnOrders.${orderIndex}.yarnBuilties.${builtieIndex}.version`,
+                { required: false }
+              )}
+              defaultValue={""}
+            />
+            <input
               {...register(
                 `companyYarnOrders.${orderIndex}.yarnBuilties.${builtieIndex}.receivedDt`,
                 { required: "Received date is required" }
               )}
+              type="date"
               placeholder="Received Date"
               className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyYarnOrders?.[orderIndex]?.yarnBuilties?.[builtieIndex]?.receivedDt ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
             />
@@ -417,6 +505,7 @@ const OrderFormCompanyYarnOrder = ({ orderIndex, register, errors, removeOrder, 
                 { required: "Quantity is required" }
               )}
               placeholder="Quantity"
+              step="0.01"
               className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${ errors.companyYarnOrders?.[orderIndex]?.yarnBuilties?.[builtieIndex]?.quantity ? 'outline-red-300' : 'outline-gray-300' } placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
             />
             {errors.companyYarnOrders?.[orderIndex]?.yarnBuilties?.[

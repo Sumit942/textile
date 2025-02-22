@@ -103,8 +103,8 @@ public class OrderServiceImpl implements OrdersService {
                         companyYarnOrder.setTotalQuantity(companyYarnOrderUpdate.getTotalQuantity());
                         companyYarnOrder.setTotalAmount(companyYarnOrderUpdate.getTotalAmount());
                         companyYarnOrder.setRemark(companyYarnOrderUpdate.getRemark());
-                        updateYarnBuilties(companyYarnOrder, companyYarnOrderUpdate);
                     }
+                    updateYarnBuilties(companyYarnOrder, companyYarnOrderUpdate);
                     //removing the updated companyYarnOrder from Map
                     companyYarnOrderMap.remove(companyYarnOrder.getId());
                 }
@@ -161,8 +161,6 @@ public class OrderServiceImpl implements OrdersService {
             for (CompanyYarnOrder companyYarnOrder : order.getCompanyYarnOrders()) {
                 companyYarnOrder.getYarnBuilties();
             }
-
-            order.getCompany();
             return transformOrdersEntity(modelMapper, order);
         }
         return null;
