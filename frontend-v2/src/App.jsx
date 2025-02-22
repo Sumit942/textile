@@ -10,11 +10,9 @@ import { Contact } from './component/Contact'
 import { setupCSRF } from './service/api'
 import { YarnList } from './component/YarnList'
 import CompanyForm from './component/Company'
-import OrderForm from './component/OrderForm'
 import OrderFormVal from './component/OrderFormVal'
 import OrderLists from './component/OrderLists'
 import CompanyYarnOrder from './component/CompanyYarnOrder'
-// import Navbar from './component/NavTest'
 
 function App() {
   const [navItems, setNavItems] = useState([])
