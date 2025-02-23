@@ -4,10 +4,14 @@ import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.repo.CompanyYarnOrderRepository;
 import com.example.textile.service.CompanyYarnOrderService;
+import com.example.textile.transform.TransformationDTOToEntity;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -17,6 +21,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.example.textile.utility.LogUtils.*;
+
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
@@ -36,7 +43,37 @@ public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
 
     @Override
     public CompanyYarnOrder save(CompanyYarnOrderDto companyYarnOrderDto) {
-        return null;
+        String logPrefix = "save()";
+        String logSuffix = createLogSuffix("companyYarnOrderDto", companyYarnOrderDto.getId());
+        log.info(createEntryLog(logPrefix));
+
+        CompanyYarnOrder companyYarnOrder = TransformationDTOToEntity.transformCompanyYarnOrder(companyYarnOrderDto);
+        if (Objects.nonNull(companyYarnOrderDto.getId()) && companyYarnOrderDto.getId().compareTo(0L) > 0) {
+            CompanyYarnOrder persisted = yarnOrderRepository.findById(companyYarnOrder.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Entity Not found by Id"+ companyYarnOrderDto.getId()));
+            updatePersistedCompanyYarnOrder(companyYarnOrder, persisted);
+            return yarnOrderRepository.save(persisted);
+        }
+
+        log.info(createExitLog(logPrefix, logSuffix));
+        return yarnOrderRepository.save(companyYarnOrder);
+    }
+
+    private void updatePersistedCompanyYarnOrder(CompanyYarnOrder companyYarnOrder, CompanyYarnOrder persisted) {
+        if (persisted.getVersion().compareTo(companyYarnOrder.getVersion()) != 0) {
+            throw new OptimisticLockException("Order has been already updated orderId="+ companyYarnOrder.getId() + " [ Version received="+companyYarnOrder.getVersion()+", persisted="+ persisted.getVersion() +"]");
+        }
+
+        persisted.setOrder(companyYarnOrder.getOrder());
+        persisted.setOrderDt(companyYarnOrder.getOrderDt());
+        persisted.setYarnInvoiceNo(companyYarnOrder.getYarnInvoiceNo());
+        persisted.setRemark(companyYarnOrder.getRemark());
+        persisted.setTotalAmount(companyYarnOrder.getTotalAmount());
+        persisted.setTotalQuantity(companyYarnOrder.getTotalQuantity());
+        persisted.setCGst(companyYarnOrder.getCGst());
+        persisted.setSGst(companyYarnOrder.getSGst());
+        persisted.setIGst(companyYarnOrder.getIGst());
+        persisted.setYarnOrderItems(companyYarnOrder.getYarnOrderItems());
     }
 
     @Override
