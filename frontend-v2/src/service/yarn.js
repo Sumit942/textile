@@ -14,7 +14,7 @@ export const addYarn = async (yarn) => {
     }
 };
 
-export const getYarn = async ( id ) => {
+export const getYarnById = async ( id ) => {
     console.log('getYarn() Entry')
     try {
         const response = await API.get(`${API_URL}${id ? '/'+id : ''}`)
@@ -25,3 +25,15 @@ export const getYarn = async ( id ) => {
         return err;
     }
 }
+
+export const getYarnByType = async (name) => {
+    console.log('getYarnByName() Entry: ', name);
+    try {
+        const response = await API.get(`${API_URL}/searchBy?type=${name}`);
+        console.log('getYarnByName() Exit: ', response);
+        return response;
+    } catch (err) {
+        console.log('getYarnByName() Error: ', err);
+        return err;
+    }
+};

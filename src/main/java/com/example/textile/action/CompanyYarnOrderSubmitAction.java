@@ -48,6 +48,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
         if (!isEmpty(companyYarnOrderDto.getYarnOrderItems())) {
             errorMap.put("yarnOrderItems", new String[]{"IsEmpty.companyYarnOrderDto.yarnOrderItems"});
         } else {
+            //TODO: duplicate check yarnInvoiceNo
             for (int i = 0; i < companyYarnOrderDto.getYarnOrderItems().size(); i++) {
                 YarnOrderItem yarnOrderItem = companyYarnOrderDto.getYarnOrderItems().get(i);
                 if (Objects.isNull(yarnOrderItem.getYarn()) || Objects.isNull(yarnOrderItem.getYarn().getId())) {

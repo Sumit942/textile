@@ -1,9 +1,19 @@
 package com.example.textile.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor
+@Setter
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class YarnDto {
+    public YarnDto(Long id, String type) {
+        this.id = id;
+        this.type = type;
+    }
     private Long id;
     private String type;
     private CompanyDto company;

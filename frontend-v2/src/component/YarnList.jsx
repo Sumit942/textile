@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getYarn } from "../service/yarn";
+import { getYarnById } from "../service/yarn";
 import { Link } from "react-router-dom";
 
 export const YarnList = () => {
@@ -10,7 +10,7 @@ export const YarnList = () => {
     }, [])
     
     const fetchYarn = async () => {
-      const yarnListResponse = await getYarn();
+      const yarnListResponse = await getYarnById();
       console.log('yarnListResponse: ', yarnListResponse.data)
       setRowData(yarnListResponse.data)
     }

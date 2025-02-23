@@ -39,6 +39,7 @@ public class CompanyYarnOrder extends Document {
     private Double cGst;
     private Double sGst;
     private Double iGst;
+    private Double discPerc;
 
     public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {
         if (Objects.nonNull(yarnOrderItems)) {

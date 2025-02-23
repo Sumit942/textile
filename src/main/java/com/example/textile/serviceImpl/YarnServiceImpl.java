@@ -104,4 +104,18 @@ public class YarnServiceImpl implements YarnService {
         return entityManager.createQuery(cq).getSingleResult() > 0;
 
     }
+
+    @Override
+    public List<YarnDto> findByTypeLike(String type) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<YarnDto> cq = cb.createQuery(YarnDto.class);
+        Root<Yarn> root = cq.from(Yarn.class);
+
+        cq.select(cb.construct(YarnDto.class,
+                root.get("id"),
+                root.get("type")))
+                .where(cb.like(cb.lower(root.get("type")), "%"+type.toLowerCase()+"%"));
+
+        return entityManager.createQuery(cq).getResultList();
+    }
 }

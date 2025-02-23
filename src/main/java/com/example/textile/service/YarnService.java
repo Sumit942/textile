@@ -17,4 +17,6 @@ public interface YarnService {
     void deleteYarn(Long id);
 
     boolean existByYarnTypeAndCompanyNameIgnoreCase(YarnDto yarn);
+
+    List<YarnDto> findByTypeLike(String type);
 }

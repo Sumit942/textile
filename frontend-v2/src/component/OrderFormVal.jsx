@@ -10,6 +10,10 @@ const OrderFormVal = () => {
   const orderId = data?.id;
   const [isUpdate, setIsUpdate] = useState(false);
   const [isFetchingOrder, setIsFetchingOrder] = useState(false);
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const navigation = useNavigate();
 
   useEffect(() => {
@@ -18,8 +22,14 @@ const OrderFormVal = () => {
       fetchOrder(data.id);
       setIsUpdate(true);
     }
-  },[orderId]);
-  
+    if (highlightedIndex >= 0 && highlightedIndex < companyOptions.length) {
+      const selectedOption = document.getElementById(`company-option-${highlightedIndex}`);
+      if (selectedOption) {
+        selectedOption.scrollIntoView({ block: "nearest" });
+      }
+    }
+  },[orderId, highlightedIndex]);
+
   const fetchOrder = async (orderId) => {
     setIsFetchingOrder(true);
     const response = await fetchOrderByID(orderId);
@@ -94,11 +104,6 @@ const OrderFormVal = () => {
     }
   };
 
-  const [companyOptions, setCompanyOptions] = useState([]);
-  const [selectedCompany, setSelectedCompany] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
   const fetchCompanies = async (query) => {
     try {
       const response = await getCompanyList(query);
@@ -112,6 +117,7 @@ const OrderFormVal = () => {
   const handleCompanyChange = (event) => {
     const query = event.target.value;
     setSelectedCompany(null);
+    setValue("company.id", "");
     setValue("company.name", query);
     if (query.length >= 3) {
       fetchCompanies(query);
@@ -140,15 +146,6 @@ const OrderFormVal = () => {
       handleCompanySelect(companyOptions[highlightedIndex]);
     }
   };
-
-  useEffect(() => {
-    if (highlightedIndex >= 0 && highlightedIndex < companyOptions.length) {
-      const selectedOption = document.getElementById(`company-option-${highlightedIndex}`);
-      if (selectedOption) {
-        selectedOption.scrollIntoView({ block: "nearest" });
-      }
-    }
-  }, [highlightedIndex]);
 
   if (isFetchingOrder) {
     return <div>Loading...</div>;

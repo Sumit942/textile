@@ -108,6 +108,16 @@ public class YarnController extends BaseController {
 
     }
 
+    @GetMapping("searchBy")
+    public ResponseEntity<List<YarnDto>> searchByName(@RequestParam String type) {
+        try {
+            return ResponseEntity.ok(yarnService.findByTypeLike(type));
+        } catch (Exception e) {
+            log.error("error while searching type"+type, e);
+            return ResponseEntity.ok(List.of());
+        }
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<YarnDto> patch(@PathVariable Long id, @RequestBody YarnDto yarnDto) {
         YarnDto dto = yarnService.updateYarn(id, yarnDto);

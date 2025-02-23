@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addYarn, getYarn } from "../service/yarn";
+import { addYarn, getYarnById } from "../service/yarn";
 import { useLocation } from "react-router-dom";
 import { getCompanyList } from "../service/company";
 import AsyncCreatableSelect from "react-select/async-creatable";
@@ -31,7 +31,7 @@ export const YarnForm = () => {
   })
   
   const fetchYarn = async (id) => {
-    const yarnListResponse = await getYarn(id);
+    const yarnListResponse = await getYarnById(id);
     console.log('yarnList: id: ', yarnId, yarnListResponse.data)
     setYarn(yarnListResponse.data)
   }
