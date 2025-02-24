@@ -1,4 +1,4 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.entity.InvoiceView;
 import com.example.textile.repo.InvoiceViewRepository;
@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import java.util.Date;

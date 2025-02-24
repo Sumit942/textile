@@ -1,4 +1,4 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.entity.NavigationItem;
 import com.example.textile.repo.NavigationItemRepo;

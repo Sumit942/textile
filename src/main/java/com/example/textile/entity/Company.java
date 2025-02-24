@@ -3,6 +3,7 @@ package com.example.textile.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -27,12 +28,23 @@ public class Company implements Serializable {
     @Getter
     private String mobileNo;
     private List<BankDetail> bankDetails;
-    private Date insert_dt;
-    private Date update_dt;
+    private Date insertDt;
+    private Date updateDt;
     @ManyToOne(fetch = FetchType.LAZY)
     private CompanyType companyType;
     @Getter
     private String code;
+
+    @PrePersist
+    private void prePersist() {
+        if (StringUtils.isEmpty(code)) {
+            StringBuilder sbCode = new StringBuilder();
+            for (String s : name.split("\\s+")) {
+                sbCode.append(s.charAt(0));
+            }
+            setCode(sbCode.toString().toUpperCase());
+        }
+    }
 
     @OneToOne
     public CompanyType getCompanyType() {
@@ -73,13 +85,13 @@ public class Company implements Serializable {
     }
 
     @CreationTimestamp
-    public Date getInsert_dt() {
-        return insert_dt;
+    public Date getInsertDt() {
+        return insertDt;
     }
 
     @UpdateTimestamp
-    public Date getUpdate_dt() {
-        return update_dt;
+    public Date getUpdateDt() {
+        return updateDt;
     }
 
     @Override

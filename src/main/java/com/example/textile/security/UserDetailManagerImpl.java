@@ -2,7 +2,7 @@ package com.example.textile.security;
 
 import com.example.textile.entity.User;
 import com.example.textile.entity.UserProfile;
-import com.example.textile.serviceImpl.UserServiceImpl;
+import com.example.textile.serviceimpl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

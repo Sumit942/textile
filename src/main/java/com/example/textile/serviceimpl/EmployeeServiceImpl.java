@@ -1,4 +1,4 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.entity.Designation;
 import com.example.textile.entity.Employee;

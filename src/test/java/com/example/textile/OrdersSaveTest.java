@@ -1,33 +1,27 @@
 package com.example.textile;
 
 import com.example.textile.action.OrderSubmitAction;
-import com.example.textile.controller.OrderController;
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.*;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.OrderStatusType;
 import com.example.textile.executors.ActionResponse;
-import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.repo.CompanyYarnOrderRepository;
-import com.example.textile.repo.OrdersRepo;
+import com.example.textile.repo.OrdersRepository;
 import com.example.textile.repo.YarnOrderItemProductRepository;
 import com.example.textile.service.CompanyYarnOrderService;
 import com.example.textile.service.OrdersService;
 import com.example.textile.utility.ShreeramTextileConstants;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 @SpringBootTest
@@ -52,7 +46,7 @@ public class OrdersSaveTest {
     CompanyYarnOrderRepository companyYarnOrderRepo;
 
     @Autowired
-    OrdersRepo ordersRepo;
+    OrdersRepository ordersRepo;
 
     @Autowired
     OrdersService ordersService;
@@ -62,6 +56,14 @@ public class OrdersSaveTest {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Test
+    public void getIdAndOrderNo_by_OrderNo_like() {
+        List<OrdersDto> test = ordersService.getIdAndOrderNoByOrderNoLike("MAK");
+        if (!CollectionUtils.isEmpty(test)) {
+            Assertions.assertTrue(test.get(0).getOrderNo().startsWith("MAK"));
+        }
+    }
 
     @Test
     void testCascadePersist_Orders() {

@@ -9,9 +9,9 @@ import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.service.CompanyYarnOrderService;
 import com.example.textile.service.YarnService;
 import com.example.textile.transform.TransformationEntityToDTO;
-import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -52,9 +52,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
         if (!isEmpty(companyYarnOrderDto.getYarnOrderItems())) {
             errorMap.put("yarnOrderItems", new String[]{"IsEmpty.companyYarnOrderDto.yarnOrderItems"});
         } else {
-            //TODO: duplicate check yarnInvoiceNo
-            if (!Strings.isNullOrEmpty(companyYarnOrderDto.getYarnInvoiceNo())) {
-                if (Objects.nonNull(companyYarnOrderDto.getCompany()) && !isNullOrLessThanOne(companyYarnOrderDto.getCompany().getId())) {
+            if (!StringUtils.isEmpty(companyYarnOrderDto.getYarnInvoiceNo()) && Objects.nonNull(companyYarnOrderDto.getCompany()) && !isNullOrLessThanOne(companyYarnOrderDto.getCompany().getId())) {
                     Optional<CompanyYarnOrder> byYarnInvoiceNo = yarnOrderService.findByYarnInvoiceNo(companyYarnOrderDto.getYarnInvoiceNo());
                     if (byYarnInvoiceNo.isPresent()) {
                         CompanyYarnOrder companyYarnOrder = byYarnInvoiceNo.get();
@@ -63,7 +61,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
                         }
                     }
                 }
-            }
+
             for (int i = 0; i < companyYarnOrderDto.getYarnOrderItems().size(); i++) {
                 YarnOrderItem yarnOrderItem = companyYarnOrderDto.getYarnOrderItems().get(i);
                 if (Objects.isNull(yarnOrderItem.getYarn()) || Objects.isNull(yarnOrderItem.getYarn().getId())) {
@@ -83,6 +81,6 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
 
     @Override
     protected void doPreSaveOperationRest(CompanyYarnOrderDto companyYarnOrderDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
-
+        //stuffs to be done if required
     }
 }

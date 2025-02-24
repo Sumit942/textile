@@ -117,4 +117,10 @@ public class OrderController extends BaseController{
             return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("searchBy")
+    public ResponseEntity<List<OrdersDto>> getIdAndOrderNo(@RequestParam String orderNo) {
+        List<OrdersDto> ordersDtoList = ordersService.getIdAndOrderNoByOrderNoLike(orderNo);
+        return ResponseEntity.ok(ordersDtoList);
+    }
 }

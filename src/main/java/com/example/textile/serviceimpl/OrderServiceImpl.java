@@ -1,10 +1,11 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
 import com.example.textile.entity.OrdersView;
 import com.example.textile.entity.YarnBuilty;
+import com.example.textile.repo.CompanyRepository;
 import com.example.textile.repo.OrdersRepository;
 import com.example.textile.repo.OrdersViewRepo;
 import com.example.textile.service.OrdersService;
@@ -36,6 +37,7 @@ public class OrderServiceImpl implements OrdersService {
     private OrdersRepository ordersRepo;
     private ModelMapper modelMapper;
     private OrdersViewRepo ordersViewRepo;
+    private CompanyRepository companyRepo;
 
     @Override
     public List<OrdersDto> findAll() {
@@ -63,6 +65,14 @@ public class OrderServiceImpl implements OrdersService {
                                 .collect(Collectors.toList())
                 );
                 return saved;
+            }
+        } else {
+            Optional<String> codeById = companyRepo.findCodeById(orders.getCompany().getId());
+            if (codeById.isPresent()) {
+                String companyCode = codeById.get();
+                int i = ordersRepo.countByCompanyId(orders.getCompany().getId());
+                String orderNo = companyCode.concat(String.format("%03d",i));
+                orders.setOrderNo(orderNo);
             }
         }
 
@@ -176,5 +186,10 @@ public class OrderServiceImpl implements OrdersService {
     public List<OrdersView> fetchView() {
 
         return ordersViewRepo.findAll();
+    }
+
+    @Override
+    public List<OrdersDto> getIdAndOrderNoByOrderNoLike(String orderNo) {
+        return ordersRepo.getIdAndOrderNoByOrderLike(orderNo);
     }
 }

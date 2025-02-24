@@ -26,6 +26,8 @@ public class Orders extends Document implements Serializable {
     @Enumerated(EnumType.STRING)
     private OrderStatusType orderStatusType = OrderStatusType.RECEIVED;
     private String remarks;
+    @Column(unique = true)
+    private String orderNo;
     //TODO: add User column (PrePersist)
 
     public void addCompanyYarnOrders(CompanyYarnOrder newYarnOrders) {
@@ -36,28 +38,6 @@ public class Orders extends Document implements Serializable {
         this.companyYarnOrders.add(newYarnOrders);
 
     }
-    /*public void setCompanyYarnOrders(List<CompanyYarnOrder> companyYarnOrders) {
-        if (Objects.nonNull(companyYarnOrders)) {
-            for (CompanyYarnOrder companyYarnOrder : companyYarnOrders) {
-                companyYarnOrder.setOrder(this);
-            }
-        }
-
-        this.companyYarnOrders = companyYarnOrders;
-    }
-
-    public void addCompanyYarnOrders(List<CompanyYarnOrder> newYarnOrders) {
-        if (Objects.nonNull(newYarnOrders)) {
-            for (CompanyYarnOrder newYarnOrder : newYarnOrders) {
-                newYarnOrder.setOrder(this);
-            }
-        }
-        if (Objects.isNull(this.companyYarnOrders)) {
-            this.companyYarnOrders = newYarnOrders;
-        } else {
-            this.companyYarnOrders.addAll(newYarnOrders);
-        }
-    }*/
 
     @Override
     public String toString() {

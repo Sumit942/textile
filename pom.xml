@@ -15,7 +15,7 @@
 	<name>textile</name>
 	<description>Demo project for Textile Manufacturing Ind</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -102,10 +102,11 @@
 			<version>3.2.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>33.4.0-jre</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.17.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

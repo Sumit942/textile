@@ -4,6 +4,7 @@ import { Button, TextField, IconButton, Autocomplete } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
 import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
+import { fetchOrderNoListByOrderNo } from '../service/orderApi';
 
 const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
@@ -82,7 +83,12 @@ const CompanyYarnOrder = () => {
         control,
         name: 'yarnOrderItems'
     });
-    const [orderOptions, setOrderOptions] = useState([{ id: 1, orderNo: 'ORD001' }, { id: 2, orderNo: 'ORD002' }]);
+    const [orderOptions, setOrderOptions] = useState([]);
+
+    const fetchOrderOptions = async (orderNo) => {
+        const orderNoList = await fetchOrderNoListByOrderNo(orderNo);
+        setOrderOptions(orderNoList.data);
+    }
 
     const onSubmit = async (data) => {
         console.log('Company Yarn Order Data:', data);
@@ -115,7 +121,7 @@ const CompanyYarnOrder = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-16 max-w-xl sm:mt-20 space-y-4">
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <input type="hidden" {...register('id')} />
-                <input type="hidden" {...register('order.id')} />
+                <input type="hidden" {...register('order.id', { required: 'Please search and select'})} />
                 <Autocomplete
                     freeSolo
                     options={orderOptions}
@@ -124,10 +130,12 @@ const CompanyYarnOrder = () => {
                         if (newValue) {
                             methods.setValue('order.id', newValue.id);
                             methods.setValue('order.orderNo', newValue.orderNo);
+                            methods.clearErrors('order.id');
                         }
                     }}
                     onInputChange={(event, newInputValue) => {
-                        // Fetch order options based on newInputValue
+                        fetchOrderOptions(newInputValue);
+                        methods.setValue('order.id', '');
                     }}
                     renderInput={(params) => (
                         <TextField
@@ -135,8 +143,8 @@ const CompanyYarnOrder = () => {
                             {...register('order.orderNo', { required: "Order No is required" })}
                             label="Order No"
                             variant="outlined"
-                            error={!!methods.formState.errors.order?.orderNo}
-                            helperText={methods.formState.errors.order?.orderNo?.message}
+                            error={!!methods.formState.errors.order?.orderNo || !!methods.formState.errors.order?.id}
+                            helperText={methods.formState.errors.order?.orderNo?.message || methods.formState.errors.order?.id?.message}
                         />
                     )}
                 />

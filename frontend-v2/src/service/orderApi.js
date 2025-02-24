@@ -37,3 +37,16 @@ export const fetchOrderByID = async (orderId) => {
         return error;
     }
 }
+
+
+export const fetchOrderNoListByOrderNo = async (orderNo) => {
+    console.log('fetchOrderListByOrderNo() Entry: ', orderNo);
+    try {
+        const response = await API.get(`${API_URL}/searchBy?orderNo=${orderNo}`);
+        console.log('fetchOrderListByOrderNo() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchOrderListByOrderNo() Error: ', error);
+        return error;
+    }
+};

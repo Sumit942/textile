@@ -1,9 +1,8 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.entity.*;
 import com.example.textile.repo.*;
 import com.example.textile.service.InvoiceService;
-import com.example.textile.utility.ShreeramTextileConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

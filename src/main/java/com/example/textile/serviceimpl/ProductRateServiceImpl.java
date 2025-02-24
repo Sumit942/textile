@@ -1,4 +1,4 @@
-package com.example.textile.serviceImpl;
+package com.example.textile.serviceimpl;
 
 import com.example.textile.repo.ProductRateRepository;
 import com.example.textile.service.ProductRateService;

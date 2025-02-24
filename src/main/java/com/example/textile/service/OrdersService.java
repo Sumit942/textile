@@ -17,4 +17,6 @@ public interface OrdersService {
     Boolean existById(Long id);
 
     List<OrdersView> fetchView();
+
+    List<OrdersDto> getIdAndOrderNoByOrderNoLike(String orderNo);
 }
