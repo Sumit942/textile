@@ -28,4 +28,5 @@ public class CompanyYarnOrderDto {
     private Double totalQuantity;
     private BigDecimal totalAmount;
     private Long version;
+    private CompanyDto company;
 }

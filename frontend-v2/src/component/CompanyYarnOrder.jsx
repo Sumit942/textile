@@ -3,8 +3,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { Button, TextField, IconButton, Autocomplete } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
+import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
 
-const OrderItem = ({ control, register, index, remove }) => {
+const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
@@ -31,6 +32,12 @@ const OrderItem = ({ control, register, index, remove }) => {
                 freeSolo
                 options={itemOptions}
                 getOptionLabel={(option) => option.type}
+                onChange={(event, newValue) => {
+                    if (newValue) {
+                        methods.setValue(`yarnOrderItems.${index}.yarn.id`, newValue.id);
+                        methods.setValue(`yarnOrderItems.${index}.yarn.type`, newValue.type);
+                    }
+                }}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
@@ -40,8 +47,8 @@ const OrderItem = ({ control, register, index, remove }) => {
                         {...register(`yarnOrderItems.${index}.yarn.type`, { required: "Item Name is required" })}
                         label="Item Name"
                         variant="outlined"
-                        error={!!control._formState.errors?.yarnOrderItems?.[index]?.item_name}
-                        helperText={control._formState.errors?.yarnOrderItems?.[index]?.item_name?.message}
+                        error={!!control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type}
+                        helperText={control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type?.message}
                     />
                 )}
             />
@@ -75,9 +82,27 @@ const CompanyYarnOrder = () => {
         control,
         name: 'yarnOrderItems'
     });
+    const [orderOptions, setOrderOptions] = useState([{ id: 1, orderNo: 'ORD001' }, { id: 2, orderNo: 'ORD002' }]);
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        console.log('Company Yarn Order Data:', data);
+        return;
+       const response = await saveCompanyYarnOrder(data);
+       console.log('Save Company Yarn Order Response:', response);
+       if (response.status === 201) {
+           alert('Company Yarn Order saved successfully');
+       } else {
+           const errors = response.response.data.errors;
+           if (errors) {
+                Object.keys(errors).forEach((field) => {
+                    methods.setError(field, {
+                        type: "server",
+                        message: errors[field].join(", "),
+                    });
+                });
+            }
+           alert('Error saving Company Yarn Order');
+       }
     };
 
     return (
@@ -91,6 +116,30 @@ const CompanyYarnOrder = () => {
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <input type="hidden" {...register('id')} />
                 <input type="hidden" {...register('order.id')} />
+                <Autocomplete
+                    freeSolo
+                    options={orderOptions}
+                    getOptionLabel={(option) => option.orderNo}
+                    onChange={(event, newValue) => {
+                        if (newValue) {
+                            methods.setValue('order.id', newValue.id);
+                            methods.setValue('order.orderNo', newValue.orderNo);
+                        }
+                    }}
+                    onInputChange={(event, newInputValue) => {
+                        // Fetch order options based on newInputValue
+                    }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            {...register('order.orderNo', { required: "Order No is required" })}
+                            label="Order No"
+                            variant="outlined"
+                            error={!!methods.formState.errors.order?.orderNo}
+                            helperText={methods.formState.errors.order?.orderNo?.message}
+                        />
+                    )}
+                />
                 <TextField {...register('orderDt')} label="Order Date" variant="outlined" type='date' 
                     slotProps={{ 
                         inputLabel: { 
@@ -98,13 +147,12 @@ const CompanyYarnOrder = () => {
                         } 
                     }}
                 />
-                <TextField {...register('yarnInvoiceNo')} label="Order No" variant="outlined" />
                 <TextField 
                     {...register('totalQuantity', { required: "Please enter quantity" , min: { value: 1, message: "Quantity should be greater than 0" } })} 
                     label="Total Quantity" 
                     variant="outlined" 
-                    error={!!methods.formState.errors.total_quantity}
-                    helperText={methods.formState.errors.total_quantity?.message}
+                    error={!!methods.formState.errors.totalQuantity}
+                    helperText={methods.formState.errors.totalQuantity?.message}
                 />
                 <TextField {...register('totalAmount')} label="Total Amount" variant="outlined" />
                 <TextField {...register('cGst')} label="C GST" variant="outlined" />
@@ -115,7 +163,7 @@ const CompanyYarnOrder = () => {
                 <div className="sm:col-span-2 grid grid-cols-1 space-y-4">
                     {fields.length > 0 && <h3 className="text-lg font-semibold">Order Items</h3>}
                     {fields.map((item, index) => (
-                        <OrderItem key={item.id} control={control} register={register} index={index} remove={remove} />
+                        <OrderItem key={item.id} control={control} methods={methods} register={register} index={index} remove={remove} />
                     ))}
                 </div>
                 <TextField {...register('remark')} label="Remark" variant="outlined" multiline rows={4} />

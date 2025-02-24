@@ -31,6 +31,8 @@ public class Company implements Serializable {
     private Date update_dt;
     @ManyToOne(fetch = FetchType.LAZY)
     private CompanyType companyType;
+    @Getter
+    private String code;
 
     @OneToOne
     public CompanyType getCompanyType() {

@@ -9,12 +9,16 @@ import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.service.CompanyYarnOrderService;
 import com.example.textile.service.YarnService;
 import com.example.textile.transform.TransformationEntityToDTO;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+import static com.example.textile.utility.ActionValidationUtil.isNullOrLessThanOne;
+import static com.example.textile.utility.ActionValidationUtil.longEquals;
 import static com.example.textile.utility.LogUtils.*;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -49,6 +53,17 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
             errorMap.put("yarnOrderItems", new String[]{"IsEmpty.companyYarnOrderDto.yarnOrderItems"});
         } else {
             //TODO: duplicate check yarnInvoiceNo
+            if (!Strings.isNullOrEmpty(companyYarnOrderDto.getYarnInvoiceNo())) {
+                if (Objects.nonNull(companyYarnOrderDto.getCompany()) && !isNullOrLessThanOne(companyYarnOrderDto.getCompany().getId())) {
+                    Optional<CompanyYarnOrder> byYarnInvoiceNo = yarnOrderService.findByYarnInvoiceNo(companyYarnOrderDto.getYarnInvoiceNo());
+                    if (byYarnInvoiceNo.isPresent()) {
+                        CompanyYarnOrder companyYarnOrder = byYarnInvoiceNo.get();
+                        if (Objects.isNull(companyYarnOrderDto.getId()) || longEquals(companyYarnOrder.getId(), companyYarnOrderDto.getId())) {
+                            errorMap.put("yarnInvoiceNo", new String[]{"DBDuplicate.ordersDto.yarnOrders.yarnInvoiceNo"});
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < companyYarnOrderDto.getYarnOrderItems().size(); i++) {
                 YarnOrderItem yarnOrderItem = companyYarnOrderDto.getYarnOrderItems().get(i);
                 if (Objects.isNull(yarnOrderItem.getYarn()) || Objects.isNull(yarnOrderItem.getYarn().getId())) {
