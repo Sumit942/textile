@@ -28,19 +28,21 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
     return (
         <div className="mb-2 border p-4 rounded-md grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
             <input type="hidden" {...register(`yarnOrderItems.${index}.id`)} />
-            <input type="hidden" {...register(`yarnOrderItems.${index}.yarn.id`)} />
+            <input type="hidden" {...register(`yarnOrderItems.${index}.yarn.id`, {required : 'Please select and search yarn'})} />
             <Autocomplete
                 freeSolo
                 options={itemOptions}
-                getOptionLabel={(option) => option.type}
+                getOptionLabel={(option) => option?.type || ''}
                 onChange={(event, newValue) => {
                     if (newValue) {
                         methods.setValue(`yarnOrderItems.${index}.yarn.id`, newValue.id);
                         methods.setValue(`yarnOrderItems.${index}.yarn.type`, newValue.type);
+                        methods.clearErrors(`yarnOrderItems.${index}.yarn.id`);
                     }
                 }}
                 onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue);
+                    setInputValue(newInputValue.trim());
+                    methods.setValue(`yarnOrderItems.${index}.yarn.id`, '');
                 }}
                 renderInput={(params) => (
                     <TextField
@@ -48,8 +50,8 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
                         {...register(`yarnOrderItems.${index}.yarn.type`, { required: "Item Name is required" })}
                         label="Item Name"
                         variant="outlined"
-                        error={!!control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type}
-                        helperText={control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type?.message}
+                        error={!!control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type || !!control._formState.errors?.yarnOrderItems?.[index]?.yarn?.id}
+                        helperText={control._formState.errors?.yarnOrderItems?.[index]?.yarn?.type?.message || control._formState.errors?.yarnOrderItems?.[index]?.yarn?.id?.message}
                     />
                 )}
             />
