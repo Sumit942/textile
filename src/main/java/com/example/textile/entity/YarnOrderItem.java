@@ -28,7 +28,12 @@ public class YarnOrderItem {
     private String hsn;
     private String lotNo;
     private BigDecimal amount;
-    @OneToMany(mappedBy = "yarnOrderItem")
+    @ManyToMany
+    @JoinTable(
+            name = "yarn_order_item_product_mapping",
+            joinColumns = @JoinColumn(name = "yarn_order_item_id"),
+            inverseJoinColumns = @JoinColumn(name = "yarn_order_item_product_id")
+    )
     private List<YarnOrderItemProduct> yarnOrderItemProducts;
 
     @Override

@@ -345,7 +345,7 @@ public class OrdersSaveTest {
     YarnFabricDesign getYarnFabricDesign(FabricDesign fabricDesign, List<FabricDesignYarnMapping> designYarnMappings) {
         YarnFabricDesign yarnFabricDesign = new YarnFabricDesign();
 
-        yarnFabricDesign.setYarns(designYarnMappings);
+        yarnFabricDesign.setYarns(null);
         yarnFabricDesign.setFabricDesign(fabricDesign);
         yarnFabricDesign.setGsm("195/200");
         return yarnFabricDesign;
