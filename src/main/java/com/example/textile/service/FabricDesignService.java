@@ -10,4 +10,6 @@ public interface FabricDesignService {
     void deleteById(Long id);
 
     List<FabricDesign> findAll();
+
+    List<FabricDesign> findByNameLike(String name);
 }

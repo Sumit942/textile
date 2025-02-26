@@ -14,6 +14,7 @@ import OrderFormVal from './component/OrderFormVal'
 import OrderLists from './component/OrderLists'
 import CompanyYarnOrder from './component/CompanyYarnOrder'
 import FabricDesign from './component/FabricDesign'
+import YarnFabricDesign from './component/YarnFabricDesign'
 
 function App() {
   const [navItems, setNavItems] = useState([])
@@ -45,6 +46,7 @@ function App() {
           <Route path='/orders/view' element={<OrderLists />} />
           <Route path='/companyYarnOrder/save' element={<CompanyYarnOrder />} />
           <Route path='/fabricDesign' element={<FabricDesign />} />
+          <Route path='/yarnFabricDesign/save' element={<YarnFabricDesign />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -32,4 +32,9 @@ public class FabricDesignServiceImpl implements FabricDesignService {
     public List<FabricDesign> findAll() {
         return designRepo.findAll();
     }
+
+    @Override
+    public List<FabricDesign> findByNameLike(String name) {
+        return designRepo.findByNameLikeIgnoreCase(name);
+    }
 }

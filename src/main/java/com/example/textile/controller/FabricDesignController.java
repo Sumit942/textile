@@ -76,6 +76,11 @@ public class FabricDesignController {
         return ResponseEntity.ok(fabricDesignService.findAll());
     }
 
+    @GetMapping("searchBy")
+    public ResponseEntity<List<FabricDesign>> findByNameLike(@RequestParam String name) {
+        return ResponseEntity.ok(fabricDesignService.findByNameLike(name));
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteDesign(@RequestParam Long id) {
         try {

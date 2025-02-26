@@ -1,11 +1,15 @@
 package com.example.textile.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
-@Data
+@Setter
+@Getter
 @Entity
+@ToString(exclude = "yarnFabricDesign")
 public class FabricDesignYarnMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

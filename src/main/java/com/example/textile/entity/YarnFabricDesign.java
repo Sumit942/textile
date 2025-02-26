@@ -1,6 +1,8 @@
 package com.example.textile.entity;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
@@ -8,29 +10,31 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Data
+@Setter
+@Getter
 @Entity
 public class YarnFabricDesign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany
-    private Set<FabricDesignYarnMapping> yarns;
+    @OneToMany(mappedBy = "yarnFabricDesign", fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    private Set<FabricDesignYarnMapping> fabricDesignYarnMappings;
     @ManyToOne
     private FabricDesign fabricDesign;
     private String gsm;
-    @Transient
-    private String quality;
+    private String qualityName;
 
-    public String getQuality() {
+    @PrePersist
+    public void perPersist() {
         String designYarns = "-";
-        if (!CollectionUtils.isEmpty(yarns)) {
-            designYarns = yarns.stream().map(designMap -> designMap.getYarn().getType())
+        if (!CollectionUtils.isEmpty(fabricDesignYarnMappings)) {
+            designYarns = fabricDesignYarnMappings.stream().map(designMap -> designMap.getYarn().getType())
                     .collect(Collectors.joining(" x "));
         }
         String designName = Objects.nonNull(fabricDesign) ? fabricDesign.getName() : "";
         String designGsm = Objects.nonNull(gsm) ? gsm : "";
-        this.quality = String.format("%s - %s (%s)", designYarns, designName, designGsm );
-        return quality;
+        String quality = String.format("%s - %s (%s gsm)", designYarns, designName, designGsm );
+        setQualityName(quality);
     }
 }

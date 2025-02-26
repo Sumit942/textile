@@ -9,7 +9,7 @@ import { fetchOrderNoListByOrderNo } from '../service/orderApi';
 const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [orderOptions, setOrderOptions] = useState([]);
+    const [yarnFabricDesignOptions, setYarnFabricDesignOptions] = useState([]);
     const { 
         fields: yarnOrderItemProducts,
         append: appendYarnOrderItemProducts,
@@ -92,12 +92,13 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
             {yarnOrderItemProducts.map((item, itemIndex) => (
                 <div key={item.id} className='col-span-2 sm:col-span-4 grid grid-cols-4 gap-x-6 gap-y-4'>
                     <input type="hidden" {...register(`yarnOrderItems.${index}.yarnOrderItemProducts.${itemIndex}.id`)} />
+                    {/* TODO: below autocomplete */}
                     <Autocomplete
                         className='col-span-3'
                         size='small'
                         freeSolo
-                        options={orderOptions}
-                        getOptionLabel={(option) => option.orderNo}
+                        options={yarnFabricDesignOptions}
+                        getOptionLabel={(option) => option.yarnFabricDesign || ''}
                         onChange={(event, newValue) => {
                             if (newValue) {
                                 methods.setValue('order.id', newValue.id);

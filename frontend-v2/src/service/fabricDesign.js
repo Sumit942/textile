@@ -38,6 +38,18 @@ export const fetchAllFabricDesigns = async () => {
     }
 }
 
+export const getFabricDesignsByNameLike = async (name) => {
+    console.log('getFabricDesignsByNameLike() Entry');
+    try {
+        const response = await API.get(`${API_URL}/searchBy?name=${name}`);
+        console.log('getFabricDesignsByNameLike() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('getFabricDesignsByNameLike() Error fetching fabric design list:', error);
+        throw error;
+    }
+}
+
 export const deleteFabricDesign = async (fabricDesignId) => {
     console.log('deleteFabricDesign() Entry: ', fabricDesignId);
     try {

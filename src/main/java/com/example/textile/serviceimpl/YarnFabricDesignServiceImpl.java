@@ -1,6 +1,7 @@
 package com.example.textile.serviceimpl;
 
 import com.example.textile.entity.YarnFabricDesign;
+import com.example.textile.repo.YarnFabricDesignRepo;
 import com.example.textile.service.YarnFabricDesignService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Service
 public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
+    private YarnFabricDesignRepo yarnFabricDesignRepo;
     private EntityManager entityManager;
 
     @Override
@@ -26,10 +28,12 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
         String[] yarnFabricDesignArray = yarnsFabricDesign.split("-");
         String[] yarnArr = null;
         String fabricDesign;
+        boolean isAndCondition = true;
         if (yarnsFabricDesign.startsWith("-")) { //if only design entered
             fabricDesign = yarnsFabricDesign.replace("-","").trim();
         } else if (yarnFabricDesignArray.length <= 1) {
             //input param will be either of yarn or design
+            isAndCondition = false;
             fabricDesign = yarnsFabricDesign.trim().toLowerCase();
             yarnArr = new String[]{fabricDesign};
         } else {
@@ -40,8 +44,7 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
 
         StringBuilder sb = new StringBuilder("SELECT yfd FROM YarnFabricDesign yfd ");
         if (Objects.nonNull(yarnArr)) {
-            sb.append("JOIN yfd.yarns yfm JOIN yfm.yarn y WHERE ");
-            sb.append("(");
+            sb.append("JOIN yfd.fabricDesignYarnMappings fym JOIN fym.yarn y WHERE (");
             for (int i = 0; i < yarnArr.length; i++) {
                 if (i > 0) {
                     sb.append("OR ");
@@ -53,7 +56,7 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
         }
         if (!StringUtils.isEmpty(fabricDesign)) {
             if (Objects.nonNull(yarnArr)) {
-                sb.append("AND ");
+                sb.append(isAndCondition ? "AND " : "OR "); //query the input either yarn or design
             } else {
                 sb.append("WHERE ");
             }
@@ -73,5 +76,20 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
         }
 
         return query.getResultList();
+    }
+
+    @Override
+    public YarnFabricDesign save(YarnFabricDesign yarnFabricDesign) {
+        return yarnFabricDesignRepo.save(yarnFabricDesign);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        yarnFabricDesignRepo.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByQualityName(String qualityName) {
+        return yarnFabricDesignRepo.existsByQualityName(qualityName);
     }
 }
