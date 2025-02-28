@@ -51,14 +51,14 @@ public class YarnFabricDesignAction extends RestActionExecutor<YarnFabricDesign>
             errorMap.put("fabricDesign.name", new String[]{"NotNull.yarnFabricDesign.fabricDesign.name"});
         }
 
-        Set<FabricDesignYarnMapping> fabricDesignYarnMappings = yarnFabricDesign.getFabricDesignYarnMappings();
+        List<FabricDesignYarnMapping> fabricDesignYarnMappings = yarnFabricDesign.getFabricDesignYarnMappings();
         if (CollectionUtils.isEmpty(fabricDesignYarnMappings)) {
             errorMap.put("fabricDesignYarnMappings", new String[]{"NotNull.yarnFabricDesign.fabricDesignYarnMappings"});
         }
-        int i = 0;
+
         List<Long> yarnIds = new ArrayList<>();
-        for (Iterator<FabricDesignYarnMapping> iterator = fabricDesignYarnMappings.iterator(); iterator.hasNext(); i++) {
-            FabricDesignYarnMapping next = iterator.next();
+        for (int i = 0; i < fabricDesignYarnMappings.size(); i++) {
+            FabricDesignYarnMapping next = fabricDesignYarnMappings.get(i);
             if (Objects.isNull(next.getYarn()) || isNullOrLessThanOne(next.getYarn().getId())) {
                 errorMap.put("fabricDesignYarnMappings["+i+"].yarn.id", new String[]{"NotNull.yarnFabricDesign.fabricDesignYarnMappings.yarn.id"});
                 if (yarnIds.contains(next.getYarn().getId())) {
@@ -80,7 +80,7 @@ public class YarnFabricDesignAction extends RestActionExecutor<YarnFabricDesign>
             if (!StringUtils.isBlank(yarnFabricDesign.getQualityName())) {
                 boolean existsByQualityName = yarnFabricDesignService.existsByQualityName(yarnFabricDesign.getQualityName());
                 if (existsByQualityName) {
-                    errorMap.put("Duplicate.yarnFabricDesign", new String[]{"Exists.yarnFabricDesign"});
+                    errorMap.put("yarnFabricDesign", new String[]{"Exists.yarnFabricDesign"});
                 }
             }
         }

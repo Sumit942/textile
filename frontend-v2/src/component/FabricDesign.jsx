@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Container, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, } from '@mui/material';
+import { TextField, Button, Container, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Grid2, } from '@mui/material';
 import { deleteFabricDesign, fetchAllFabricDesigns, fetchFabricDesignById, saveFabricDesign } from '../service/fabricDesign';
 
 const FabricDesign = ({ id }) => {
@@ -95,7 +95,7 @@ const FabricDesign = ({ id }) => {
 
     return (
         <Container maxWidth="sm">
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography textAlign={'center'} variant="h4" component="h1" gutterBottom>
                 Fabric Design Form
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -120,16 +120,17 @@ const FabricDesign = ({ id }) => {
                     error={!!errors.description}
                     helperText={errors.description ? errors.description.message : ''}
                 />
-                
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : submitButtonText}
-                </Button>
-                <Button variant="contained" color="secondary" onClick={handleButtonClick}>
-                    {buttonText}
-                </Button>
+                <Grid2 container spacing={3}>
+                    <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Submitting...' : submitButtonText}
+                    </Button>
+                    <Button variant="contained" color="secondary" onClick={handleButtonClick}>
+                        {buttonText}
+                    </Button>
+                </Grid2>
             </form>
 
-            <Typography variant="h5" component="h2" gutterBottom>
+            <Typography marginTop={3} textAlign={'center'} variant="h5" component="h2" gutterBottom>
                 Fabric Designs List
             </Typography>
             <TextField
@@ -155,10 +156,10 @@ const FabricDesign = ({ id }) => {
                                 <TableCell>{design.name}</TableCell>
                                 <TableCell>{design.description}</TableCell>
                                 <TableCell>
-                                    <Button variant="contained" color="primary" onClick={() => handleEdit(design)}>
+                                    <Button size='small' variant="contained" color="primary" onClick={() => handleEdit(design)}>
                                         Edit
                                     </Button>
-                                    <Button variant="contained" color="secondary" onClick={() => handleDelete(design.id)}>
+                                    <Button size='small' variant="contained" color="secondary" onClick={() => handleDelete(design.id)}>
                                         Delete
                                     </Button>
                                 </TableCell>

@@ -6,8 +6,8 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Setter
@@ -19,7 +19,7 @@ public class YarnFabricDesign {
     private Long id;
     @OneToMany(mappedBy = "yarnFabricDesign", fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
-    private Set<FabricDesignYarnMapping> fabricDesignYarnMappings;
+    private List<FabricDesignYarnMapping> fabricDesignYarnMappings;
     @ManyToOne
     private FabricDesign fabricDesign;
     private String gsm;
@@ -34,7 +34,7 @@ public class YarnFabricDesign {
         }
         String designName = Objects.nonNull(fabricDesign) ? fabricDesign.getName() : "";
         String designGsm = Objects.nonNull(gsm) ? gsm : "";
-        String quality = String.format("%s - %s (%s gsm)", designYarns, designName, designGsm );
+        String quality = String.format("%s --%s (Gsm:%s)", designYarns, designName, designGsm );
         setQualityName(quality);
     }
 }

@@ -1,60 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { TextField, Button, Autocomplete, Box, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { findYarnFabricDesignById, saveYarnFabricDesign } from '../service/yarnFabricDesign';
-import { getYarnByType } from '../service/yarn';
-import { getFabricDesignsByNameLike } from '../service/fabricDesign';
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { TextField, Autocomplete, Snackbar, Alert } from '@mui/material';
+import { getYarnByType } from '../service/yarn'
+import { getFabricDesignsByNameLike } from '../service/fabricDesign'
+import { saveYarnFabricDesign } from '../service/yarnFabricDesign';
 
 const YarnFabricDesign = () => {
-    const { id } = useParams();
-    const { control, handleSubmit, setError, setValue, formState: { errors } } = useForm();
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'yarns'
+    const { handleSubmit, control, watch, formState: { errors, isSubmitting } } = useForm({
+        defaultValues: {
+            qualityName: '',
+            fabricDesignYarnMappings: [],
+            fabricDesign: null,
+            gsm: '',
+        }
     });
 
     const [yarnOptions, setYarnOptions] = useState([]);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     const [designOptions, setDesignOptions] = useState([]);
-
-    useEffect(() => {
-        console.log('useEffect() Entry: ', id);
-        //TODO: setValue after fetching data
-        if (id) {
-            findYarnFabricDesignById(id)
-                .then(response => {
-                    const data = response.data;
-                    setValue('id', data.id);
-                    setValue('fabricDesign', data.fabricDesign);
-                    setValue('gsm', data.gsm);
-                    data.yarns.forEach((yarn, index) => {
-                        append({ yarn });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        } else {
-            append({ type: '' })
-        }
-    }, [id]);
-
-    const onSubmit = async (data) => {
-        console.log('onSubmit() Entry: ', data);
-        return;
-        try {
-            const response = await saveYarnFabricDesign(data);
-            if (response.status === 200) {
-                alert('Yarn Fabric Design saved successfully');
-            } else if (response.status === 400) {
-                setError('apiError', { message: 'Bad Request' });
-            } else {
-                setError('apiError', { message: 'An error occurred' });
-            }
-        } catch (error) {
-            setError('apiError', { message: 'An error occurred' });
-        }
-    };
+    const [openRecordExistsSnackbar, setOpenRecordExistsSnackbar] = useState(false)
 
     const fetchYarnOptions = async (inputValue) => {
         try {
@@ -62,111 +26,201 @@ const YarnFabricDesign = () => {
             setYarnOptions(response.data);
         } catch (error) {
             console.error('Error fetching yarn options:', error);
+            setYarnOptions([])
         }
     };
 
     const fetchDesignOptions = async (inputValue) => {
         try {
             const response = await getFabricDesignsByNameLike(inputValue);
+            console.log('fetchDesignOptions response: ', response.data)
             setDesignOptions(response.data);
         } catch (error) {
             console.error('Error fetching design options:', error);
         }
     };
 
+    const selectedYarns = watch('fabricDesignYarnMappings')
+    const selectedDesign = watch('fabricDesign')
+    const enteredGsm = watch('gsm')
+
+    const getFullQualityName = () => {
+        const selectedYarnStr = selectedYarns ? selectedYarns.map((yarn) => yarn.type).join(" x ") : '';
+        const selectedDesignStr = selectedDesign ? selectedDesign.name : '';
+        return selectedYarnStr + ' --' + selectedDesignStr + " (Gsm:"+ enteredGsm + ")";
+    }
+
+    const onSubmit = async (data) => {
+        console.log('onSmbit: ', data)
+
+        const transformedData = {
+            ...data,
+            fabricDesignYarnMappings: data.fabricDesignYarnMappings.map((yarn) => ( { yarn }))
+        }
+
+        console.log('transformed: ', transformedData)
+        saveYarnFabricDesign(transformedData)
+            .then(response => {
+                console.log("sucess response: ", response)
+                alert("Yarn Fabric Design saved sucessfully!!")
+            })
+            .catch(error => {
+                console.log('Error saving yarnFabricDesign: ', error)
+                if (error.status == 400) {
+                    const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
+                    setOpenRecordExistsSnackbar(true)
+                } else {
+                    alert('Error Saving')
+                }
+            })
+
+    };
+
     return (
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}
-            className='isolate bg-white px-6 py-5 sm:py-10 lg:px-8'
+        <form 
+            className='mx-auto mt-16 max-w-xl sm:mt-20'
+            onSubmit={handleSubmit(onSubmit)}
         >
-            <Typography variant="h6">Yarn Fabric Design Form</Typography>
+            <div className='px-3.5 py-2'>
             <Controller
-                name="quality"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                    <TextField {...field} label="Quality" slotProps={{ input: { readOnly: true } }} />
-                )}
-            />
-            <Controller
-                name="id"
+                name="qualityName"
                 control={control}
                 render={({ field }) => (
-                    <input type="hidden" {...field} />
+                <TextField
+                    {...field}
+                    label="Quality"
+                    variant="filled"
+                    value={getFullQualityName()}
+                    slotProps={{
+                        inputProps: {
+                            readOnly: true,
+                        }
+                    }}
+                    className='w-full'
+                />
                 )}
             />
-            {fields.map((item, index) => (
-                <Box key={item.id} >
-                    <Controller
-                        name={`yarns[${index}].id`}
-                        control={control}
-                        render={({ field }) => (
-                            <input type="hidden" {...field} />
-                        )}
-                    />
-                    <Controller
-                        name={`yarns[${index}].type`}
-                        control={control}
-                        defaultValue="" // Ensuring controlled component
-                        render={({ field: { onChange, value } }) => (
-                            <Autocomplete
-                                options={yarnOptions}
-                                getOptionLabel={(option) => option?.type || ''}
-                                value={yarnOptions.find(y => y.type === value) || null} // Ensuring value consistency
-                                onChange={(_, selectedOption) => {
-                                    setValue(`yarns[${index}].id`, selectedOption?.id || '');
-                                    setValue(`yarns[${index}].type`, selectedOption?.type || '');
-                                    onChange(selectedOption?.type || ''); // Ensuring React Hook Form state updates correctly
-                                }}
-                                renderInput={(params) => (
-                                    <TextField 
-                                        {...params} 
-                                        label="Product (Yarn)" 
-                                        onChange={(e) => fetchYarnOptions(e.target.value)} 
-                                    />
-                                )}
+            </div>
+            <Controller
+                name="fabricDesignYarnMappings"
+                control={control}
+                rules={{ required: 'Yarns are required' }}
+                // defaultValue={[]}
+                render={({ field }) => (
+                    <Autocomplete
+                        {...field}
+                        multiple
+                        value={field.value || []}
+                        options={yarnOptions}
+                        getOptionLabel={(option) => option.type || ''}
+                        // isOptionEqualToValue={(option, value) => option.id === value.id}
+                        className="px-3.5 py-2"
+                        onInputChange={(_, value) => {
+                            if (value.trim()) {
+                                fetchYarnOptions(value)
+                            }
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Yarns"
+                                placeholder='Select Yarns'
+                                error={!!errors.fabricDesignYarnMappings}
+                                helperText={errors.fabricDesignYarnMappings ? errors.fabricDesignYarnMappings.message : ''}
                             />
                         )}
+                        onChange={(_, value) => {
+                            const hasDuplicate = value.some(
+                                (item, index) => value.findIndex((v) => v.id === item.id) !== index
+                            );
+
+                            if (hasDuplicate) {
+                                document.activeElement.blur();
+                                setOpenSnackbar(true)
+                                field.onChange(field.value)
+                            } else {
+                                field.onChange(value)
+                            }
+                        }}
                     />
+                )}
+            />
 
-
-                    <Button onClick={() => remove(index)} >Remove</Button>
-                </Box>
-            ))}
-            <Button onClick={() => append({ id: '', type: '' })}>Add Yarn</Button>
             <Controller
                 name="fabricDesign"
                 control={control}
-                defaultValue={null} // Ensuring controlled behavior
-                render={({ field: { onChange, value } }) => (
+                rules={{ required: 'Design is required' }}
+                // defaultValue={null}
+                render={({ field }) => (
                     <Autocomplete
+                        {...field}
                         options={designOptions}
                         getOptionLabel={(option) => option?.name || ''}
-                        value={designOptions.find(option => option.name === value) || null} // Ensure consistency
-                        onChange={(_, selectedOption) => {
-                            onChange(selectedOption?.name || ''); // Sync with React Hook Form
+                        onInputChange={(event, value) => {
+                            if (value.trim() !== '') {
+                                fetchDesignOptions(value)
+                            }
                         }}
+                        className='px-3.5 py-2'
                         renderInput={(params) => (
-                            <TextField 
-                                {...params} 
-                                label="fabricDesign" 
-                                onChange={(e) => fetchDesignOptions(e.target.value)} 
+                            <TextField
+                                {...params}
+                                label="Design"
+                                error={!!errors.fabricDesign}
+                                helperText={errors.fabricDesign ? errors.fabricDesign.message : ''}
                             />
                         )}
+                        onChange={(event, value) => field.onChange(value)}
                     />
                 )}
             />
-
+            <div className='px-3.5 py-2'>
             <Controller
                 name="gsm"
-                defaultValue=''
                 control={control}
+                // defaultValue=""
+                rules={{
+                    required: "GSM is required",
+                }}
                 render={({ field }) => (
-                    <TextField {...field} label="GSM" error={!!errors.gsm} helperText={errors.gsm ? errors.gsm.message : ''} />
+                <TextField
+                    {...field}
+                    label="GSM"
+                    variant="outlined"
+                    error={!!errors.gsm}
+                    helperText={errors.gsm?.message || ''}
+                    className='w-full'
+                />
                 )}
             />
-            {errors.apiError && <Typography color="error">{errors.apiError.message}</Typography>}
-            <Button type="submit" variant="contained" sx={{ mt: 2 }}>{id ? 'Update' : 'Save'}</Button>
-        </Box>
+            </div>
+
+            <div className='px-3.5 py-2'>
+            <button 
+                className="block w-full rounded-md bg-indigo-600 px-3.5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                type="submit"
+                disabled={isSubmitting}
+                >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+            </div>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={() => setOpenSnackbar(false)}
+                message="Yarn already selected!"
+            />
+            <Snackbar
+                open={openRecordExistsSnackbar}
+                autoHideDuration={3000} // Automatically hide after 3 seconds
+                onClose={() => setOpenRecordExistsSnackbar(false)} // Close Snackbar when dismissed
+                anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position of Snackbar
+            >
+                <Alert severity="error" onClose={() => setOpenRecordExistsSnackbar(false)}>
+                The record already exists in the system!
+                </Alert>
+            </Snackbar>
+        </form>
     );
 };
 

@@ -25,12 +25,12 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
             return Collections.emptyList();
         }
         /* Getting Yarns and Design from yarnFabricDesign - Start **/
-        String[] yarnFabricDesignArray = yarnsFabricDesign.split("-");
+        String[] yarnFabricDesignArray = yarnsFabricDesign.split("--");
         String[] yarnArr = null;
         String fabricDesign;
         boolean isAndCondition = true;
-        if (yarnsFabricDesign.startsWith("-")) { //if only design entered
-            fabricDesign = yarnsFabricDesign.replace("-","").trim();
+        if (yarnsFabricDesign.startsWith("--")) { //if only design entered
+            fabricDesign = yarnsFabricDesign.replace("--","").trim();
         } else if (yarnFabricDesignArray.length <= 1) {
             //input param will be either of yarn or design
             isAndCondition = false;

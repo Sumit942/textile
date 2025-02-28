@@ -34,6 +34,6 @@ export const getYarnByType = async (name) => {
         return response;
     } catch (err) {
         console.log('getYarnByName() Error: ', err);
-        return err;
+        throw err;
     }
 };
