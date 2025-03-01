@@ -1,6 +1,7 @@
 package com.example.textile.dto;
 
 import com.example.textile.enums.OrderStatusType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrdersDto {
     public OrdersDto(Long id, String orderNo) {
         this.id = id;

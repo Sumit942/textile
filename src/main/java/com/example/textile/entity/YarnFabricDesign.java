@@ -1,6 +1,5 @@
 package com.example.textile.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,8 +16,8 @@ public class YarnFabricDesign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "yarnFabricDesign", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @EqualsAndHashCode.Exclude
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "yarn_fabric_design_id")
     private List<FabricDesignYarnMapping> fabricDesignYarnMappings;
     @ManyToOne
     private FabricDesign fabricDesign;

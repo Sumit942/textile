@@ -7,7 +7,7 @@ import { saveYarnFabricDesign } from '../service/yarnFabricDesign';
 import { Add, Remove } from '@mui/icons-material';
 
 const YarnFabricDesign = () => {
-    const { handleSubmit, control, watch, reset, setError, formState: { errors, isSubmitting } } = useForm({
+    const { handleSubmit, control, watch, reset, setError, formState: { errors } } = useForm({
         defaultValues: {
             qualityName: '',
             fabricDesignYarnMappings: [
@@ -33,6 +33,7 @@ const YarnFabricDesign = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [designOptions, setDesignOptions] = useState([]);
     const [openRecordExistsSnackbar, setOpenRecordExistsSnackbar] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const fetchYarnOptions = async (inputValue) => {
         try {
@@ -65,6 +66,7 @@ const YarnFabricDesign = () => {
     }
 
     const onSubmit = async (data) => {
+        setIsSubmitting(true)
         const totalPerc = selectedYarns.reduce((sum, item) => {
             const percentageValue = parseFloat(item.percentage) || 0;
             return sum + percentageValue;
@@ -73,22 +75,22 @@ const YarnFabricDesign = () => {
         if (totalPerc !== 100.00) {
             setError(`fabricDesignYarnMappings.[0].percentage`, { type: 'manual', message: 'Sum all percentage should be 100'})
         }
-        console.log('onSumbit: ', data);
-        // saveYarnFabricDesign(data)
-        //     .then(response => {
-        //         console.log("sucess response: ", response)
-        //         alert("Yarn Fabric Design saved sucessfully!!")
-        //     })
-        //     .catch(error => {
-        //         console.log('Error saving yarnFabricDesign: ', error)
-        //         if (error.status == 400) {
-        //             const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
-        //             setOpenRecordExistsSnackbar(true)
-        //         } else {
-        //             alert('Error Saving')
-        //         }
-        //     })
-
+        saveYarnFabricDesign(data)
+            .then(response => {
+                console.log("sucess response: ", response)
+                alert("Yarn Fabric Design saved sucessfully!!")
+                reset();
+            })
+            .catch(error => {
+                console.log('Error saving yarnFabricDesign: ', error)
+                if (error.status == 400) {
+                    const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
+                    setOpenRecordExistsSnackbar(true)
+                } else {
+                    alert('Error Saving')
+                }
+            })
+        setIsSubmitting(false)
     };
 
     const isDuplicateYarn = (yarnobj) => {
