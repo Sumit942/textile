@@ -1,19 +1,33 @@
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { TextField, Autocomplete, Snackbar, Alert } from '@mui/material';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { TextField, Autocomplete, Snackbar, Alert, Typography, Button, Box, Grid2 } from '@mui/material';
 import { getYarnByType } from '../service/yarn'
 import { getFabricDesignsByNameLike } from '../service/fabricDesign'
 import { saveYarnFabricDesign } from '../service/yarnFabricDesign';
+import { Add, Remove } from '@mui/icons-material';
 
 const YarnFabricDesign = () => {
-    const { handleSubmit, control, watch, formState: { errors, isSubmitting } } = useForm({
+    const { handleSubmit, control, watch, reset, setError, formState: { errors, isSubmitting } } = useForm({
         defaultValues: {
             qualityName: '',
-            fabricDesignYarnMappings: [],
+            fabricDesignYarnMappings: [
+                {
+                    yarn: null,
+                    percentage: ''
+                }
+            ],
             fabricDesign: null,
             gsm: '',
         }
     });
+
+    const { fields: fabricDesignYarnMappingsField,
+        append,
+        remove
+    } = useFieldArray({
+        control,
+        name: "fabricDesignYarnMappings"
+    })
 
     const [yarnOptions, setYarnOptions] = useState([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -45,36 +59,45 @@ const YarnFabricDesign = () => {
     const enteredGsm = watch('gsm')
 
     const getFullQualityName = () => {
-        const selectedYarnStr = selectedYarns ? selectedYarns.map((yarn) => yarn.type).join(" x ") : '';
+        const selectedYarnStr = selectedYarns ? selectedYarns.map((mapping) => mapping.yarn?.type || '').join(" x ") : '';
         const selectedDesignStr = selectedDesign ? selectedDesign.name : '';
         return selectedYarnStr + ' --' + selectedDesignStr + " (Gsm:"+ enteredGsm + ")";
     }
 
     const onSubmit = async (data) => {
-        console.log('onSmbit: ', data)
-
-        const transformedData = {
-            ...data,
-            fabricDesignYarnMappings: data.fabricDesignYarnMappings.map((yarn) => ( { yarn }))
+        const totalPerc = selectedYarns.reduce((sum, item) => {
+            const percentageValue = parseFloat(item.percentage) || 0;
+            return sum + percentageValue;
+        }, 0)
+        console.log('totalPerc: ', totalPerc)
+        if (totalPerc !== 100.00) {
+            setError(`fabricDesignYarnMappings.[0].percentage`, { type: 'manual', message: 'Sum all percentage should be 100'})
         }
-
-        console.log('transformed: ', transformedData)
-        saveYarnFabricDesign(transformedData)
-            .then(response => {
-                console.log("sucess response: ", response)
-                alert("Yarn Fabric Design saved sucessfully!!")
-            })
-            .catch(error => {
-                console.log('Error saving yarnFabricDesign: ', error)
-                if (error.status == 400) {
-                    const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
-                    setOpenRecordExistsSnackbar(true)
-                } else {
-                    alert('Error Saving')
-                }
-            })
+        console.log('onSumbit: ', data);
+        // saveYarnFabricDesign(data)
+        //     .then(response => {
+        //         console.log("sucess response: ", response)
+        //         alert("Yarn Fabric Design saved sucessfully!!")
+        //     })
+        //     .catch(error => {
+        //         console.log('Error saving yarnFabricDesign: ', error)
+        //         if (error.status == 400) {
+        //             const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
+        //             setOpenRecordExistsSnackbar(true)
+        //         } else {
+        //             alert('Error Saving')
+        //         }
+        //     })
 
     };
+
+    const isDuplicateYarn = (yarnobj) => {
+        console.log('isDuplicateYarn: ', yarnobj)
+        const val = selectedYarns.filter((selectedYarn) => selectedYarn.yarn?.id === yarnobj?.id )
+        return val.length > 0 && val[0]?.yarn?.id ? true: false;
+    }
+
+    console.log('erros; :: ', errors)
 
     return (
         <form 
@@ -90,62 +113,101 @@ const YarnFabricDesign = () => {
                     {...field}
                     label="Quality"
                     variant="filled"
+                    disabled
                     value={getFullQualityName()}
-                    slotProps={{
-                        inputProps: {
-                            readOnly: true,
-                        }
-                    }}
                     className='w-full'
                 />
                 )}
             />
             </div>
-            <Controller
-                name="fabricDesignYarnMappings"
-                control={control}
-                rules={{ required: 'Yarns are required' }}
-                // defaultValue={[]}
-                render={({ field }) => (
-                    <Autocomplete
-                        {...field}
-                        multiple
-                        value={field.value || []}
-                        options={yarnOptions}
-                        getOptionLabel={(option) => option.type || ''}
-                        // isOptionEqualToValue={(option, value) => option.id === value.id}
-                        className="px-3.5 py-2"
-                        onInputChange={(_, value) => {
-                            if (value.trim()) {
-                                fetchYarnOptions(value)
-                            }
-                        }}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Yarns"
-                                placeholder='Select Yarns'
-                                error={!!errors.fabricDesignYarnMappings}
-                                helperText={errors.fabricDesignYarnMappings ? errors.fabricDesignYarnMappings.message : ''}
+            <div className='px-3.5 py-2'>
+            <Typography component={'h2'} marginTop={3} textAlign={'center'} >Yarns</Typography>
+            {fabricDesignYarnMappingsField.map((yarnMapping, index)  => {
+                return (
+                <Grid2 key={index} container spacing={2} marginTop={2}>
+                    <Grid2 size={6}>
+                    <Controller
+                        name={`fabricDesignYarnMappings.${index}.yarn`}
+                        control={control}
+                        rules={{ required: 'Yarns are required' }}
+                        defaultValue={yarnMapping.yarn}
+                        render={({ field }) => (
+                            <Autocomplete
+                                {...field}
+                                value={field.value || ''}
+                                options={yarnOptions}
+                                getOptionLabel={(option) => option.type || ''}
+                                size='small'
+                                onInputChange={(_, value) => {
+                                    if (value.trim()) {
+                                        fetchYarnOptions(value)
+                                    }
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Yarns"
+                                        placeholder='Select Yarns'
+                                        error={!!errors.fabricDesignYarnMappings?.[index]?.yarn}
+                                        helperText={errors.fabricDesignYarnMappings?.[index]?.yarn?.message || ''}
+                                    />
+                                )}
+                                onChange={(_, value) => {
+                                    if (isDuplicateYarn(value)) {
+                                        document.activeElement.blur();
+                                        setOpenSnackbar(true)
+                                        field.onChange(field.value)
+                                    } else {
+                                        field.onChange(value)
+                                    }
+                                }}
                             />
                         )}
-                        onChange={(_, value) => {
-                            const hasDuplicate = value.some(
-                                (item, index) => value.findIndex((v) => v.id === item.id) !== index
-                            );
-
-                            if (hasDuplicate) {
-                                document.activeElement.blur();
-                                setOpenSnackbar(true)
-                                field.onChange(field.value)
-                            } else {
-                                field.onChange(value)
-                            }
-                        }}
                     />
-                )}
-            />
-
+                    </Grid2>
+                    <Grid2 size={4} alignContent={'center'}>
+                    <Controller
+                        name={`fabricDesignYarnMappings.${index}.percentage`}
+                        control={control}
+                        rules={{
+                            required: 'Please enter percentage',
+                            min: { value: 0.01, message: 'Value should be at least 0.01' },
+                            max: { value: 100.00, message: 'Value should not greater than 100' }
+                        }}
+                        defaultValue={yarnMapping.percentage}
+                        render={({ field }) => (
+                            <TextField
+                                size='small'
+                                {...field}
+                                type="number"
+                                label="Percentage"
+                                error={!!errors.fabricDesignYarnMappings?.[index]?.percentage?.message}
+                                helperText={errors.fabricDesignYarnMappings?.[index]?.percentage?.message || ''}
+                            />
+                        )}
+                    />
+                    </Grid2>
+                    <Grid2 size={1}>
+                    <Button
+                        variant='contained'
+                        color='error'
+                        onClick={() => remove(index)}
+                        disabled={fabricDesignYarnMappingsField.length === 1}
+                        startIcon={<Remove />}
+                    ></Button>
+                    </Grid2>
+                </Grid2>
+                )
+            })
+            }
+            </div>
+            <div className='px-3.5 py-2'>
+                <Button variant='contained' startIcon={<Add />}
+                    onClick={() => append({ yarn: null, percentage: ''})}
+                >Add Yarn</Button>
+            </div>
+            <Grid2 className='px-3.5 py-2' container spacing={2}>
+            <Grid2 size={8}>
             <Controller
                 name="fabricDesign"
                 control={control}
@@ -161,7 +223,6 @@ const YarnFabricDesign = () => {
                                 fetchDesignOptions(value)
                             }
                         }}
-                        className='px-3.5 py-2'
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -174,7 +235,8 @@ const YarnFabricDesign = () => {
                     />
                 )}
             />
-            <div className='px-3.5 py-2'>
+            </Grid2>
+            <Grid2 size={4}>
             <Controller
                 name="gsm"
                 control={control}
@@ -189,13 +251,20 @@ const YarnFabricDesign = () => {
                     variant="outlined"
                     error={!!errors.gsm}
                     helperText={errors.gsm?.message || ''}
-                    className='w-full'
                 />
                 )}
             />
-            </div>
+            </Grid2>
+            </Grid2>
 
-            <div className='px-3.5 py-2'>
+            <div className='px-3.5 py-2 space-y-2'>
+            <button 
+                className="mb-3 w-full border rounded-md bg-gray-100 px-3.5 py-3.5 text-center text-sm font-semibold text-indigo-500 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                type="button"
+                onClick={() => reset()}
+                >
+                Reset
+            </button>
             <button 
                 className="block w-full rounded-md bg-indigo-600 px-3.5 py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 type="submit"

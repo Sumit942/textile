@@ -17,7 +17,7 @@ public class YarnFabricDesign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "yarnFabricDesign", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "yarnFabricDesign", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     private List<FabricDesignYarnMapping> fabricDesignYarnMappings;
     @ManyToOne
