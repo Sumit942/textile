@@ -29,6 +29,7 @@ public class TransformationEntityToDTO {
             ordersDto.setId(orders.getId());
             ordersDto.setRemarks(orders.getRemarks());
             ordersDto.setOrderStatusType(orders.getOrderStatusType());
+            ordersDto.setOrderNo(orders.getOrderNo());
             if (Objects.nonNull(orders.getCompany())) {
                 ordersDto.setCompany(transformCompanyEntity(orders.getCompany()));
             }

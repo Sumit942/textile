@@ -18,6 +18,7 @@ public class OrdersView {
     private Long id;
     private Long orderId;
     private String orderStatusType;
-    private String companyName;
+    private Long companyId;
     private String itemsWithQuantities;
+    private String orderNo;
 }

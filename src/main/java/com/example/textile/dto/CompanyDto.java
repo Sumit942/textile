@@ -13,10 +13,11 @@ import java.util.List;
 @Getter
 @Setter
 public class CompanyDto {
-    public CompanyDto(Long id, String name, String gst) {
+    public CompanyDto(Long id, String name, String gst, String code) {
         this.id = id;
         this.name = name;
         this.gst = gst;
+        this.code = code;
     }
     private Long id;
     private String name;
@@ -27,4 +28,5 @@ public class CompanyDto {
     private String mobileNo;
     private List<BankDetail> bankDetails;
     private CompanyType companyType;
+    private String code;
 }

@@ -78,7 +78,7 @@ const OrderLists = () => {
                     {orders.map((order, index) => (
                         <TableRow key={order.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>{order.companyName}</TableCell>
+                            <TableCell>{order.orderNo}</TableCell>
                             <TableCell>
                                 <span style={{ color: getOrderStatus(order.orderStatusType).color }}>
                                     {order.orderStatusType}

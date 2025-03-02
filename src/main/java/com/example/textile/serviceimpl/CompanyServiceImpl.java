@@ -62,9 +62,11 @@ public class CompanyServiceImpl implements CompanyService {
         Root<Company> companyRoot = query.from(Company.class);
 
         query.select(cb.construct(CompanyDto.class,
-                companyRoot.get("id"),
-                companyRoot.get("name"),
-                companyRoot.get("gst")))
+                    companyRoot.get("id"),
+                    companyRoot.get("name"),
+                    companyRoot.get("gst"),
+                    companyRoot.get("code"))
+                )
                 .where(cb.like(cb.lower(companyRoot.get("name")), "%"+name.toLowerCase()+"%"));
         return entityManager.createQuery(query).getResultList();
     }

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.example.textile.transform.TransformationEntityToDTO.transformOrdersEntity;
+import static com.example.textile.utility.ActionValidationUtil.isNullOrLessThanOne;
 
 @Slf4j
 @AllArgsConstructor
@@ -49,6 +50,9 @@ public class OrderSubmitAction extends RestActionExecutor<OrdersDto> {
         log.debug("Entry{}", logPrefix);
 
         List<CompanyYarnOrderDto> yarnOrders = ordersDto.getCompanyYarnOrders();
+        if (Objects.isNull(ordersDto.getCompany()) || isNullOrLessThanOne(ordersDto.getCompany().getId())) {
+            errorMap.put("company.code", new String[]{"NotNull.ordersDto.company.code"});
+        }
         if (Objects.nonNull(yarnOrders) && !yarnOrders.isEmpty()) {
             List<String> yarnInvoiceNos = new ArrayList<>();
             for (int i = 0; i < yarnOrders.size(); i++) {
@@ -75,6 +79,6 @@ public class OrderSubmitAction extends RestActionExecutor<OrdersDto> {
 
     @Override
     protected void doPreSaveOperationRest(OrdersDto ordersDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
-
+        //pre saving stuffs
     }
 }

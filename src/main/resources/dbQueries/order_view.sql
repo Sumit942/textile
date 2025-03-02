@@ -1,9 +1,10 @@
-CREATE VIEW order_view AS
+CREATE VIEW orders_view AS
 SELECT
 	ROW_NUMBER() OVER (ORDER BY o.id) AS id,
 	o.id AS order_id,
 	o.order_status_type,
-	c.name AS company_name,
+	c.id AS company_id,
+	o.order_no,
 	GROUP_CONCAT(yn.type, ' :', oi.quantity, ' kgs') AS items_with_quantities
 FROM
 	orders o

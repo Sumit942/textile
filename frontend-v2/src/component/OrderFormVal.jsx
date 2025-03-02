@@ -42,6 +42,7 @@ const OrderFormVal = () => {
       setValue("orderStatusType", response.data.orderStatusType);
       setValue("remarks", response.data.remarks);
       setValue("companyYarnOrders", response.data.companyYarnOrders);
+      setValue("orderNo", response.data.orderNo)
       setIsFetchingOrder(false);
     } else {
       alert('Error fetching order by id', orderId);
@@ -131,6 +132,7 @@ const OrderFormVal = () => {
     setSelectedCompany(company);
     setValue("company.name", company.name);
     setValue("company.id", company.id);
+    setValue("company.code", company.code)
     clearErrors("company.name");
     clearErrors("company.id");
     setShowDropdown(false);
@@ -154,8 +156,8 @@ const OrderFormVal = () => {
   return (
     <div className="isolate bg-white px-6 py-5 sm:py-10 lg:px-8">
      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-          {isUpdate ? 'Update Order' : 'Save Order'}
+        <h2 className="text-balance text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+          {isUpdate ? `Update Order No :${watch('orderNo')}` : 'Save Order'}
         </h2>
      </div> 
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto mt-16 max-w-xl sm:mt-20'>
@@ -177,6 +179,11 @@ const OrderFormVal = () => {
           value={selectedCompany ? selectedCompany.id : watch("company.id") ? watch("company.id") : ""}
         />
         <input
+          type="hidden"
+          {...register("company.code", { required: "Please search and select company"})}
+          value={selectedCompany?.code || ''}
+        />
+        <input
           {...register("company.name", { required: "Company name is required" })}
           placeholder="Enter Company Name"
           className={`w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 ${errors.company?.name || errors.company?.id ? 'outline-red-300' : 'outline-gray-300'} placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600`}
@@ -195,12 +202,13 @@ const OrderFormVal = () => {
                 className={`px-3 py-2 cursor-pointer hover:bg-gray-200 ${highlightedIndex === index ? 'bg-gray-200' : ''}`}
                 onClick={() => handleCompanySelect(company)}
               >
-                {company.name} - <b><i>{company.gst}</i></b>
+                {company.name} ({company.code}) - <b><i>{company.gst}</i></b>
               </li>
             ))}
           </ul>
         )}
         {errors.company?.id && <p className="text-red-500 text-sm mt-1">{errors.company.id.message}</p>}
+        {errors.company?.code && <p className="text-red-500 text-sm mt-1">{errors.company.code.message}</p>}
         {errors.company?.name && <p className="text-red-500 text-sm mt-1">{errors.company.name.message}</p>}
         </div>
 

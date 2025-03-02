@@ -26,6 +26,7 @@ public class TransformationDTOToEntity {
         orders.setId(ordersDto.getId());
         orders.setRemarks(ordersDto.getRemarks());
         orders.setOrderStatusType(ordersDto.getOrderStatusType());
+        orders.setOrderNo(orders.getOrderNo());
         if (Objects.nonNull(ordersDto.getCompany()) && Objects.nonNull(ordersDto.getCompany().getId())) {
             orders.setCompany(modelMapper.map(ordersDto.getCompany(), Company.class));
         }

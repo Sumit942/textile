@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { Button, TextField, IconButton, Autocomplete } from '@mui/material';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { Button, TextField, Autocomplete } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
 import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
@@ -154,6 +154,11 @@ const CompanyYarnOrder = () => {
     }
 
     const onSubmit = async (data) => {
+
+        if (data.yarnOrderItems.length === 0) {
+            alert('Please add atleast one item')
+            return;
+        }
         console.log('Company Yarn Order Data:', data);
         return;
        const response = await saveCompanyYarnOrder(data);
@@ -184,30 +189,38 @@ const CompanyYarnOrder = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-16 max-w-xl sm:mt-20 space-y-4">
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <input type="hidden" {...register('id')} />
-                <input type="hidden" {...register('order.id', { required: 'Please search and select'})} />
-                <Autocomplete
-                    freeSolo
-                    options={orderOptions}
-                    getOptionLabel={(option) => option.orderNo}
-                    onChange={(event, newValue) => {
-                        if (newValue) {
-                            methods.setValue('order.id', newValue.id);
-                            methods.setValue('order.orderNo', newValue.orderNo);
-                            methods.clearErrors('order.id');
-                        }
+                <Controller
+                    control={control}
+                    name='order'
+                    rules={{
+                        required: 'Please select orderNo'
                     }}
-                    onInputChange={(event, newInputValue) => {
-                        fetchOrderOptions(newInputValue);
-                        methods.setValue('order.id', '');
-                    }}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            {...register('order.orderNo', { required: "Order No is required" })}
-                            label="Order No"
-                            variant="outlined"
-                            error={!!methods.formState.errors.order?.orderNo || !!methods.formState.errors.order?.id}
-                            helperText={methods.formState.errors.order?.orderNo?.message || methods.formState.errors.order?.id?.message}
+                    render={( { field } ) => (
+                        <Autocomplete
+                            {...field}
+                            value={field?.orderNo || ''}
+                            freeSolo
+                            options={orderOptions}
+                            getOptionLabel={(option) => option.orderNo || ''}
+                            onInputChange={(_, newInputValue) => {
+                                if (newInputValue.trim() !== '') {
+                                    fetchOrderOptions(newInputValue);
+                                }
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Order No"
+                                    variant="outlined"
+                                    error={!!methods.formState.errors.order}
+                                    helperText={methods.formState.errors.order?.message || ''}
+                                />
+                            )}
+                            onChange={(_, newValue) => {
+                                if (newValue) {
+                                    field.onChange(newValue)
+                                }
+                            }}
                         />
                     )}
                 />
