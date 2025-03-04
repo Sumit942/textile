@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +23,6 @@ public class FabricDesignYarnMapping {
     @Column(precision = 5, scale = 2)
     private BigDecimal percentage;
     @ManyToOne
+    @JsonBackReference
     private YarnFabricDesign yarnFabricDesign;
 }

@@ -18,7 +18,7 @@ public class YarnFabricDesingCrudTest {
     public void fetchYarnFabricDesign() {
         String input = "24 Cot";
 
-        List<YarnFabricDesign> byYarnsAndFabricDesign = yarnFabricDesignService.findByYarnTypesAndFabricDesign(input);
+        List<YarnFabricDesign> byYarnsAndFabricDesign = yarnFabricDesignService.findByYarnTypesAndFabricDesign(input, true);
 
         System.out.println("byYarnsAndFabricDesign.size() = " + byYarnsAndFabricDesign.size());
         byYarnsAndFabricDesign.forEach(yarnFabricDesign -> {

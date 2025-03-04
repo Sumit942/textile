@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +35,7 @@ public class YarnOrderItem {
             joinColumns = @JoinColumn(name = "yarn_order_item_id"),
             inverseJoinColumns = @JoinColumn(name = "yarn_order_item_product_id")
     )
+    @JsonManagedReference
     private List<YarnOrderItemProduct> yarnOrderItemProducts;
 
     @Override

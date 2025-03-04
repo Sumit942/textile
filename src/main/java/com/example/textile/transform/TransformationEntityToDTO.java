@@ -3,9 +3,11 @@ package com.example.textile.transform;
 import com.example.textile.dto.CompanyDto;
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.dto.OrdersDto;
+import com.example.textile.dto.YarnFabricDesignDto;
 import com.example.textile.entity.Company;
 import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.entity.Orders;
+import com.example.textile.entity.YarnFabricDesign;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -36,7 +38,7 @@ public class TransformationEntityToDTO {
 
             if (!CollectionUtils.isEmpty(orders.getCompanyYarnOrders())) {
                 List<CompanyYarnOrderDto> yarnOrderDtoList = orders.getCompanyYarnOrders().stream()
-                        .map(TransformationEntityToDTO::transformCompanyYarnOrderDto)
+                        .map(TransformationEntityToDTO::transformCompanyYarnOrderEntity)
                         .collect(Collectors.toList());
                 ordersDto.setCompanyYarnOrders(yarnOrderDtoList);
             }
@@ -55,7 +57,7 @@ public class TransformationEntityToDTO {
         return companyDto;
     }
 
-    public static CompanyYarnOrderDto transformCompanyYarnOrderDto(CompanyYarnOrder yarnOrder) {
+    public static CompanyYarnOrderDto transformCompanyYarnOrderEntity(CompanyYarnOrder yarnOrder) {
         CompanyYarnOrderDto companyYarnOrderDto = new CompanyYarnOrderDto();
 
         companyYarnOrderDto.setVersion(yarnOrder.getVersion());
@@ -69,5 +71,14 @@ public class TransformationEntityToDTO {
         companyYarnOrderDto.setYarnBuilties(yarnOrder.getYarnBuilties());
 
         return companyYarnOrderDto;
+    }
+
+    public static YarnFabricDesignDto transformYarnFabricDesignEntity(YarnFabricDesign yarnFabricDesign) {
+        YarnFabricDesignDto yarnFabricDesignDto = new YarnFabricDesignDto();
+        yarnFabricDesignDto.setId(yarnFabricDesign.getId());
+        yarnFabricDesignDto.setFabricDesign(yarnFabricDesign.getFabricDesign());
+        yarnFabricDesignDto.setGsm(yarnFabricDesign.getGsm());
+        yarnFabricDesignDto.setQualityName(yarnFabricDesign.getQualityName());
+        return yarnFabricDesignDto;
     }
 }

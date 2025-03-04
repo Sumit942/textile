@@ -20,6 +20,48 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
     private EntityManager entityManager;
 
     @Override
+    public List<YarnFabricDesign> findByYarnTypesAndFabricDesign(String yarnFabricDesign, boolean isDeepSearch) {
+        if (isDeepSearch) {
+            return findByYarnTypesAndFabricDesign(yarnFabricDesign);
+        }
+        if (StringUtils.isEmpty(yarnFabricDesign)) {
+            return Collections.emptyList();
+        }
+
+        String yarns = null, fabric = null;
+        if (yarnFabricDesign.startsWith("--")) {
+            fabric = yarnFabricDesign.replace("--","");
+        } else {
+            String[] yarnsAndFabricArr = yarnFabricDesign.split("--");
+            yarns = yarnsAndFabricArr[0];
+            if (yarnsAndFabricArr.length > 1) {
+                fabric = yarnsAndFabricArr[1];
+            }
+        }
+
+
+        StringBuilder sb = new StringBuilder("SELECT yfd FROM YarnFabricDesign yfd WHERE ");
+        if (!StringUtils.isEmpty(yarns)) {
+            sb.append("LOWER(yfd.qualityName) like LOWER(:yarns) ");
+        }
+        if (!StringUtils.isEmpty(fabric)) {
+            if (!StringUtils.isEmpty(yarns)) {
+                sb.append("AND ");
+            }
+            sb.append("LOWER(yfd.fabricDesign.name) like LOWER(:fabricDesignName)");
+        }
+
+        TypedQuery<YarnFabricDesign> query = entityManager.createQuery(sb.toString(), YarnFabricDesign.class);
+        if (!StringUtils.isEmpty(yarns)) {
+            query.setParameter("yarns", "%".concat(yarns).concat("%"));
+        }
+        if (!StringUtils.isEmpty(fabric)) {
+            query.setParameter("fabricDesignName", "%".concat(fabric).concat("%"));
+        }
+
+        return query.getResultList();
+    }
+
     public List<YarnFabricDesign> findByYarnTypesAndFabricDesign(String yarnsFabricDesign) {
         if (StringUtils.isEmpty(yarnsFabricDesign)) {
             return Collections.emptyList();

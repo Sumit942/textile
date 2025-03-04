@@ -5,6 +5,7 @@ import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
 import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
 import { fetchOrderNoListByOrderNo } from '../service/orderApi';
+import { fetchYarnFabricDesignByYarnsAndDesigns } from '../service/yarnFabricDesign';
 
 const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
@@ -32,6 +33,14 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
         } catch (error) {
             console.error('Error fetching yarn:', error);
         }
+    }
+
+    const fetchYarnFabricDesignsByYarnAndDesignName = (yarnAndDesignName) => {
+        fetchYarnFabricDesignByYarnsAndDesigns(yarnAndDesignName)
+            .then(response => setYarnFabricDesignOptions(response.data))
+            .catch(error => {
+                console.log('Error fetching yarns', error);
+            })
     }
 
     return (
@@ -90,36 +99,36 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
             
             {yarnOrderItemProducts?.length > 0 && <h3 className="font-semibold col-span-2 sm:col-span-4">Order Item Products</h3>}
             {yarnOrderItemProducts.map((item, itemIndex) => (
-                <div key={item.id} className='col-span-2 sm:col-span-4 grid grid-cols-4 gap-x-6 gap-y-4'>
-                    <input type="hidden" {...register(`yarnOrderItems.${index}.yarnOrderItemProducts.${itemIndex}.id`)} />
-                    {/* TODO: below autocomplete */}
-                    <Autocomplete
-                        className='col-span-3'
-                        size='small'
-                        freeSolo
-                        options={yarnFabricDesignOptions}
-                        getOptionLabel={(option) => option.yarnFabricDesign || ''}
-                        onChange={(event, newValue) => {
-                            if (newValue) {
-                                methods.setValue('order.id', newValue.id);
-                                methods.setValue('order.orderNo', newValue.orderNo);
-                                methods.clearErrors('order.id');
-                            }
-                        }}
-                        onInputChange={(event, newInputValue) => {
-                            fetchOrderOptions(newInputValue);
-                            methods.setValue('order.id', '');
-                        }}
-                        renderInput={(params) => (
-                            <TextField
-                                {...register(`yarnOrderItems.${index}.yarnOrderItemProducts.${itemIndex}.yarnFabricDesign`)}
-                                label="Fabric Design"
-                                variant="outlined"
-                                {...params}
-                                error={!!methods.formState.errors.order?.orderNo || !!methods.formState.errors.order?.id}
-                                helperText={methods.formState.errors.order?.orderNo?.message || methods.formState.errors.order?.id?.message}
-                            />
-                        )}
+                <div key={`${index}-${item.id}`} className='col-span-2 sm:col-span-4 grid grid-cols-4 gap-x-6 gap-y-4'>
+                    <Controller
+                        control={control}
+                        name={`yarnOrderItems.${index}.yarnOrderItemProducts.${itemIndex}`}
+                        defaultValue={null}
+                        render={({ field }) => (
+                            <Autocomplete
+                                className='col-span-3'
+                                size='small'
+                                freeSolo
+                                options={yarnFabricDesignOptions}
+                                getOptionLabel={(option) => option.qualityName || ''}
+                                onChange={(_, newValue) => {
+                                    field.onChange(newValue)
+                                }}
+                                onInputChange={(event, newInputValue) => {
+                                    if (newInputValue.trim() !== '') {
+                                        fetchYarnFabricDesignsByYarnAndDesignName(newInputValue);
+                                    }
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Fabric Design"
+                                        variant="outlined"
+                                        error={!!methods.formState.errors.yarnOrderItems?.[index]?.yarnOrderItemProducts?.[itemIndex]}
+                                        helperText={methods.formState.errors.yarnOrderItems?.[index]?.yarnOrderItemProducts?.[itemIndex]?.message || ''}
+                                    />
+                                )}
+                            />)}
                     />
                     <Button size='small' className='col-span-1' variant="contained" color="error" onClick={() => removeYarnOrderItemProducts(index)}
                         startIcon={<Remove />}

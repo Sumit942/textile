@@ -2,6 +2,7 @@ package com.example.textile.controller;
 
 import com.example.textile.action.YarnFabricDesignAction;
 import com.example.textile.dto.ErrorResponseDto;
+import com.example.textile.dto.YarnFabricDesignDto;
 import com.example.textile.entity.YarnFabricDesign;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
@@ -9,6 +10,7 @@ import com.example.textile.executors.ActionExecutor;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.service.YarnFabricDesignService;
+import com.example.textile.transform.TransformationEntityToDTO;
 import com.example.textile.utility.FactoryUtility;
 import com.example.textile.utility.ShreeramTextileConstants;
 import com.example.textile.utility.factory.ActionExecutorFactory;
@@ -16,17 +18,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.example.textile.utility.LogUtils.*;
 
@@ -79,5 +80,15 @@ public class YarnFabricDesignController extends BaseController{
             log.info(createExitLog(logPrefix, logSuffix));
             return ResponseEntity.internalServerError().body(errorResponseDto);
         }
+    }
+
+    @GetMapping("searchBy")
+    public ResponseEntity<List<YarnFabricDesignDto>> searchBy(@RequestParam String yarnsAndDesignName,
+                                                              @RequestParam(value = "isDeepSearch", defaultValue = "false") boolean isDeepSearch) {
+        List<YarnFabricDesign> byYarnTypesAndFabricDesign = yarnFabricDesignService.findByYarnTypesAndFabricDesign(yarnsAndDesignName, isDeepSearch);
+        List<YarnFabricDesignDto> yarnFabricDesignDtos = byYarnTypesAndFabricDesign.stream()
+                .map(TransformationEntityToDTO::transformYarnFabricDesignEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(yarnFabricDesignDtos);
     }
 }

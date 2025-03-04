@@ -35,7 +35,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
         log.info(createEntryLog(logPrefix));
 
         CompanyYarnOrder save = yarnOrderService.save(companyYarnOrderDto);
-        CompanyYarnOrderDto yarnOrderDto = TransformationEntityToDTO.transformCompanyYarnOrderDto(save);
+        CompanyYarnOrderDto yarnOrderDto = TransformationEntityToDTO.transformCompanyYarnOrderEntity(save);
 
         ActionResponse<CompanyYarnOrderDto> actionResponse = new ActionResponse<>(ResponseType.SUCCESS);
         actionResponse.setDbObj(yarnOrderDto);

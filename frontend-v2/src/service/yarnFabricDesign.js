@@ -25,3 +25,15 @@ export const findYarnFabricDesignById = async (id) => {
         throw error;
     }
 }
+
+export const fetchYarnFabricDesignByYarnsAndDesigns = async (yarnsAndDesignName) => {
+    console.log('fetchYarnFabricDesignByYarnsAndDesigns() Entry: ', yarnsAndDesignName);
+    try {
+        const response = await API.get(`${API_URL}/searchBy?yarnsAndDesignName=${yarnsAndDesignName}`);
+        console.log('fetchYarnFabricDesignByYarnsAndDesigns() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchYarnFabricDesignByYarnsAndDesigns() Error finding fabric design:', error);
+        throw error;
+    }
+}
