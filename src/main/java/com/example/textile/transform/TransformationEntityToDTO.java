@@ -54,6 +54,7 @@ public class TransformationEntityToDTO {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setId(company.getId());
         companyDto.setName(company.getName());
+        companyDto.setCode(company.getCode());
         return companyDto;
     }
 
@@ -69,6 +70,12 @@ public class TransformationEntityToDTO {
         companyYarnOrderDto.setTotalAmount(yarnOrder.getTotalAmount());
         companyYarnOrderDto.setYarnOrderItems(yarnOrder.getYarnOrderItems());
         companyYarnOrderDto.setYarnBuilties(yarnOrder.getYarnBuilties());
+        companyYarnOrderDto.setCompany(transformCompanyEntity(yarnOrder.getCompany()));
+        companyYarnOrderDto.setCompanyYarnOrderProductMappings(yarnOrder.getCompanyYarnOrderProductMappings());
+        companyYarnOrderDto.setIGst(yarnOrder.getIGst());
+        companyYarnOrderDto.setCGst(yarnOrder.getCGst());
+        companyYarnOrderDto.setSGst(yarnOrder.getSGst());
+        companyYarnOrderDto.setDiscPerc(yarnOrder.getDiscPerc());
 
         return companyYarnOrderDto;
     }

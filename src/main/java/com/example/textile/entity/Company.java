@@ -30,23 +30,26 @@ public class Company implements Serializable {
     private List<BankDetail> bankDetails;
     private Date insertDt;
     private Date updateDt;
-    @ManyToOne(fetch = FetchType.LAZY)
     private CompanyType companyType;
-    @Getter
     private String code;
 
     @PrePersist
     private void prePersist() {
+        System.out.println("Company.prePersist");
         if (StringUtils.isEmpty(code)) {
             StringBuilder sbCode = new StringBuilder();
             for (String s : name.split("\\s+")) {
-                sbCode.append(s.charAt(0));
+                char c = s.charAt(0);
+                if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+                    continue;
+                }
+                sbCode.append(c);
             }
             setCode(sbCode.toString().toUpperCase());
         }
     }
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public CompanyType getCompanyType() {
         return companyType;
     }
@@ -92,6 +95,11 @@ public class Company implements Serializable {
     @UpdateTimestamp
     public Date getUpdateDt() {
         return updateDt;
+    }
+
+    @Column(unique = true, nullable = false)
+    public String getCode() {
+        return code;
     }
 
     @Override

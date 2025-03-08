@@ -1,5 +1,6 @@
 package com.example.textile.transform;
 
+import com.example.textile.dto.CompanyDto;
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.Company;
@@ -39,6 +40,14 @@ public class TransformationDTOToEntity {
         return orders;
     }
 
+    private static Company transformCompany(CompanyDto companyDto) {
+        Company company = new Company();
+        company.setId(companyDto.getId());
+        company.setName(companyDto.getName());
+        company.setCode(companyDto.getCode());
+        return company;
+    }
+
     public static CompanyYarnOrder transformCompanyYarnOrder(CompanyYarnOrderDto companyYarnOrderDto) {
         CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
 
@@ -56,6 +65,13 @@ public class TransformationDTOToEntity {
             companyYarnOrder.getYarnBuilties()
                     .forEach(TransformationDTOToEntity::validateYarnBuilty);
         }
+
+        companyYarnOrder.setCompany(transformCompany(companyYarnOrderDto.getCompany()));
+        companyYarnOrder.setCompanyYarnOrderProductMappings(companyYarnOrderDto.getCompanyYarnOrderProductMappings());
+        companyYarnOrder.setIGst(companyYarnOrderDto.getIGst());
+        companyYarnOrder.setCGst(companyYarnOrderDto.getCGst());
+        companyYarnOrder.setSGst(companyYarnOrderDto.getSGst());
+        companyYarnOrder.setDiscPerc(companyYarnOrderDto.getDiscPerc());
         return companyYarnOrder;
     }
 

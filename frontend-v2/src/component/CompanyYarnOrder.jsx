@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Button, TextField, Autocomplete } from '@mui/material';
+import { Button, TextField, Autocomplete, Box } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
 import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
 import { fetchOrderNoListByOrderNo } from '../service/orderApi';
 import { fetchYarnFabricDesignByYarnsAndDesigns } from '../service/yarnFabricDesign';
+import { fetchProductIdAndMachineByYarnFabricDesignId } from '../service/companyYarnOrderProduct';
 
 const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [yarnFabricDesignOptions, setYarnFabricDesignOptions] = useState([]);
-    const { 
-        fields: yarnOrderItemProducts,
-        append: appendYarnOrderItemProducts,
-        remove: removeYarnOrderItemProducts 
-    } = useFieldArray({
-        control,
-        name: `yarnOrderItems.${index}.yarnOrderItemProducts`
-    });
 
     useEffect(() => {
         if (inputValue) {
@@ -35,13 +27,6 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
         }
     }
 
-    const fetchYarnFabricDesignsByYarnAndDesignName = (yarnAndDesignName) => {
-        fetchYarnFabricDesignByYarnsAndDesigns(yarnAndDesignName)
-            .then(response => setYarnFabricDesignOptions(response.data))
-            .catch(error => {
-                console.log('Error fetching yarns', error);
-            })
-    }
 
     return (
         <div className="mb-2 border p-4 rounded-md grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
@@ -95,58 +80,144 @@ const OrderItem = ({ control, methods, register, index, remove }) => {
             />
             <TextField size='small' {...register(`yarnOrderItems.${index}.rate`)} label="Rate" variant="outlined" />
             <TextField size='small' {...register(`yarnOrderItems.${index}.amount`)} label="Amount" variant="outlined" />
-
-            
-            {yarnOrderItemProducts?.length > 0 && <h3 className="font-semibold col-span-2 sm:col-span-4">Order Item Products</h3>}
-            {yarnOrderItemProducts.map((item, itemIndex) => (
-                <div key={`${index}-${item.id}`} className='col-span-2 sm:col-span-4 grid grid-cols-4 gap-x-6 gap-y-4'>
-                    <Controller
-                        control={control}
-                        name={`yarnOrderItems.${index}.yarnOrderItemProducts.${itemIndex}`}
-                        defaultValue={null}
-                        render={({ field }) => (
-                            <Autocomplete
-                                className='col-span-3'
-                                size='small'
-                                freeSolo
-                                options={yarnFabricDesignOptions}
-                                getOptionLabel={(option) => option.qualityName || ''}
-                                onChange={(_, newValue) => {
-                                    field.onChange(newValue)
-                                }}
-                                onInputChange={(event, newInputValue) => {
-                                    if (newInputValue.trim() !== '') {
-                                        fetchYarnFabricDesignsByYarnAndDesignName(newInputValue);
-                                    }
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Fabric Design"
-                                        variant="outlined"
-                                        error={!!methods.formState.errors.yarnOrderItems?.[index]?.yarnOrderItemProducts?.[itemIndex]}
-                                        helperText={methods.formState.errors.yarnOrderItems?.[index]?.yarnOrderItemProducts?.[itemIndex]?.message || ''}
-                                    />
-                                )}
-                            />)}
-                    />
-                    <Button size='small' className='col-span-1' variant="contained" color="error" onClick={() => removeYarnOrderItemProducts(index)}
-                        startIcon={<Remove />}
-                    ></Button>
-                </div>
-            ))}
-            <Button size='small' className='col-span-2' 
-                variant="contained" color="primary" onClick={() => appendYarnOrderItemProducts(index)}
-                startIcon={<Add />}
-            >
-                fabric design quality
-            </Button>
             <Button className='col-span-2' variant="contained" color="error" onClick={() => remove(index)} startIcon={<Remove />}>
                 Remove Item
             </Button>
         </div>
     );
 };
+
+const CompanyOrderProduct = ( {control, index, removeOrderProduct, methods} ) => {
+
+
+    const [yarnFabricDesignOptions, setYarnFabricDesignOptions] = useState([]);
+    const [machineOptions, setMachineOptions] = useState([])
+
+    const fetchYarnFabricDesignsByYarnAndDesignName = (yarnAndDesignName) => {
+        fetchYarnFabricDesignByYarnsAndDesigns(yarnAndDesignName)
+            .then(response => setYarnFabricDesignOptions(response.data))
+            .catch(error => {
+                console.log('Error fetching yarns', error);
+            })
+    }
+
+    const fetchCompanyOrderProduct = (fabricDesign) => {
+        if (fabricDesign?.id) {
+            fetchProductIdAndMachineByYarnFabricDesignId(fabricDesign.id)
+                .then(response => {
+                    console.log('machineOpt: ', response.data)
+                    setMachineOptions(response.data)
+                })
+                .catch(error => {
+                    alert('Error fetching machines selected fabric design')
+                    console.log('Error fetching machines selected fabric design', error)
+                })
+        }
+    }
+
+    return (
+        <div className='col-span-2 sm:col-span-4 mb-2 border p-4 rounded-md grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4'>
+            <Controller
+                control={control}
+                name={`companyYarnOrderProductMappings.${index}.companyYarnOrderProduct.yarnFabricDesign`}
+                rules={{
+                    required: "Yarn Fabric Design is required",
+                }}
+                defaultValue={null}
+                render={({ field }) => (
+                    <Autocomplete
+                        className='col-span-3'
+                        size='small'
+                        freeSolo
+                        options={yarnFabricDesignOptions}
+                        getOptionLabel={(option) => option.qualityName || ''}
+                        onChange={(_, newValue) => {
+                            field.onChange(newValue);
+                            fetchCompanyOrderProduct(newValue)
+                        }}
+                        onInputChange={(_, newInputValue) => {
+                            if (newInputValue.trim() !== '') {
+                                fetchYarnFabricDesignsByYarnAndDesignName(newInputValue);
+                            }
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Fabric Design"
+                                variant="outlined"
+                                error={!!methods.formState.errors.companyYarnOrderProductMappings?.[index]?.companyYarnOrderProduct?.yarnFabricDesign}
+                                helperText={methods.formState.errors.companyYarnOrderProductMappings?.[index]?.companyYarnOrderProduct?.yarnFabricDesign?.message || ''}
+                            />
+                        )}
+                    />
+                )}
+            />
+            <Controller
+                name={`companyYarnOrderProductMappings.${index}.companyYarnOrderProduct.machine`}
+                control={control}
+                defaultValue={null}
+                rules={{
+                    required: "Machine no is required",
+                }}
+                render={({ field }) => (
+                    <Autocomplete
+                        {...field}
+                        className='col-span-1'
+                        size='small'
+                        freeSolo
+                        options={machineOptions}
+                        getOptionLabel={(option) => option.machine?.machineNo ? (`${option.machine.machineNo}  -${option.machine.dia}/${option.machine.guage}`) : ''}
+                        openOnFocus
+                        value={field.value?.machine || null}
+                        onChange={(_, newValue) => {
+                            console.log('onCHnage machine: ', newValue)
+                            if (newValue?.id) {
+                                methods.setValue(`companyYarnOrderProductMappings.${index}.companyYarnOrderProduct.id`, newValue.id)
+                            }
+                            if (newValue?.machine) {
+                                field.onChange(newValue.machine || null);
+                            }
+                        }}
+                        onInputChange={(_, newInputValue) => {
+                            methods.setValue(`companyYarnOrderProductMappings.${index}.companyYarnOrderProduct.machine`, null)
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Machine"
+                                variant="outlined"
+                                error={!!methods.formState.errors.companyYarnOrderProductMappings?.[index]?.companyYarnOrderProduct?.machine}
+                                helperText={methods.formState.errors.companyYarnOrderProductMappings?.[index]?.companyYarnOrderProduct?.machine?.message}
+                            />
+                        )}
+                    />
+                )}
+            />
+            <Controller
+                name={`companyYarnOrderProductMappings.${index}.quantity`}
+                control={control}
+                defaultValue=''
+                rules={{ required: 'Quantity is required', pattern: { value: /^[0-9]+$/, message: "Quantity must be a number" } }}
+                render={({ field, fieldState }) => (
+                    <TextField
+                        {...field}
+                        label="Quantity"
+                        variant="outlined"
+                        size="small"
+                        className="col-span-1"
+                        error={!!fieldState.error}
+                        helperText={fieldState.error?.message}
+                    />
+                )}
+            />
+            <Button size='small' className='col-span-2' variant="contained" color="error" onClick={() => removeOrderProduct(index)}
+                startIcon={<Remove />}
+            >
+                Remove product
+            </Button>
+        </div>
+    )
+}
 
 const CompanyYarnOrder = () => {
     const methods = useForm();
@@ -155,6 +226,15 @@ const CompanyYarnOrder = () => {
         control,
         name: 'yarnOrderItems'
     });
+    const { 
+        fields: orderProducts,
+        append: appendOrderProducts,
+        remove: removeOrderProducts 
+    } = useFieldArray({
+        control,
+        name: `companyYarnOrderProductMappings`
+    });
+
     const [orderOptions, setOrderOptions] = useState([]);
 
     const fetchOrderOptions = async (orderNo) => {
@@ -259,17 +339,26 @@ const CompanyYarnOrder = () => {
                         <OrderItem key={item.id} control={control} methods={methods} register={register} index={index} remove={remove} />
                     ))}
                 </div>
+                <Button className='col-span-1' variant="contained" color="primary" onClick={() => append({})} startIcon={<Add />}>
+                    Add Item
+                </Button>
+                <div className='col-span-1'></div>
                 <TextField {...register('remark')} label="Remark" variant="outlined" multiline rows={4} />
                 </div>
-                <div className="mt-4 space-x-4">
-                    <Button variant="contained" color="primary" onClick={() => append({})} startIcon={<Add />}>
-                        Add Item
-                    </Button>
-
-                    <Button type="submit" variant="contained" color="secondary">
-                        Save Order
-                    </Button>
+                
+                <div className='sm:col-span-2 grid grid-cols-1 space-y-4'>
+                {orderProducts?.length > 0 && <h3 className="font-semibold col-span-2 sm:col-span-4">Order Item Products</h3>}
+                {orderProducts.map((item, itemIndex) => (
+                    <CompanyOrderProduct key={item.id} index={itemIndex} control={control} methods={methods} removeOrderProduct={removeOrderProducts}/>
+                ))}
+                <Button size='small'
+                    variant="contained" color="primary" onClick={() => appendOrderProducts({})}
+                    startIcon={<Add />}
+                >fabric quality</Button>
                 </div>
+                <Button fullWidth type="submit" variant="contained" color="secondary">
+                    Save Order
+                </Button>
             </form>
         </div>
     );

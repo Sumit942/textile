@@ -39,6 +39,8 @@ public class CompanyYarnOrder extends Document {
     private Double sGst;
     private Double iGst;
     private Double discPerc;
+    @ManyToOne
+    private Company company;
     @OneToMany(mappedBy = "companyYarnOrder")
     @JsonManagedReference
     private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
