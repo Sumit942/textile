@@ -1,7 +1,7 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-@EqualsAndHashCode(callSuper = false)
 @Setter
 @Getter
 @Entity
@@ -40,6 +39,10 @@ public class CompanyYarnOrder extends Document {
     private Double sGst;
     private Double iGst;
     private Double discPerc;
+    @OneToMany(mappedBy = "companyYarnOrder")
+    @JsonManagedReference
+    private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
+
 
     public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {
         if (Objects.nonNull(yarnOrderItems)) {

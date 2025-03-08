@@ -4,20 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
-@Setter
 @Getter
+@Setter
 @Entity
-public class Challan extends Document {
+public class CompanyYarnOrderProductMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer challanNo;
+    @ManyToOne
+    private CompanyYarnOrder companyYarnOrder;
     @ManyToOne
     private CompanyYarnOrderProduct companyYarnOrderProduct;
     private Double quantity;
-    private String vehicleNo;
-    @Temporal(TemporalType.DATE)
-    private Date challanDate;
 }

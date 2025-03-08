@@ -18,11 +18,11 @@ public class FabricDesignYarnMapping {
     private Long id;
     @ManyToOne
     private Yarn yarn;
+    @ManyToOne
+    @JsonBackReference
+    private YarnFabricDesign yarnFabricDesign;
     @DecimalMin("0.01")
     @DecimalMax("100.00")
     @Column(precision = 5, scale = 2)
     private BigDecimal percentage;
-    @ManyToOne
-    @JsonBackReference
-    private YarnFabricDesign yarnFabricDesign;
 }

@@ -1,7 +1,6 @@
 package com.example.textile.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,19 +10,15 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-public class YarnOrderItemProduct {
+public class CompanyYarnOrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JsonBackReference
-    private YarnOrderItem yarnOrderItem;
-    @ManyToOne
     private YarnFabricDesign yarnFabricDesign;
-    private Double quantity;
     @ManyToOne
     private Machine machine;
     private String remarks;
-    @ManyToMany(mappedBy = "yarnOrderItemProducts")
-    private List<YarnOrderItem> yarnOrderItems;
+    @OneToMany(mappedBy = "companyYarnOrderProduct")
+    private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
 }

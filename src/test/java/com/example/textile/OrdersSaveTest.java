@@ -128,18 +128,18 @@ public class OrdersSaveTest {
         product.setId(279L);
 
 
-        YarnOrderItemProduct yarnOrderProduct = new YarnOrderItemProduct();
+        CompanyYarnOrderProduct yarnOrderProduct = new CompanyYarnOrderProduct();
         yarnOrderProduct.setId(4L);
 //        yarnOrderProduct.setProduct(product);
 //        yarnOrderProduct.setGsm("234");
-        yarnOrderProduct.setQuantity(142.32);
+//        yarnOrderProduct.setQuantity(142.32);
         System.out.println("saving: " + yarnOrderProduct);
-        YarnOrderItemProduct savedYarnOrderItemProduct = yarnOrderProductRepo.save(yarnOrderProduct);
+        CompanyYarnOrderProduct savedCompanyYarnOrderProduct = yarnOrderProductRepo.save(yarnOrderProduct);
 
-        System.out.println("saved: " + savedYarnOrderItemProduct);
+        System.out.println("saved: " + savedCompanyYarnOrderProduct);
 
 //        Assertions.assertSame(yarnOrderProduct.getGsm(), savedYarnOrderItemProduct.getGsm());
-        Assertions.assertTrue(savedYarnOrderItemProduct.getId() > 0);
+        Assertions.assertTrue(savedCompanyYarnOrderProduct.getId() > 0);
 
     }
 
@@ -304,7 +304,7 @@ public class OrdersSaveTest {
         return companyYarnOrder;
     }
 
-    YarnOrderItem getYarnOrderItem(Yarn yarn, List<YarnOrderItemProduct> itemProducts) {
+    YarnOrderItem getYarnOrderItem(Yarn yarn, List<CompanyYarnOrderProduct> itemProducts) {
         YarnOrderItem yarnOrderItem = new YarnOrderItem();
 
         yarnOrderItem.setHsn("54023300");
@@ -314,7 +314,7 @@ public class OrdersSaveTest {
         yarnOrderItem.setRate(113.00);
         yarnOrderItem.setYarn(yarn);
         yarnOrderItem.setAmount(BigDecimal.valueOf(62096.89));
-        yarnOrderItem.setYarnOrderItemProducts(itemProducts);
+//        yarnOrderItem.setYarnOrderItemProducts(itemProducts);
         return yarnOrderItem;
     }
 
@@ -331,15 +331,15 @@ public class OrdersSaveTest {
         return yarnBuilty;
     }
 
-    YarnOrderItemProduct getYarnOrderItemProduct(YarnOrderItem yarnOrderItem, YarnFabricDesign yarnFabricDesign, Machine machine) {
-        YarnOrderItemProduct yarnOrderItemProduct = new YarnOrderItemProduct();
+    CompanyYarnOrderProduct getYarnOrderItemProduct(YarnOrderItem yarnOrderItem, YarnFabricDesign yarnFabricDesign, Machine machine) {
+        CompanyYarnOrderProduct companyYarnOrderProduct = new CompanyYarnOrderProduct();
 
-        yarnOrderItemProduct.setYarnOrderItem(yarnOrderItem);
-        yarnOrderItemProduct.setYarnFabricDesign(yarnFabricDesign);
-        yarnOrderItemProduct.setMachine(machine);
-        yarnOrderItemProduct.setQuantity(1350.00);
-        yarnOrderItemProduct.setRemarks("design mostly run on machine no 6, with lycra");
-        return yarnOrderItemProduct;
+//        companyYarnOrderProduct.setYarnOrderItem(yarnOrderItem);
+        companyYarnOrderProduct.setYarnFabricDesign(yarnFabricDesign);
+        companyYarnOrderProduct.setMachine(machine);
+//        companyYarnOrderProduct.setQuantity(1350.00);
+        companyYarnOrderProduct.setRemarks("design mostly run on machine no 6, with lycra");
+        return companyYarnOrderProduct;
     }
 
     YarnFabricDesign getYarnFabricDesign(FabricDesign fabricDesign, List<FabricDesignYarnMapping> designYarnMappings) {

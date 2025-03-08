@@ -1,13 +1,11 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,14 +27,6 @@ public class YarnOrderItem {
     private String hsn;
     private String lotNo;
     private BigDecimal amount;
-    @ManyToMany
-    @JoinTable(
-            name = "yarn_order_item_product_mapping",
-            joinColumns = @JoinColumn(name = "yarn_order_item_id"),
-            inverseJoinColumns = @JoinColumn(name = "yarn_order_item_product_id")
-    )
-    @JsonManagedReference
-    private List<YarnOrderItemProduct> yarnOrderItemProducts;
 
     @Override
     public boolean equals(Object o) {
