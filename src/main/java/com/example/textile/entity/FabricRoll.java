@@ -14,7 +14,7 @@ public class FabricRoll extends Document {
     private Long id;
     private Integer rollNo;
     @ManyToOne
-    private CompanyYarnOrderProductMapping companyYarnOrderProductMapping;
+    private OrderProductMapping orderProductMapping;
     private Boolean isWhite = Boolean.FALSE;
     private Double quantity;
     @ManyToOne(fetch = FetchType.LAZY)

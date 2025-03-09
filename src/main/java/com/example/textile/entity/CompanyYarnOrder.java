@@ -1,7 +1,6 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,9 +40,7 @@ public class CompanyYarnOrder extends Document {
     private Double discPerc;
     @ManyToOne
     private Company company;
-    @OneToMany(mappedBy = "companyYarnOrder")
-    @JsonManagedReference
-    private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
+
 
 
     public void setYarnOrderItems(List<YarnOrderItem> yarnOrderItems) {

@@ -71,7 +71,6 @@ public class TransformationEntityToDTO {
         companyYarnOrderDto.setYarnOrderItems(yarnOrder.getYarnOrderItems());
         companyYarnOrderDto.setYarnBuilties(yarnOrder.getYarnBuilties());
         companyYarnOrderDto.setCompany(transformCompanyEntity(yarnOrder.getCompany()));
-        companyYarnOrderDto.setCompanyYarnOrderProductMappings(yarnOrder.getCompanyYarnOrderProductMappings());
         companyYarnOrderDto.setIGst(yarnOrder.getIGst());
         companyYarnOrderDto.setCGst(yarnOrder.getCGst());
         companyYarnOrderDto.setSGst(yarnOrder.getSGst());

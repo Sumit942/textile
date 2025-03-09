@@ -67,7 +67,6 @@ public class TransformationDTOToEntity {
         }
 
         companyYarnOrder.setCompany(transformCompany(companyYarnOrderDto.getCompany()));
-        companyYarnOrder.setCompanyYarnOrderProductMappings(companyYarnOrderDto.getCompanyYarnOrderProductMappings());
         companyYarnOrder.setIGst(companyYarnOrderDto.getIGst());
         companyYarnOrder.setCGst(companyYarnOrderDto.getCGst());
         companyYarnOrder.setSGst(companyYarnOrderDto.getSGst());

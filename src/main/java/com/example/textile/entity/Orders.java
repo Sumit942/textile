@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import com.example.textile.enums.OrderStatusType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,9 @@ public class Orders extends Document implements Serializable {
     private String remarks;
     @Column(unique = true)
     private String orderNo;
+    @OneToMany(mappedBy = "companyYarnOrder")
+    @JsonManagedReference
+    private List<OrderProductMapping> orderProductMappings;
     //TODO: add User column (PrePersist)
 
     public void addCompanyYarnOrders(CompanyYarnOrder newYarnOrders) {

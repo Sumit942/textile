@@ -1,6 +1,5 @@
 package com.example.textile.dto;
 
-import com.example.textile.entity.CompanyYarnOrderProductMapping;
 import com.example.textile.entity.YarnBuilty;
 import com.example.textile.entity.YarnOrderItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -34,5 +33,4 @@ public class CompanyYarnOrderDto {
     private Double iGst;
     private Double discPerc;
     private CompanyDto company;
-    private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
 }

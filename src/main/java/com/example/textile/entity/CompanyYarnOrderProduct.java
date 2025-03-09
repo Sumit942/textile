@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Setter
 @Getter
@@ -19,6 +18,4 @@ public class CompanyYarnOrderProduct {
     @ManyToOne
     private Machine machine;
     private String remarks;
-    @OneToMany(mappedBy = "companyYarnOrderProduct")
-    private List<CompanyYarnOrderProductMapping> companyYarnOrderProductMappings;
 }
