@@ -7,6 +7,7 @@ import com.example.textile.utility.factory.Factory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +92,7 @@ public class ShreeramTextile implements Factory {
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal debit = list.stream().map(InvoiceView::getAmtDr)
                 .filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
+        double pendingAmount = totalAmount.doubleValue() - (paidAmount.doubleValue() + debit.doubleValue());
 
         valueMapTotal.put("Party Name","Total:"); //assuming to add total in party name column
         valueMapTotal.put("Amount",amount);
@@ -99,6 +101,11 @@ public class ShreeramTextile implements Factory {
         valueMapTotal.put("Total Amount",totalAmount);
         valueMapTotal.put("Paid",paidAmount);
         valueMapTotal.put("Debit",debit);
+        valueMapList.add(valueMapTotal);
+
+        valueMapTotal = new HashMap<>();
+        valueMapTotal.put("Payment Date","Pending:");
+        valueMapTotal.put("Debit",pendingAmount);
         valueMapList.add(valueMapTotal);
     }
 
@@ -119,4 +126,6 @@ public class ShreeramTextile implements Factory {
 
         return DATE_FORMAT_ddMMYYYY;
     }
+
+    public static DecimalFormat df = new DecimalFormat("#,###.##");
 }

@@ -17,6 +17,7 @@
             border: 1px solid black;
             padding-left: 5px;
             padding-right: 5px;
+            text-align: center;
         }
         table {
             border-collapse: collapse;
@@ -67,10 +68,11 @@
     </tr>
     </th:block>
     <tr height="25">
-        <td height="25" colspan="12"></td>
+        <td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td>
+        <td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td><td height="25"></td>
     </tr>
     <tr style="font-style: oblique;font-weight: 600;">
-        <td colspan="3"></td>
+        <td></td><td></td><td></td>
         <td style="text-align: right;">Total: </td>
         <td><span th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getTotalAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
         <td><span th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getTotalTaxAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
@@ -80,6 +82,10 @@
         <td><span th:if="${invoiceReport.get(invoiceReport.size()-1).getPaidAmount() > 0}" th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getPaidAmount(), 0, 'COMMA', 2, 'POINT')}" /></td>
         <td></td>
         <td><span th:if="${invoiceReport.get(invoiceReport.size()-1).getAmtDr() > 0}" th:text="${#numbers.formatDecimal(invoiceReport.get(invoiceReport.size()-1).getAmtDr(), 0, 'COMMA', 2, 'POINT')}" /></td>
+    </tr>
+    <tr  style="font-style: oblique;font-weight: 600;">
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td>Pending:</td><td colspan="2" th:text="${invoiceReport.get(invoiceReport.size()-1).getBillToPartyName()}"></td>
     </tr>
     </tbody>
 </table>

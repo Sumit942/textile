@@ -182,6 +182,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
                 sb.append(" AND upper(pd.product.name) NOT LIKE upper(:exclusion").append(i).append(")");
             }
         }
+        sb.append(" ORDER BY pd.chNo ASC");
 
         TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
@@ -207,7 +208,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     public List<ProductDetail> findAllExcluded() {
         List<ProductExclude> excludePatterns = productExcludeRepos.findAll();
 
-        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL");
+        StringBuilder sb = new StringBuilder("FROM ProductDetail pd WHERE pd.invoice IS NULL AND pd.party IS NOT NULL");
 
         if (!excludePatterns.isEmpty()) {
             for (int i = 0; i < excludePatterns.size(); i++) {
@@ -224,6 +225,7 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
             if (excludePatterns.size() > 1)
                 sb.append(" )");
         }
+        sb.append(" ORDER BY pd.chNo ASC");
 
         TypedQuery<ProductDetail> query = entityManager.createQuery(sb.toString(), ProductDetail.class);
 
@@ -239,5 +241,10 @@ public class ProductDetailsServiceImpl implements ProductDetailService {
     @Override
     public List<ProductDetail> findByChNos(List<Long> challanNos) {
         return productDetailRepo.findByChNos(challanNos);
+    }
+
+    @Override
+    public ProductDetail save(ProductDetail productDetail) {
+        return productDetailRepo.save(productDetail);
     }
 }

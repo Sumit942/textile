@@ -6,4 +6,6 @@ public class TextileConstants {
     public static final String ACTION = "action";
     public static final String YARN_RETURN = "YARN RETURN";
     public static final String ACTION_RESPONSE = "actionResponse";
+
+    public static final String CANCELLED = "Cancelled";
 }

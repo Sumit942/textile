@@ -438,6 +438,7 @@
             <form:errors path="totalAmountAfterTax" cssClass="error"/>
         </div>
     </div>
+    <form:hidden path="paid" />
     <input type="Submit" class="btn btn-primary" />
     <c:choose>
     <c:when test="${printInvoice}">

@@ -96,21 +96,34 @@ public class ExcelUtility<T> {
 
         /*  Applying Excel Footer Style   **/
         CellStyle totalStyle = createTotalStyle(workbook);
-        row = sheet.getRow(sheet.getLastRowNum());
-        int footerCellNo = 0;
+        CellStyle totalAmount = createTotalStyle(workbook);
+        DataFormat dataFormat = workbook.createDataFormat();
+        totalAmount.setDataFormat(dataFormat.getFormat("#,##0.00"));
+        row = sheet.getRow(sheet.getLastRowNum()-1);
+        int totalFooterCellNo = 0;
         for (String footer: headerSet) {
-            cell = row.getCell(footerCellNo++);
+            cell = row.getCell(totalFooterCellNo++);
             if (!footer.equals("Party Name")) {
-                CellStyle totalAmount = createTotalStyle(workbook);
-                DataFormat dataFormat = workbook.createDataFormat();
-                totalAmount.setDataFormat(dataFormat.getFormat("#,##0.00"));
                 cell.setCellStyle(totalAmount);
             } else {
                 cell.setCellStyle(totalStyle);
             }
 
+        }
+
+        /* added pending row style */
+        row = sheet.getRow(sheet.getLastRowNum());
+        int pendingFooterCellNo = 0;
+        for (String footer: headerSet) {
+            cell = row.getCell(pendingFooterCellNo++);
+            if (!footer.equals("Debit")) {
+                cell.setCellStyle(totalStyle);
+            } else {
+                cell.setCellStyle(totalAmount);
+            }
+
             //AutoSize Column
-            sheet.autoSizeColumn(footerCellNo);
+            sheet.autoSizeColumn(pendingFooterCellNo);
         }
 
 

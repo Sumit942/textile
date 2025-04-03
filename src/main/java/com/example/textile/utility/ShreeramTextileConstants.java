@@ -18,7 +18,7 @@ public class ShreeramTextileConstants {
     public static final String BANK_AC_NO = "125001337061";
     public static final String BANK_IFSC = "CNRB0000113";
 
-    public static final String FORMAT_INVOICE_NO = "SRTI/23-24/";
+    public static final String FORMAT_INVOICE_NO = "SRTI/24-25/";
     public static final String FORMAT_SAVE_INVOICE_NO = "######";
     public static final String ACTION = "action";
 
@@ -28,4 +28,5 @@ public class ShreeramTextileConstants {
     public static final String DATE_FORMAT_ddMMYYYY_SLASH = "dd/MM/yyyy";
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT_ddMMYYYY_SLASH = new SimpleDateFormat(DATE_FORMAT_ddMMYYYY_SLASH);
     public static final String SRNO = "srNo";
+    public static final String USER_AGENT = "User-Agent";
 }
