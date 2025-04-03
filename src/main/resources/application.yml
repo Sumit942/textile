@@ -36,6 +36,6 @@ server:
 invoice:
   startCount: 1
   oldInvoiceLastId: 207
-  invoiceFormatNo: "SRTI/24-25/"
+  invoiceFormatNo: "SRTI/25-26/"
 challan:
   showGroupByParty: false
