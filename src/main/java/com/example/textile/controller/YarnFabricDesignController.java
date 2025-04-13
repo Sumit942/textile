@@ -49,7 +49,7 @@ public class YarnFabricDesignController extends BaseController{
     @PostMapping("/submit")
     public ResponseEntity<?> submit(@RequestBody YarnFabricDesign yarnFabricDesign, HttpServletRequest request) {
         String logPrefix = "submit()";
-        String logSuffix = createLogSuffix("yarnFabricDesign id", yarnFabricDesign.getId());
+        String logSuffix = createNameValue("yarnFabricDesign id", yarnFabricDesign.getId());
         log.info(createEntryLog(logPrefix));
 
         Map<String, Object> parameterMap = new HashMap<>();
@@ -71,7 +71,7 @@ public class YarnFabricDesignController extends BaseController{
                 return ResponseEntity.badRequest().body(validationErrorResponseDto);
             }
         } catch (Exception e) {
-            log.error("Exception while YarnFabricDesign submit() :" + e.getLocalizedMessage(), e);
+            log.error("Exception while YarnFabricDesign submit() :{}", e.getLocalizedMessage(), e);
             ErrorResponseDto errorResponseDto = ErrorResponseDto.builder()
                     .errorMessages(Map.of("SystemError", messageSource.getMessage("System.Error", null, request.getLocale())))
                     .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)

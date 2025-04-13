@@ -73,7 +73,7 @@ public class OrderController extends BaseController{
     public ResponseEntity<List<OrdersView>> fetchOrderView() {
         log.info(createEntryLog("fetchOrderView()"));
         List<OrdersView> invoiceViews = ordersService.fetchView();
-        String logSuffix = createLogSuffix("invoiceViewCount",invoiceViews.size());
+        String logSuffix = createNameValue("invoiceViewCount",invoiceViews.size());
         log.info(createExitLog("fetchOrderView()", logSuffix));
         return ResponseEntity.ok(invoiceViews);
     }

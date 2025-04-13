@@ -53,7 +53,7 @@ public class CompanyYarnOrderController extends BaseController {
     @PostMapping("submit")
     public ResponseEntity<?> submit(@RequestBody CompanyYarnOrderDto yarnOrderDto, HttpServletRequest request) {
         String logPrefix = "submit()";
-        String logSuffix = createLogSuffix("yarnOrderDtoId", yarnOrderDto.getId());
+        String logSuffix = createNameValue("yarnOrderDtoId", yarnOrderDto.getId());
         log.info(createEntryLog(logPrefix));
 
         Map<String, String[]> errorMap = new HashMap<>();

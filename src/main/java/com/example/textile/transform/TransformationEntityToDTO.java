@@ -1,14 +1,7 @@
 package com.example.textile.transform;
 
-import com.example.textile.dto.CompanyDto;
-import com.example.textile.dto.CompanyYarnOrderDto;
-import com.example.textile.dto.OrdersDto;
-import com.example.textile.dto.YarnFabricDesignDto;
-import com.example.textile.entity.Company;
-import com.example.textile.entity.CompanyYarnOrder;
-import com.example.textile.entity.Orders;
-import com.example.textile.entity.YarnFabricDesign;
-import org.apache.commons.collections4.CollectionUtils;
+import com.example.textile.dto.*;
+import com.example.textile.entity.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public class TransformationEntityToDTO {
 
@@ -36,7 +31,7 @@ public class TransformationEntityToDTO {
                 ordersDto.setCompany(transformCompanyEntity(orders.getCompany()));
             }
 
-            if (!CollectionUtils.isEmpty(orders.getCompanyYarnOrders())) {
+            if (!isEmpty(orders.getCompanyYarnOrders())) {
                 List<CompanyYarnOrderDto> yarnOrderDtoList = orders.getCompanyYarnOrders().stream()
                         .map(TransformationEntityToDTO::transformCompanyYarnOrderEntity)
                         .collect(Collectors.toList());
@@ -70,7 +65,7 @@ public class TransformationEntityToDTO {
         companyYarnOrderDto.setTotalAmount(yarnOrder.getTotalAmount());
         companyYarnOrderDto.setYarnOrderItems(yarnOrder.getYarnOrderItems());
         companyYarnOrderDto.setYarnBuilties(yarnOrder.getYarnBuilties());
-        companyYarnOrderDto.setCompany(transformCompanyEntity(yarnOrder.getCompany()));
+        companyYarnOrderDto.setSupplier(transformCompanyEntity(yarnOrder.getSupplier()));
         companyYarnOrderDto.setIGst(yarnOrder.getIGst());
         companyYarnOrderDto.setCGst(yarnOrder.getCGst());
         companyYarnOrderDto.setSGst(yarnOrder.getSGst());
@@ -86,5 +81,30 @@ public class TransformationEntityToDTO {
         yarnFabricDesignDto.setGsm(yarnFabricDesign.getGsm());
         yarnFabricDesignDto.setQualityName(yarnFabricDesign.getQualityName());
         return yarnFabricDesignDto;
+    }
+
+    public static OrderProductMappingDto transformOrderProductMappings(List<OrderProductMapping> savedOrderProductMapping) {
+        OrderProductMappingDto productMappingDto = new OrderProductMappingDto();
+
+        if (!isEmpty(savedOrderProductMapping)) {
+            Orders orders = savedOrderProductMapping.get(0).getOrders();
+            OrdersDto ordersDto = new OrdersDto();
+            ordersDto.setId(orders.getId());
+            ordersDto.setOrderNo(orders.getOrderNo());
+            productMappingDto.setOrders(ordersDto);
+
+            List<OrderProductMappingDto.OrderProduct> orderProducts = productMappingDto.getOrderProducts();
+            for (OrderProductMapping productMapping : savedOrderProductMapping) {
+                OrderProductMappingDto.OrderProduct orderProduct = new OrderProductMappingDto.OrderProduct();
+                orderProduct.setCompanyYarnOrderProduct(productMapping.getCompanyYarnOrderProduct());
+                orderProduct.setQuantity(productMapping.getQuantity());
+                orderProduct.setRawMaterial(productMapping.getRawMaterials());
+                orderProduct.setQuantity(productMapping.getQuantity());
+
+                orderProducts.add(orderProduct);
+            }
+        }
+
+        return productMappingDto;
     }
 }

@@ -31,7 +31,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
     @Override
     protected ActionResponse<CompanyYarnOrderDto> onSuccessRest(CompanyYarnOrderDto companyYarnOrderDto, Map<String, Object> parameterMap) {
         String logPrefix = "onSuccessRest()";
-        String logSuffix = createLogSuffix("companyYarnOrderDtoId", companyYarnOrderDto.getId());
+        String logSuffix = createNameValue("companyYarnOrderDtoId", companyYarnOrderDto.getId());
         log.info(createEntryLog(logPrefix));
 
         CompanyYarnOrder save = yarnOrderService.save(companyYarnOrderDto);
@@ -48,11 +48,11 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
     protected void doValidationRest(CompanyYarnOrderDto companyYarnOrderDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
         String logPrefix = "doValidationRest()";
         log.info(createEntryLog(logPrefix));
-        String logSuffix = createLogSuffix("companyYarnOrderDto id", companyYarnOrderDto.getId());
+        String logSuffix = createNameValue("companyYarnOrderDto id", companyYarnOrderDto.getId());
         if (!isEmpty(companyYarnOrderDto.getYarnOrderItems())) {
             errorMap.put("yarnOrderItems", new String[]{"IsEmpty.companyYarnOrderDto.yarnOrderItems"});
         } else {
-            if (!StringUtils.isEmpty(companyYarnOrderDto.getYarnInvoiceNo()) && Objects.nonNull(companyYarnOrderDto.getCompany()) && !isNullOrLessThanOne(companyYarnOrderDto.getCompany().getId())) {
+            if (!StringUtils.isEmpty(companyYarnOrderDto.getYarnInvoiceNo()) && Objects.nonNull(companyYarnOrderDto.getSupplier()) && !isNullOrLessThanOne(companyYarnOrderDto.getSupplier().getId())) {
                     Optional<CompanyYarnOrder> byYarnInvoiceNo = yarnOrderService.findByYarnInvoiceNo(companyYarnOrderDto.getYarnInvoiceNo());
                     if (byYarnInvoiceNo.isPresent()) {
                         CompanyYarnOrder companyYarnOrder = byYarnInvoiceNo.get();
@@ -75,7 +75,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
                 }
             }
         }
-        logSuffix += createLogSuffix("errorCount",errorMap.size());
+        logSuffix += createNameValue("errorCount",errorMap.size());
         log.info(createExitLog(logPrefix, logSuffix));
     }
 

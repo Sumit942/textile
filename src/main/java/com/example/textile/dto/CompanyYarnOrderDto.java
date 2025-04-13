@@ -32,5 +32,5 @@ public class CompanyYarnOrderDto {
     private Double sGst;
     private Double iGst;
     private Double discPerc;
-    private CompanyDto company;
+    private CompanyDto supplier;
 }

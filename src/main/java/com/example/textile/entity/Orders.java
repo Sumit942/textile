@@ -29,7 +29,7 @@ public class Orders extends Document implements Serializable {
     private String remarks;
     @Column(unique = true)
     private String orderNo;
-    @OneToMany(mappedBy = "companyYarnOrder")
+    @OneToMany(mappedBy = "orders")
     @JsonManagedReference
     private List<OrderProductMapping> orderProductMappings;
     //TODO: add User column (PrePersist)

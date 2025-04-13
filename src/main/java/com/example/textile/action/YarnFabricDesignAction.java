@@ -25,7 +25,7 @@ public class YarnFabricDesignAction extends RestActionExecutor<YarnFabricDesign>
     @Override
     protected ActionResponse<YarnFabricDesign> onSuccessRest(YarnFabricDesign yarnFabricDesign, Map<String, Object> parameterMap) {
         String logPrefix = "onSuccessRest()";
-        String logSuffix = createLogSuffix("yarnFabricDesign id", yarnFabricDesign.getId());
+        String logSuffix = createNameValue("yarnFabricDesign id", yarnFabricDesign.getId());
         log.info(createEntryLog(logPrefix));
 
         YarnFabricDesign save = yarnFabricDesignService.save(yarnFabricDesign);
@@ -39,7 +39,7 @@ public class YarnFabricDesignAction extends RestActionExecutor<YarnFabricDesign>
     @Override
     protected void doValidationRest(YarnFabricDesign yarnFabricDesign, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
         String logPrefix = "doValidationRest()";
-        String logSuffix = createLogSuffix("yarnFabricDesign id", yarnFabricDesign.getId());
+        String logSuffix = createNameValue("yarnFabricDesign id", yarnFabricDesign.getId());
         log.info(createEntryLog(logPrefix));
 
         FabricDesign fabricDesign = yarnFabricDesign.getFabricDesign();

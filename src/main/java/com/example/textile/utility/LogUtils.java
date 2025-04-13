@@ -8,7 +8,7 @@ public class LogUtils {
         return String.format("%s Entry", methodName);
     }
 
-    public static String createLogSuffix(String key, Object value) {
+    public static String createNameValue(String key, Object value) {
         return String.format("%s=[%s]", key, value);
     }
 

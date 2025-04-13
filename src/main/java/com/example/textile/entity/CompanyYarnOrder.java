@@ -39,7 +39,7 @@ public class CompanyYarnOrder extends Document {
     private Double iGst;
     private Double discPerc;
     @ManyToOne
-    private Company company;
+    private Company supplier;
 
 
 

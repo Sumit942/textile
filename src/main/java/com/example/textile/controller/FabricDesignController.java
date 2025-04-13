@@ -52,7 +52,7 @@ public class FabricDesignController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         String logPrefix = "findById()";
-        String logSuffix = createLogSuffix("id",id);
+        String logSuffix = createNameValue("id",id);
         log.info(createEntryLog(logPrefix));
 
         try {

@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -15,7 +17,20 @@ public class OrderProductMapping {
     private Long id;
     @ManyToOne
     private CompanyYarnOrderProduct companyYarnOrderProduct;
-    @OneToMany(mappedBy = "orderProductMapping")
-    private List<ProductRawMaterial> rawMaterial;
+    @OneToMany(mappedBy = "orderProductMapping", cascade = CascadeType.ALL)
+    private List<ProductRawMaterial> rawMaterials;
     private Double quantity;
+    @ManyToOne
+    private Orders orders;
+
+    public void setRawMaterials(List<ProductRawMaterial> rawMaterials) {
+        if (Objects.isNull(rawMaterials)) return;
+        if (Objects.isNull(this.rawMaterials)) {
+            this.rawMaterials = new ArrayList<>();
+        }
+        for (ProductRawMaterial rawMaterial : rawMaterials) {
+            rawMaterial.setOrderProductMapping(this);
+        }
+        this.rawMaterials.addAll(rawMaterials);
+    }
 }

@@ -44,7 +44,7 @@ public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
     @Override
     public CompanyYarnOrder save(CompanyYarnOrderDto companyYarnOrderDto) {
         String logPrefix = "save()";
-        String logSuffix = createLogSuffix("companyYarnOrderDto", companyYarnOrderDto.getId());
+        String logSuffix = createNameValue("companyYarnOrderDto", companyYarnOrderDto.getId());
         log.info(createEntryLog(logPrefix));
 
         CompanyYarnOrder companyYarnOrder = TransformationDTOToEntity.transformCompanyYarnOrder(companyYarnOrderDto);
