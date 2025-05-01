@@ -1,5 +1,6 @@
 package com.example.textile;
 
+import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
 import com.example.textile.service.YarnFabricDesignService;
 import org.junit.jupiter.api.Test;
@@ -25,5 +26,13 @@ public class YarnFabricDesingCrudTest {
             System.out.println("yarnFabricDesign = " + yarnFabricDesign);
             System.out.println("yarnFabricDesign.quality = " + yarnFabricDesign.getQualityName());
         });
+    }
+
+    @Test
+    public void fetchFabricDesignYarnMappingById() {
+        List<FabricDesignYarnMapping> fabricDesignYarnMappings = yarnFabricDesignService.fetchFabricDesignYarnMappingById(1L);
+        for (FabricDesignYarnMapping fabricDesignYarnMapping : fabricDesignYarnMappings) {
+            System.out.println(fabricDesignYarnMapping);
+        }
     }
 }

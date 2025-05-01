@@ -46,6 +46,9 @@ public class TransformationEntityToDTO {
     }
 
     private static CompanyDto transformCompanyEntity(Company company) {
+        if (Objects.isNull(company)) {
+            return null;
+        }
         CompanyDto companyDto = new CompanyDto();
         companyDto.setId(company.getId());
         companyDto.setName(company.getName());

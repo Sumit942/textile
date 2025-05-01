@@ -3,6 +3,7 @@ package com.example.textile.controller;
 import com.example.textile.action.YarnFabricDesignAction;
 import com.example.textile.dto.ErrorResponseDto;
 import com.example.textile.dto.YarnFabricDesignDto;
+import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
@@ -90,5 +91,11 @@ public class YarnFabricDesignController extends BaseController{
                 .map(TransformationEntityToDTO::transformYarnFabricDesignEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(yarnFabricDesignDtos);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        List<FabricDesignYarnMapping> fabricDesignYarnMappings = yarnFabricDesignService.fetchFabricDesignYarnMappingById(id);
+        return ResponseEntity.ok(fabricDesignYarnMappings);
     }
 }

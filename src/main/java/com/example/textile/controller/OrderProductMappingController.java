@@ -66,7 +66,6 @@ public class OrderProductMappingController extends BaseController {
 
     @PostMapping("submit")
     public ResponseEntity<?> submit(@RequestBody OrderProductMappingDto productMappingDto, HttpServletRequest request) {
-        //TODO: submit action
         String logPrefix = "submit()";
         log.info(createEntryLog(logPrefix));
         String logSuffix = createNameValue("productMappingDto", productMappingDto.getId());

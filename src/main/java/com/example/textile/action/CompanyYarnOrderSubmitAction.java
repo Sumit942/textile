@@ -49,7 +49,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
         String logPrefix = "doValidationRest()";
         log.info(createEntryLog(logPrefix));
         String logSuffix = createNameValue("companyYarnOrderDto id", companyYarnOrderDto.getId());
-        if (!isEmpty(companyYarnOrderDto.getYarnOrderItems())) {
+        if (isEmpty(companyYarnOrderDto.getYarnOrderItems())) {
             errorMap.put("yarnOrderItems", new String[]{"IsEmpty.companyYarnOrderDto.yarnOrderItems"});
         } else {
             if (!StringUtils.isEmpty(companyYarnOrderDto.getYarnInvoiceNo()) && Objects.nonNull(companyYarnOrderDto.getSupplier()) && !isNullOrLessThanOne(companyYarnOrderDto.getSupplier().getId())) {

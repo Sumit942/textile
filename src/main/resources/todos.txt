@@ -1,2 +1,13 @@
+- OrderProductMapping.jsx
+    - FE to fixed for same fetching yarn mapping for design
+    - rawMaterial loaded need to get the yarn_order_item now.
+
 - OrderProductMappingController submit action controller complete. FE to be started
 - Orders submit action logic creation
+
+
+
+
+
+TODOS: Phase 2
+- add supplier in CompanyYarnOrder page

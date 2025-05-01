@@ -1,17 +1,20 @@
 package com.example.textile.serviceimpl;
 
+import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
 import com.example.textile.repo.YarnFabricDesignRepo;
 import com.example.textile.service.YarnFabricDesignService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -133,5 +136,13 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
     @Override
     public boolean existsByQualityName(String qualityName) {
         return yarnFabricDesignRepo.existsByQualityName(qualityName);
+    }
+
+    @Override
+    @Transactional
+    public List<FabricDesignYarnMapping> fetchFabricDesignYarnMappingById(Long id) {
+        Optional<YarnFabricDesign> byId = yarnFabricDesignRepo.findById(id);
+        return byId.map(YarnFabricDesign::getFabricDesignYarnMappings)
+                .orElse(Collections.emptyList());
     }
 }

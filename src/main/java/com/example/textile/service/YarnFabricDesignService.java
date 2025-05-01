@@ -1,5 +1,6 @@
 package com.example.textile.service;
 
+import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface YarnFabricDesignService {
     void deleteById(Long id);
 
     boolean existsByQualityName(String qualityName);
+
+    List<FabricDesignYarnMapping> fetchFabricDesignYarnMappingById(Long id);
 }

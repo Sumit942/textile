@@ -1,5 +1,6 @@
 package com.example.textile.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class OrderProductMapping {
     private List<ProductRawMaterial> rawMaterials;
     private Double quantity;
     @ManyToOne
+    @JsonBackReference
     private Orders orders;
 
     public void setRawMaterials(List<ProductRawMaterial> rawMaterials) {

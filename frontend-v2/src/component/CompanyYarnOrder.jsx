@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Button, TextField, Autocomplete, Box } from '@mui/material';
+import { Button, TextField, Autocomplete, Box, Snackbar, Alert } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { getYarnByType } from '../service/yarn';
 import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
@@ -94,16 +94,13 @@ const CompanyYarnOrder = () => {
         control,
         name: 'yarnOrderItems'
     });
-    const { 
-        fields: orderProducts,
-        append: appendOrderProducts,
-        remove: removeOrderProducts 
-    } = useFieldArray({
-        control,
-        name: `companyYarnOrderProductMappings`
-    });
 
     const [orderOptions, setOrderOptions] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [alertSeverity, setAlertSeverity] = useState(null);
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const fetchOrderOptions = async (orderNo) => {
         const orderNoList = await fetchOrderNoListByOrderNo(orderNo);
@@ -113,15 +110,13 @@ const CompanyYarnOrder = () => {
     const onSubmit = async (data) => {
 
         if (data.yarnOrderItems.length === 0) {
-            alert('Please add atleast one item')
             return;
         }
-        console.log('Company Yarn Order Data:', data);
-        return;
        const response = await saveCompanyYarnOrder(data);
        console.log('Save Company Yarn Order Response:', response);
        if (response.status === 201) {
-           alert('Company Yarn Order saved successfully');
+        setAlertSeverity('success');
+        setOpen(true);
        } else {
            const errors = response.response.data.errors;
            if (errors) {
@@ -132,7 +127,8 @@ const CompanyYarnOrder = () => {
                     });
                 });
             }
-           alert('Error saving Company Yarn Order');
+            setAlertSeverity('error');
+            setOpen(true);
        }
     };
 
@@ -213,20 +209,22 @@ const CompanyYarnOrder = () => {
                 <div className='col-span-1'></div>
                 <TextField {...register('remark')} label="Remark" variant="outlined" multiline rows={4} />
                 </div>
-                
-                <div className='sm:col-span-2 grid grid-cols-1 space-y-4'>
-                {orderProducts?.length > 0 && <h3 className="font-semibold col-span-2 sm:col-span-4">Order Item Products</h3>}
-                {orderProducts.map((item, itemIndex) => (
-                    <CompanyOrderProduct key={item.id} index={itemIndex} control={control} methods={methods} removeOrderProduct={removeOrderProducts}/>
-                ))}
-                <Button size='small'
-                    variant="contained" color="primary" onClick={() => appendOrderProducts({})}
-                    startIcon={<Add />}
-                >fabric quality</Button>
-                </div>
+
                 <Button fullWidth type="submit" variant="contained" color="secondary">
                     Save Order
                 </Button>
+                <div>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert
+                    onClose={handleClose}
+                    severity={alertSeverity}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                    >
+                    {alertSeverity === 'success' ? 'Company Yarn Order saved successfully!' : 'Error occurred while saving Company Yarn Order!'}
+                    </Alert>
+                </Snackbar>
+                </div>
             </form>
         </div>
     );
