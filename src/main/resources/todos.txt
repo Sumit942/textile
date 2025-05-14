@@ -1,10 +1,6 @@
 - OrderProductMapping.jsx
-    - FE to fixed for same fetching yarn mapping for design
+    - rawMaterial control field created need to configure for selection of yarnOrderItem
     - rawMaterial loaded need to get the yarn_order_item now.
-
-- OrderProductMappingController submit action controller complete. FE to be started
-- Orders submit action logic creation
-
 
 
 

@@ -6,7 +6,7 @@ import { Autocomplete, Button, TextField } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { fetchOrderNoListByOrderNo } from '../service/orderApi';
 
-const CompanyOrderProduct = () => {
+const OrderProductMapping = () => {
     const methods = useForm();
     const { control, handleSubmit } = methods;
     const [yarnFabricDesignOptions, setYarnFabricDesignOptions] = useState([]);
@@ -69,7 +69,7 @@ const CompanyOrderProduct = () => {
                         defaultValue={null}
                         render={({ field }) => (
                             <Autocomplete
-                                className='col-span-3'
+                                className='col-span-2 sm:col-span-4'
                                 size='small'
                                 freeSolo
                                 options={orderOptions}
@@ -105,7 +105,7 @@ const CompanyOrderProduct = () => {
                                     defaultValue={null}
                                     render={({ field }) => (
                                         <Autocomplete
-                                            className='col-span-3'
+                                            className='col-span-2 sm:col-span-4'
                                             size='small'
                                             freeSolo
                                             options={yarnFabricDesignOptions}
@@ -141,7 +141,7 @@ const CompanyOrderProduct = () => {
                                     render={({ field }) => (
                                         <Autocomplete
                                             {...field}
-                                            className='col-span-1'
+                                            className='col-span-1 sm:col-span-2'
                                             size='small'
                                             freeSolo
                                             options={machineOptions}
@@ -176,32 +176,75 @@ const CompanyOrderProduct = () => {
                                             label="Quantity"
                                             variant="outlined"
                                             size="small"
-                                            className="col-span-1"
+                                            className="col-span-1 sm:col-span-2"
                                             error={!!methods.formState.errors.orderProducts?.[index]?.quantity}
                                             helperText={methods.formState.errors.orderProducts?.[index]?.quantity?.message || ''}
                                         />
                                     )}
                                 />
 
-                                {orderProducts?.[index].rawMaterials && orderProducts?.[index].rawMaterials.map((rawMaterial, rawIndex) => (
-                                    <div key={rawIndex} className='col-span-2 grid grid-cols-2 gap-2'>
-                                        <TextField
-                                            label="Yarn"
-                                            variant="outlined"
-                                            size="small"
-                                            disabled
-                                            value={rawMaterial.yarn?.type || ''}
-                                        />
-                                        <TextField
-                                            label="Percentage"
-                                            variant="outlined"
-                                            size="small"
-                                            disabled
-                                            value={rawMaterial.percentage || ''}
-                                        />
-                                    </div>
-                                ))}
-
+                                <div className='col-span-2 sm:col-span-4 grid grid-cols-4 gap-x-6 gap-y-4'>    
+                                {orderProducts?.[index]?.rawMaterials && orderProducts?.[index]?.rawMaterials.length > 0 && (
+                                    <span className='col-span-2 sm:col-span-4'>Raw Materials</span>
+                                )}
+                                {orderProducts?.[index]?.rawMaterials && orderProducts?.[index]?.rawMaterials.length && 
+                                    orderProducts?.[index]?.rawMaterials.map((rawMaterial, rawIndex) => (
+                                        <div key={rawIndex} className='col-span-2 sm:col-span-4 space-x-2'>
+                                            <TextField
+                                                label="Yarn"
+                                                variant="outlined"
+                                                size="small"
+                                                className='col-span-1 sm:col-span-2'
+                                                disabled
+                                                value={rawMaterial.yarn?.type || ''}
+                                            />
+                                            <TextField
+                                                label="Percentage"
+                                                variant="outlined"
+                                                size="small"
+                                                className='col-span-1 sm:col-span-2'
+                                                disabled
+                                                value={rawMaterial.percentage || ''}
+                                            />
+                                            //TODO: configure below field to be yarnOrderItem
+                                            <Controller
+                                                control={control}
+                                                name={`orderProducts.${index}.rawMaterials.${rawIndex}.yarnOrderItem`}
+                                                rules={{ required: "Yarn Fabric Design is required" }}
+                                                defaultValue={null}
+                                                render={({ field }) => (
+                                                    <Autocomplete
+                                                        className='col-span-2 sm:col-span-4'
+                                                        size='small'
+                                                        freeSolo
+                                                        options={yarnFabricDesignOptions}
+                                                        getOptionLabel={(option) => option.qualityName || ''}
+                                                        onChange={(_, newValue) => {
+                                                            field.onChange(newValue);
+                                                            fetchCompanyOrderProduct(newValue);
+                                                            if (newValue?.id) {
+                                                                fetchYarnFabricDesignMappingById(index, newValue.id);
+                                                            }
+                                                        }}
+                                                        onInputChange={(_, newInputValue) => {
+                                                            if (newInputValue.trim() !== '') fetchYarnFabricDesignsByYarnAndDesignName(newInputValue);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                label="Fabric Design"
+                                                                variant="outlined"
+                                                                error={!!methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.yarnFabricDesign}
+                                                                helperText={methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.yarnFabricDesign?.message || ''}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                    ))
+                                }
+                                </div>
                                 <Button size='small' className='col-span-2' variant="contained" color="error" onClick={() => remove(index)} startIcon={<Remove />}>
                                     Remove product
                                 </Button>
@@ -220,4 +263,4 @@ const CompanyOrderProduct = () => {
     );
 };
 
-export default CompanyOrderProduct;
+export default OrderProductMapping;
