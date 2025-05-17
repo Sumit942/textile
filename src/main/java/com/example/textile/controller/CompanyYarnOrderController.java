@@ -16,15 +16,13 @@ import com.example.textile.utility.factory.ActionExecutorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.textile.utility.LogUtils.*;
@@ -85,5 +83,11 @@ public class CompanyYarnOrderController extends BaseController {
             log.info(createExitLog(logPrefix, logSuffix));
             return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CompanyYarnOrderDto>> fetchYarnOrders(@RequestParam(defaultValue = "10", name = "size") Long size) {
+        List<CompanyYarnOrderDto> yarnOrderDtos = yarnOrderService.findAllCompanyYarnOrderDto(size);
+        return ResponseEntity.ok(yarnOrderDtos);
     }
 }

@@ -59,6 +59,10 @@ public class TransformationEntityToDTO {
     public static CompanyYarnOrderDto transformCompanyYarnOrderEntity(CompanyYarnOrder yarnOrder) {
         CompanyYarnOrderDto companyYarnOrderDto = new CompanyYarnOrderDto();
 
+        if (yarnOrder.getOrder() != null) {
+            companyYarnOrderDto.setOrderId(yarnOrder.getOrder().getId());
+            companyYarnOrderDto.setOrderNo(yarnOrder.getOrder().getOrderNo());
+        }
         companyYarnOrderDto.setVersion(yarnOrder.getVersion());
         companyYarnOrderDto.setId(yarnOrder.getId());
         companyYarnOrderDto.setRemark(yarnOrder.getRemark());
@@ -109,5 +113,23 @@ public class TransformationEntityToDTO {
         }
 
         return productMappingDto;
+    }
+
+    public static YarnOrderItemDto transformYarOrderItem(YarnOrderItem yarnOrderItem) {
+        YarnOrderItemDto yarnOrderItemDto = new YarnOrderItemDto();
+
+        yarnOrderItemDto.setId(yarnOrderItem.getId());
+        yarnOrderItemDto.setBoxes(yarnOrderItem.getBoxes());
+        yarnOrderItemDto.setYarn(yarnOrderItem.getYarn());
+        yarnOrderItemDto.setQuantity(yarnOrderItem.getQuantity());
+        yarnOrderItemDto.setQtyAllocated(yarnOrderItem.getQtyAllocated());
+        yarnOrderItemDto.setQtyUsed(yarnOrderItem.getQtyUsed());
+        if (Objects.nonNull(yarnOrderItem.getCompanyYarnOrder()) && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder())
+                && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany())) {
+            yarnOrderItemDto.setCompanyId(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany().getId());
+            yarnOrderItemDto.setCompanyName(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany().getName());
+        }
+
+        return yarnOrderItemDto;
     }
 }

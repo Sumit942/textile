@@ -22,6 +22,8 @@ public class YarnOrderItem {
     private CompanyYarnOrder companyYarnOrder;
     @Column(nullable = false)
     private Double quantity;
+    private Double qtyAllocated;
+    private Double qtyUsed;
     private Integer boxes;
     private Double rate;
     private String hsn;

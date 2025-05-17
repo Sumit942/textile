@@ -13,3 +13,15 @@ export const saveCompanyYarnOrder = async (companyYarnOrder) => {
         return error;
     }
 };
+
+export const fetchAllOrders = async () => {
+    console.log('fetchAllOrders() Entry');
+    try {
+        const response = await API.get(`${API_URL}`);
+        console.log('fetchAllOrders() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchAllOrders() Error: ', error);
+        return error;
+    }
+};

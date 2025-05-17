@@ -21,4 +21,6 @@ public interface CompanyYarnOrderService {
     Optional<CompanyYarnOrder> findByYarnInvoiceNo(String yarnInvoiceNo);
 
     List<Long> getOrderIdByYarnInvoiceNoAndIdNot(String yarnInvoiceNo, Long id);
+
+    List<CompanyYarnOrderDto> findAllCompanyYarnOrderDto(Long size);
 }

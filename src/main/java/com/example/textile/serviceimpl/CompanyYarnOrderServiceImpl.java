@@ -5,6 +5,7 @@ import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.repo.CompanyYarnOrderRepository;
 import com.example.textile.service.CompanyYarnOrderService;
 import com.example.textile.transform.TransformationDTOToEntity;
+import com.example.textile.transform.TransformationEntityToDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.textile.utility.LogUtils.*;
 
@@ -110,5 +113,14 @@ public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
 
 
         return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    @Transactional
+    public List<CompanyYarnOrderDto> findAllCompanyYarnOrderDto(Long size) {
+        List<CompanyYarnOrder> companyYarnOrders = yarnOrderRepository.findAll();
+        return companyYarnOrders.stream()
+                .map(TransformationEntityToDTO::transformCompanyYarnOrderEntity)
+                .collect(Collectors.toList());
     }
 }

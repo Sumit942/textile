@@ -18,6 +18,14 @@ public class OrdersDto {
         this.id = id;
         this.orderNo = orderNo;
     }
+
+    public OrdersDto(Long id, String orderNo, Long companyId, String companyName) {
+        this.id = id;
+        this.orderNo = orderNo;
+        company = new CompanyDto();
+        company.setId(companyId);
+        company.setName(companyName);
+    }
     private Long id;
     @JsonManagedReference
     private List<CompanyYarnOrderDto> companyYarnOrders;

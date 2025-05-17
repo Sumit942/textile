@@ -22,6 +22,8 @@ public class CompanyYarnOrderDto {
     private List<YarnBuilty> yarnBuilties;
     @JsonBackReference
     private OrdersDto order;
+    private Long orderId;
+    private String orderNo;
     private Date orderDt;
     private String yarnInvoiceNo;
     private String remark;

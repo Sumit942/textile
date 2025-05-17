@@ -12,6 +12,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query("SELECT COUNT(*) FROM Orders o where o.company.id=:id")
     int countByCompanyId(Long id);
 
-    @Query("SELECT new com.example.textile.dto.OrdersDto(o.id,o.orderNo) FROM Orders o WHERE LOWER(o.orderNo) LIKE LOWER(CONCAT('%',:orderNo, '%'))")
+    @Query("SELECT new com.example.textile.dto.OrdersDto(o.id,o.orderNo,o.company.id,o.company.name) FROM Orders o WHERE LOWER(o.orderNo) LIKE LOWER(CONCAT('%',:orderNo, '%'))")
     List<OrdersDto> getIdAndOrderNoByOrderLike(String orderNo);
 }
