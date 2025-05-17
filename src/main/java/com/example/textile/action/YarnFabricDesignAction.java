@@ -80,7 +80,14 @@ public class YarnFabricDesignAction extends RestActionExecutor<YarnFabricDesign>
             if (!StringUtils.isBlank(yarnFabricDesign.getQualityName())) {
                 boolean existsByQualityName = yarnFabricDesignService.existsByQualityName(yarnFabricDesign.getQualityName());
                 if (existsByQualityName) {
-                    errorMap.put("yarnFabricDesign", new String[]{"Exists.yarnFabricDesign"});
+                    if (!isNullOrLessThanOne(yarnFabricDesign.getId())) {
+                        Long id = yarnFabricDesignService.getYarnFabricDesignIdByQualityName(yarnFabricDesign.getQualityName());
+                        if (id.compareTo(yarnFabricDesign.getId()) != 0) {
+                            errorMap.put("yarnFabricDesign", new String[]{"Exists.yarnFabricDesign"});
+                        }
+                    } else {
+                        errorMap.put("yarnFabricDesign", new String[]{"Exists.yarnFabricDesign"});
+                    }
                 }
             }
         }

@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Setter
 @Getter
-public class YarnOrderItem {
+public class YarnOrderItem extends Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,9 +21,9 @@ public class YarnOrderItem {
     @JsonIgnore
     private CompanyYarnOrder companyYarnOrder;
     @Column(nullable = false)
-    private Double quantity;
-    private Double qtyAllocated;
-    private Double qtyUsed;
+    private BigDecimal quantity;
+    private BigDecimal qtyAllocated;
+    private BigDecimal qtyLeft;
     private Integer boxes;
     private Double rate;
     private String hsn;

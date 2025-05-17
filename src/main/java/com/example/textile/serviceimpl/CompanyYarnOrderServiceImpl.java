@@ -2,7 +2,9 @@ package com.example.textile.serviceimpl;
 
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.entity.CompanyYarnOrder;
+import com.example.textile.entity.Orders;
 import com.example.textile.repo.CompanyYarnOrderRepository;
+import com.example.textile.repo.OrdersRepository;
 import com.example.textile.service.CompanyYarnOrderService;
 import com.example.textile.transform.TransformationDTOToEntity;
 import com.example.textile.transform.TransformationEntityToDTO;
@@ -24,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.textile.utility.ActionValidationUtil.isNullOrLessThanOne;
 import static com.example.textile.utility.LogUtils.*;
 
 @Slf4j
@@ -31,6 +34,7 @@ import static com.example.textile.utility.LogUtils.*;
 @AllArgsConstructor
 public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
     private CompanyYarnOrderRepository yarnOrderRepository;
+    private OrdersRepository ordersRepo;
     private EntityManager entityManager;
 
 
@@ -56,6 +60,10 @@ public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
                     .orElseThrow(() -> new EntityNotFoundException("Entity Not found by Id"+ companyYarnOrderDto.getId()));
             updatePersistedCompanyYarnOrder(companyYarnOrder, persisted);
             return yarnOrderRepository.save(persisted);
+        }
+        if (Objects.nonNull(companyYarnOrder.getOrder()) && !isNullOrLessThanOne(companyYarnOrder.getOrder().getId())){
+            Orders referenceById = ordersRepo.getReferenceById(companyYarnOrder.getOrder().getId());
+            companyYarnOrder.setOrder(referenceById);
         }
 
         log.info(createExitLog(logPrefix, logSuffix));

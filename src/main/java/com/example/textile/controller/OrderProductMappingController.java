@@ -13,7 +13,6 @@ import com.example.textile.executors.RestActionExecutor;
 import com.example.textile.service.OrderProductMappingService;
 import com.example.textile.utility.FactoryUtility;
 import com.example.textile.utility.factory.ActionExecutorFactory;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,6 @@ import java.util.Objects;
 
 import static com.example.textile.utility.LogUtils.*;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("orderProductMapping")
 @Slf4j

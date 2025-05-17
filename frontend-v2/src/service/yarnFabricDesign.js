@@ -14,14 +14,14 @@ export const saveYarnFabricDesign = async (fabricDesign) => {
     }
 }
 
-export const findYarnFabricDesignById = async (id) => {
-    console.log('findYarnFabricDesignById() Entry: ', id);
+export const fetchFabricDesignYarnMappingById = async (id) => {
+    console.log('fetchFabricDesignYarnMappingById() Entry: ', id);
     try {
-        const response = await API.get(`${API_URL}/${id}`);
-        console.log('findYarnFabricDesignById() Exit: ', response);
+        const response = await API.get(`${API_URL}/yarn/${id}`);
+        console.log('fetchFabricDesignYarnMappingById() Exit: ', response);
         return response;
     } catch (error) {
-        console.error('findYarnFabricDesignById() Error finding fabric design:', error);
+        console.error('fetchFabricDesignYarnMappingById() Error finding fabric design:', error);
         throw error;
     }
 }
@@ -34,6 +34,30 @@ export const fetchYarnFabricDesignByYarnsAndDesigns = async (yarnsAndDesignName)
         return response;
     } catch (error) {
         console.error('fetchYarnFabricDesignByYarnsAndDesigns() Error finding fabric design:', error);
+        throw error;
+    }
+}
+
+export const fetchAllYarnFabricDesign = async (yarnsAndDesignName) => {
+    console.log('fetchAll() Entry: ', yarnsAndDesignName);
+    try {
+        const response = await API.get(`${API_URL}`);
+        console.log('fetchAll() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchAll() Error finding fabric design:', error);
+        throw error;
+    }
+}
+
+export const fetchYarnFabricDesignById = async (id) => {
+    console.log('fetchYarnFabricDesignById() Entry: ', id);
+    try {
+        const response = await API.get(`${API_URL}/${id}`);
+        console.log('fetchYarnFabricDesignById() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchYarnFabricDesignById() Error finding fabric design:', error);
         throw error;
     }
 }

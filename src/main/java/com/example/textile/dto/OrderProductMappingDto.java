@@ -5,6 +5,7 @@ import com.example.textile.entity.ProductRawMaterial;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class OrderProductMappingDto {
     public static class OrderProduct {
         private Long id;
         private CompanyYarnOrderProduct companyYarnOrderProduct;
-        private List<ProductRawMaterial> rawMaterial;
-        private Double quantity;
+        private List<ProductRawMaterial> rawMaterials;
+        private BigDecimal quantity;
     }
 }

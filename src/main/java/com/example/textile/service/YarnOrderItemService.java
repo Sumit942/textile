@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface YarnOrderItemService {
     List<YarnOrderItemDto> findAllByCompanyIdAndIsUsed(Long companyId, Boolean isUsed);
+
+    List<YarnOrderItemDto> findAllByCompanyIdAndYarnIdAndIsUsed(Long companyId, Long yarnId, Boolean isUsed);
 }

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -15,8 +16,8 @@ public class ProductRawMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private YarnOrderItem yarnOrderItem;
+    @OneToMany
+    private List<YarnOrderItem> yarnOrderItems;
     @DecimalMin("0.01")
     @DecimalMax("100.00")
     @Column(precision = 5, scale = 2)

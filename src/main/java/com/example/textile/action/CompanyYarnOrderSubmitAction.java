@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,7 +71,7 @@ public class CompanyYarnOrderSubmitAction extends RestActionExecutor<CompanyYarn
                 if (Objects.isNull(yarnOrderItem.getBoxes()) || yarnOrderItem.getBoxes().compareTo(0) <= 0) {
                     errorMap.put("yarnOrderItems["+i+"].boxes", new String[]{"NotNull.yarnOrderItems.boxes"});
                 }
-                if (Objects.isNull(yarnOrderItem.getQuantity()) || yarnOrderItem.getQuantity().compareTo(0.00) <= 0) {
+                if (Objects.isNull(yarnOrderItem.getQuantity()) || yarnOrderItem.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
                     errorMap.put("yarnOrderItems["+i+"].quantity", new String[]{"NotNull.yarnOrderItems.quantity"});
                 }
             }

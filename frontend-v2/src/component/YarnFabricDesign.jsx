@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { TextField, Autocomplete, Snackbar, Alert, Typography, Button, Box, Grid2 } from '@mui/material';
 import { getYarnByType } from '../service/yarn'
 import { getFabricDesignsByNameLike } from '../service/fabricDesign'
-import { saveYarnFabricDesign } from '../service/yarnFabricDesign';
+import { fetchFabricDesignYarnMappingById, fetchYarnFabricDesignById, saveYarnFabricDesign } from '../service/yarnFabricDesign';
 import { Add, Remove } from '@mui/icons-material';
+import { useLocation } from 'react-router-dom';
 
 const YarnFabricDesign = () => {
+    const location = useLocation();
+    const design = location.state?.design;
+
     const { handleSubmit, control, watch, reset, setError, formState: { errors } } = useForm({
         defaultValues: {
+            id : null,
             qualityName: '',
             fabricDesignYarnMappings: [
                 {
@@ -67,30 +72,51 @@ const YarnFabricDesign = () => {
 
     const onSubmit = async (data) => {
         setIsSubmitting(true)
-        const totalPerc = selectedYarns.reduce((sum, item) => {
-            const percentageValue = parseFloat(item.percentage) || 0;
-            return sum + percentageValue;
-        }, 0)
-        console.log('totalPerc: ', totalPerc)
-        if (totalPerc !== 100.00) {
-            setError(`fabricDesignYarnMappings.[0].percentage`, { type: 'manual', message: 'Sum all percentage should be 100'})
-        }
-        saveYarnFabricDesign(data)
-            .then(response => {
-                console.log("sucess response: ", response)
-                alert("Yarn Fabric Design saved sucessfully!!")
-                reset();
-            })
-            .catch(error => {
-                console.log('Error saving yarnFabricDesign: ', error)
-                if (error.status == 400) {
-                    const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
-                    setOpenRecordExistsSnackbar(true)
-                } else {
-                    alert('Error Saving')
+        try {
+            const totalPerc = selectedYarns.reduce((sum, item) => {
+                const percentageValue = parseFloat(item.percentage) || 0;
+                return sum + percentageValue;
+            }, 0)
+            console.log('totalPerc: ', totalPerc)
+            if (totalPerc !== 100.00) {
+                setError(`fabricDesignYarnMappings.[0].percentage`, {
+                    type: 'manual', 
+                    message: 'Sum all percentage should be 100'
+                })
+                setIsSubmitting(false)
+                return;
+            }
+            const response = await saveYarnFabricDesign(data);
+            const savedData = response.data;
+
+            // Update form with saved data
+            const yarnMappings = savedData.fabricDesignYarnMappings.map(mapping => ({
+                yarn: mapping.yarn,
+                percentage: mapping.percentage
+            }));
+            reset({
+                id: savedData.id,
+                qualityName: savedData.qualityName,
+                fabricDesignYarnMappings: yarnMappings,
+                fabricDesign: savedData.fabricDesign,
+                gsm: savedData.gsm,
+            });
+
+            // Show success message
+            alert("Yarn Fabric Design saved successfully!");
+        } catch (error) {
+            console.log('Error saving yarnFabricDesign: ', error);
+            if (error.status === 400) {
+                const isRecordExist = error.response?.data?.errorMessages?.yarnFabricDesign ? true : false;
+                if (isRecordExist) {
+                    setOpenRecordExistsSnackbar(true);
                 }
-            })
-        setIsSubmitting(false)
+            } else {
+                alert('Error Saving');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const isDuplicateYarn = (yarnobj) => {
@@ -100,6 +126,32 @@ const YarnFabricDesign = () => {
     }
 
     console.log('erros; :: ', errors)
+
+    useEffect(() => {
+        console.log('design: ', design)
+        if (design?.id) {
+            // Populate form with design data
+            fetchYarnFabricDesignById(design.id)
+                .then(response => {
+                    console.log('findYarnFabricDesignById response: ', response.data)
+                    const designData = response.data;
+                    const yarnMappings = designData.fabricDesignYarnMappings.map(mapping => ({
+                        yarn: mapping.yarn,
+                        percentage: mapping.percentage
+                    }));
+                    reset({
+                        id: designData.id,
+                        qualityName: designData.qualityName,
+                        fabricDesignYarnMappings: yarnMappings,
+                        fabricDesign: designData.fabricDesign,
+                        gsm: designData.gsm,
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching design data:', error);
+                });
+        }
+    }, [design, reset]);
 
     return (
         <form 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class OrderProductMapping {
     private CompanyYarnOrderProduct companyYarnOrderProduct;
     @OneToMany(mappedBy = "orderProductMapping", cascade = CascadeType.ALL)
     private List<ProductRawMaterial> rawMaterials;
-    private Double quantity;
+    private BigDecimal quantity;
     @ManyToOne
     @JsonBackReference
     private Orders orders;

@@ -83,6 +83,19 @@ public class YarnFabricDesignController extends BaseController{
         }
     }
 
+    @GetMapping
+    public ResponseEntity<List<YarnFabricDesignDto>> fetchAll() {
+        String logPrefix = "fetchAll()";
+        log.info(createEntryLog(logPrefix));
+        String logSuffix = "";
+
+        List<YarnFabricDesignDto> yarnFabricDesignDtos =  yarnFabricDesignService.findAll();
+        logSuffix += createNameValue("YarnFabricDesign size", yarnFabricDesignDtos.size());
+
+        log.info(createExitLog(logPrefix, logSuffix));
+        return ResponseEntity.ok(yarnFabricDesignDtos);
+    }
+
     @GetMapping("searchBy")
     public ResponseEntity<List<YarnFabricDesignDto>> searchBy(@RequestParam String yarnsAndDesignName,
                                                               @RequestParam(value = "isDeepSearch", defaultValue = "false") boolean isDeepSearch) {
@@ -93,9 +106,21 @@ public class YarnFabricDesignController extends BaseController{
         return ResponseEntity.ok(yarnFabricDesignDtos);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+    @GetMapping("/yarn/{id}")
+    public ResponseEntity<?> findYarnMappingById(@PathVariable("id") Long id) {
         List<FabricDesignYarnMapping> fabricDesignYarnMappings = yarnFabricDesignService.fetchFabricDesignYarnMappingById(id);
         return ResponseEntity.ok(fabricDesignYarnMappings);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<YarnFabricDesign> findById(@PathVariable("id") Long id) {
+        String logPrefix = "findById()";
+        log.info(createEntryLog(logPrefix));
+        String logSuffix = createNameValue("id", id);
+
+        YarnFabricDesign yarnFabricDesign = yarnFabricDesignService.findById(id);
+
+        log.info(createExitLog(logPrefix, logSuffix));
+        return ResponseEntity.ok(yarnFabricDesign);
     }
 }

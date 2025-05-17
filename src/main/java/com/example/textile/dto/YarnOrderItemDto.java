@@ -4,6 +4,8 @@ import com.example.textile.entity.Yarn;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class YarnOrderItemDto {
@@ -11,8 +13,8 @@ public class YarnOrderItemDto {
     private Yarn yarn;
     private Long companyId;
     private String companyName;
-    private Double quantity;
-    private Double qtyAllocated;
-    private Double qtyUsed;
+    private BigDecimal quantity;
+    private BigDecimal qtyAllocated;
+    private BigDecimal qtyLeft;
     private Integer boxes;
 }

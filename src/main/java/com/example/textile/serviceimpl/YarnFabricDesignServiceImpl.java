@@ -1,7 +1,9 @@
 package com.example.textile.serviceimpl;
 
+import com.example.textile.dto.YarnFabricDesignDto;
 import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
+import com.example.textile.exception.YarnFabricDesignNotFoundException;
 import com.example.textile.repo.YarnFabricDesignRepo;
 import com.example.textile.service.YarnFabricDesignService;
 import lombok.AllArgsConstructor;
@@ -139,10 +141,25 @@ public class YarnFabricDesignServiceImpl implements YarnFabricDesignService {
     }
 
     @Override
+    public Long getYarnFabricDesignIdByQualityName(String qualityName) {
+        return yarnFabricDesignRepo.getYarnFabricDesignIdByQualityName(qualityName);
+    }
+
+    @Override
     @Transactional
     public List<FabricDesignYarnMapping> fetchFabricDesignYarnMappingById(Long id) {
         Optional<YarnFabricDesign> byId = yarnFabricDesignRepo.findById(id);
         return byId.map(YarnFabricDesign::getFabricDesignYarnMappings)
                 .orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<YarnFabricDesignDto> findAll() {
+        return yarnFabricDesignRepo.findAllYarnFabric();
+    }
+
+    @Override
+    public YarnFabricDesign findById(Long id) {
+        return yarnFabricDesignRepo.findById(id).orElseThrow(() -> new YarnFabricDesignNotFoundException(id));
     }
 }

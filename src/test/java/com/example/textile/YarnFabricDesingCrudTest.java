@@ -35,4 +35,11 @@ public class YarnFabricDesingCrudTest {
             System.out.println(fabricDesignYarnMapping);
         }
     }
+
+    @Test
+    public void getYarnFabricDesignIdByQualityName() {
+        Long yarnFabricDesignIdByQualityName = yarnFabricDesignService.getYarnFabricDesignIdByQualityName("30s CCH x 100Poly x 30Lycra --Twil (Gsm:205/210)");
+        System.out.println(yarnFabricDesignIdByQualityName);
+
+    }
 }

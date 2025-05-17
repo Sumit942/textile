@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.*;
 
+import static com.example.textile.utility.ActionValidationUtil.isNullOrLessThanOne;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public class TransformationDTOToEntity {
@@ -26,8 +28,8 @@ public class TransformationDTOToEntity {
         orders.setId(ordersDto.getId());
         orders.setRemarks(ordersDto.getRemarks());
         orders.setOrderStatusType(ordersDto.getOrderStatusType());
-        orders.setOrderNo(orders.getOrderNo());
-        if (Objects.nonNull(ordersDto.getCompany()) && Objects.nonNull(ordersDto.getCompany().getId())) {
+        orders.setOrderNo(ordersDto.getOrderNo());
+        if (Objects.nonNull(modelMapper) && Objects.nonNull(ordersDto.getCompany()) && Objects.nonNull(ordersDto.getCompany().getId())) {
             orders.setCompany(modelMapper.map(ordersDto.getCompany(), Company.class));
         }
 
@@ -53,6 +55,11 @@ public class TransformationDTOToEntity {
     public static CompanyYarnOrder transformCompanyYarnOrder(CompanyYarnOrderDto companyYarnOrderDto) {
         CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
 
+        if (Objects.nonNull(companyYarnOrderDto.getOrder())) {
+            Orders orders = transformOrdersDto(null, companyYarnOrderDto.getOrder());
+            companyYarnOrder.setOrder(orders);
+        }
+
         companyYarnOrder.setVersion(companyYarnOrderDto.getVersion());
         companyYarnOrder.setId(companyYarnOrderDto.getId());
         companyYarnOrder.setRemark(companyYarnOrderDto.getRemark());
@@ -60,7 +67,11 @@ public class TransformationDTOToEntity {
         companyYarnOrder.setOrderDt(companyYarnOrderDto.getOrderDt());
         companyYarnOrder.setTotalQuantity(companyYarnOrderDto.getTotalQuantity());
         companyYarnOrder.setTotalAmount(companyYarnOrderDto.getTotalAmount());
+
         companyYarnOrder.setYarnOrderItems(companyYarnOrderDto.getYarnOrderItems());
+        for (YarnOrderItem yarnOrderItem : companyYarnOrder.getYarnOrderItems()) {
+            validateYarnOrderItems(yarnOrderItem);
+        }
 
         companyYarnOrder.setYarnBuilties(companyYarnOrderDto.getYarnBuilties());
         if (companyYarnOrder.getYarnBuilties() != null) {
@@ -73,7 +84,15 @@ public class TransformationDTOToEntity {
         companyYarnOrder.setCGst(companyYarnOrderDto.getCGst());
         companyYarnOrder.setSGst(companyYarnOrderDto.getSGst());
         companyYarnOrder.setDiscPerc(companyYarnOrderDto.getDiscPerc());
+
         return companyYarnOrder;
+    }
+
+    private static void validateYarnOrderItems(YarnOrderItem yarnOrderItem) {
+
+        if (Objects.nonNull(yarnOrderItem) && isNullOrLessThanOne(yarnOrderItem.getId())) {
+            yarnOrderItem.setQtyLeft(yarnOrderItem.getQuantity());
+        };
     }
 
     public static void validateYarnBuilty(YarnBuilty yarnBuilty) {
@@ -96,10 +115,21 @@ public class TransformationDTOToEntity {
                 productMapping.setOrders(transformOrdersDto(null,productMappingDto.getOrders()));
                 productMapping.setQuantity(orderProduct.getQuantity());
                 productMapping.setCompanyYarnOrderProduct(orderProduct.getCompanyYarnOrderProduct());
-                productMapping.setRawMaterials(orderProduct.getRawMaterial());
+                allocateRawMaterialQtyToYarnOrderItem(orderProduct);
+                productMapping.setRawMaterials(orderProduct.getRawMaterials());
             }
         }
 
         return productMappings;
+    }
+
+    private static void allocateRawMaterialQtyToYarnOrderItem(OrderProductMappingDto.OrderProduct orderProduct) {
+        for (ProductRawMaterial productRawMaterial : orderProduct.getRawMaterials()) {
+
+            for (YarnOrderItem yarnOrderItem : productRawMaterial.getYarnOrderItems()) {
+                BigDecimal allocatedQty = orderProduct.getQuantity().multiply(productRawMaterial.getPercentage());
+                yarnOrderItem.setQtyAllocated(allocatedQty);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.example.textile.dto.OrderProductMappingDto;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.CompanyYarnOrderProduct;
 import com.example.textile.entity.ProductRawMaterial;
+import com.example.textile.entity.YarnOrderItem;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.executors.ActionResponse;
 import com.example.textile.executors.RestActionExecutor;
@@ -47,6 +48,7 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
     protected void doValidationRest(OrderProductMappingDto orderProductMappingDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
         String logPrefix = "doValidationRest()";
         log.info(createEntryLog(logPrefix));
+        String logSuffix = "";
 
         OrdersDto orders = orderProductMappingDto.getOrders();
         if (Objects.isNull(orders) || StringUtils.isEmpty(orders.getOrderNo()) || isNullOrLessThanOne(orders.getId())) {
@@ -64,39 +66,49 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
             CompanyYarnOrderProduct yarnOrderProduct = orderProduct.getCompanyYarnOrderProduct();
 
             if (isNullOrLessThanOne(yarnOrderProduct.getYarnFabricDesign().getId())){
-                errorMap.put(String.format("orders.orderProducts.[%s].yarnFabricDesign",i),
+                errorMap.put(String.format("orderProducts[%s].yarnFabricDesign",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.companyYarnOrderProduct.yarnFabricDesign"});
             }
             if (isNullOrLessThanOne(yarnOrderProduct.getMachine().getId())) {
-                errorMap.put(String.format("orders.orderProducts.[%s].machine",i),
+                errorMap.put(String.format("orderProducts[%s].machine",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.companyYarnOrderProduct.machine"});
             }
             if (ActionValidationUtil.isEqualToLessThanZero(orderProduct.getQuantity())) {
-                errorMap.put(String.format("orders.orderProducts.[%s].quantity",i),
+                errorMap.put(String.format("orderProducts[%s].quantity",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.quantity"});
             }
 
-            List<ProductRawMaterial> rawMaterials = orderProduct.getRawMaterial();
+            List<ProductRawMaterial> rawMaterials = orderProduct.getRawMaterials();
             if (isEmpty(rawMaterials)) {
-                errorMap.put(String.format("orders.orderProducts.[%s].rawMaterial",i),
+                errorMap.put(String.format("orderProducts[%s].rawMaterials",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.rawMaterial"});
                 continue;
             }
 
             for (int j = 0; j < rawMaterials.size(); j++) {
 
-                if (Objects.isNull(rawMaterials.get(j).getPercentage()) || isEqualToLessThanZero(rawMaterials.get(j).getPercentage())) {
-                    errorMap.put(String.format("orders.orderProducts.[%s].rawMaterial.[%s].percentage",i,j),
+                ProductRawMaterial rawMaterial = rawMaterials.get(j);
+                if (Objects.isNull(rawMaterial.getPercentage()) || isEqualToLessThanZero(rawMaterial.getPercentage())) {
+                    errorMap.put(String.format("orderProducts[%s].rawMaterials[%s].percentage",i,j),
                             new String[]{"NotNull.orderProductMappingDto.rawMaterial.percentage"});
                 }
-                if (Objects.isNull(rawMaterials.get(j).getYarnOrderItem()) || isNullOrLessThanOne(rawMaterials.get(j).getYarnOrderItem().getId())) {
-                    errorMap.put(String.format("orders.orderProducts.[%s].rawMaterial.[%s].yarnOrderItem",i,j),
+                if (isEmpty(rawMaterial.getYarnOrderItems())) {
+                    errorMap.put(String.format("orderProducts[%s].rawMaterials[%s].yarnOrderItem",i,j),
                             new String[]{"NotNull.orderProductMappingDto.orderProducts.rawMaterial.yarnOrderItem"});
+                } else {
+                    for (int k = 0; k < rawMaterial.getYarnOrderItems().size(); k++) {
+                        YarnOrderItem yarnOrderItem = rawMaterial.getYarnOrderItems().get(k);
+                        if (isNullOrLessThanOne(yarnOrderItem.getId())) {
+                            errorMap.put(String.format("orderProducts[%s].rawMaterials[%s].yarnOrderItem[%s].id",i,j,k),
+                                    new String[]{"NotNull.orderProductMappingDto.orderProducts.rawMaterial.yarnOrderItem"});
+                        }
+                    }
                 }
             }
         }
 
-        log.info(createExitLog(logPrefix, ""));
+        logSuffix += createNameValue("errorMap siz", errorMap.size());
+        log.info(createExitLog(logPrefix, logSuffix));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.textile.service;
 
+import com.example.textile.dto.YarnFabricDesignDto;
 import com.example.textile.entity.FabricDesignYarnMapping;
 import com.example.textile.entity.YarnFabricDesign;
 
@@ -14,5 +15,12 @@ public interface YarnFabricDesignService {
 
     boolean existsByQualityName(String qualityName);
 
+    Long getYarnFabricDesignIdByQualityName(String qualityName);
+
     List<FabricDesignYarnMapping> fetchFabricDesignYarnMappingById(Long id);
+
+    List<YarnFabricDesignDto> findAll();
+
+    YarnFabricDesign findById(Long id);
+
 }

@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { Autocomplete, Button, TextField, Dialog, DialogTitle, DialogContent, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Checkbox } from '@mui/material';
-import { Add, Remove } from '@mui/icons-material';
+import { Autocomplete, Button, TextField, Dialog, DialogTitle, DialogContent, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Checkbox, Typography, Snackbar, Alert } from '@mui/material';
+import { Add, Refresh, Remove } from '@mui/icons-material';
 import { fetchOrderNoListByOrderNo } from '../service/orderApi';
-import { fetchYarnFabricDesignByYarnsAndDesigns, findYarnFabricDesignById } from '../service/yarnFabricDesign';
+import { fetchYarnFabricDesignByYarnsAndDesigns, fetchFabricDesignYarnMappingById } from '../service/yarnFabricDesign';
 import { fetchProductIdAndMachineByYarnFabricDesignId } from '../service/companyYarnOrderProduct';
+import { fetchYarnOrderItemsByOrderAndYarnType } from '../service/yarnOrderItem';
+import { saveOrderProductMapping } from '../service/orderProductMapping';
 
 const OrderProductMapping = () => {
     const methods = useForm();
     const { control, handleSubmit } = methods;
     const [orderOptions, setOrderOptions] = useState([]);
+    const [alertState, setAlertState] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -27,9 +35,60 @@ const OrderProductMapping = () => {
         setOrderOptions(orderNoList.data);
     }
 
-    const onSubmit = (data) => {
-        console.log('Form data: ', data);
-    }
+    const handleAlertClose = () => {
+        setAlertState({...alertState, open: false});
+    };
+
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+        try {
+            const response = await saveOrderProductMapping(data);
+            if (response.status == 201) {                
+                setAlertState({
+                    open: true,
+                    message: 'Order product mapping saved successfully!',
+                    severity: 'success'
+                });
+                methods.reset(response.data);
+            } else {
+                setAlertState({
+                    open: true,
+                    message: 'Failed to save order product mapping',
+                    severity: 'error'
+                });
+                methods.setError(response.response.data.errorMessages)
+            }
+            // Reset form with saved data
+        } catch (error) {
+            console.error('Error saving order product mapping:', error);
+            
+            if (error.response?.status === 400) {
+                // Handle validation errors
+                const errors = error.response.data.errors || {};
+                Object.keys(errors).forEach(key => {
+                    methods.setError(key, {
+                        type: 'manual',
+                        message: errors[key]
+                    });
+                });
+                
+                setAlertState({
+                    open: true,
+                    message: 'Please correct the errors in the form',
+                    severity: 'error'
+                });
+            } else {
+                // Handle other errors
+                setAlertState({
+                    open: true,
+                    message: 'An error occurred while saving the order',
+                    severity: 'error'
+                });
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div>
@@ -95,10 +154,25 @@ const OrderProductMapping = () => {
                     type="submit"
                     variant="contained"
                     color="secondary"
-                    disabled={!selectedOrder}
+                    disabled={!selectedOrder || isSubmitting}
                 >
-                    Save Order
+                    {isSubmitting ? 'Saving...' : 'Save Order'}
                 </Button>
+
+                <Snackbar 
+                    open={alertState.open}
+                    autoHideDuration={6000}
+                    onClose={handleAlertClose}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert 
+                        onClose={handleAlertClose} 
+                        severity={alertState.severity}
+                        variant="filled"
+                    >
+                        {alertState.message}
+                    </Alert>
+                </Snackbar>
             </form>
         </div>
     );
@@ -135,7 +209,7 @@ const OrderProductMappingItem = ({
     }
 
     const fetchYarnFabricDesignMappingById = (id) => {
-        findYarnFabricDesignById(id)
+        fetchFabricDesignYarnMappingById(id)
             .then(response => {
                 const rawMaterials = response.data.map(({ yarn, percentage }) => ({ yarn, percentage }));
                 methods.setValue(`orderProducts.${index}.rawMaterials`, rawMaterials);
@@ -247,6 +321,7 @@ const OrderProductMappingItem = ({
                         rawIndex={rawIndex}
                         control={control} 
                         methods={methods}
+                        selectedOrder={selectedOrder}
                     />
                 ))}
             </div>
@@ -270,11 +345,37 @@ const RawMaterial = ({
     index,
     rawIndex,
     control,
-    methods
+    methods,
+    selectedOrder
 }) => {
     const [open, setOpen] = useState(false);
     const [yarnOrderItems, setYarnOrderItems] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchYarnOrders();
+    }, [selectedOrder?.id, rawMaterial?.yarn?.type]);
+
+    const fetchYarnOrders = async () => {
+        if (selectedOrder?.id && rawMaterial?.yarn?.type) {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetchYarnOrderItemsByOrderAndYarnType(
+                    selectedOrder.company.id,
+                    rawMaterial.yarn.id
+                );
+                setYarnOrderItems(response.data);
+            } catch (err) {
+                setError('Error fetching yarn orders');
+                console.error('Error fetching yarn orders:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -294,7 +395,7 @@ const RawMaterial = ({
 
     const handleSave = () => {
         methods.setValue(
-            `orderProducts.${index}.rawMaterials.${rawIndex}.selectedOrders`, 
+            `orderProducts.${index}.rawMaterials.${rawIndex}.yarnOrderItems`, 
             selectedItems
         );
         handleClose();
@@ -323,8 +424,17 @@ const RawMaterial = ({
                 variant="outlined"
                 onClick={handleOpen}
                 className='col-span-2 sm:col-span-4'
+                disabled={loading || !selectedOrder}
             >
-                Select Yarn Orders
+                {loading ? 'Loading...' : 'Select Yarn Orders'}
+            </Button>
+            <Button
+                variant="outlined"
+                onClick={fetchYarnOrders}
+                disabled={loading || !selectedOrder}
+                startIcon={<Refresh />}
+            >
+                Refresh
             </Button>
 
             <Dialog 
@@ -333,8 +443,16 @@ const RawMaterial = ({
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>Select Yarn Orders</DialogTitle>
+                <DialogTitle>
+                    Select Yarn Orders
+                    {loading && ' (Loading...)'}
+                </DialogTitle>
                 <DialogContent>
+                    {error && (
+                        <div className="text-red-500 mb-4">
+                            {error}
+                        </div>
+                    )}
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -371,7 +489,7 @@ const RawMaterial = ({
                                         </TableCell>
                                         <TableCell>{item.orderNo}</TableCell>
                                         <TableCell>{item.quantity}</TableCell>
-                                        <TableCell>{item.quantityAllocated}</TableCell>
+                                        <TableCell>{item.qtyAllocated}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

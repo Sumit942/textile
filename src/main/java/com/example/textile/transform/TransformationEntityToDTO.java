@@ -105,7 +105,7 @@ public class TransformationEntityToDTO {
                 OrderProductMappingDto.OrderProduct orderProduct = new OrderProductMappingDto.OrderProduct();
                 orderProduct.setCompanyYarnOrderProduct(productMapping.getCompanyYarnOrderProduct());
                 orderProduct.setQuantity(productMapping.getQuantity());
-                orderProduct.setRawMaterial(productMapping.getRawMaterials());
+                orderProduct.setRawMaterials(productMapping.getRawMaterials());
                 orderProduct.setQuantity(productMapping.getQuantity());
 
                 orderProducts.add(orderProduct);
@@ -123,7 +123,7 @@ public class TransformationEntityToDTO {
         yarnOrderItemDto.setYarn(yarnOrderItem.getYarn());
         yarnOrderItemDto.setQuantity(yarnOrderItem.getQuantity());
         yarnOrderItemDto.setQtyAllocated(yarnOrderItem.getQtyAllocated());
-        yarnOrderItemDto.setQtyUsed(yarnOrderItem.getQtyUsed());
+        yarnOrderItemDto.setQtyLeft(yarnOrderItem.getQtyLeft());
         if (Objects.nonNull(yarnOrderItem.getCompanyYarnOrder()) && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder())
                 && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany())) {
             yarnOrderItemDto.setCompanyId(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany().getId());
