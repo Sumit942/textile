@@ -3,9 +3,12 @@ package com.example.textile.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,6 +32,15 @@ public class YarnOrderItem extends Document {
     private String hsn;
     private String lotNo;
     private BigDecimal amount;
+    @OneToMany(mappedBy = "yarnOrderItem")
+    private List<ProductRawMaterialYarnOrderItem> productRawMaterials = new ArrayList<>();
+
+    @PreRemove
+    private void preventRemoveIfUser() {
+        if (CollectionUtils.isEmpty(productRawMaterials)) {
+            throw new IllegalStateException("Cannot delete YarnOrderItem because it is used in ProductRawMaterial.");
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

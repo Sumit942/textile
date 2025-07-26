@@ -92,7 +92,8 @@ public class TransformationDTOToEntity {
 
         if (Objects.nonNull(yarnOrderItem) && isNullOrLessThanOne(yarnOrderItem.getId())) {
             yarnOrderItem.setQtyLeft(yarnOrderItem.getQuantity());
-        };
+            yarnOrderItem.setQtyAllocated(BigDecimal.ZERO);
+        }
     }
 
     public static void validateYarnBuilty(YarnBuilty yarnBuilty) {
@@ -115,21 +116,12 @@ public class TransformationDTOToEntity {
                 productMapping.setOrders(transformOrdersDto(null,productMappingDto.getOrders()));
                 productMapping.setQuantity(orderProduct.getQuantity());
                 productMapping.setCompanyYarnOrderProduct(orderProduct.getCompanyYarnOrderProduct());
-                allocateRawMaterialQtyToYarnOrderItem(orderProduct);
                 productMapping.setRawMaterials(orderProduct.getRawMaterials());
+
+                productMappings.add(productMapping);
             }
         }
 
         return productMappings;
-    }
-
-    private static void allocateRawMaterialQtyToYarnOrderItem(OrderProductMappingDto.OrderProduct orderProduct) {
-        for (ProductRawMaterial productRawMaterial : orderProduct.getRawMaterials()) {
-
-            for (YarnOrderItem yarnOrderItem : productRawMaterial.getYarnOrderItems()) {
-                BigDecimal allocatedQty = orderProduct.getQuantity().multiply(productRawMaterial.getPercentage());
-                yarnOrderItem.setQtyAllocated(allocatedQty);
-            }
-        }
     }
 }

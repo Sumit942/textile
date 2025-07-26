@@ -17,4 +17,5 @@ public class YarnOrderItemDto {
     private BigDecimal qtyAllocated;
     private BigDecimal qtyLeft;
     private Integer boxes;
+    private String orderNo;
 }

@@ -1,0 +1,50 @@
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: metrics,info,health
+spring:
+  info:
+    name: "Textile Company - Project"
+    Description: "One Solution for a Textile Manufacturing Company"
+    companyName: "SHREERAM TEXTILE INDUSTRIES"
+  datasource:
+    url: jdbc:mysql://localhost:3306/textile_crm
+    username: root
+    password: 12345678
+  jpa:
+    hibernate:
+#      ddl-auto: update
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  thymeleaf:
+    view-names:
+      - emailTemplates/*
+  main:
+    banner-mode: OFF
+    lazy-initialization: true
+  data:
+    rest:
+      base-path: "/api"
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+server:
+  servlet:
+    context-path: "/textile"
+  port: 8082
+invoice:
+  startCount: 1
+  oldInvoiceLastId: 207
+  invoiceFormatNo: "SRTI/25-26/"
+challan:
+  showGroupByParty: false
+logging:
+  level:
+    org.springframework.web: "trace"

@@ -10,4 +10,6 @@ public interface CompanyYarnOrderProductRepo extends JpaRepository<CompanyYarnOr
 
     @Query("SELECT cyop.id,cyop.machine FROM CompanyYarnOrderProduct cyop where cyop.yarnFabricDesign.id=:yarnFabricProductId")
     List<Object[]> findIdAndMachineByYarnFabricProductId(Long yarnFabricProductId);
+
+    List<CompanyYarnOrderProduct> findByYarnFabricDesignIdAndMachineId(Long yarnFabricDesignId, Long machineId);
 }

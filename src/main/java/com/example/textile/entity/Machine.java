@@ -14,6 +14,7 @@ public class Machine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String machineNo;
+    private boolean active;
     private String dia;
     private String guage;
     private String feeder;

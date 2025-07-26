@@ -43,32 +43,49 @@ const OrderProductMapping = () => {
         setIsSubmitting(true);
         try {
             const response = await saveOrderProductMapping(data);
-            if (response.status == 201) {                
+            if (response.status === 201) {                
                 setAlertState({
                     open: true,
                     message: 'Order product mapping saved successfully!',
                     severity: 'success'
                 });
                 methods.reset(response.data);
-            } else {
+            } else if (response.status === 400) {
+                // Handle error response
+                const errorMessages = response.response?.data?.errorMessages || {};
+                
+                // Handle nested error messages
+                Object.entries(errorMessages).forEach(([key, value]) => {
+                    // Parse the path for nested errors like "orderProducts[0].companyYarnOrderProduct.machine"
+                    methods.setError(key, {
+                        type: 'manual',
+                        message: value
+                    });
+                });
+
                 setAlertState({
                     open: true,
                     message: 'Failed to save order product mapping',
                     severity: 'error'
                 });
-                methods.setError(response.response.data.errorMessages)
+            } else {
+                setAlertState({
+                    open: true,
+                    message: response.response?.data?.errorMessages?.SystemError || 'An unexpected error occurred while saving the order',
+                    severity: 'error'
+                });
             }
-            // Reset form with saved data
         } catch (error) {
             console.error('Error saving order product mapping:', error);
             
             if (error.response?.status === 400) {
-                // Handle validation errors
-                const errors = error.response.data.errors || {};
-                Object.keys(errors).forEach(key => {
+                const errorMessages = error.response?.data?.errorMessages || {};
+                
+                // Handle nested error messages
+                Object.entries(errorMessages).forEach(([key, value]) => {
                     methods.setError(key, {
                         type: 'manual',
-                        message: errors[key]
+                        message: value
                     });
                 });
                 
@@ -78,7 +95,6 @@ const OrderProductMapping = () => {
                     severity: 'error'
                 });
             } else {
-                // Handle other errors
                 setAlertState({
                     open: true,
                     message: 'An error occurred while saving the order',
@@ -190,6 +206,7 @@ const OrderProductMappingItem = ({
 }) => {
     const [yarnFabricDesignOptions, setYarnFabricDesignOptions] = useState([]);
     const [machineOptions, setMachineOptions] = useState([]);
+    const [fabricDesignSelected, setFabricDesignSelected] = useState(false);
 
     const fetchYarnFabricDesignsByYarnAndDesignName = (yarnAndDesignName) => {
         fetchYarnFabricDesignByYarnsAndDesigns(yarnAndDesignName)
@@ -199,6 +216,7 @@ const OrderProductMappingItem = ({
 
     const fetchCompanyOrderProduct = (fabricDesign) => {
         if (fabricDesign?.id) {
+            setFabricDesignSelected(true);
             fetchProductIdAndMachineByYarnFabricDesignId(fabricDesign.id)
                 .then(response => setMachineOptions(response.data))
                 .catch(error => {
@@ -260,33 +278,81 @@ const OrderProductMappingItem = ({
                 name={`orderProducts.${index}.companyYarnOrderProduct.machine`}
                 control={control}
                 defaultValue={null}
-                rules={{ required: "Machine no is required" }}
+                rules={{ 
+                    required: "Machine no is required",
+                    validate: {
+                        validMachine: (value) => {
+                            // Allow both machine object and manual input
+                            if (!value) return "Machine no is required";
+                            if (typeof value === 'string' && value.trim() === '') return "Machine no is required";
+                            // Check if it's a manual input with machineNo
+                            if (value.machineNo && typeof value.machineNo === 'string') return true;
+                            // Check if it's a machine object
+                            if (value.machine?.machineNo) return true;
+                            return "Invalid machine format";
+                        }
+                    }
+                }}
                 render={({ field }) => (
                     <Autocomplete
-                        {...field}
-                        className='col-span-1 sm:col-span-2'
-                        size='small'
-                        freeSolo
-                        options={machineOptions}
-                        getOptionLabel={(option) => option.machine?.machineNo ? `${option.machine.machineNo} -${option.machine.dia}/${option.machine.guage}` : ''}
-                        value={field.value?.machine || null}
-                        onChange={(_, newValue) => {
-                            if (newValue?.id) methods.setValue(`orderProducts.${index}.companyYarnOrderProduct.id`, newValue.id);
-                            if (newValue?.machine) field.onChange(newValue.machine || null);
-                        }}
-                        onInputChange={(_, newInputValue) => methods.setValue(`orderProducts.${index}.companyYarnOrderProduct.machine`, null)}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Machine"
-                                variant="outlined"
-                                error={!!methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.machine}
-                                helperText={methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.machine?.message}
-                                disabled={!selectedOrder}
-                            />
-                        )}
-                        disabled={!selectedOrder}
-                    />
+            {...field}
+            className='col-span-1 sm:col-span-2'
+            size='small'
+            freeSolo={machineOptions.length === 0}
+            options={machineOptions}
+            getOptionLabel={(option) => {
+                if (typeof option === 'string') return option;
+                if (option?.machineNo) return option.machineNo; // Handle manual input object
+                return option.machine?.machineNo ? 
+                    `${option.machine.machineNo} -${option.machine.dia}/${option.machine.guage}` : '';
+            }}
+            value={field.value}
+            onChange={(_, newValue) => {
+                if (machineOptions.length === 0) {
+                    // Handle manual input when no options
+                    const manualValue = typeof newValue === 'string' ? 
+                        { machineNo: newValue } : newValue;
+                    field.onChange(manualValue);
+                    // Clear error if valid value entered
+                    if (manualValue?.machineNo && manualValue.machineNo.trim() !== '') {
+                        methods.clearErrors(`orderProducts.${index}.companyYarnOrderProduct.machine`);
+                    }
+                } else {
+                    // Handle selection from options
+                    if (newValue?.id) {
+                        methods.setValue(`orderProducts.${index}.companyYarnOrderProduct.id`, newValue.id);
+                    }
+                    field.onChange(newValue?.machine || null);
+                }
+            }}
+            onInputChange={(_, newInputValue) => {
+                if (!newInputValue) {
+                    methods.setValue(`orderProducts.${index}.companyYarnOrderProduct.machine`, null);
+                    methods.setError(`orderProducts.${index}.companyYarnOrderProduct.machine`, {
+                        type: 'required',
+                        message: 'Machine no is required'
+                    });
+                } else if (machineOptions.length === 0) {
+                    // Update value for manual input
+                    field.onChange({ machineNo: newInputValue });
+                }
+            }}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label="Machine"
+                    variant="outlined"
+                    error={!!methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.machine}
+                    helperText={
+                        methods.formState.errors.orderProducts?.[index]?.companyYarnOrderProduct?.machine?.message ||
+                        (fabricDesignSelected && machineOptions.length === 0 && !field.value?.machineNo ? 
+                            'No machines available, enter manually' : '')
+                    }
+                    disabled={!selectedOrder}
+                />
+)}
+            disabled={!selectedOrder}
+        />
                 )}
             />
 
@@ -396,7 +462,7 @@ const RawMaterial = ({
     const handleSave = () => {
         methods.setValue(
             `orderProducts.${index}.rawMaterials.${rawIndex}.yarnOrderItems`, 
-            selectedItems
+            selectedItems.map(item => ({ yarnOrderItem: item }))
         );
         handleClose();
     };
@@ -473,6 +539,7 @@ const RawMaterial = ({
                                     <TableCell>Order No</TableCell>
                                     <TableCell>Quantity</TableCell>
                                     <TableCell>Quantity Allocated</TableCell>
+                                    <TableCell>Quantity Left</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -490,6 +557,7 @@ const RawMaterial = ({
                                         <TableCell>{item.orderNo}</TableCell>
                                         <TableCell>{item.quantity}</TableCell>
                                         <TableCell>{item.qtyAllocated}</TableCell>
+                                        <TableCell>{item.qtyLeft}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

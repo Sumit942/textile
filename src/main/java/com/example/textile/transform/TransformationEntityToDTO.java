@@ -124,10 +124,12 @@ public class TransformationEntityToDTO {
         yarnOrderItemDto.setQuantity(yarnOrderItem.getQuantity());
         yarnOrderItemDto.setQtyAllocated(yarnOrderItem.getQtyAllocated());
         yarnOrderItemDto.setQtyLeft(yarnOrderItem.getQtyLeft());
-        if (Objects.nonNull(yarnOrderItem.getCompanyYarnOrder()) && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder())
-                && Objects.nonNull(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany())) {
-            yarnOrderItemDto.setCompanyId(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany().getId());
-            yarnOrderItemDto.setCompanyName(yarnOrderItem.getCompanyYarnOrder().getOrder().getCompany().getName());
+        CompanyYarnOrder companyYarnOrder = yarnOrderItem.getCompanyYarnOrder();
+        if (Objects.nonNull(companyYarnOrder) && Objects.nonNull(companyYarnOrder.getOrder())
+                && Objects.nonNull(companyYarnOrder.getOrder().getCompany())) {
+            yarnOrderItemDto.setCompanyId(companyYarnOrder.getOrder().getCompany().getId());
+            yarnOrderItemDto.setCompanyName(companyYarnOrder.getOrder().getCompany().getName());
+            yarnOrderItemDto.setOrderNo(companyYarnOrder.getOrder().getOrderNo());
         }
 
         return yarnOrderItemDto;

@@ -3,6 +3,7 @@ package com.example.textile.action;
 import com.example.textile.dto.OrderProductMappingDto;
 import com.example.textile.dto.OrdersDto;
 import com.example.textile.entity.CompanyYarnOrderProduct;
+import com.example.textile.entity.Machine;
 import com.example.textile.entity.ProductRawMaterial;
 import com.example.textile.entity.YarnOrderItem;
 import com.example.textile.enums.ResponseType;
@@ -55,10 +56,10 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
             errorMap.put("orders",new String[]{"NotNull.orderProductMappingDto.orders"});
             return;
         }
-        log.info("{} {}",logPrefix,createNameValue("orderNo=", orders.getOrderNo()));
+        log.info("{} {}",logPrefix,createNameValue("orderNo", orders.getOrderNo()));
         List<OrderProductMappingDto.OrderProduct> orderProducts = orderProductMappingDto.getOrderProducts();
         if(isEmpty(orderProducts)) {
-            errorMap.put("orders",new String[]{"NotNull.orderProductMappingDto.orderProducts"});
+            errorMap.put("orderProducts",new String[]{"NotNull.orderProductMappingDto.orderProducts"});
             return;
         }
         for (int i = 0; i < orderProducts.size(); i++) {
@@ -66,10 +67,10 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
             CompanyYarnOrderProduct yarnOrderProduct = orderProduct.getCompanyYarnOrderProduct();
 
             if (isNullOrLessThanOne(yarnOrderProduct.getYarnFabricDesign().getId())){
-                errorMap.put(String.format("orderProducts[%s].yarnFabricDesign",i),
+                errorMap.put(String.format("orderProducts[%s].companyYarnOrderProduct.yarnFabricDesign",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.companyYarnOrderProduct.yarnFabricDesign"});
             }
-            if (isNullOrLessThanOne(yarnOrderProduct.getMachine().getId())) {
+            if (isNullOrLessThanOne(yarnOrderProduct.getMachine().getId()) && StringUtils.isEmpty(yarnOrderProduct.getMachine().getMachineNo())) {
                 errorMap.put(String.format("orderProducts[%s].machine",i),
                         new String[]{"NotNull.orderProductMappingDto.orderProducts.companyYarnOrderProduct.machine"});
             }
@@ -97,7 +98,7 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
                             new String[]{"NotNull.orderProductMappingDto.orderProducts.rawMaterial.yarnOrderItem"});
                 } else {
                     for (int k = 0; k < rawMaterial.getYarnOrderItems().size(); k++) {
-                        YarnOrderItem yarnOrderItem = rawMaterial.getYarnOrderItems().get(k);
+                        YarnOrderItem yarnOrderItem = rawMaterial.getYarnOrderItems().get(k).getYarnOrderItem();
                         if (isNullOrLessThanOne(yarnOrderItem.getId())) {
                             errorMap.put(String.format("orderProducts[%s].rawMaterials[%s].yarnOrderItem[%s].id",i,j,k),
                                     new String[]{"NotNull.orderProductMappingDto.orderProducts.rawMaterial.yarnOrderItem"});
@@ -113,6 +114,35 @@ public class OrderProductMappingAction extends RestActionExecutor<OrderProductMa
 
     @Override
     protected void doPreSaveOperationRest(OrderProductMappingDto orderProductMappingDto, Map<String, Object> parameterMap, Map<String, String[]> errorMap) {
+        String logPrefix = "doPreSaveOperationRest()";
+        log.info(createEntryLog(logPrefix));
+        String logSuffix = createNameValue("orderProductMappingDto orderNo", orderProductMappingDto.getOrders().getOrderNo());
 
+        List<OrderProductMappingDto.OrderProduct> orderProducts = orderProductMappingDto.getOrderProducts();
+        for (int i = 0; i < orderProducts.size(); i++) {
+            Machine machine = orderProducts.get(i).getCompanyYarnOrderProduct().getMachine();
+
+            if (!isNullOrLessThanOne(machine.getId())) {
+                Machine existingMcn = productMappingService.findMachineById(machine.getId());
+                if (Objects.nonNull(existingMcn) && !existingMcn.isActive()) {
+                    errorMap.put(String.format("orderProducts[%s].companyYarnOrderProduct.machine",i),
+                            new String[]{"UnderMaintenance.orderProductMappingDto.orderProducts.companyYarnOrderProduct.machine"});
+                }
+            } else if (StringUtils.isNotEmpty(machine.getMachineNo())) {
+                List<Machine> existingMcn = productMappingService.findMachineByMachineNo(machine.getMachineNo().trim());
+                if (isEmpty(existingMcn)) {
+                    errorMap.put(String.format("orderProducts[%s].companyYarnOrderProduct.machine",i),
+                            new String[]{"MachineNotFound.orderProductMappingDto.orderProducts.companyYarnOrderProduct.machine"});
+                } else if (!existingMcn.get(0).isActive()) {
+                    errorMap.put(String.format("orderProducts[%s].companyYarnOrderProduct.machine",i),
+                            new String[]{"UnderMaintenance.orderProductMappingDto.orderProducts.companyYarnOrderProduct.machine"});
+                } else {
+                    orderProducts.get(i).getCompanyYarnOrderProduct().setMachine(existingMcn.get(0));
+                }
+            }
+        }
+
+        logSuffix += createNameValue("errorMap count",errorMap.size());
+        log.info(createExitLog(logPrefix, logSuffix));
     }
 }
