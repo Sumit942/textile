@@ -1,6 +1,7 @@
 import { useState } from "react";
 import NavbarItem from "./NavbarItem";
 import { NavbarItemMobile } from "./NavItemMobile";
+import { Link } from "react-router-dom";
 
 const Navbar = ({ items }) => {
   console.log('navbar')

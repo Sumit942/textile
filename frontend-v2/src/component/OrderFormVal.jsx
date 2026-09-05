@@ -261,7 +261,7 @@ const OrderFormVal = () => {
 
        
         <div className="sm:col-span-2 grid grid-cols-1">
-          {orderFields.length > 0 && <h3 className="text-lg font-semibold mb-2">Company Yarn Orders</h3>}
+          {orderFields.length > 0 && <h3 className="text-lg font-semibold mb-2">Company - Yarn Orders</h3>}
           {orderFields.map((order, orderIndex) => (
             <OrderFormCompanyYarnOrder key={order.id} orderIndex={orderIndex} order={order} register={register} removeOrder={removeOrder} errors={errors} control={control} />
           ))}

@@ -55,10 +55,11 @@ public class TransformationDTOToEntity {
     public static CompanyYarnOrder transformCompanyYarnOrder(CompanyYarnOrderDto companyYarnOrderDto) {
         CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
 
+        /* Commented to prevent recursion
         if (Objects.nonNull(companyYarnOrderDto.getOrder())) {
             Orders orders = transformOrdersDto(null, companyYarnOrderDto.getOrder());
             companyYarnOrder.setOrder(orders);
-        }
+        }*/
 
         companyYarnOrder.setVersion(companyYarnOrderDto.getVersion());
         companyYarnOrder.setId(companyYarnOrderDto.getId());
