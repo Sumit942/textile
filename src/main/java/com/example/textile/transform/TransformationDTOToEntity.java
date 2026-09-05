@@ -55,11 +55,15 @@ public class TransformationDTOToEntity {
     public static CompanyYarnOrder transformCompanyYarnOrder(CompanyYarnOrderDto companyYarnOrderDto) {
         CompanyYarnOrder companyYarnOrder = new CompanyYarnOrder();
 
-        /* Commented to prevent recursion
-        if (Objects.nonNull(companyYarnOrderDto.getOrder())) {
-            Orders orders = transformOrdersDto(null, companyYarnOrderDto.getOrder());
+        if (Objects.nonNull(companyYarnOrderDto.getOrderId())) {
+            Orders orders = new Orders();
+            orders.setId(companyYarnOrderDto.getOrderId());
             companyYarnOrder.setOrder(orders);
-        }*/
+        } else if (Objects.nonNull(companyYarnOrderDto.getOrder())) {
+            Orders orders = new Orders();
+            orders.setId(companyYarnOrderDto.getOrder().getId());
+            companyYarnOrder.setOrder(orders);
+        }
 
         companyYarnOrder.setVersion(companyYarnOrderDto.getVersion());
         companyYarnOrder.setId(companyYarnOrderDto.getId());
@@ -93,7 +97,7 @@ public class TransformationDTOToEntity {
 
         if (Objects.nonNull(yarnOrderItem) && isNullOrLessThanOne(yarnOrderItem.getId())) {
             yarnOrderItem.setQtyLeft(yarnOrderItem.getQuantity());
-        };
+        }
     }
 
     public static void validateYarnBuilty(YarnBuilty yarnBuilty) {

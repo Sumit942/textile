@@ -310,7 +310,7 @@ public class OrdersSaveTest {
         yarnOrderItem.setHsn("54023300");
         yarnOrderItem.setLotNo("K27092");
         yarnOrderItem.setBoxes(16);
-        yarnOrderItem.setQuantity(549.530);
+        yarnOrderItem.setQuantity(BigDecimal.valueOf(549.530));
         yarnOrderItem.setRate(113.00);
         yarnOrderItem.setYarn(yarn);
         yarnOrderItem.setAmount(BigDecimal.valueOf(62096.89));

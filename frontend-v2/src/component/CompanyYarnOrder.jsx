@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Button, TextField, Autocomplete, Box, Snackbar, Alert } from '@mui/material';
-import { Add, Remove } from '@mui/icons-material';
-import { getYarnByType } from '../service/yarn';
-import { saveCompanyYarnOrder } from '../service/companyYarnOrder';
-import { fetchOrderNoListByOrderNo } from '../service/orderApi';
+import React, {useEffect, useState} from 'react';
+import {Controller, useFieldArray, useForm} from 'react-hook-form';
+import {Alert, Autocomplete, Button, Snackbar, TextField} from '@mui/material';
+import {Add, Remove} from '@mui/icons-material';
+import {getYarnByType} from '../service/yarn';
+import {saveCompanyYarnOrder} from '../service/companyYarnOrder';
+import {fetchOrderNoListByOrderNo} from '../service/orderApi';
 
 const OrderItem = ({ control, methods, register, index, remove }) => {
     const [itemOptions, setItemOptions] = useState([]);
@@ -195,6 +195,7 @@ const CompanyYarnOrder = () => {
                 <TextField {...register('cGst')} label="C GST" variant="outlined" />
                 <TextField {...register('sGst')} label="S GST" variant="outlined" />
                 <TextField {...register('iGst')} label="I GST" variant="outlined" />
+                <TextField {...register('yarnInvoiceNo')} label="Yarn Invoice No" variant="outlined" />
                 <TextField {...register('discPerc')} label="Discount" variant="outlined" />
 
                 <div className="sm:col-span-2 grid grid-cols-1 space-y-4">

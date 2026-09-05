@@ -18,6 +18,7 @@ import YarnFabricDesign from './component/YarnFabricDesign'
 import OrderProductMapping from './component/OrderProductMapping'
 import CompanyYarnOrderList from './component/CompanyYarnOrderList'
 import YarnFabricDesignList from './component/YarnFabricDesignList'
+import YarnBuiltyForm from './component/YarnBuiltyForm'
 
 function App() {
   const [navItems, setNavItems] = useState([])
@@ -53,6 +54,7 @@ function App() {
           <Route path='/yarnFabricDesign/save' element={<YarnFabricDesign />} />
           <Route path='/yarnFabricDesign/view' element={<YarnFabricDesignList />} />
           <Route path='/orderProductMapping/save' element={<OrderProductMapping />} />
+          <Route path='/yarnBuilty/save' element={<YarnBuiltyForm />} />
         </Routes>
       </BrowserRouter>
     </div>

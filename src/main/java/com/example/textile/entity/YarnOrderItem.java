@@ -1,6 +1,6 @@
 package com.example.textile.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,13 +12,14 @@ import java.util.Objects;
 @Setter
 @Getter
 public class YarnOrderItem extends Document {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private Yarn yarn;
     @ManyToOne
-    @JsonIgnore
+    @JsonBackReference
     private CompanyYarnOrder companyYarnOrder;
     @Column(nullable = false)
     private BigDecimal quantity;

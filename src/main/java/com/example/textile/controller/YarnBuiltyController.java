@@ -24,6 +24,12 @@ public class YarnBuiltyController extends BaseController {
     public ResponseEntity<YarnBuilty> save(@RequestBody YarnBuilty yarnBuilty) {
         String logPrefix = "save()";
         log.info(createEntryLog(logPrefix));
+        if (yarnBuilty.getCompanyYarnOrder() != null && yarnBuilty.getCompanyYarnOrder().getId() == null) {
+            yarnBuilty.setCompanyYarnOrder(null);
+        }
+        if (yarnBuilty.getTranportCompany() != null && yarnBuilty.getTranportCompany().getId() == null) {
+            yarnBuilty.setTranportCompany(null);
+        }
         YarnBuilty saved = yarnBuiltyService.save(yarnBuilty);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }

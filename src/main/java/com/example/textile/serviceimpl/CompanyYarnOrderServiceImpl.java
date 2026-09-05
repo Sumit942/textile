@@ -75,7 +75,11 @@ public class CompanyYarnOrderServiceImpl implements CompanyYarnOrderService {
             throw new OptimisticLockException("Order has been already updated orderId="+ companyYarnOrder.getId() + " [ Version received="+companyYarnOrder.getVersion()+", persisted="+ persisted.getVersion() +"]");
         }
 
-        persisted.setOrder(companyYarnOrder.getOrder());
+        if (Objects.nonNull(companyYarnOrder.getOrder()) && !isNullOrLessThanOne(companyYarnOrder.getOrder().getId())){
+            Orders referenceById = ordersRepo.getReferenceById(companyYarnOrder.getOrder().getId());
+            persisted.setOrder(referenceById);
+        }
+
         persisted.setOrderDt(companyYarnOrder.getOrderDt());
         persisted.setYarnInvoiceNo(companyYarnOrder.getYarnInvoiceNo());
         persisted.setRemark(companyYarnOrder.getRemark());

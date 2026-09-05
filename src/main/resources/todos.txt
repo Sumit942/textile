@@ -7,3 +7,4 @@
 TODOS: Phase 2
 - add supplier in CompanyYarnOrder page
 - optmize /companyYarnOrder GET request query
+- mobileNo validation in /company/save

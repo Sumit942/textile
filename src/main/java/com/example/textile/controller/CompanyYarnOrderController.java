@@ -3,6 +3,7 @@ package com.example.textile.controller;
 import com.example.textile.action.CompanyYarnOrderSubmitAction;
 import com.example.textile.dto.CompanyYarnOrderDto;
 import com.example.textile.dto.ErrorResponseDto;
+import com.example.textile.entity.CompanyYarnOrder;
 import com.example.textile.enums.ActionType;
 import com.example.textile.enums.ResponseType;
 import com.example.textile.executors.ActionExecutor;
@@ -89,5 +90,12 @@ public class CompanyYarnOrderController extends BaseController {
     public ResponseEntity<List<CompanyYarnOrderDto>> fetchYarnOrders(@RequestParam(defaultValue = "10", name = "size") Long size) {
         List<CompanyYarnOrderDto> yarnOrderDtos = yarnOrderService.findAllCompanyYarnOrderDto(size);
         return ResponseEntity.ok(yarnOrderDtos);
+    }
+
+    @GetMapping("/search/yarnInvoiceNo")
+    public ResponseEntity<CompanyYarnOrder> findByYarnInvoiceNo(@RequestParam("yarnInvoiceNo") String yarnInvoiceNo) {
+        return yarnOrderService.findByYarnInvoiceNo(yarnInvoiceNo)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -25,3 +25,15 @@ export const fetchAllOrders = async () => {
         return error;
     }
 };
+
+export const fetchByYarnInvoiceNo = async (yarnInvoiceNo) => {
+    console.log('fetchByYarnInvoiceNo() Entry: ', yarnInvoiceNo);
+    try {
+        const response = await API.get(`${API_URL}/search/yarnInvoiceNo?yarnInvoiceNo=${yarnInvoiceNo}`);
+        console.log('fetchByYarnInvoiceNo() Exit: ', response);
+        return response;
+    } catch (error) {
+        console.error('fetchByYarnInvoiceNo() Error: ', error);
+        return error;
+    }
+}

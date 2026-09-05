@@ -1,6 +1,7 @@
 package com.example.textile.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,11 +21,13 @@ public class CompanyYarnOrder extends Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<YarnOrderItem> yarnOrderItems;
     @OneToMany(mappedBy = "companyYarnOrder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonBackReference
+    @JsonManagedReference
     private List<YarnBuilty> yarnBuilties;
     @ManyToOne
+    @JsonBackReference
     private Orders order;
     @Temporal(TemporalType.DATE)
     private Date orderDt;

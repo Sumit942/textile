@@ -21,6 +21,7 @@ public class Orders extends Document implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<CompanyYarnOrder> companyYarnOrders;
     @ManyToOne(fetch = FetchType.LAZY)
     private Company company;
@@ -29,7 +30,7 @@ public class Orders extends Document implements Serializable {
     private String remarks;
     @Column(unique = true)
     private String orderNo;
-    @OneToMany(mappedBy = "orders")
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderProductMapping> orderProductMappings;
     //TODO: add User column (PrePersist)
